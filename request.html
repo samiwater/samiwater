@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>درخواست خدمات | SamiWater</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <h2>درخواست خدمات</h2>
+    <form id="requestForm">
+      <div class="step" id="step1">
+        <label>شماره موبایل:</label>
+        <input type="tel" id="phone" required />
+        <button type="button" onclick="checkPhone()">ادامه</button>
+      </div>
+
+      <div class="step" id="step2" style="display:none;">
+        <label>نام:</label>
+        <input type="text" id="name" required />
+        <label>آدرس:</label>
+        <input type="text" id="address" required />
+        <label>نوع دستگاه:</label>
+        <input type="text" id="device" required />
+        <label>نوع خدمات:</label>
+        <input type="text" id="service" required />
+        <button type="submit">ثبت درخواست</button>
+      </div>
+
+      <div class="step" id="stepQuick" style="display:none;">
+        <label>نوع خدمات:</label>
+        <input type="text" id="quickService" required />
+        <button type="submit">ثبت سریع</button>
+      </div>
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

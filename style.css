@@ -1,23 +1,43 @@
-@font-face {
-  font-family: "Dana";
-  src: url("https://cdn.fontcdn.ir/Font/Persian/Dana/DanaFaNum-Regular.woff2") format("woff2");
-}
 
 body {
-  margin: 0;
-  font-family: "Dana", sans-serif;
-  background: linear-gradient(145deg, #e8f0ff, #f4faff);
+  font-family: sans-serif;
+  background: #f2faff;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  flex-direction: column;
 }
-
-.logo {
-  max-width: 200px;
-  margin-bottom: 30px;
+.form-container {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 12px rgba(0, 89, 255, 0.2);
 }
-
-.button {
+h2 {
+  text-align: center;
+  color: #0059ff;
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  margin-top: 10px;
+}
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
   background-color: #0059ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
