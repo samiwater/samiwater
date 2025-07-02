@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>در حال بارگذاری...</title>
+  <style>
+    body {
+      background-color: #f4faff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: "Dana", sans-serif;
+    }
+    .loader {
+      border: 6px solid #e0e0e0;
+      border-top: 6px solid #0059ff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #0059ff;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="loader"></div>
+    <div class="loading-text">در حال بارگذاری...</div>
+  </div>
+</body>
+</html>
