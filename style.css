@@ -1,1 +1,23 @@
-body { font-family: sans-serif; background: #e0f7fa; color: #00796b; text-align: center; padding-top: 50px; }
+@font-face {
+  font-family: "Dana";
+  src: url("https://cdn.fontcdn.ir/Font/Persian/Dana/DanaFaNum-Regular.woff2") format("woff2");
+}
+
+body {
+  margin: 0;
+  font-family: "Dana", sans-serif;
+  background: linear-gradient(145deg, #e8f0ff, #f4faff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.logo {
+  max-width: 200px;
+  margin-bottom: 30px;
+}
+
+.button {
+  background-color: #0059ff;
