@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>بررسی شماره موبایل</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
+    <input type="tel" id="phone" placeholder="مثلاً 09130000000" />
+    <button onclick="checkPhone()">ادامه</button>
+  </div>
+
+  <script>
+    function checkPhone() {
+      const phone = document.getElementById("phone").value;
+      const knownNumbers = ["09130051733", "09130051745"]; // شماره‌های موجود در دیتابیس
+
+      const serviceType = sessionStorage.getItem("serviceType") || "نا‌مشخص";
+
+      if (knownNumbers.includes(phone)) {
+        alert("درخواست شما ثبت شد ✅");
+        // اینجا میشه ارسال به ایمیل یا سرور اضافه کرد
+        window.location.href = "request-confirmed.html";
+      } else {
+        window.location.href = `request-form.html?phone=${phone}&type=${serviceType}`;
+      }
+    }
+  </script>
+</body>
+</html>
