@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SamiWater | VIP Water Purification</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: sans-serif;
+      background-color: #004d40;
+      direction: rtl;
+    }
+    .header {
+      background: #004d40;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 2rem;
+    }
+    .menu {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #004d40;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      border: 2px solid gold;
+    }
+    .menu-items {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      background-color: #ffffff;
+      color: #004d40;
+      padding: 15px;
+      border-radius: 10px;
+      width: 220px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 100;
+    }
+    .menu-items a {
+      display: block;
+      text-decoration: none;
+      color: #004d40;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .menu-items a:hover {
+      background-color: #004d40;
+      color: white;
+    }
+    .content {
+      padding: 80px 20px 20px 20px;
+      color: white;
+    }
+    .content h2 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>SamiWater</h1>
+    <p>خدمات تصفیه آب VIP برای مشتریان خاص</p>
+  </div>
+
+  <div class="menu" id="menu-toggle">☰ منو</div>
+
+  <div class="menu-items" id="menu-items">
+    <a href="#services">خدمات</a>
+    <a href="#contact">تماس با ما</a>
+    <a href="#about">درباره ما</a>
+    <a href="#help">راهنما</a>
+  </div>
+
+  <div class="content">
+    <section id="services">
+      <h2>خدمات ما</h2>
+      <ul>
+        <li>نصب و راه‌اندازی سیستم تصفیه آب</li>
+        <li>خدمات دوره‌ای</li>
+        <li>تعمیرات تخصصی</li>
+        <li>مشاوره رایگان</li>
+      </ul>
+    </section>
+
+    <section id="contact">
+      <h2>تماس با ما</h2>
+      <p>شماره تماس‌:</p>
+      <p>۰۹۱۳۰۰۵۱۷۳۳</p>
+      <p>۰۹۱۳۰۰۵۱۷۴۵</p>
+    </section>
+
+    <section id="about">
+      <h2>درباره ما</h2>
+      <p>ما خدمات VIP تصفیه آب را با کیفیت بالا و پشتیبانی ویژه ارائه می‌دهیم.</p>
+    </section>
+
+    <section id="help">
+      <h2>راهنما</h2>
+      <p>در صورت نیاز به راهنمایی، با ما تماس بگیرید یا از بخش خدمات استفاده کنید.</p>
+    </section>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('menu-items');
+    toggle.addEventListener('click', () => {
+      if (menu.style.display === 'block') {
+        menu.style.display = 'none';
+      } else {
+        menu.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
