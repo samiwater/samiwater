@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="fa">
+<!DOCTYPE html>
+<html lang="fa">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -15,10 +16,13 @@
       <input type="text" name="address" placeholder="آدرس کامل" required />
       <textarea name="details" placeholder="توضیحات اضافی (اختیاری)"></textarea>
       <input type="hidden" name="serviceType" id="serviceType" />
-      <button type="submit" id="submit-btn">ثبت درخواست</button>
+      <button type="submit">ثبت درخواست</button>
     </form>
     <div id="msg"></div>
-  </div>  <script>
+  </div>
+
+  <script>
+    // دریافت پارامترهای URL
     const urlParams = new URLSearchParams(window.location.search);
     const phone = urlParams.get("phone");
     const type = urlParams.get("type");
@@ -30,19 +34,9 @@
       e.preventDefault();
       const form = e.target;
       const data = new FormData(form);
-      const submitBtn = document.getElementById("submit-btn");
+      data.append("source", "درخواست فوری");
 
-      // اعتبارسنجی ساده شماره موبایل
-      const phoneInput = document.getElementById("phone").value;
-      if (!/^09\d{9}$/.test(phoneInput)) {
-        document.getElementById("msg").innerHTML = "❌ شماره موبایل نامعتبر است.";
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.innerText = "در حال ارسال...";
-
-      fetch("https://script.google.com/macros/s/AKfycbwmG5I-2o97fyTSZi5nN_ckldN5lau0eVaG0pcOZcbkW14qEnBB-mMy1FnnjfycV9Te/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbz4hjQpslhBOi9XUmqnjp7y5x_umnQE-BhztWgI1KKhX1KMsOw0mZ2MDSFyhatTEMd8/exec", {
         method: "POST",
         body: data
       })
@@ -57,9 +51,8 @@
       .catch(err => {
         document.getElementById("msg").innerHTML = "❌ خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.";
         console.error(err);
-        submitBtn.disabled = false;
-        submitBtn.innerText = "ثبت درخواست";
       });
     });
-  </script></body>
+  </script>
+</body>
 </html>
