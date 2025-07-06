@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>فرم ثبت اطلاعات مشتری جدید</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>ثبت مشخصات مشتری جدید</h2>
+    <form id="request-form">
+      <input type="text" name="name" placeholder="نام و نام خانوادگی" required />
+      <input type="tel" name="phone" id="phone" placeholder="شماره موبایل" required />
+      <input type="text" name="city" placeholder="شهر" required />
+      <input type="text" name="address" placeholder="آدرس کامل" required />
+      <textarea name="details" placeholder="توضیحات اضافی (اختیاری)"></textarea>
+      <input type="hidden" name="serviceType" id="serviceType" />
+      <button type="submit">ثبت درخواست</button>
+    </form>
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    // گرفتن پارامترهای URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const phone = urlParams.get("phone");
+    const type = urlParams.get("type");
+
+    if (phone) document.getElementById("phone").value = phone;
+    if (type) document.getElementById("serviceType").value = type;
+
+    document.getElementById("request-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+
+      fetch("https://script.google.com/macros/s/AKfycbwmG5I-2o97fyTSZi5nN_ckldN5lau0eVaG0pcOZcbkW14qEnBB-mMy1FnnjfycV9Te/exec", {
+        method: "POST",
+        body: data
+      })
+      .then(res => res.text())
+      .then(txt => {
+        document.getElementById("msg").innerHTML = "✅ درخواست شما با موفقیت ثبت شد.";
+        form.reset();
+        setTimeout(() => {
+          window.location.href = "request-confirmed.html";
+        }, 2000);
+      })
+      .catch(err => {
+        document.getElementById("msg").innerHTML = "❌ خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.";
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
