@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa">
 <head>
@@ -10,20 +9,19 @@
 <body>
   <div class="container">
     <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
-    <input type="tel" id="phone" placeholder="مثلاً 09130000000" />
+    <input type="tel" id="phone" placeholder="09130000000" required />
     <button onclick="checkPhone()">ادامه</button>
   </div>
 
   <script>
     function checkPhone() {
-      const phone = document.getElementById("phone").value;
-      const knownNumbers = ["09130051733", "09130051745"]; // شماره‌های موجود در دیتابیس
-
-      const serviceType = sessionStorage.getItem("serviceType") || "نا‌مشخص";
+      const phone = document.getElementById("phone").value.trim();
+      const knownNumbers = ["09130051733", "09130051745"]; // شماره‌های ثبت‌شده قبلی
+      const serviceType = new URLSearchParams(window.location.search).get("type") || "نامشخص";
 
       if (knownNumbers.includes(phone)) {
-        alert("درخواست شما ثبت شد ✅");
-        // اینجا میشه ارسال به ایمیل یا سرور اضافه کرد
+        alert("✅ درخواست ثبت‌شده قبلی یافت شد.");
+        // اینجا می‌تونی ارسال ایمیل هم اضافه کنی اگر خواستی
         window.location.href = "request-confirmed.html";
       } else {
         window.location.href = `request-form.html?phone=${phone}&type=${serviceType}`;
