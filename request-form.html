@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ثبت اطلاعات مشتری جدید</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -30,30 +30,26 @@
     if (phone) document.getElementById("phone").value = phone;
     if (type) document.getElementById("serviceType").value = type;
 
-    // ثبت فرم
     document.getElementById("request-form").addEventListener("submit", function (e) {
       e.preventDefault();
       const form = e.target;
-      const data = new URLSearchParams(new FormData(form)); // 👈 این خط کلید حل مشکل بود
+      const data = new FormData(form);
 
       document.getElementById("msg").innerHTML = "⏳ در حال ارسال اطلاعات ...";
 
-      fetch("https://script.google.com/macros/s/AKfycbxkWH_M5nrC-d_V4eh_sfDTWGCULsNXWSnkJVEaEOmN-bmL28RzTO0UDPJOdT7u6qekQ/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbxKwWH_M5nrC-d_V4eh_sfDTwGCULsNXWSnkJVEaEOmN-bmL28RzTO0UDPJOdT7u6qekQ/exec", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
         body: data,
       })
-      .then(res => res.text())
-      .then(txt => {
+      .then((res) => res.text())
+      .then((txt) => {
         document.getElementById("msg").innerHTML = "✅ ثبت شد: " + txt;
         form.reset();
         setTimeout(() => {
           window.location.href = "request-confirmed.html";
         }, 3000);
       })
-      .catch(err => {
+      .catch((err) => {
         document.getElementById("msg").innerHTML = "❌ خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.<br>" + err;
         console.error(err);
       });
