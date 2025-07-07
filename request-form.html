@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ثبت اطلاعات مشتری جدید</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,7 +11,7 @@
     <h2>ثبت مشخصات مشتری جدید</h2>
     <form id="request-form">
       <input type="text" name="name" placeholder="نام و نام خانوادگی" required />
-      <input type="tel" name="phone" id="phone" placeholder="شماره موبایل" required />
+      <input type="tel" name="phone" id="phone" placeholder="شماره موبایل مشتری" required />
       <input type="text" name="city" placeholder="شهر" required />
       <input type="text" name="address" placeholder="آدرس کامل" required />
       <textarea name="details" placeholder="توضیحات اضافی (اختیاری)"></textarea>
@@ -22,7 +22,7 @@
   </div>
 
   <script>
-    // دریافت پارامترهای URL
+    // دریافت شماره و نوع سرویس از URL
     const urlParams = new URLSearchParams(window.location.search);
     const phone = urlParams.get("phone");
     const type = urlParams.get("type");
@@ -32,27 +32,28 @@
 
     document.getElementById("request-form").addEventListener("submit", function (e) {
       e.preventDefault();
+
       const form = e.target;
       const data = new FormData(form);
 
       document.getElementById("msg").innerHTML = "⏳ در حال ارسال اطلاعات ...";
 
-      fetch("https://script.google.com/macros/s/AKfycbxKwWH_M5nrC-d_V4eh_sfDTwGCULsNXWSnkJVEaEOmN-bmL28RzTO0UDPJOdT7u6qekQ/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbwlEQxsWbzGP8dY7hQamviidvS0HAmVzSxZEABFXJ7Z8YZ64Z1bLBc4T4WJ7CRh69VqNw/exec", {
         method: "POST",
         body: data,
       })
-      .then((res) => res.text())
-      .then((txt) => {
-        document.getElementById("msg").innerHTML = "✅ ثبت شد: " + txt;
-        form.reset();
-        setTimeout(() => {
-          window.location.href = "request-confirmed.html";
-        }, 3000);
-      })
-      .catch((err) => {
-        document.getElementById("msg").innerHTML = "❌ خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.<br>" + err;
-        console.error(err);
-      });
+        .then(res => res.text())
+        .then(txt => {
+          document.getElementById("msg").innerHTML = "✅ ثبت شد: " + txt;
+          form.reset();
+          setTimeout(() => {
+            window.location.href = "request-confirmed.html";
+          }, 3000);
+        })
+        .catch(err => {
+          document.getElementById("msg").innerHTML = "❌ خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.<br>" + err;
+          console.error(err);
+        });
     });
   </script>
 </body>
