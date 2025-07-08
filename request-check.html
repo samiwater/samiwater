@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>بررسی شماره موبایل</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -10,22 +10,35 @@
   <div class="container">
     <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
     <input type="tel" id="phone" placeholder="09130000000" required />
-    <button onclick="checkPhone()">ادامه</button>
+    <button onclick="checkPhone()">بررسی</button>
   </div>
 
   <script>
     function checkPhone() {
       const phone = document.getElementById("phone").value.trim();
-      const knownNumbers = ["09130051733", "09130051745"]; // شماره‌های ثبت‌شده قبلی
       const serviceType = new URLSearchParams(window.location.search).get("type") || "نامشخص";
 
-      if (knownNumbers.includes(phone)) {
-        alert("✅ درخواست ثبت‌شده قبلی یافت شد.");
-        // اینجا می‌تونی ارسال ایمیل هم اضافه کنی اگر خواستی
-        window.location.href = "request-confirmed.html";
-      } else {
-        window.location.href = `request-form.html?phone=${phone}&type=${serviceType}`;
+      if (!phone) {
+        alert("📌 لطفاً شماره موبایل را وارد کنید.");
+        return;
       }
+
+      fetch(`https://script.google.com/macros/s/AKfycbwlEQxsWbzGP8dY7hQamviidvS0HAmVzSxZEABFXJ7Z8YZ64Z1bLBc4T4WJ7CRh69VqNw/exec?check=1&phone=${phone}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.found) {
+            // شماره در بانک اطلاعاتی بود
+            alert("✅ درخواست ثبت‌شده قبلی یافت شد.");
+            window.location.href = "request-confirmed.html";
+          } else {
+            // شماره جدید است، بریم فرم ثبت اطلاعات کامل
+            window.location.href = `request-form.html?phone=${phone}&type=${serviceType}`;
+          }
+        })
+        .catch(err => {
+          alert("❌ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.");
+          console.error(err);
+        });
     }
   </script>
 </body>
