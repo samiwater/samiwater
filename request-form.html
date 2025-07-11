@@ -9,110 +9,110 @@
     body {
       direction: rtl;
       font-family: 'Vazirmatn', sans-serif;
-      background: linear-gradient(135deg, #005f5f, #0d4d4d);
+      background: linear-gradient(135deg, #006f6f, #0f403f);
       color: white;
-      padding: 20px;
+      padding: 30px 15px;
     }
     .container {
-      max-width: 480px;
+      max-width: 500px;
       margin: auto;
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(255,255,255,0.05);
       border-radius: 20px;
-      padding: 30px;
       box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      backdrop-filter: blur(8px);
+      padding: 30px;
+      backdrop-filter: blur(10px);
     }
     h2 {
       color: #ffd700;
-      text-align: center;
       margin-bottom: 25px;
+      text-align: center;
     }
     input, textarea {
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
-      font-size: 15px;
-      border: none;
       border-radius: 10px;
+      border: none;
+      margin-bottom: 20px;
+      font-size: 16px;
     }
     button {
-      width: 100%;
       background-color: #ffd700;
       color: #003f3f;
       border: none;
+      width: 100%;
       padding: 12px;
-      font-weight: bold;
-      border-radius: 12px;
       font-size: 16px;
+      border-radius: 12px;
       cursor: pointer;
+      font-weight: bold;
     }
     button:hover {
       background-color: #e6c200;
     }
-    #message {
-      margin-top: 15px;
+    #response {
+      margin-top: 20px;
       text-align: center;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>فرم ثبت درخواست خدمات</h2>
+    <h2>فرم ثبت اطلاعات مشتری جدید</h2>
     <form id="serviceForm">
-      <input type="text" id="name" placeholder="نام و نام خانوادگی *" required />
-      <input type="text" id="city" placeholder="شهر *" required />
-      <textarea id="address" placeholder="آدرس کامل *" rows="3" required></textarea>
-      <textarea id="description" placeholder="توضیحات (اختیاری)" rows="2"></textarea>
+      <input type="text" id="name" placeholder="نام و نام خانوادگی" required />
+      <input type="text" id="city" placeholder="شهر" required />
+      <input type="text" id="address" placeholder="آدرس کامل" required />
+      <textarea id="description" placeholder="توضیحات (اختیاری)"></textarea>
       <button type="submit">ثبت درخواست</button>
-      <p id="message"></p>
     </form>
+    <div id="response"></div>
   </div>
 
   <script>
     const phone = new URLSearchParams(window.location.search).get("phone") || "";
     const path = sessionStorage.getItem("servicePath") || "درخواست فوری";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxlVQC3FMsKa8aK2B4gBktuaySq5dk5u4ZRC7w49dqWK34pcYPjh-MZ81rZ8ol1cvc/exec";
 
-    document.getElementById("serviceForm").addEventListener("submit", function(e) {
+    document.getElementById("serviceForm").addEventListener("submit", function (e) {
       e.preventDefault();
-
       const name = document.getElementById("name").value.trim();
       const city = document.getElementById("city").value.trim();
       const address = document.getElementById("address").value.trim();
       const description = document.getElementById("description").value.trim();
+      const type = "درخواست فوری";
 
-      if (!name || !city || !address || !phone) {
-        document.getElementById("message").innerText = "❌ لطفاً همه فیلدهای الزامی را تکمیل کنید.";
+      if (!phone || !name || !city || !address) {
+        document.getElementById("response").innerText = "❌ لطفاً همه فیلدهای ضروری را تکمیل کنید.";
         return;
       }
 
-      fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec", {
+      const formData = {
+        phone,
+        name,
+        city,
+        address,
+        description,
+        type,
+        path
+      };
+
+      fetch(scriptURL, {
         method: "POST",
-        body: JSON.stringify({
-          name,
-          phone,
-          city,
-          address,
-          description,
-          type: "خدمت حضوری",
-          path
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
+        body: JSON.stringify(formData)
       })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "success") {
-          document.getElementById("message").innerText = "✅ درخواست شما با موفقیت ثبت شد.";
-          document.getElementById("serviceForm").reset();
-        } else {
-          document.getElementById("message").innerText = "❌ خطا در ثبت. لطفاً دوباره تلاش کنید.";
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById("message").innerText = "❌ خطا در اتصال به سرور.";
-      });
+        .then(response => response.json())
+        .then(res => {
+          if (res.status === "success") {
+            document.getElementById("response").innerText = "✅ درخواست با موفقیت ثبت شد.";
+          } else {
+            document.getElementById("response").innerText = "❌ خطا در ثبت اطلاعات.";
+          }
+        })
+        .catch(error => {
+          console.error("Error!", error);
+          document.getElementById("response").innerText = "❌ خطا در ارتباط با سرور.";
+        });
     });
   </script>
 </body>
