@@ -103,21 +103,10 @@
         return;
       }
 
-      const data = {
-        name,
-        phone,
-        city,
-        address,
-        description,
-        type,
-        path
-      };
+      const data = { name, phone, city, address, description, type, path };
 
       fetch("https://script.google.com/macros/s/AKfycbxwt4fRUyoASVr4zz5poADBIQT2qkLBY6C6lDlRHH5xRIK5v-BlWK8n7Bk-W-2eUEM/exec", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
         body: JSON.stringify(data)
       })
         .then(res => res.json())
