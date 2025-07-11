@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>بررسی شماره موبایل | SamiWater</title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -74,7 +74,7 @@
         return;
       }
 
-      fetch("https://script.google.com/macros/s/AKfycbxlVQC3FMsKa8aK2B4gBktuaySq5dk5u4ZRC7w49dqWK34pcYPjh-MZ81rZ8ol1cvc/exec?check=true&phone=" + encodeURIComponent(phone))
+      fetch("https://script.google.com/macros/s/AKfycbxwt4fRUyoASVr4zz5poADBIQT2qkLBY6C6lDlRHH5xRIK5v-BlWK8n7Bk-W-2eUEM/exec?check=true&phone=" + encodeURIComponent(phone))
         .then(res => res.json())
         .then(res => {
           if (res.status === "found" || res.status === "not_found") {
