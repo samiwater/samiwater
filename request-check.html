@@ -77,10 +77,7 @@ button:hover {
       fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec?check=true&phone=" + phone)
         .then(res => res.json())
         .then(res => {
-          if (res.status === "found") {
-            sessionStorage.setItem("servicePath", "درخواست فوری");
-            window.location.href = "/request-form.html?phone=" + phone;
-          } else if (res.status === "not_found") {
+          if (res.status === "found" || res.status === "not_found") {
             sessionStorage.setItem("servicePath", "درخواست فوری");
             window.location.href = "/request-form.html?phone=" + phone;
           } else {
