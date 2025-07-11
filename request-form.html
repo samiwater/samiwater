@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>فرم ثبت درخواست | SamiWater</title>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       direction: rtl;
@@ -16,7 +16,7 @@
     .container {
       max-width: 500px;
       margin: auto;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border-radius: 20px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
       padding: 30px;
@@ -24,12 +24,12 @@
     }
     h2 {
       color: #ffd700;
-      text-align: center;
       margin-bottom: 25px;
+      text-align: center;
     }
     label {
       display: block;
-      margin-bottom: 6px;
+      margin-top: 15px;
       font-weight: bold;
     }
     input, textarea {
@@ -37,10 +37,12 @@
       padding: 10px;
       border-radius: 10px;
       border: none;
-      margin-bottom: 20px;
+      margin-top: 5px;
       font-size: 16px;
+      box-sizing: border-box;
     }
     button {
+      margin-top: 25px;
       background-color: #ffd700;
       color: #003f3f;
       border: none;
@@ -54,77 +56,80 @@
     button:hover {
       background-color: #e6c200;
     }
-    #message {
-      text-align: center;
+    #result {
       margin-top: 20px;
       font-size: 16px;
+      color: #fff;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>فرم ثبت اطلاعات مشتری</h2>
+    <h2>ثبت درخواست خدمات</h2>
     <form id="requestForm">
       <label>نام و نام خانوادگی</label>
       <input type="text" id="name" required />
-
-      <label>شماره موبایل</label>
-      <input type="tel" id="phone" required />
 
       <label>شهر</label>
       <input type="text" id="city" required />
 
       <label>آدرس کامل</label>
-      <textarea id="address" rows="3" required></textarea>
+      <input type="text" id="address" required />
 
       <label>توضیحات (اختیاری)</label>
-      <textarea id="description" rows="2"></textarea>
+      <textarea id="description" rows="3"></textarea>
 
-      <button type="submit">ثبت نهایی</button>
+      <button type="submit">ثبت نهایی درخواست</button>
     </form>
-    <p id="message"></p>
+    <p id="result"></p>
   </div>
 
   <script>
-    const phoneFromURL = new URLSearchParams(window.location.search).get("phone");
-    const servicePath = sessionStorage.getItem("servicePath") || "درخواست فوری";
-    if (phoneFromURL) document.getElementById("phone").value = phoneFromURL;
+    const phone = new URLSearchParams(window.location.search).get("phone") || "";
+    const path = sessionStorage.getItem("servicePath") || "ورود دستی";
+    const type = "درخواست فوری"; // یا هر عنوان دلخواه دیگه
 
     document.getElementById("requestForm").addEventListener("submit", function (e) {
       e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const result = document.getElementById("result");
+
+      if (!name || !city || !address) {
+        result.innerText = "❌ لطفاً همه فیلدهای ضروری را پر کنید.";
+        return;
+      }
 
       const data = {
-        name: document.getElementById("name").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        city: document.getElementById("city").value.trim(),
-        address: document.getElementById("address").value.trim(),
-        description: document.getElementById("description").value.trim(),
-        type: "درخواست فوری",
-        path: servicePath
+        name,
+        phone,
+        city,
+        address,
+        description,
+        type,
+        path
       };
-
-      document.getElementById("message").innerText = "⏳ در حال ارسال اطلاعات...";
 
       fetch("https://script.google.com/macros/s/AKfycbxwt4fRUyoASVr4zz5poADBIQT2qkLBY6C6lDlRHH5xRIK5v-BlWK8n7Bk-W-2eUEM/exec", {
         method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json"
-        }
+        body: JSON.stringify(data)
       })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "success") {
-          document.getElementById("message").innerText = "✅ درخواست با موفقیت ثبت شد.";
-          document.getElementById("requestForm").reset();
-        } else {
-          document.getElementById("message").innerText = "❌ خطا در ثبت. لطفاً دوباره تلاش کنید.";
-        }
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        document.getElementById("message").innerText = "❌ خطا در اتصال به سرور.";
-      });
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === "success") {
+            result.innerText = "✅ درخواست با موفقیت ثبت شد.";
+            document.getElementById("requestForm").reset();
+          } else {
+            result.innerText = "❌ خطا در ثبت اطلاعات. لطفاً دوباره تلاش کنید.";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          result.innerText = "❌ خطا در اتصال به سرور.";
+        });
     });
   </script>
 </body>
