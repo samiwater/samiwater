@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="fa">
+<!DOCTYPE html>
+<html lang="fa">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,53 +12,48 @@
       background: linear-gradient(135deg, #006f6f, #0f403f);
       color: white;
       padding: 30px 15px;
-    }.container {
-  max-width: 400px;
-  margin: auto;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  padding: 30px;
-  backdrop-filter: blur(10px);
-  text-align: center;
-}
-
-h2 {
-  color: #ffd700;
-  margin-bottom: 25px;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-button {
-  background-color: #ffd700;
-  color: #003f3f;
-  border: none;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover {
-  background-color: #e6c200;
-}
-
-#result {
-  margin-top: 20px;
-  font-size: 16px;
-  color: #fff;
-}
-
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+    h2 {
+      color: #ffd700;
+      margin-bottom: 25px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #ffd700;
+      color: #003f3f;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #e6c200;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -66,28 +62,33 @@ button:hover {
     <input type="tel" id="phone" placeholder="شماره موبایل را وارد کنید" required />
     <button onclick="checkPhone()">بررسی</button>
     <p id="result"></p>
-  </div>  <script>
+  </div>
+
+  <script>
     function checkPhone() {
-      const phone = document.getElementById("phone").value;
+      const phone = document.getElementById("phone").value.trim();
+      const result = document.getElementById("result");
+
       if (!phone || phone.length < 10) {
-        document.getElementById("result").innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
+        result.innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
         return;
       }
 
-      fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec?check=true&phone=" + phone)
+      fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec?check=true&phone=" + encodeURIComponent(phone))
         .then(res => res.json())
         .then(res => {
           if (res.status === "found" || res.status === "not_found") {
             sessionStorage.setItem("servicePath", "درخواست فوری");
             window.location.href = "/request-form.html?phone=" + phone;
           } else {
-            document.getElementById("result").innerText = "❌ خطا در بررسی. لطفاً دوباره تلاش کنید.";
+            result.innerText = "❌ خطا در بررسی. لطفاً دوباره تلاش کنید.";
           }
         })
         .catch(err => {
-          document.getElementById("result").innerText = "❌ خطا در اتصال به سرور.";
-          console.error(err);
+          result.innerText = "❌ خطا در اتصال به سرور.";
+          console.error("Server error:", err);
         });
     }
-  </script></body>
+  </script>
+</body>
 </html>
