@@ -1,45 +1,55 @@
-<!DOCTYPE html>
-<html lang="fa">
+<!-- request-check.html - نسخه بازنویسی‌شده نهایی --><!DOCTYPE html><html lang="fa">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>بررسی شماره موبایل</title>
-  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
-    <input type="tel" id="phone" placeholder="09130000000" required />
-    <button onclick="checkPhone()">بررسی</button>
-  </div>
+  <h2>بررسی شماره موبایل مشتری</h2>
+  <input type="tel" id="mobile" placeholder="شماره موبایل را وارد کنید"><br>
+  <button onclick="checkNumber()">بررسی</button>  <p id="result"></p>  <script>
+    const bankInfoURL = "https://docs.google.com/spreadsheets/d/1K1StWKrqNfsO4NtkiQtavpERaESN0OYBgfxmnucaq3w/gviz/tq?tqx=out:json";
 
-  <script>
-    function checkPhone() {
-      const phone = document.getElementById("phone").value.trim();
-      const serviceType = new URLSearchParams(window.location.search).get("type") || "مشخص‌نشده";
-
-      if (!phone) {
+    function checkNumber() {
+      const mobile = document.getElementById("mobile").value.trim();
+      if (!mobile) {
         alert("لطفاً شماره موبایل را وارد کنید.");
         return;
       }
+      sessionStorage.setItem("mobile", mobile);
 
-      fetch(`https://script.google.com/macros/s/AKfycbwlEQxsWbzGP8dY7hQamviidvS0HAmVzSxZEABFXJ7Z8YZ64Z1bLBc4T4WJ7CRh69VqNw/exec?phone=${phone}&check=1`)
-        .then(res => res.json())
+      fetch(bankInfoURL)
+        .then(res => res.text())
         .then(data => {
-          if (data.found) {
-            // شماره قبلاً ثبت شده
-            alert("درخواست قبلی ثبت شده – انتقال به تایید");
-            window.location.href = "request-confirmed.html";
+          const json = JSON.parse(data.substring(47).slice(0, -2));
+          const rows = json.table.rows;
+          let found = false;
+
+          for (let i = 0; i < rows.length; i++) {
+            const savedMobile = rows[i].c[0]?.v;
+            if (savedMobile === mobile) {
+              found = true;
+              break;
+            }
+          }
+
+          if (found) {
+            document.getElementById("result").innerText = "درخواست شما با موفقیت ثبت شد.";
+            fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec", {
+              method: "POST",
+              body: new URLSearchParams({
+                mobile: mobile,
+                type: sessionStorage.getItem("type") || "درخواست فوری"
+              })
+            });
           } else {
-            // شماره جدید – انتقال به فرم
-            window.location.href = `request-form.html?phone=${phone}&type=${serviceType}`;
+            window.location.href = "request-form.html";
           }
         })
         .catch(err => {
-          alert("❌ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.");
+          alert("خطا در بررسی شماره. لطفاً دوباره تلاش کنید.");
           console.error(err);
         });
     }
-  </script>
-</body>
+  </script></body>
 </html>
