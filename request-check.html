@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>بررسی شماره موبایل | SamiWater</title>
+  <title>بررسی شماره مشتری | SamiWater</title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       direction: rtl;
       font-family: 'Vazirmatn', sans-serif;
-      background: linear-gradient(135deg, #006f6f, #0f403f);
+      background: linear-gradient(135deg, #004d4d, #0a3b3b);
       color: white;
       padding: 30px 15px;
     }
@@ -18,39 +18,38 @@
       margin: auto;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
       padding: 30px;
-      backdrop-filter: blur(10px);
-      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
     }
     h2 {
+      text-align: center;
       color: #ffd700;
-      margin-bottom: 25px;
     }
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border-radius: 10px;
       border: none;
-      margin-bottom: 20px;
+      margin-top: 20px;
       font-size: 16px;
+      box-sizing: border-box;
     }
     button {
+      margin-top: 25px;
       background-color: #ffd700;
       color: #003f3f;
       border: none;
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       font-size: 16px;
       border-radius: 12px;
       cursor: pointer;
       font-weight: bold;
     }
-    button:hover {
-      background-color: #e6c200;
-    }
     #result {
       margin-top: 20px;
+      text-align: center;
       font-size: 16px;
       color: #fff;
     }
@@ -58,9 +57,9 @@
 </head>
 <body>
   <div class="container">
-    <h2>بررسی شماره موبایل مشتری</h2>
-    <input type="tel" id="phone" placeholder="شماره موبایل را وارد کنید" required />
-    <button onclick="checkPhone()">بررسی</button>
+    <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
+    <input type="text" id="phone" placeholder="مثلاً: 09130000000" />
+    <button onclick="checkPhone()">بررسی و ادامه</button>
     <p id="result"></p>
   </div>
 
@@ -69,24 +68,24 @@
       const phone = document.getElementById("phone").value.trim();
       const result = document.getElementById("result");
 
-      if (!phone || phone.length < 10) {
-        result.innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
+      if (!phone) {
+        result.innerText = "❌ لطفاً شماره موبایل را وارد کنید.";
         return;
       }
 
-      fetch("https://script.google.com/macros/s/AKfycbxwt4fRUyoASVr4zz5poADBIQT2qkLBY6C6lDlRHH5xRIK5v-BlWK8n7Bk-W-2eUEM/exec?check=true&phone=" + encodeURIComponent(phone))
+      fetch(`https://script.google.com/macros/s/AKfycbxwt4fRUyoASVr4zz5poADBIQT2qkLBY6C6lDlRHH5xRIK5v-BlWK8n7Bk-W-2eUEM/exec?phone=${phone}&check=true`)
         .then(res => res.json())
         .then(res => {
-          if (res.status === "found" || res.status === "not_found") {
-            sessionStorage.setItem("servicePath", "درخواست فوری");
-            window.location.href = "/request-form.html?phone=" + phone;
+          if (res.status === "found") {
+            sessionStorage.setItem("servicePath", "مشتری قدیمی");
           } else {
-            result.innerText = "❌ خطا در بررسی. لطفاً دوباره تلاش کنید.";
+            sessionStorage.setItem("servicePath", "مشتری جدید");
           }
+          window.location.href = `request-form.html?phone=${phone}`;
         })
         .catch(err => {
+          console.error(err);
           result.innerText = "❌ خطا در اتصال به سرور.";
-          console.error("Server error:", err);
         });
     }
   </script>
