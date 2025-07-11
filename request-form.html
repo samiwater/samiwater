@@ -3,60 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>فرم ثبت اطلاعات مشتری جدید</title>
+  <title>فرم ثبت اطلاعات مشتری</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <form id="request-form" class="container">
-    <input type="text" name="name" id="name" placeholder="نام و نام خانوادگی" required />
+    <input type="text" name="name" placeholder="نام و نام خانوادگی" required />
     <input type="tel" name="phone" id="phone" placeholder="شماره موبایل" required />
-    <input type="text" name="city" id="city" placeholder="شهر" required />
-    <input type="text" name="address" id="address" placeholder="آدرس کامل" required />
-    <textarea name="details" id="details" placeholder="توضیحات (اختیاری)"></textarea>
-
+    <input type="text" name="city" placeholder="شهر" required />
+    <input type="text" name="address" placeholder="آدرس کامل" required />
+    <textarea name="details" placeholder="توضیحات (اختیاری)"></textarea>
     <input type="hidden" name="serviceType" id="serviceType" value="" />
     <input type="hidden" name="source" id="source" value="درخواست فوری" />
-
     <button type="submit">ثبت اطلاعات</button>
   </form>
 
   <div id="msg"></div>
 
   <script>
-    // گرفتن شماره و مسیر از URL
     const urlParams = new URLSearchParams(window.location.search);
     const phone = urlParams.get("phone");
-    let type = urlParams.get("type");
-
-    if (!type) type = "درخواست فوری"; // مقدار پیش‌فرض
+    const type = urlParams.get("type") || "مشخص نشده";
 
     if (phone) document.getElementById("phone").value = phone;
     document.getElementById("serviceType").value = type;
-    document.getElementById("source").value = type;
 
-    // ارسال فرم
     document.getElementById("request-form").addEventListener("submit", function(e) {
       e.preventDefault();
       const data = new FormData(this);
 
-      document.getElementById("msg").innerHTML = "📨 در حال ارسال اطلاعات ...";
+      document.getElementById("msg").innerHTML = "⏳ در حال ارسال اطلاعات ...";
 
       fetch("https://script.google.com/macros/s/AKfycbwlEQxsWbzGP8dY7hQamviidvS0HAmVzSxZEABFXJ7Z8YZ64Z1bLBc4T4WJ7CRh69VqNw/exec", {
         method: "POST",
         body: data
       })
-      .then(res => res.text())
-      .then(txt => {
-        document.getElementById("msg").innerHTML = "✅ ثبت شد: " + txt;
-        this.reset();
-        setTimeout(() => {
-          window.location.href = "request-confirmed.html";
-        }, 3000);
-      })
-      .catch(err => {
-        document.getElementById("msg").innerHTML = "❌ خطا در ارسال. لطفاً دوباره تلاش کنید.<br>" + err;
-        console.error(err);
-      });
+        .then(res => res.text())
+        .then(txt => {
+          document.getElementById("msg").innerHTML = "✅ ثبت شد: " + txt;
+          this.reset();
+          setTimeout(() => {
+            window.location.href = "request-confirmed.html";
+          }, 3000);
+        })
+        .catch(err => {
+          document.getElementById("msg").innerHTML = "❌ خطا در ارسال. لطفاً دوباره تلاش کنید.<br>" + err;
+          console.error(err);
+        });
     });
   </script>
 </body>
