@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>بررسی شماره موبایل</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -16,19 +16,22 @@
   <script>
     function checkPhone() {
       const phone = document.getElementById("phone").value.trim();
-      const serviceType = new URLSearchParams(window.location.search).get("type") || "مشخص نشده";
+      const serviceType = new URLSearchParams(window.location.search).get("type") || "مشخص‌نشده";
 
       if (!phone) {
         alert("لطفاً شماره موبایل را وارد کنید.");
         return;
       }
 
-      fetch(`https://script.google.com/macros/s/AKfycbwlEQxsWbzGP8dY7hQamviidvS0HAmVzSxZEABFXJ7Z8YZ64Z1bLBc4T4WJ7CRh69VqNw/exec?check=1&phone=${phone}`)
+      fetch(`https://script.google.com/macros/s/AKfycbwlEQxsWbzGP8dY7hQamviidvS0HAmVzSxZEABFXJ7Z8YZ64Z1bLBc4T4WJ7CRh69VqNw/exec?phone=${phone}&check=1`)
         .then(res => res.json())
         .then(data => {
           if (data.found) {
+            // شماره قبلاً ثبت شده
+            alert("درخواست قبلی ثبت شده – انتقال به تایید");
             window.location.href = "request-confirmed.html";
           } else {
+            // شماره جدید – انتقال به فرم
             window.location.href = `request-form.html?phone=${phone}&type=${serviceType}`;
           }
         })
