@@ -1,53 +1,94 @@
-<!-- request-check.html - نسخه بازنویسی‌شده نهایی --><!DOCTYPE html><html lang="fa">
+<!DOCTYPE html><html lang="fa">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بررسی شماره موبایل</title>
+  <title>بررسی شماره موبایل | SamiWater</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      direction: rtl;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #006f6f, #0f403f);
+      color: white;
+      padding: 30px 15px;
+    }.container {
+  max-width: 400px;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+h2 {
+  color: #ffd700;
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #ffd700;
+  color: #003f3f;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #e6c200;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #fff;
+}
+
+  </style>
 </head>
 <body>
-  <h2>بررسی شماره موبایل مشتری</h2>
-  <input type="tel" id="mobile" placeholder="شماره موبایل را وارد کنید"><br>
-  <button onclick="checkNumber()">بررسی</button>  <p id="result"></p>  <script>
-    const bankInfoURL = "https://docs.google.com/spreadsheets/d/1K1StWKrqNfsO4NtkiQtavpERaESN0OYBgfxmnucaq3w/gviz/tq?tqx=out:json";
-
-    function checkNumber() {
-      const mobile = document.getElementById("mobile").value.trim();
-      if (!mobile) {
-        alert("لطفاً شماره موبایل را وارد کنید.");
+  <div class="container">
+    <h2>بررسی شماره موبایل مشتری</h2>
+    <input type="tel" id="phone" placeholder="شماره موبایل را وارد کنید" required />
+    <button onclick="checkPhone()">بررسی</button>
+    <p id="result"></p>
+  </div>  <script>
+    function checkPhone() {
+      const phone = document.getElementById("phone").value;
+      if (!phone || phone.length < 10) {
+        document.getElementById("result").innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
         return;
       }
-      sessionStorage.setItem("mobile", mobile);
 
-      fetch(bankInfoURL)
-        .then(res => res.text())
-        .then(data => {
-          const json = JSON.parse(data.substring(47).slice(0, -2));
-          const rows = json.table.rows;
-          let found = false;
-
-          for (let i = 0; i < rows.length; i++) {
-            const savedMobile = rows[i].c[0]?.v;
-            if (savedMobile === mobile) {
-              found = true;
-              break;
-            }
-          }
-
-          if (found) {
-            document.getElementById("result").innerText = "درخواست شما با موفقیت ثبت شد.";
-            fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec", {
-              method: "POST",
-              body: new URLSearchParams({
-                mobile: mobile,
-                type: sessionStorage.getItem("type") || "درخواست فوری"
-              })
-            });
+      fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec?check=true&phone=" + phone)
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === "found") {
+            sessionStorage.setItem("servicePath", "درخواست فوری");
+            window.location.href = "/request-form.html?phone=" + phone;
+          } else if (res.status === "not_found") {
+            sessionStorage.setItem("servicePath", "درخواست فوری");
+            window.location.href = "/request-form.html?phone=" + phone;
           } else {
-            window.location.href = "request-form.html";
+            document.getElementById("result").innerText = "❌ خطا در بررسی. لطفاً دوباره تلاش کنید.";
           }
         })
         .catch(err => {
-          alert("خطا در بررسی شماره. لطفاً دوباره تلاش کنید.");
+          document.getElementById("result").innerText = "❌ خطا در اتصال به سرور.";
           console.error(err);
         });
     }
