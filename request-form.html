@@ -1,37 +1,97 @@
-<!DOCTYPE html>
-<html lang="fa">
+<!DOCTYPE html><html lang="fa">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>فرم ثبت اطلاعات</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فرم ثبت درخواست | SamiWater</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      direction: rtl;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #006f6f, #0f403f);
+      color: white;
+      padding: 30px 15px;
+    }.container {
+  max-width: 500px;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+h2 {
+  text-align: center;
+  color: #ffd700;
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #eee;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #ffd700;
+  color: #003f3f;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #e6c200;
+}
+
+#result {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #fff;
+}
+
+  </style>
 </head>
-<body dir="rtl" style="font-family: sans-serif; max-width: 500px; margin: auto; padding: 20px">
-  <h2>فرم ثبت مشخصات مشتری</h2>
-  <form id="request-form">
-    <label for="name">نام و نام خانوادگی:</label>
-    <input type="text" id="name" name="name" required /><br/><br/>
-    
-    <label for="city">شهر:</label>
-    <input type="text" id="city" name="city" required /><br/><br/>
-    
-    <label for="address">آدرس کامل:</label>
-    <textarea id="address" name="address" rows="3" required></textarea><br/><br/>
-    
-    <label for="description">توضیحات (اختیاری):</label>
-    <textarea id="description" name="description" rows="3"></textarea><br/><br/>
-    
-    <input type="hidden" id="phone" name="phone" />
-    <button type="submit">ثبت درخواست</button>
-  </form>
+<body>
+  <div class="container">
+    <h2>درخواست خدمات SamiWater</h2>
+    <form id="request-form">
+      <label for="name">نام و نام خانوادگی:</label>
+      <input type="text" id="name" name="name" required /><label for="city">شهر:</label>
+  <input type="text" id="city" name="city" required />
 
-  <p id="result" style="margin-top: 20px;"></p>
+  <label for="address">آدرس کامل:</label>
+  <textarea id="address" name="address" rows="3" required></textarea>
 
-  <script>
+  <label for="description">توضیحات (اختیاری):</label>
+  <textarea id="description" name="description" rows="3"></textarea>
+
+  <input type="hidden" id="phone" name="phone" />
+
+  <button type="submit">ثبت درخواست</button>
+</form>
+<p id="result"></p>
+
+  </div>  <script>
     document.addEventListener("DOMContentLoaded", function () {
       const urlParams = new URLSearchParams(window.location.search);
       const phone = urlParams.get("phone");
       const path = sessionStorage.getItem("servicePath") || "درخواست فوری";
-      
       document.getElementById("phone").value = phone;
 
       document.getElementById("request-form").addEventListener("submit", function (e) {
@@ -46,21 +106,24 @@
           path: path
         };
 
-        fetch("https://script.google.com/macros/s/AKfycbzRA6NTpEMCTlizpn7LY4oIT1X45AYt76Qyh-fcijkMycD1LBDrDggVf2sHHo6xdDfw/exec", {
+        fetch("https://script.google.com/macros/s/AKfycbzRA6NtPEMCT1iI2pn7LY4o1TXl45AYt6Qyh-fciJkMyCb1L8DrDpgVf2sHHo6xdDFw/exec", {
           method: "POST",
           body: JSON.stringify(data)
         })
-        .then(res => res.text())
+        .then(res => res.json())
         .then(msg => {
-          document.getElementById("result").innerText = msg;
-          document.getElementById("request-form").reset();
+          if (msg.status === "success") {
+            document.getElementById("result").innerText = "✅ اطلاعات با موفقیت ثبت شد.";
+            document.getElementById("request-form").reset();
+          } else {
+            document.getElementById("result").innerText = "❌ خطا: " + msg.message;
+          }
         })
         .catch(err => {
-          document.getElementById("result").innerText = "خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.";
+          document.getElementById("result").innerText = "❌ خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.";
           console.error(err);
         });
       });
     });
-  </script>
-</body>
+  </script></body>
 </html>
