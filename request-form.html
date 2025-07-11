@@ -89,6 +89,12 @@
     const phone = new URLSearchParams(window.location.search).get("phone") || "";
     const path = sessionStorage.getItem("servicePath") || "ورود دستی";
     const type = "درخواست فوری";
+    const result = document.getElementById("result");
+
+    if (!phone) {
+      result.innerText = "❌ شماره تلفن یافت نشد. لطفاً از مسیر درست وارد شوید.";
+      document.getElementById("requestForm").style.display = "none";
+    }
 
     document.getElementById("requestForm").addEventListener("submit", function (e) {
       e.preventDefault();
@@ -96,14 +102,21 @@
       const city = document.getElementById("city").value.trim();
       const address = document.getElementById("address").value.trim();
       const description = document.getElementById("description").value.trim();
-      const result = document.getElementById("result");
 
       if (!name || !city || !address) {
         result.innerText = "❌ لطفاً همه فیلدهای ضروری را پر کنید.";
         return;
       }
 
-      const data = { name, phone, city, address, description, type, path };
+      const data = {
+        name,
+        phone,
+        city,
+        address,
+        description,
+        type,
+        path
+      };
 
       fetch("https://script.google.com/macros/s/AKfycbxwt4fRUyoASVr4zz5poADBIQT2qkLBY6C6lDlRHH5xRIK5v-BlWK8n7Bk-W-2eUEM/exec", {
         method: "POST",
