@@ -2,36 +2,33 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>بررسی شماره مشتری</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بررسی شماره موبایل مشتری</title>
   <style>
     body {
       font-family: sans-serif;
-      direction: rtl;
-      background: #006666;
-      color: white;
+      background-color: #00695c;
+      color: #fff;
       text-align: center;
-      padding: 2rem;
+      padding: 50px 20px;
     }
     input, button {
-      padding: 1rem;
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      border-radius: 0.5rem;
+      padding: 12px;
+      margin: 10px;
+      border-radius: 10px;
       border: none;
+      font-size: 18px;
     }
     input {
-      width: 80%;
-      max-width: 300px;
+      width: 250px;
+      text-align: center;
     }
     button {
-      background: gold;
-      color: black;
-      font-weight: bold;
+      background-color: gold;
+      cursor: pointer;
     }
-    #result {
-      margin-top: 2rem;
-      font-size: 1.1rem;
+    .error {
+      color: #ff5252;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -40,36 +37,39 @@
   <input type="tel" id="phone" placeholder="شماره موبایل">
   <br>
   <button onclick="checkPhone()">بررسی</button>
-  <div id="result"></div>
+  <div id="result" class="error"></div>
 
   <script>
-    async function checkPhone() {
-      const phone = document.getElementById('phone').value.trim();
-      const result = document.getElementById('result');
-      result.innerText = 'در حال بررسی...';
+    function checkPhone() {
+      const phone = document.getElementById("phone").value.trim();
+      const result = document.getElementById("result");
 
-      try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbwsB1rPpQ59TQbxUkBML6uzGUrZRhJzBc7nkU3aFFYFMMF4WO2hwNpleiMpv5e0RWED/exec?check=true&phone=${phone}`);
-        const data = await response.json();
-
-        if (data.status === 'success') {
-          if (data.found === 'found') {
-            result.innerHTML = '✅ شماره مشتری یافت شد. <br> <b>در حال هدایت...</b>';
-            setTimeout(() => {
-              window.location.href = `request-form.html?phone=${phone}&path=old`;
-            }, 1500);
-          } else {
-            result.innerHTML = '🔍 شماره یافت نشد. انتقال به فرم ثبت اطلاعات جدید...';
-            setTimeout(() => {
-              window.location.href = `request-form.html?phone=${phone}&path=new`;
-            }, 1500);
-          }
-        } else {
-          result.innerText = `❌ ${data.message}`;
-        }
-      } catch (err) {
-        result.innerText = '❌ خطا در اتصال به سرور.';
+      if (!phone.match(/^09\d{9}$/)) {
+        result.textContent = "شماره معتبر نیست.";
+        return;
       }
+
+      result.textContent = "در حال بررسی...";
+      fetch(`https://script.google.com/macros/s/AKfycbzGQI1hvn3_m8YCEjuSpsz_RiRYD5QC11aqgbWC6Al3cSGUbDaKhWitJdzLuGv0Pxk0/exec?phone=${phone}&check=true`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "found") {
+            // مسیر مشتری قبلی
+            sessionStorage.setItem("samiwater_phone", phone);
+            sessionStorage.setItem("samiwater_type", "مشتری قدیمی");
+            alert("مشتری قبلاً ثبت شده. فقط ثبت درخواست انجام می‌شود.");
+            window.location.href = "request-form.html";
+          } else {
+            // مسیر مشتری جدید
+            sessionStorage.setItem("samiwater_phone", phone);
+            sessionStorage.setItem("samiwater_type", "مشتری جدید");
+            window.location.href = "request-form.html";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          result.textContent = "❌ خطا در اتصال به سرور.";
+        });
     }
   </script>
 </body>
