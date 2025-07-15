@@ -2,111 +2,66 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>فرم ثبت درخواست | SamiWater</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <title>فرم ثبت مشتری جدید</title>
   <style>
     body {
-      direction: rtl;
-      font-family: 'Vazirmatn', sans-serif;
-      background: linear-gradient(135deg, #006f6f, #0f403f);
+      font-family: sans-serif;
+      background-color: #004d40;
       color: white;
       padding: 30px;
       text-align: center;
     }
-    .form-box {
-      max-width: 500px;
-      margin: auto;
-      background-color: rgba(255,255,255,0.06);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-    }
-    h2 {
-      color: #ffd700;
-      margin-bottom: 25px;
-    }
-    label {
-      display: block;
-      margin: 12px 0 5px;
-      text-align: right;
-    }
-    input, textarea {
-      width: 100%;
+    input, textarea, button {
+      width: 90%;
+      max-width: 300px;
       padding: 12px;
       border-radius: 10px;
       border: none;
+      margin-top: 15px;
       font-size: 16px;
-      box-sizing: border-box;
     }
     button {
-      margin-top: 25px;
-      background-color: #ffd700;
-      color: #003f3f;
-      border: none;
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 12px;
+      background-color: gold;
+      color: black;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #e6c200;
-    }
-    #msg {
+    .msg {
       margin-top: 20px;
-      font-size: 16px;
-      color: #fff;
     }
   </style>
 </head>
 <body>
-  <div class="form-box">
-    <h2>فرم ثبت درخواست مشتری</h2>
-    <form id="requestForm">
-      <label>نام و نام خانوادگی:</label>
-      <input type="text" id="name" required>
-
-      <label>شهر:</label>
-      <input type="text" id="city" required>
-
-      <label>آدرس کامل:</label>
-      <input type="text" id="address" required>
-
-      <label>شماره تماس دوم (اختیاری):</label>
-      <input type="text" id="phone2">
-
-      <label>توضیحات (اختیاری):</label>
-      <textarea id="description" rows="3"></textarea>
-
-      <button type="submit">ثبت نهایی</button>
-    </form>
-    <p id="msg"></p>
-  </div>
+  <h2>فرم ثبت مشخصات مشتری</h2>
+  <form id="requestForm">
+    <input type="text" id="name" placeholder="نام و نام خانوادگی" required><br>
+    <input type="text" id="city" placeholder="شهر" required><br>
+    <input type="text" id="address" placeholder="آدرس کامل" required><br>
+    <input type="text" id="secondPhone" placeholder="شماره تماس دوم (اختیاری)"><br>
+    <textarea id="description" placeholder="توضیحات (اختیاری)"></textarea><br>
+    <button type="submit">ثبت نهایی</button>
+  </form>
+  <div class="msg" id="msg"></div>
 
   <script>
     const phone = sessionStorage.getItem("samiwater_phone") || "";
     const type = sessionStorage.getItem("samiwater_type") || "ثبت نشده";
-    const path = "فرم عمومی";
 
-    document.getElementById("requestForm").addEventListener("submit", function(e) {
+    document.getElementById("requestForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
       const name = document.getElementById("name").value.trim();
       const city = document.getElementById("city").value.trim();
       const address = document.getElementById("address").value.trim();
-      const phone2 = document.getElementById("phone2").value.trim();
+      const secondPhone = document.getElementById("secondPhone").value.trim();
       const description = document.getElementById("description").value.trim();
       const msg = document.getElementById("msg");
 
       if (!name || !city || !address) {
-        msg.innerText = "❌ لطفاً تمام فیلدهای ضروری را پر کنید.";
+        msg.textContent = "لطفاً تمام فیلدهای الزامی را وارد کنید.";
         return;
       }
 
-      msg.innerText = "⏳ در حال ارسال اطلاعات...";
+      msg.textContent = "در حال ارسال اطلاعات...";
 
       fetch("https://script.google.com/macros/s/AKfycbzGQI1hvn3_m8YCEjuSpsz_RiRYD5QC11aqgbWC6Al3cSGUbDaKhWitJdzLuGv0Pxk0/exec", {
         method: "POST",
@@ -115,24 +70,24 @@
           name,
           city,
           address,
-          phone2,
+          secondPhone,
           description,
           type,
-          path
+          path: "فرم عمومی"
         }),
       })
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
-          msg.innerHTML = "✅ درخواست با موفقیت ثبت شد.<br>کد پیگیری شما: <b>" + data.factorCode + "</b>";
+          msg.innerHTML = "✅ ثبت با موفقیت انجام شد.<br>کد پیگیری: <b>" + data.factorCode + "</b>";
           document.getElementById("requestForm").reset();
         } else {
-          msg.innerText = "❌ خطا در ثبت اطلاعات. لطفاً مجدداً تلاش کنید.";
+          msg.textContent = "❌ خطا در ثبت اطلاعات. لطفاً مجدداً تلاش کنید.";
         }
       })
       .catch(err => {
         console.error(err);
-        msg.innerText = "❌ خطا در اتصال به سرور.";
+        msg.textContent = "❌ خطا در ارتباط با سرور.";
       });
     });
   </script>
