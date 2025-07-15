@@ -1,74 +1,98 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <title>بررسی شماره موبایل مشتری</title>
+  <meta charset="UTF-8" />
+  <title>بررسی شماره موبایل | SamiWater</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #00695c;
-      color: #fff;
+      direction: rtl;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #006f6f, #0f403f);
+      color: white;
+      padding: 30px;
       text-align: center;
-      padding: 50px 20px;
     }
-    input, button {
-      padding: 12px;
-      margin: 10px;
-      border-radius: 10px;
-      border: none;
-      font-size: 18px;
+    .box {
+      max-width: 400px;
+      margin: auto;
+      background-color: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+    }
+    h2 {
+      color: #ffd700;
+      margin-bottom: 25px;
     }
     input {
-      width: 250px;
-      text-align: center;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      margin-bottom: 20px;
     }
     button {
-      background-color: gold;
+      background-color: #ffd700;
+      color: #003f3f;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 12px;
       cursor: pointer;
     }
-    .error {
-      color: #ff5252;
-      margin-top: 15px;
+    button:hover {
+      background-color: #e6c200;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <h2>بررسی شماره موبایل مشتری</h2>
-  <input type="tel" id="phone" placeholder="شماره موبایل">
-  <br>
-  <button onclick="checkPhone()">بررسی</button>
-  <div id="result" class="error"></div>
+  <div class="box">
+    <h2>بررسی شماره موبایل</h2>
+    <input type="tel" id="phone" placeholder="شماره موبایل را وارد کنید">
+    <button onclick="checkPhone()">بررسی شماره</button>
+    <p id="status"></p>
+  </div>
 
   <script>
     function checkPhone() {
       const phone = document.getElementById("phone").value.trim();
-      const result = document.getElementById("result");
+      const status = document.getElementById("status");
 
-      if (!phone.match(/^09\d{9}$/)) {
-        result.textContent = "شماره معتبر نیست.";
+      if (!phone || phone.length < 10) {
+        status.innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
         return;
       }
 
-      result.textContent = "در حال بررسی...";
-      fetch(`https://script.google.com/macros/s/AKfycbzGQI1hvn3_m8YCEjuSpsz_RiRYD5QC11aqgbWC6Al3cSGUbDaKhWitJdzLuGv0Pxk0/exec?phone=${phone}&check=true`)
+      status.innerText = "⏳ در حال بررسی...";
+
+      fetch("https://script.google.com/macros/s/AKfycbzGQI1hvn3_m8YCEjuSpsz_RiRYD5QC11aqgbWC6Al3cSGUbDaKhWitJdzLuGv0Pxk0/exec?check=true&phone=" + encodeURIComponent(phone))
         .then(res => res.json())
         .then(data => {
           if (data.status === "found") {
-            // مسیر مشتری قبلی
             sessionStorage.setItem("samiwater_phone", phone);
-            sessionStorage.setItem("samiwater_type", "مشتری قدیمی");
-            alert("مشتری قبلاً ثبت شده. فقط ثبت درخواست انجام می‌شود.");
-            window.location.href = "request-form.html";
+            sessionStorage.setItem("samiwater_type", "درخواست فوری");
+            window.location.href = "request-form.html";  // مشتری قدیمی مستقیم بره ثبت درخواست
+          } else if (data.status === "not_found") {
+            sessionStorage.setItem("samiwater_phone", phone);
+            sessionStorage.setItem("samiwater_type", "درخواست فوری");
+            window.location.href = "request-form.html";  // مشتری جدید بره فرم اطلاعات
           } else {
-            // مسیر مشتری جدید
-            sessionStorage.setItem("samiwater_phone", phone);
-            sessionStorage.setItem("samiwater_type", "مشتری جدید");
-            window.location.href = "request-form.html";
+            status.innerText = "❌ خطا در پاسخ سرور.";
           }
         })
         .catch(err => {
           console.error(err);
-          result.textContent = "❌ خطا در اتصال به سرور.";
+          status.innerText = "❌ خطا در اتصال. دوباره امتحان کنید.";
         });
     }
   </script>
