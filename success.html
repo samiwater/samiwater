@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ثبت موفق</title>
+  <style>
+    body {
+      background-color: #004D40;
+      color: white;
+      font-family: Vazir, Tahoma, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .container {
+      background-color: #00695C;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px #00000050;
+      display: inline-block;
+      max-width: 400px;
+    }
+    h1 {
+      color: #FFD600;
+      font-size: 24px;
+    }
+    .tracking-code {
+      margin-top: 20px;
+      font-size: 20px;
+      background: #ffffff22;
+      padding: 10px 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ اطلاعات شما با موفقیت ثبت شد</h1>
+    <p>کد رهگیری شما:</p>
+    <div class="tracking-code" id="code">در حال بارگذاری...</div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    document.getElementById("code").innerText = code ? code : 'یافت نشد';
+  </script>
+</body>
+</html>
