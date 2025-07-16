@@ -1,71 +1,91 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <title>بررسی شماره مشتری</title>
+  <meta charset="UTF-8" />
+  <title>بررسی شماره موبایل | SamiWater</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #004d40;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #006f6f, #0f403f);
       color: white;
+      padding: 40px 20px;
+      direction: rtl;
       text-align: center;
+    }
+    .container {
+      max-width: 450px;
+      margin: auto;
+      background-color: rgba(255, 255, 255, 0.08);
       padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+    }
+    h2 {
+      color: #ffd700;
+      margin-bottom: 25px;
+      font-size: 24px;
     }
     input, button {
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: none;
+      width: 100%;
+      font-size: 18px;
+      padding: 14px;
       margin-top: 15px;
-      width: 90%;
-      max-width: 300px;
+      border-radius: 12px;
+      border: none;
     }
     button {
-      background-color: gold;
-      color: black;
+      background-color: #ffd700;
+      color: #003f3f;
+      font-weight: bold;
       cursor: pointer;
     }
-    .msg {
+    button:hover {
+      background-color: #e6c200;
+    }
+    #result {
       margin-top: 20px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
-  <input type="tel" id="phone" placeholder="مثلاً 09130000000" required>
-  <br>
-  <button onclick="checkPhone()">ادامه</button>
-  <div class="msg" id="msg"></div>
+  <div class="container">
+    <h2>بررسی شماره موبایل</h2>
+    <input type="tel" id="phone" placeholder="شماره موبایل را وارد کنید (مثلاً 09130000000)" />
+    <button onclick="checkPhone()">بررسی شماره</button>
+    <div id="result"></div>
+  </div>
 
   <script>
     function checkPhone() {
-      const phoneInput = document.getElementById("phone").value.trim();
-      const phone = phoneInput.replace(/^0/, ""); // حذف صفر اول
+      const phone = document.getElementById("phone").value.trim();
+      const result = document.getElementById("result");
 
-      if (!/^\d{10,11}$/.test(phoneInput)) {
-        document.getElementById("msg").textContent = "شماره موبایل معتبر وارد کنید.";
+      if (!phone || phone.length < 10 || !/^09\d{9}$/.test(phone)) {
+        result.innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
         return;
       }
 
-      document.getElementById("msg").textContent = "در حال بررسی شماره...";
+      sessionStorage.setItem("samiwater_phone", phone);
+      sessionStorage.setItem("samiwater_type", "درخواست فوری");
 
-      fetch("https://script.google.com/macros/s/AKfycbzGQI1hvn3_m8YCEjuSpsz_RiRYD5QC11aqgbWC6Al3cSGUbDaKhWitJdzLuGv0Pxk0/exec?check=" + phone)
+      fetch("https://script.google.com/macros/s/AKfycbyw2bMf0byTPsttd7Jle-1tWo8XnMxCrWVRAnaqMigilmCGIyVloIrdqm8E2diW5xl6/exec?check=true&phone=" + encodeURIComponent(phone))
         .then(res => res.json())
-        .then(data => {
-          sessionStorage.setItem("samiwater_phone", phone);
-          sessionStorage.setItem("samiwater_type", "درخواست فوری");
-
-          if (data.exists === true) {
-            // مشتری قدیمی → مستقیم ثبت درخواست
-            window.location.href = "request-auto.html";
+        .then(res => {
+          if (res.status === "found") {
+            window.location.href = "/success.html"; // مسیر ثبت خودکار برای مشتری قدیمی
+          } else if (res.status === "not_found") {
+            window.location.href = "/request-form.html";
           } else {
-            // مشتری جدید → فرم اطلاعات
-            window.location.href = "request-form.html";
+            result.innerText = "❌ خطا در پاسخ سرور.";
           }
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("msg").textContent = "❌ خطا در ارتباط با سرور.";
+          result.innerText = "❌ اتصال به سرور برقرار نشد.";
         });
     }
   </script>
