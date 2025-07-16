@@ -1,37 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ثبت موفق</title>
+  <meta charset="UTF-8" />
+  <title>ثبت موفق | SamiWater</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #004D40;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #006f6f, #0f403f);
       color: white;
-      font-family: Vazir, Tahoma, sans-serif;
-      text-align: center;
       padding: 40px 20px;
+      text-align: center;
     }
     .container {
-      background-color: #00695C;
+      max-width: 420px;
+      margin: auto;
+      background-color: rgba(255,255,255,0.08);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 0 10px #00000050;
-      display: inline-block;
-      max-width: 400px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
     }
     h1 {
-      color: #FFD600;
       font-size: 24px;
+      margin-bottom: 20px;
+      color: #00ff99;
     }
-    .tracking-code {
-      margin-top: 20px;
+    p {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .code-box {
+      background-color: #ffd700;
+      color: #004d40;
+      padding: 12px 20px;
+      border-radius: 12px;
       font-size: 20px;
-      background: #ffffff22;
-      padding: 10px 20px;
-      border-radius: 10px;
+      font-weight: bold;
       display: inline-block;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -39,7 +47,7 @@
   <div class="container">
     <h1>✅ اطلاعات شما با موفقیت ثبت شد</h1>
     <p>کد رهگیری شما:</p>
-    <div class="tracking-code" id="code">در حال بارگذاری...</div>
+    <div id="code" class="code-box">در حال بارگذاری...</div>
   </div>
 
   <script>
