@@ -1,57 +1,62 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SamiWater - Landing</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SamiWater Landing</title>
   <style>
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    body {
       background-color: #004d40;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background-image: url('samiwater-landing.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: sans-serif;
     }
-    .container {
-      position: relative;
-      width: 100%;
-      max-width: 430px;
-    }
-    .landing-img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 10px;
-    }
-    .button-area {
+
+    .overlay {
       position: absolute;
-      left: 10%;
-      width: 80%;
-      height: 12%;
-      cursor: pointer;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 100%;
     }
-    .btn-start {
-      top: 56%;
+
+    .btn {
+      display: block;
+      width: 250px;
+      margin: 20px auto;
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      background-color: transparent;
+      border: 2px solid gold;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.3s ease;
     }
-    .btn-app {
-      top: 72%;
+
+    .btn:hover {
+      background-color: gold;
+      color: #000;
+    }
+
+    @media (max-width: 600px) {
+      .btn {
+        width: 80%;
+        font-size: 16px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="samiwater-landing.png" class="landing-img" alt="Landing" />
-    <a href="request-check.html">
-      <div class="button-area btn-start"></div>
-    </a>
-    <a href="main.html">
-      <div class="button-area btn-app"></div>
-    </a>
+  <div class="overlay">
+    <a href="request-check.html" class="btn">درخواست خدمات</a>
+    <a href="main.html" class="btn">ورود به اپ</a>
   </div>
 </body>
 </html>
