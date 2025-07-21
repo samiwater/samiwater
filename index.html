@@ -2,54 +2,48 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>صفحه فرود - SamiWater</title>
+  <title>صفحه فرود SamiWater</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
+    html, body {
       margin: 0;
-      background-color: #004d40;
+      padding: 0;
+      height: 100%;
       font-family: 'Vazirmatn', sans-serif;
-      position: relative;
     }
 
-    .bg {
-      width: 100%;
-      height: auto;
-      display: block;
+    body {
+      background-image: url('samiwater-landing.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
     }
 
     .btn {
       position: absolute;
-      width: 80%;
-      max-width: 300px;
-      height: 50px;
       left: 50%;
       transform: translateX(-50%);
-      border: none;
+      width: 70%;
+      max-width: 300px;
+      height: 50px;
       background: none;
+      border: none;
       cursor: pointer;
     }
 
-    /* موقعیت دکمه بالا */
     #start-btn {
-      top: 52%; /* تنظیم دقیق با تست */
+      top: 61%; /* با توجه به طراحی تصویر */
     }
 
-    /* موقعیت دکمه پایین */
     #app-btn {
-      top: 63%; /* تنظیم دقیق با تست */
+      top: 71%;
     }
   </style>
 </head>
 <body>
 
-  <!-- تصویر اصلی -->
-  <img src="samiwater-landing.png" alt="SamiWater Landing Page" class="bg">
-
-  <!-- دکمه اول (درخواست خدمات) -->
   <button class="btn" id="start-btn" onclick="location.href='request-check.html'"></button>
-
-  <!-- دکمه دوم (ورود به اپ) -->
   <button class="btn" id="app-btn" onclick="location.href='main.html'"></button>
 
 </body>
