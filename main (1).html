@@ -1,77 +1,64 @@
-
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!DOCTYPE html><html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SamiWater App</title>
   <style>
-    @font-face {
-      font-family: 'Vazirmatn';
-      src: url('https://cdn.fontcdn.ir/Font/Persian/Vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
-    }
-    body {
+    * {
       margin: 0;
-      font-family: Vazirmatn, sans-serif;
-      background: linear-gradient(180deg, #0e3b32, #11403b);
-      color: #d4af37;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: "Vazirmatn", sans-serif;
+      background: linear-gradient(to bottom, #005f5f, #002c2c);
+      color: white;
       text-align: center;
-      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
     .logo {
-      max-width: 60%;
-      margin: 2rem auto 1.5rem;
-      display: block;
-    }
-    .menu {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.5rem;
-      font-size: 2rem;
-      color: #d4af37;
+      width: 150px;
+      height: auto;
+      margin-bottom: 20px;
     }
     h1 {
-      font-size: 1.4rem;
-      font-weight: 400;
-      margin-bottom: 0.3rem;
+      font-size: 20px;
+      margin-bottom: 10px;
     }
-    h2 {
-      font-size: 1.7rem;
-      font-weight: bold;
-      margin: 0.5rem 0 2rem;
+    .phone-box {
+      background: gold;
+      color: black;
+      padding: 10px 15px;
+      border-radius: 12px;
+      margin: 8px 0;
+      font-size: 16px;
     }
-    .box {
-      border: 1px solid #d4af37;
-      border-radius: 1rem;
-      padding: 1rem;
-      margin: 0 auto 2rem;
-      max-width: 300px;
+    .instagram {
+      margin-top: 15px;
+      font-size: 15px;
     }
-    .box div {
-      margin: 0.5rem 0;
-      font-size: 1rem;
+    .instagram a {
+      color: #00ffff;
+      text-decoration: none;
     }
-    .icon {
-      margin-left: 0.5rem;
-    }
-    .slogan {
-      font-size: 1rem;
-      margin-top: 2rem;
-      letter-spacing: 1px;
-      color: #e5c16c;
+    .en-text {
+      margin-top: 25px;
+      font-size: 13px;
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
-  <div class="menu">≡</div>
-  <img src="logo-samiwater.png" alt="SamiWater Logo" class="logo" />
-  <h1>خدماتی متمایز برای مشتریانی خاص</h1>
-  <h2>SAMIWATER</h2>
-  <div class="box">
-    <div><span class="icon">📞</span>09130051733</div>
-    <div><span class="icon">📞</span>09130051745</div>
-    <div><span class="icon">📸</span>asamiwater.vip</div>
-  </div>
-  <div class="slogan">A PREMIUM CHOICE<br>FOR EXCEPTIONAL PEOPLE</div>
+  <img class="logo" src="logo-samiwater.png" alt="SamiWater Logo" />
+  <h1>خدماتی متمایز برای مشتریان خاص</h1>
+  <div class="phone-box">09130051733</div>
+  <div class="phone-box">09130051745</div>
+  <div class="instagram">اینستاگرام: <a href="https://instagram.com/samiwater.vip" target="_blank">samiwater.vip</a></div>
+  <div class="en-text">A Premium Choice for Exceptional People</div>
 </body>
 </html>
