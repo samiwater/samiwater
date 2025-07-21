@@ -1,77 +1,79 @@
-
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!DOCTYPE html><html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SamiWater App</title>
+  <title>SamiWater</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    @font-face {
-      font-family: 'Vazirmatn';
-      src: url('https://cdn.fontcdn.ir/Font/Persian/Vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     body {
-      margin: 0;
-      font-family: Vazirmatn, sans-serif;
-      background: linear-gradient(180deg, #0e3b32, #11403b);
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #013220, #065143);
       color: #d4af37;
       text-align: center;
-      padding: 1rem;
+      padding: 2rem 1rem;
     }
     .logo {
-      max-width: 60%;
-      margin: 2rem auto 1.5rem;
-      display: block;
-    }
-    .menu {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.5rem;
-      font-size: 2rem;
-      color: #d4af37;
+      width: 120px;
+      margin: 0 auto 1.5rem;
     }
     h1 {
-      font-size: 1.4rem;
-      font-weight: 400;
-      margin-bottom: 0.3rem;
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
     }
     h2 {
-      font-size: 1.7rem;
-      font-weight: bold;
-      margin: 0.5rem 0 2rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
     }
-    .box {
+    .contact-box {
       border: 1px solid #d4af37;
-      border-radius: 1rem;
-      padding: 1rem;
-      margin: 0 auto 2rem;
-      max-width: 300px;
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
     }
-    .box div {
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       margin: 0.5rem 0;
       font-size: 1rem;
     }
-    .icon {
-      margin-left: 0.5rem;
+    .contact-item i {
+      font-size: 1.2rem;
     }
-    .slogan {
-      font-size: 1rem;
-      margin-top: 2rem;
-      letter-spacing: 1px;
-      color: #e5c16c;
+    .footer {
+      font-size: 0.9rem;
+      color: #ffd700;
+    }
+    a {
+      color: #ffd700;
+      text-decoration: none;
     }
   </style>
+  <script src="https://kit.fontawesome.com/2b4e1f7cf0.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="menu">≡</div>
-  <img src="logo-samiwater.png" alt="SamiWater Logo" class="logo" />
+  <img src="logo-samiwater.png" alt="SamiWater Logo" class="logo">
   <h1>خدماتی متمایز برای مشتریانی خاص</h1>
-  <h2>SAMIWATER</h2>
-  <div class="box">
-    <div><span class="icon">📞</span>09130051733</div>
-    <div><span class="icon">📞</span>09130051745</div>
-    <div><span class="icon">📸</span>asamiwater.vip</div>
-  </div>
-  <div class="slogan">A PREMIUM CHOICE<br>FOR EXCEPTIONAL PEOPLE</div>
+  <h2>SAMIWATER</h2>  <div class="contact-box">
+    <div class="contact-item">
+      <i class="fas fa-phone"></i>
+      <a href="tel:09130051733">09130051733</a>
+    </div>
+    <div class="contact-item">
+      <i class="fas fa-phone"></i>
+      <a href="tel:09130051745">09130051745</a>
+    </div>
+    <div class="contact-item">
+      <i class="fab fa-instagram"></i>
+      <a href="https://instagram.com/asamiwater.vip" target="_blank">asamiwater.vip</a>
+    </div>
+  </div>  <p class="footer">A PREMIUM CHOICE<br>FOR EXCEPTIONAL PEOPLE</p>
 </body>
 </html>
