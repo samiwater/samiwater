@@ -9,42 +9,56 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Vazirmatn', sans-serif;
+      background-color: #000;
+      font-family: sans-serif;
     }
 
-    body {
-      background-image: url('samiwater-landing.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+    .container {
       position: relative;
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 9 / 16;
+      margin: auto;
+      background-image: url('samiwater-landing.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     .btn {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      width: 70%;
-      max-width: 300px;
-      height: 50px;
+      width: 66%;
+      height: 9.5%;
       background: none;
       border: none;
       cursor: pointer;
+      z-index: 2;
     }
 
     #start-btn {
-      top: 61%; /* با توجه به طراحی تصویر */
+      top: 59%;
     }
 
     #app-btn {
-      top: 71%;
+      top: 70%;
+    }
+
+    @media (max-width: 400px) {
+      .btn {
+        width: 72%;
+        height: 10%;
+      }
     }
   </style>
 </head>
 <body>
 
-  <button class="btn" id="start-btn" onclick="location.href='request-check.html'"></button>
-  <button class="btn" id="app-btn" onclick="location.href='main.html'"></button>
+  <div class="container">
+    <button class="btn" id="start-btn" onclick="location.href='request-check.html'"></button>
+    <button class="btn" id="app-btn" onclick="location.href='main.html'"></button>
+  </div>
 
 </body>
 </html>
