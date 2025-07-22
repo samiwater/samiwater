@@ -1,77 +1,72 @@
-
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!DOCTYPE html><html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SamiWater App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SamiWater App Main</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: Vazirmatn, sans-serif;
+    }
     @font-face {
-      font-family: 'Vazirmatn';
+      font-family: Vazirmatn;
       src: url('https://cdn.fontcdn.ir/Font/Persian/Vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
     }
-    body {
-      margin: 0;
-      font-family: Vazirmatn, sans-serif;
-      background: linear-gradient(180deg, #0e3b32, #11403b);
-      color: #d4af37;
-      text-align: center;
-      padding: 1rem;
-    }
-    .logo {
-      max-width: 60%;
-      margin: 2rem auto 1.5rem;
-      display: block;
-    }
-    .menu {
+    .background {
       position: absolute;
-      top: 1.2rem;
-      right: 1.5rem;
-      font-size: 2rem;
-      color: #d4af37;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('landing-main.png') no-repeat center center;
+      background-size: cover;
+      z-index: 0;
     }
-    h1 {
-      font-size: 1.4rem;
-      font-weight: 400;
-      margin-bottom: 0.3rem;
+    .clickable {
+      position: absolute;
+      z-index: 2;
+      cursor: pointer;
     }
-    h2 {
-      font-size: 1.7rem;
-      font-weight: bold;
-      margin: 0.5rem 0 2rem;
+    /* شماره اول */
+    #phone1 {
+      top: 62.5%;
+      left: 15%;
+      width: 70%;
+      height: 6%;
     }
-    .box {
-      border: 1px solid #d4af37;
-      border-radius: 1rem;
-      padding: 1rem;
-      margin: 0 auto 2rem;
-      max-width: 300px;
+    /* شماره دوم */
+    #phone2 {
+      top: 69.3%;
+      left: 15%;
+      width: 70%;
+      height: 6%;
     }
-    .box div {
-      margin: 0.5rem 0;
-      font-size: 1rem;
+    /* اینستاگرام */
+    #instagram {
+      top: 76.3%;
+      left: 15%;
+      width: 70%;
+      height: 6%;
     }
-    .icon {
-      margin-left: 0.5rem;
-    }
-    .slogan {
-      font-size: 1rem;
-      margin-top: 2rem;
-      letter-spacing: 1px;
-      color: #e5c16c;
+    /* منوی همبرگری */
+    #menu {
+      top: 5.5%;
+      left: 85%;
+      width: 10%;
+      height: 5%;
     }
   </style>
 </head>
 <body>
-  <div class="menu">≡</div>
-  <img src="logo-samiwater.png" alt="SamiWater Logo" class="logo" />
-  <h1>خدماتی متمایز برای مشتریانی خاص</h1>
-  <h2>SAMIWATER</h2>
-  <div class="box">
-    <div><span class="icon">📞</span>09130051733</div>
-    <div><span class="icon">📞</span>09130051745</div>
-    <div><span class="icon">📸</span>asamiwater.vip</div>
-  </div>
-  <div class="slogan">A PREMIUM CHOICE<br>FOR EXCEPTIONAL PEOPLE</div>
+  <div class="background"></div><a href="tel:09130051733" class="clickable" id="phone1"></a> <a href="tel:09130051745" class="clickable" id="phone2"></a> <a href="https://instagram.com/samiwater.vip" target="_blank" class="clickable" id="instagram"></a>
+
+  <div class="clickable" id="menu" onclick="alert('منوی اپ بعداً طراحی می‌شود')"></div>
 </body>
 </html>
