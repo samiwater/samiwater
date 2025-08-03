@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>SamiWater App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     @font-face {
       font-family: Vazirmatn;
@@ -20,7 +20,7 @@
 
     .menu {
       position: absolute;
-      top: 0.7rem;        /* دقیق‌تر روی آیکن */
+      top: 0.7rem;
       right: 0.7rem;
       width: 2rem;
       height: 2rem;
@@ -28,52 +28,58 @@
       z-index: 10;
     }
 
-    .menu:hover {
-      opacity: 0.8;
-    }
-
     .click-zone {
       position: absolute;
       z-index: 5;
     }
 
-    /* دکمه تلفن اول */
-    .btn-phone1 {
-      top: 60%;
-      right: 23%;
-      width: 55%;
-      height: 5%;
-    }
+    .btn-phone1 { top: 60%; right: 23%; width: 55%; height: 5%; }
+    .btn-phone2 { top: 67%; right: 23%; width: 55%; height: 5%; }
+    .btn-insta  { top: 74%; right: 23%; width: 55%; height: 5%; }
 
-    /* دکمه تلفن دوم */
-    .btn-phone2 {
-      top: 67%;
-      right: 23%;
-      width: 55%;
-      height: 5%;
-    }
-
-    /* دکمه اینستاگرام */
-    .btn-insta {
-      top: 74%;
-      right: 23%;
-      width: 55%;
-      height: 5%;
-    }
-
-    /* برای موبایل سایز اصلاح */
     @media screen and (max-width: 480px) {
       .btn-phone1, .btn-phone2, .btn-insta {
         width: 60%;
         right: 20%;
       }
     }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 250px;
+      height: 100%;
+      background: #012f2a;
+      padding: 2rem 1rem;
+      transition: right 0.3s ease;
+      z-index: 999;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.4);
+      border-radius: 10px 0 0 10px;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .side-menu li {
+      padding: 15px 10px;
+      color: #d4af37;
+      font-size: 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    .side-menu li:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
   </style>
 </head>
 <body>
 
-  <!-- منوی همبرگری -->
-  <div class="menu" onclick="alert('منوی اپ بعداً طراحی می‌شود')"></div>
+  <div class="menu" onclick="toggleMenu()"></div>
 
   <!-- دکمه تماس اول -->
   <a href="tel:09130051733" class="click-zone btn-phone1"></a>
@@ -84,5 +90,17 @@
   <!-- دکمه اینستاگرام -->
   <a href="https://instagram.com/samiwater.vip" target="_blank" class="click-zone btn-insta"></a>
 
+  <!-- منوی کناری -->
+  <div class="side-menu" id="sideMenu">
+    <ul>
+      <li onclick="navigate('service-install.html')">خدمات</li>
+      <li onclick="navigate('store.html')">فروشگاه سامی</li>
+      <li onclick="navigate('club.html')">باشگاه مشتریان</li>
+      <li onclick="navigate('request.html')">درخواست خدمات</li>
+      <li onclick="navigate('complaint.html')">ثبت شکایت</li>
+    </ul>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
