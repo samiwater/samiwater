@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>خدمات سامی | SamiWater Services</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #00332f, #061d1b);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #ffd700;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      text-shadow: 1px 1px 4px black;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .service-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    }
+
+    .service-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    .service-subtitle {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-top: 0.5rem;
+    }
+
+    .highlight-box {
+      grid-column: span 2;
+      background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid #ffd700;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+
+    @media (max-width: 600px) {
+      .highlight-box {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>خدمات سامی‌واتر</h1>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">👷‍♂️</div>
+      <div class="service-title">نصب</div>
+      <div class="service-subtitle">Installation</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">💧</div>
+      <div class="service-title">خدمات دوره‌ای</div>
+      <div class="service-subtitle">Periodic Maintenance</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🛠</div>
+      <div class="service-title">تعمیرات تخصصی</div>
+      <div class="service-subtitle">Specialized Repairs</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">💡</div>
+      <div class="service-title">مشاوره رایگان</div>
+      <div class="service-subtitle">Free Consultation</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔆</div>
+      <div class="service-title">فیلتر UV</div>
+      <div class="service-subtitle">UV Filter Services</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🐠</div>
+      <div class="service-title">خدمات آکواریوم</div>
+      <div class="service-subtitle">Aquarium Services</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌀</div>
+      <div class="service-title">استیج جامبو</div>
+      <div class="service-subtitle">Jumbo Stage</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🧊</div>
+      <div class="service-title">اتصال به ساید</div>
+      <div class="service-subtitle">Fridge Setup</div>
+    </div>
+    <div class="service-card highlight-box">
+      <div class="service-icon">🍽</div>
+      <div class="service-title">خدمات کافه و رستوران</div>
+      <div class="service-subtitle">Cafe & Restaurant Services</div>
+    </div>
+  </div>
+</body>
+</html>
