@@ -1,12 +1,18 @@
+@font-face {
+  font-family: Vazirmatn;
+  src: url('https://cdn.fontcdn.ir/Font/Persian/Vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
+}
 
 body {
-  font-family: sans-serif;
-  background: #f2faff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 0;
+  padding: 0;
+  font-family: Vazirmatn, sans-serif;
+  background: url('landing-main.png') no-repeat center center fixed;
+  background-size: cover;
   height: 100vh;
 }
+
+/* استایل فرم‌ها */
 .form-container {
   background: white;
   padding: 25px;
@@ -14,16 +20,20 @@ body {
   width: 90%;
   max-width: 400px;
   box-shadow: 0 0 12px rgba(0, 89, 255, 0.2);
+  margin: 2rem auto;
 }
+
 h2 {
   text-align: center;
   color: #0059ff;
   margin-bottom: 20px;
 }
+
 label {
   display: block;
   margin-top: 10px;
 }
+
 input {
   width: 100%;
   padding: 8px;
@@ -31,6 +41,7 @@ input {
   border-radius: 6px;
   border: 1px solid #ccc;
 }
+
 button {
   width: 100%;
   padding: 10px;
@@ -40,4 +51,99 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+/* دکمه همبرگری */
+.menu {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 1.5rem;
+  color: gold;
+}
+
+/* نواحی کلیک تماس و اینستاگرام */
+.click-zone {
+  position: absolute;
+  z-index: 5;
+}
+
+.btn-phone1 {
+  top: 60%;
+  right: 23%;
+  width: 55%;
+  height: 5%;
+}
+
+.btn-phone2 {
+  top: 67%;
+  right: 23%;
+  width: 55%;
+  height: 5%;
+}
+
+.btn-insta {
+  top: 74%;
+  right: 23%;
+  width: 55%;
+  height: 5%;
+}
+
+@media screen and (max-width: 480px) {
+  .btn-phone1,
+  .btn-phone2,
+  .btn-insta {
+    width: 60%;
+    right: 20%;
+  }
+}
+
+/* منوی همبرگری */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;
+  height: 100%;
+  background-color: rgba(0, 40, 30, 0.98);
+  color: gold;
+  font-size: 1.2rem;
+  z-index: 20;
+  padding: 2rem 1rem;
+  display: none;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-overlay button {
+  background: none;
+  border: none;
+  color: gold;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.menu-overlay hr {
+  border: none;
+  border-top: 1px solid gold;
+  margin: 0.8rem 0;
+}
+
+.menu-overlay div {
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.2);
+  background-color: #003d39;
+}
+
+.menu-overlay div:hover {
+  background-color: #00544d;
+  box-shadow: 0 0 8px gold;
 }
