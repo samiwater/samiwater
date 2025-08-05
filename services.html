@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تعمیرات دستگاه تصفیه آب</title>
+  <title>خدمات سامی‌واتر</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body {
@@ -14,90 +14,110 @@
       padding: 0;
       text-align: center;
     }
+    .logo {
+      width: 120px;
+      margin: 20px auto 10px;
+    }
     h1 {
-      color: #FFD700;
-      font-size: 22px;
-      margin: 20px 10px 10px;
+      color: #ffd700;
+      font-size: 28px;
     }
-    form {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: right;
-    }
-    label {
-      display: block;
-      margin: 12px 0;
-      padding: 8px 12px;
-      background-color: #00392e;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 6px rgba(255,215,0,0.2);
-      transition: background 0.2s;
-    }
-    label:hover {
-      background-color: #004a3a;
-    }
-    input[type="checkbox"] {
-      margin-left: 8px;
-      transform: scale(1.1);
-    }
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      resize: vertical;
-      margin-top: 15px;
-      font-family: sans-serif;
-    }
-    button {
-      margin-top: 20px;
-      background-color: #FFD700;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      color: #002b20;
-      font-size: 16px;
-    }
-    .back-link {
-      display: inline-block;
+    .services-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 800px;
       margin: 20px auto;
-      color: #FFD700;
-      text-decoration: underline;
-      font-size: 15px;
+    }
+    .service-card {
+      background: #00392e;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+      width: 45%;
+      min-width: 140px;
+      padding: 20px;
+      transition: 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .service-card:hover {
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      transform: translateY(-5px);
+    }
+    .service-card span {
+      font-size: 36px;
+    }
+    .service-card p {
+      margin: 10px 0 0;
+      font-weight: bold;
+      color: #ffd700;
+    }
+    .service-card small {
+      display: block;
+      margin-top: 5px;
+      color: #ccc;
+    }
+    @media (max-width: 500px) {
+      .service-card {
+        width: 80%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🔧 لطفاً نوع مشکل دستگاه را انتخاب کنید:</h1>
-
-  <form id="repairForm" onsubmit="submitForm(event)">
-    <label><input type="checkbox" name="issue" value="فشار آب کم">فشار آب کم 💧</label>
-    <label><input type="checkbox" name="issue" value="نشتی آب">نشتی آب 🚿</label>
-    <label><input type="checkbox" name="issue" value="روشن نمی‌شود">روشن نمی‌شود 🔌</label>
-    <label><input type="checkbox" name="issue" value="خاموش نمی‌شود">خاموش نمی‌شود ❌</label>
-    <label><input type="checkbox" name="issue" value="صدای ناهنجار">صدای ناهنجار 🔊</label>
-    <label><input type="checkbox" name="issue" value="قطعی یا نوسان کارکرد">قطعی یا نوسان کارکرد ⚠️</label>
-    
-    <textarea name="note" rows="3" placeholder="توضیح بیشتر (اختیاری)..."></textarea>
-    
-    <button type="submit">ادامه ثبت درخواست</button>
-  </form>
-
-  <a class="back-link" href="services.html">← بازگشت به خدمات</a>
-
-  <script>
-    function submitForm(event) {
-      event.preventDefault();
-      const selected = Array.from(document.querySelectorAll('input[name="issue"]:checked')).map(el => el.value);
-      const note = document.querySelector('textarea[name="note"]').value.trim();
-      const allIssues = selected.join(' | ') + (note ? ` | توضیح: ${note}` : '');
-      const encoded = encodeURIComponent(allIssues);
-      window.location.href = `request-check.html?type=repair&details=${encoded}`;
-    }
-  </script>
+  <h1>خدمات سامی‌واتر</h1>
+  <div class="services-container">
+    <a class="service-card" href="request-check.html?type=install">
+      <span>🔧</span>
+      <p>نصب</p>
+      <small>Installation</small>
+    </a>
+    <a class="service-card" href="service-repair.html">
+      <span>🛠️</span>
+      <p>تعمیرات تخصصی</p>
+      <small>Repairs</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=maintenance">
+      <span>🧰</span>
+      <p>خدمات دوره‌ای</p>
+      <small>Periodic Maintenance</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=connect">
+      <span>🥤</span>
+      <p>اتصال به ساید</p>
+      <small>Side Plumbing</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=uvfilter">
+      <span>☀️</span>
+      <p>فیلتر UV</p>
+      <small>UV Filter</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=aquarium">
+      <span>🐠</span>
+      <p>تصفیه آکواریوم</p>
+      <small>Aquarium</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=stage">
+      <span>🛢️</span>
+      <p>استیج جامبو</p>
+      <small>Jumbo Stage</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=filter">
+      <span>🧊</span>
+      <p>فیلتر یخچال</p>
+      <small>Fridge Filter</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=cafe">
+      <span>☕</span>
+      <p>خدمات کافه و رستوران</p>
+      <small>Cafe & Restaurant</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=consult">
+      <span>💬</span>
+      <p>مشاوره رایگان</p>
+      <small>Free Consultation</small>
+    </a>
+  </div>
 </body>
 </html>
