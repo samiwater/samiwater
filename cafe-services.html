@@ -1,76 +1,74 @@
-
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>خدمات کافه و رستوران</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       background: #002b20;
+      color: #fff;
       font-family: sans-serif;
       margin: 0;
-      padding: 20px;
-      color: white;
+      padding: 0;
       text-align: center;
     }
-
     h1 {
       color: #ffd700;
-      margin-bottom: 30px;
+      font-size: 26px;
+      margin-top: 20px;
     }
-
     .services-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
+      max-width: 800px;
+      margin: 30px auto;
     }
-
     .service-card {
-      position: relative;
-      width: 42%;
-      min-width: 140px;
       background: #00392e;
-      color: #ffd700;
-      text-decoration: none;
-      border-radius: 12px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+      width: 45%;
+      min-width: 140px;
       padding: 20px;
-      overflow: hidden;
-      z-index: 0;
-      transition: transform 0.3s;
+      transition: 0.3s;
+      text-decoration: none;
+      color: inherit;
     }
-
     .service-card:hover {
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
       transform: translateY(-5px);
     }
-
-    .service-card::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, gold, #ffa500, gold, #ffd700);
-      background-size: 400% 400%;
-      animation: glow 4s linear infinite;
-      z-index: -1;
-      border-radius: 14px;
-    }
-
     .service-card span {
-      font-size: 30px;
+      font-size: 34px;
+    }
+    .service-card p {
+      margin: 10px 0 0;
+      font-weight: bold;
+      color: #ffd700;
+    }
+    .service-card small {
       display: block;
-      margin-bottom: 10px;
+      margin-top: 5px;
+      color: #ccc;
     }
-
-    @keyframes glow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .back-btn {
+      display: block;
+      margin: 30px auto 20px;
+      padding: 10px 20px;
+      background-color: #004433;
+      color: #ffd700;
+      border-radius: 8px;
+      text-decoration: none;
+      width: fit-content;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     }
-
+    .back-btn:hover {
+      background-color: #005544;
+    }
     @media (max-width: 500px) {
       .service-card {
         width: 80%;
@@ -79,15 +77,48 @@
   </style>
 </head>
 <body>
+
   <h1>خدمات کافه و رستوران</h1>
+
   <div class="services-container">
-    <a class="service-card" href="request-form.html?type=coffee"><span>☕</span>اتصال به قهوه‌ساز</a>
-    <a class="service-card" href="request-form.html?type=boiler"><span>🔥</span>اتصال به بویلر</a>
-    <a class="service-card" href="request-form.html?type=ice"><span>🧊</span>اتصال به یخ‌ساز</a>
-    <a class="service-card" href="request-form.html?type=valve"><span>🚰</span>نصب شیر برداشت</a>
-    <a class="service-card" href="request-form.html?type=tank"><span>🛢️</span>اضافه کردن مخزن ذخیره</a>
-    <a class="service-card" href="request-form.html?type=upgrade"><span>🔧</span>ارتقاء دستگاه</a>
-    <a class="service-card" href="request-form.html?type=semi-pro"><span>🏭</span>نیمه صنعتی</a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،قهوه‌ساز">
+      <span>☕</span>
+      <p>اتصال به قهوه‌ساز</p>
+      <small>Espresso Machine</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،بویلر">
+      <span>🍶</span>
+      <p>اتصال به بویلر</p>
+      <small>Boiler Connection</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،یخساز">
+      <span>🧊</span>
+      <p>اتصال به یخساز</p>
+      <small>Ice Maker</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،شیر برداشت">
+      <span>🚰</span>
+      <p>نصب شیر برداشت</p>
+      <small>Tap Installation</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،مخزن ذخیره">
+      <span>🛢️</span>
+      <p>افزودن مخزن ذخیره</p>
+      <small>Storage Tank</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،ارتقاء">
+      <span>⚙️</span>
+      <p>ارتقاء دستگاه</p>
+      <small>Upgrade Device</small>
+    </a>
+    <a class="service-card" href="request-check.html?type=تعمیرات،خدمات کافه،نیمه صنعتی">
+      <span>🏭</span>
+      <p>مدل نیمه صنعتی</p>
+      <small>Semi-Industrial</small>
+    </a>
   </div>
+
+  <a href="services.html" class="back-btn">← بازگشت به خدمات سامی</a>
+
 </body>
 </html>
