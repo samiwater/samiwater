@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>خدمات کافه و رستوران</title>
+  <style>
+    body {
+      background: #002b20;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ffd700;
+      margin-bottom: 30px;
+    }
+
+    .services-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .service-card {
+      position: relative;
+      width: 42%;
+      min-width: 140px;
+      background: #00392e;
+      color: #ffd700;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 20px;
+      overflow: hidden;
+      z-index: 0;
+      transition: transform 0.3s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, gold, #ffa500, gold, #ffd700);
+      background-size: 400% 400%;
+      animation: glow 4s linear infinite;
+      z-index: -1;
+      border-radius: 14px;
+    }
+
+    .service-card span {
+      font-size: 30px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    @keyframes glow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @media (max-width: 500px) {
+      .service-card {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>خدمات کافه و رستوران</h1>
+  <div class="services-container">
+    <a class="service-card" href="request-form.html?type=coffee"><span>☕</span>اتصال به قهوه‌ساز</a>
+    <a class="service-card" href="request-form.html?type=boiler"><span>🔥</span>اتصال به بویلر</a>
+    <a class="service-card" href="request-form.html?type=ice"><span>🧊</span>اتصال به یخ‌ساز</a>
+    <a class="service-card" href="request-form.html?type=valve"><span>🚰</span>نصب شیر برداشت</a>
+    <a class="service-card" href="request-form.html?type=tank"><span>🛢️</span>اضافه کردن مخزن ذخیره</a>
+    <a class="service-card" href="request-form.html?type=upgrade"><span>🔧</span>ارتقاء دستگاه</a>
+    <a class="service-card" href="request-form.html?type=semi-pro"><span>🏭</span>نیمه صنعتی</a>
+  </div>
+</body>
+</html>
