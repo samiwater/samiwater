@@ -1,36 +1,47 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ثبت موفق | SamiWater</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ثبت شد | SamiWater</title>
   <style>
-    body{font-family:Tahoma,Arial,sans-serif;background:#f6f7fb;color:#222;margin:0}
-    .wrap{max-width:520px;margin:24px auto;padding:16px}
-    .card{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:22px;text-align:center}
-    .title{font-size:20px;margin-bottom:8px}
-    .code{font-size:22px;color:#16a34a;margin:8px 0 4px;font-weight:bold;letter-spacing:.5px}
-    .sub{font-size:13px;color:#666}
-    .btn{margin-top:16px;background:#0ea5e9;color:#fff;border:0;padding:12px 16px;border-radius:10px;font-size:15px}
+    :root{--green:#0f3d2e;--green-2:#134935;--gold:#d4af37;--radius:18px;--shadow:0 10px 30px rgba(0,0,0,.25)}
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Tahoma,Arial,sans-serif; color:#f7f7f7;
+      background:radial-gradient(1200px 600px at 20% 0%, #114533, var(--green));
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .card{
+      width:100%; max-width:560px; text-align:center;
+      background:linear-gradient(180deg,var(--green-2),var(--green));
+      border:1px solid rgba(212,175,55,.25);
+      border-radius:var(--radius); box-shadow:var(--shadow); padding:28px 22px;
+    }
+    .logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(145deg,#1a5a43,#0c2a20);display:grid;place-items:center;border:1px solid rgba(212,175,55,.35);color:var(--gold);font-weight:700;margin:0 auto 10px}
+    h1{font-size:20px;margin:6px 0 6px}
+    .code{font-size:36px; font-weight:900; color:var(--gold); letter-spacing:2px; margin:6px 0 10px}
+    .btn{
+      display:inline-block; margin-top:8px; text-decoration:none;
+      padding:12px 18px; border-radius:12px; border:1px solid #b8942e;
+      background:linear-gradient(180deg,#f1d36a,#d4af37); color:#2b2200; font-weight:700;
+    }
+    .muted{color:#d6dfdb;font-size:13px;margin-top:8px}
   </style>
 </head>
 <body>
-<div class="wrap">
   <div class="card">
-    <div class="title">درخواست شما ثبت شد</div>
-    <div class="sub">کد پیگیری شما:</div>
+    <div class="logo">SA</div>
+    <h1>درخواست شما ثبت شد</h1>
+    <div class="muted">کد پیگیری شما:</div>
     <div id="code" class="code">—</div>
-    <div class="sub">کارشناسان ما برای هماهنگی با شما تماس می‌گیرند.</div>
-    <button class="btn" onclick="goHome()">بازگشت</button>
+    <a href="request-check.html" class="btn">بازگشت</a>
+    <div class="muted">همکاران ما برای هماهنگی با شما تماس می‌گیرند.</div>
   </div>
-</div>
 
 <script>
-  function goHome(){ window.location.href = "index.html"; }
-  (function(){
-    const code = sessionStorage.getItem("samiwater_invoice") || "—";
-    document.getElementById("code").textContent = code;
-  })();
+  document.getElementById("code").textContent =
+    sessionStorage.getItem("samiwater_invoice") || "—";
 </script>
 </body>
 </html>
