@@ -1,133 +1,114 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>بررسی شماره | SamiWater</title>
-  <style>
-    :root{
-      --green:#0f3d2e;       /* پس‌زمینه اصلی */
-      --green-2:#134935;     /* سایه کمی روشن‌تر */
-      --gold:#d4af37;        /* طلایی برند */
-      --text:#f7f7f7;
-      --muted:#cfd8d3;
-      --radius:16px;
-      --shadow:0 10px 30px rgba(0,0,0,.25);
-    }
-    *{box-sizing:border-box}
-    body{
-      font-family:Tahoma,Arial,sans-serif;
-      margin:0; color:var(--text);
-      background: radial-gradient(1200px 600px at 20% 0%, #114533, var(--green));
-      min-height:100vh; display:flex; align-items:center; justify-content:center;
-      padding:20px;
-    }
-    .card{
-      width:100%; max-width:520px;
-      background:linear-gradient(180deg, var(--green-2), var(--green));
-      border:1px solid rgba(212,175,55,.25);
-      border-radius:var(--radius); box-shadow:var(--shadow);
-      padding:22px;
-    }
-    .brand{display:flex; align-items:center; gap:12px; margin-bottom:12px}
-    .logo{
-      width:44px; height:44px; border-radius:12px;
-      background:linear-gradient(145deg,#1a5a43,#0c2a20);
-      display:grid; place-items:center; border:1px solid rgba(212,175,55,.35);
-      color:var(--gold); font-weight:700; letter-spacing:.5px;
-    }
-    .title{font-size:18px; font-weight:700}
-    .subtitle{font-size:13px; color:var(--muted); margin-top:4px}
-    .input{
-      width:100%; margin-top:16px; background:#fff; color:#222;
-      padding:14px 12px; border-radius:12px; border:1px solid #e6e6e6; font-size:16px;
-    }
-    .btn{
-      width:100%; margin-top:14px; padding:13px 12px; border-radius:12px;
-      border:1px solid #b8942e; background:linear-gradient(180deg,#f1d36a,#d4af37);
-      color:#2b2200; font-weight:700; font-size:16px;
-    }
-    .btn:active{transform:translateY(1px)}
-    .msg{margin-top:10px; font-size:14px; color:#ffe79a}
-    .hint{margin-top:8px; font-size:12px; color:var(--muted)}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SamiWater | بررسی شماره</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0f3b2d;         /* سبز بک‌گراند */
+  --panel:#0f3b2db3;       /* باکس نیمه‌شفاف */
+  --gold:#d9b24c;          /* طلایی تایپوگرافی */
+  --gold-strong:#f2c94c;   /* طلایی پررنگ‌تر برای عدد/CTA */
+  --ring:#3e6b57;          /* خط دور کارت */
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--green);
+  font-family:"Vazirmatn",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  color:#fff; display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.card{
+  width:min(640px,100%); background:linear-gradient(180deg,#0f3b2df5,#0e392bb5);
+  border:1px solid var(--ring); border-radius:18px; padding:28px 22px; position:relative;
+  box-shadow:0 12px 30px #00000055;
+}
+.brand{
+  display:flex; align-items:center; gap:12px; margin-bottom:18px;
+}
+.brand img{width:42px;height:42px;border-radius:9px;border:1px solid #355a49; object-fit:cover; background:#124432}
+.brand .title{font-size:24px; font-weight:800; letter-spacing:.5px; color:var(--gold)}
+h1{font-size:20px;margin:6px 0 14px;font-weight:700;color:#fff}
+.note{font-size:13px;line-height:1.9;color:#dfeee8}
+.input{width:100%;background:#0b2d23;border:1px solid #2e5a48;border-radius:12px;color:#fff;font-size:18px;padding:14px 16px;outline:none}
+.input::placeholder{color:#8fb5a6}
+.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);
+  color:#1b2d23;border:none;padding:14px 16px;border-radius:14px;font-size:18px;font-weight:800}
+.btn:active{transform:translateY(1px)}
+.helper{margin-top:12px;font-size:12px;color:#cfded7}
+.err{margin-top:10px;color:#ffc6c6;font-size:13px;display:none}
+.footer{margin-top:14px;font-size:12px;color:#b8d7cc}
+a{color:#9ad7ff;text-decoration:none}
+</style>
 </head>
 <body>
   <div class="card">
     <div class="brand">
-      <div class="logo">SA</div>
-      <div>
-        <div class="title">SamiWater</div>
-        <div class="subtitle">بررسی شماره موبایل</div>
-      </div>
+      <img src="/logo-samiwater.png" alt="SamiWater" />
+      <div class="title">SamiWater</div>
     </div>
 
+    <h1>بررسی شماره موبایل</h1>
+    <p class="note">
+      با وارد کردن شماره، اگر قبلاً مشتری ما بوده‌اید، درخواست شما فوراً ثبت می‌شود.
+      <br>اگر هم از این صفحه وارد شده‌اید، درخواست شما به عنوان <strong style="color:var(--gold)">درخواست فوری</strong> ثبت می‌شود (تلاش برای رسیدگی حداکثر تا ۲۴ ساعت).
+    </p>
+
     <input id="phone" class="input" inputmode="numeric" placeholder="مثلاً 09131234567" />
-    <button class="btn" onclick="next()">ادامه</button>
-    <div id="result" class="msg"></div>
-    <div class="hint">اگر از صفحه فرود آمده‌اید، این درخواست به عنوان «درخواست فوری» ثبت می‌شود.</div>
+    <button id="go" class="btn">ادامه</button>
+    <div id="err" class="err"></div>
+
+    <div class="footer">مشکل در ثبت؟ با ما تماس بگیرید: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
   </div>
 
 <script>
-  const API_BASE = "https://samiwater-backend.onrender.com/api";
+const API = "https://samiwater-backend.onrender.com";
+function getSourcePath(){
+  const p = new URLSearchParams(location.search);
+  const src = (p.get("src")||"").toLowerCase();
+  // هر چیزی غیر از مقدارهای شناخته‌شده → فوری
+  const map = {landing:"urgent", urgent:"urgent", web:"web_form"};
+  return map[src] || "urgent";
+}
+function onlyDigits(s){return s.replace(/\D/g,'')}
 
-  // source => خدمت
-  const sourceToIssue = {
-    urgent:"درخواست فوری",
-    maintenance:"سرویس دوره‌ای / تعویض فیلتر",
-    repair:"تعمیر",
-    install:"نصب",
-    move:"اتصال/جابجایی",
-    visit:"بازدید",
-    other:"سایر",
-    web_form:"سایر",
-  };
-
-  function getSource(){
-    const p=new URLSearchParams(location.search);
-    return (p.get("source")||sessionStorage.getItem("samiwater_type")||"web_form").toLowerCase();
+document.getElementById("go").addEventListener("click", async ()=>{
+  const phone = onlyDigits(document.getElementById("phone").value);
+  const err = document.getElementById("err"); err.style.display="none";
+  if(!/^09\d{9}$/.test(phone)){
+    err.textContent = "لطفاً شماره را به صورت 11 رقمی و با 09 وارد کنید."; err.style.display="block"; return;
   }
-
-  async function next(){
-    const phoneEl=document.getElementById("phone");
-    const result=document.getElementById("result");
-    const phone=(phoneEl.value||"").trim();
-
-    if(!/^09\d{9}$/.test(phone)){
-      result.textContent="❌ لطفاً شماره موبایل معتبر (۱۱ رقمی) وارد کنید."; return;
-    }
-
-    const sourcePath=getSource();
-    const issueType=sourceToIssue[sourcePath]||sourceToIssue.other;
-
-    result.textContent="بررسی شماره...";
-    sessionStorage.setItem("samiwater_phone",phone);
-    sessionStorage.setItem("samiwater_type",sourcePath);
-
-    try{
-      const cRes=await fetch(`${API_BASE}/customers/phone/${encodeURIComponent(phone)}`);
-      if(cRes.ok){
-        // مشتری موجود → ثبت فوری
-        result.textContent="ثبت فوری درخواست...";
-        const rRes=await fetch(`${API_BASE}/requests`,{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({phone,issueType,sourcePath})
-        });
-        if(rRes.ok){
-          const data=await rRes.json();
-          sessionStorage.setItem("samiwater_invoice",data?.invoiceCode||"—");
-          location.href="request-confirmed.html"; return;
-        }else{
-          location.href="request-form.html"; return;
-        }
+  try{
+    // آیا مشتری وجود دارد؟
+    const r = await fetch(`${API}/api/customers/phone/${phone}`);
+    if(r.ok){
+      // مشتری موجود → مستقیماً درخواست بساز و برو صفحهٔ تایید
+      const make = await fetch(`${API}/api/requests`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ phone, issueType:"خدمت از صفحه بررسی شماره", sourcePath:getSourcePath() })
+      });
+      if(make.status===429){
+        location.href = `request-confirmed.html?code=spam`;
+        return;
       }
-      // مشتری نبود → فرم
-      location.href="request-form.html";
-    }catch(e){
-      console.error(e); result.textContent="❌ اتصال به سرور برقرار نشد.";
+      const reqDoc = await make.json();
+      if(make.ok){
+        location.href = `request-confirmed.html?code=${encodeURIComponent(reqDoc.invoiceCode)}`;
+      }else{
+        throw new Error(reqDoc.error || "ثبت نشد");
+      }
+    }else{
+      // مشتری جدید → برو فرم تکمیل اطلاعات
+      location.href = `request-form.html?phone=${phone}&src=${encodeURIComponent(getSourcePath())}`;
     }
+  }catch(e){
+    err.textContent = "خطا در ارتباط. دوباره تلاش کنید."; err.style.display="block";
   }
+});
 </script>
 </body>
 </html>
