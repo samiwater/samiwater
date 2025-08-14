@@ -5,53 +5,128 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>بررسی شماره | SamiWater</title>
   <style>
-    body{font-family:Tahoma,Arial,sans-serif;background:#f6f7fb;color:#222;margin:0}
-    .wrap{max-width:480px;margin:24px auto;padding:16px}
-    .card{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:18px}
-    .title{font-size:18px;margin-bottom:12px}
-    .input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px}
-    .btn{width:100%;margin-top:12px;background:#0ea5e9;color:#fff;border:0;padding:12px;border-radius:10px;font-size:16px}
-    .hint{font-size:12px;color:#666;margin-top:8px}
-    .msg{margin-top:10px;font-size:14px}
+    :root{
+      --green:#0f3d2e;       /* پس‌زمینه اصلی */
+      --green-2:#134935;     /* سایه کمی روشن‌تر */
+      --gold:#d4af37;        /* طلایی برند */
+      --text:#f7f7f7;
+      --muted:#cfd8d3;
+      --radius:16px;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:Tahoma,Arial,sans-serif;
+      margin:0; color:var(--text);
+      background: radial-gradient(1200px 600px at 20% 0%, #114533, var(--green));
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      padding:20px;
+    }
+    .card{
+      width:100%; max-width:520px;
+      background:linear-gradient(180deg, var(--green-2), var(--green));
+      border:1px solid rgba(212,175,55,.25);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:22px;
+    }
+    .brand{display:flex; align-items:center; gap:12px; margin-bottom:12px}
+    .logo{
+      width:44px; height:44px; border-radius:12px;
+      background:linear-gradient(145deg,#1a5a43,#0c2a20);
+      display:grid; place-items:center; border:1px solid rgba(212,175,55,.35);
+      color:var(--gold); font-weight:700; letter-spacing:.5px;
+    }
+    .title{font-size:18px; font-weight:700}
+    .subtitle{font-size:13px; color:var(--muted); margin-top:4px}
+    .input{
+      width:100%; margin-top:16px; background:#fff; color:#222;
+      padding:14px 12px; border-radius:12px; border:1px solid #e6e6e6; font-size:16px;
+    }
+    .btn{
+      width:100%; margin-top:14px; padding:13px 12px; border-radius:12px;
+      border:1px solid #b8942e; background:linear-gradient(180deg,#f1d36a,#d4af37);
+      color:#2b2200; font-weight:700; font-size:16px;
+    }
+    .btn:active{transform:translateY(1px)}
+    .msg{margin-top:10px; font-size:14px; color:#ffe79a}
+    .hint{margin-top:8px; font-size:12px; color:var(--muted)}
   </style>
 </head>
 <body>
-<div class="wrap">
   <div class="card">
-    <div class="title">بررسی شماره موبایل</div>
+    <div class="brand">
+      <div class="logo">SA</div>
+      <div>
+        <div class="title">SamiWater</div>
+        <div class="subtitle">بررسی شماره موبایل</div>
+      </div>
+    </div>
+
     <input id="phone" class="input" inputmode="numeric" placeholder="مثلاً 09131234567" />
-    <button class="btn" onclick="checkPhone()">ادامه</button>
+    <button class="btn" onclick="next()">ادامه</button>
     <div id="result" class="msg"></div>
-    <div class="hint">شماره وارد شده برای پیدا کردن سوابق شما استفاده می‌شود.</div>
+    <div class="hint">اگر از صفحه فرود آمده‌اید، این درخواست به عنوان «درخواست فوری» ثبت می‌شود.</div>
   </div>
-</div>
 
 <script>
   const API_BASE = "https://samiwater-backend.onrender.com/api";
 
-  function checkPhone() {
-    const phoneEl = document.getElementById("phone");
-    const result = document.getElementById("result");
-    const phone = (phoneEl.value || "").trim();
+  // source => خدمت
+  const sourceToIssue = {
+    urgent:"درخواست فوری",
+    maintenance:"سرویس دوره‌ای / تعویض فیلتر",
+    repair:"تعمیر",
+    install:"نصب",
+    move:"اتصال/جابجایی",
+    visit:"بازدید",
+    other:"سایر",
+    web_form:"سایر",
+  };
 
-    if (!/^09\d{9}$/.test(phone)) {
-      result.textContent = "❌ لطفاً شماره موبایل معتبر (11 رقمی) وارد کنید.";
-      return;
+  function getSource(){
+    const p=new URLSearchParams(location.search);
+    return (p.get("source")||sessionStorage.getItem("samiwater_type")||"web_form").toLowerCase();
+  }
+
+  async function next(){
+    const phoneEl=document.getElementById("phone");
+    const result=document.getElementById("result");
+    const phone=(phoneEl.value||"").trim();
+
+    if(!/^09\d{9}$/.test(phone)){
+      result.textContent="❌ لطفاً شماره موبایل معتبر (۱۱ رقمی) وارد کنید."; return;
     }
 
-    result.textContent = "در حال بررسی...";
-    sessionStorage.setItem("samiwater_phone", phone);
-    sessionStorage.setItem("samiwater_type", "web_form");
+    const sourcePath=getSource();
+    const issueType=sourceToIssue[sourcePath]||sourceToIssue.other;
 
-    fetch(`${API_BASE}/customers/phone/${encodeURIComponent(phone)}`)
-      .then(async (res) => {
-        // چه مشتری پیدا شود چه نه، می‌رویم به فرم (در فرم اگر مشتری نبود، ساخته می‌شود)
-        window.location.href = "request-form.html";
-      })
-      .catch((e) => {
-        console.error(e);
-        result.textContent = "❌ اتصال به سرور برقرار نشد. دوباره تلاش کنید.";
-      });
+    result.textContent="بررسی شماره...";
+    sessionStorage.setItem("samiwater_phone",phone);
+    sessionStorage.setItem("samiwater_type",sourcePath);
+
+    try{
+      const cRes=await fetch(`${API_BASE}/customers/phone/${encodeURIComponent(phone)}`);
+      if(cRes.ok){
+        // مشتری موجود → ثبت فوری
+        result.textContent="ثبت فوری درخواست...";
+        const rRes=await fetch(`${API_BASE}/requests`,{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({phone,issueType,sourcePath})
+        });
+        if(rRes.ok){
+          const data=await rRes.json();
+          sessionStorage.setItem("samiwater_invoice",data?.invoiceCode||"—");
+          location.href="request-confirmed.html"; return;
+        }else{
+          location.href="request-form.html"; return;
+        }
+      }
+      // مشتری نبود → فرم
+      location.href="request-form.html";
+    }catch(e){
+      console.error(e); result.textContent="❌ اتصال به سرور برقرار نشد.";
+    }
   }
 </script>
 </body>
