@@ -1,16 +1,241 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>باشگاه مشتریان</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ورود به باشگاه مشتریان | SamiWater</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green:#0f3f31;        /* سبز تیره برند */
+      --green-2:#0e4839;      /* سبز کارت */
+      --gold:#d4af37;         /* طلایی برند */
+      --gold-soft:#f2d472;    /* طلایی روشن برای دکمه */
+      --ink:#f6f6f6;
+      --muted:#c7d2cc;
+      --shadow:0 12px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:linear-gradient(160deg,var(--green),#0c2c24 60%);
+      color:var(--ink);font-family:Vazirmatn,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      display:flex;align-items:center;justify-content:center;padding:24px;
+    }
+    .wrap{width:100%;max-width:560px}
+    .logo{
+      display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:16px;opacity:.95
+    }
+    .logo img{width:44px;height:44px;border-radius:12px;box-shadow:var(--shadow)}
+    .logo h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.5px;background:linear-gradient(180deg,#ffeaa7,var(--gold));
+      -webkit-background-clip:text;background-clip:text;color:transparent}
+    .card{
+      background:radial-gradient(1200px 500px at 20% 0%,rgba(255,255,255,.04),transparent),
+                 linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+      border:1px solid rgba(212,175,55,.25);
+      border-radius:22px;padding:22px 18px;box-shadow:var(--shadow)
+    }
+    .title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .badge{width:42px;height:42px;border-radius:12px;background:
+           linear-gradient(160deg,#173f34,var(--green-2));
+           border:1px solid rgba(212,175,55,.45);
+           display:grid;place-items:center;font-weight:800;color:var(--gold)}
+    .title h2{margin:0;font-size:20px;font-weight:800;color:#fff}
+    .hint{margin:6px 2px 18px;color:var(--muted);font-size:13px;line-height:1.8}
+    .row{display:flex;gap:10px;align-items:center}
+    label{display:block;margin:12px 2px 8px;font-size:13px;color:#e9f3f0}
+    input{
+      width:100%;background:#0c2f27;border:1px solid rgba(212,175,55,.25);
+      color:#fff;border-radius:14px;padding:14px 12px;font-size:16px;outline:none;
+      transition:.2s box-shadow,.2s border
+    }
+    input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+    .btn{
+      width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(0,0,0,.2);
+      background:linear-gradient(180deg,var(--gold-soft),var(--gold));
+      color:#20322c;font-weight:900;font-size:18px;cursor:pointer;box-shadow:var(--shadow);transition:.2s transform
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .link{background:none;border:none;color:var(--gold-soft);font-size:13px;cursor:pointer}
+    .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),transparent);margin:18px 0}
+    .msg{margin-top:10px;font-size:13px}
+    .msg.error{color:#ffb3b3}
+    .msg.ok{color:#b8f3c2}
+    .foot{margin-top:18px;text-align:center;color:#a7b7b2;font-size:12px}
+  </style>
 </head>
 <body>
-  <h2>🎉 باشگاه مشتریان SamiWater</h2>
-  <p>شماره موبایل: 0913xxxxxxx</p>
-  <p>سطح عضویت: طلایی</p>
-  <p>امتیاز: 120</p>
-  <p>تعداد روز باقیمانده تا سرویس بعدی: 42 روز</p>
-  <p>⏳ شمارش معکوس سرویس دوره‌ای</p>
+  <main class="wrap">
+    <div class="logo">
+      <img src="./logo-samiwater.png" alt="SamiWater">
+      <h1>SamiWater</h1>
+    </div>
+
+    <section class="card">
+      <div class="title">
+        <div class="badge">SA</div>
+        <h2>ورود به باشگاه مشتریان</h2>
+      </div>
+      <p class="hint">
+        شماره موبایل خود را وارد کنید. برای شماره‌های عادی، یک کد تایید پیامکی ارسال می‌شود. اگر شماره شما
+        <b>مدیریتی</b> باشد، علاوه بر کد تایید، وارد کردن <b>رمز ثابت ۴ رقمی</b> نیز لازم است.
+      </p>
+
+      <label for="phone">شماره موبایل</label>
+      <input id="phone" inputmode="numeric" pattern="[0-9]*" placeholder="مثلاً 09131234567" maxlength="11" />
+
+      <div id="adminBlock" style="display:none">
+        <label for="pin">رمز ثابت (فقط مدیر)</label>
+        <input id="pin" inputmode="numeric" pattern="[0-9]*" placeholder="مثلاً 1234" maxlength="4" />
+      </div>
+
+      <div class="sep"></div>
+
+      <div id="step1">
+        <button id="btnSend" class="btn">دریافت کد تایید</button>
+        <div id="msg1" class="msg"></div>
+      </div>
+
+      <div id="step2" style="display:none">
+        <label for="code">کد تایید</label>
+        <div class="row">
+          <input id="code" inputmode="numeric" pattern="[0-9]*" placeholder="کد ۶ رقمی" maxlength="6"/>
+          <button id="btnResend" class="link" disabled>ارسال مجدد <span id="timer">60</span>s</button>
+        </div>
+        <button id="btnVerify" class="btn" style="margin-top:12px">تایید و ورود</button>
+        <div id="msg2" class="msg"></div>
+      </div>
+
+      <div class="foot">© SamiWater — Green & Gold Theme</div>
+    </section>
+  </main>
+
+  <script>
+    // ===== تنظیمات =====
+    const API_BASE = "https://samiwater-backend.onrender.com"; // اگر آدرس بک‌اند فرق دارد این را عوض کن
+    const ADMIN_PHONE = "09384129843";                          // شماره مدیریتی که گفتی
+
+    // ===== المنت‌ها =====
+    const phoneEl  = document.getElementById('phone');
+    const pinEl    = document.getElementById('pin');
+    const adminBlk = document.getElementById('adminBlock');
+
+    const btnSend  = document.getElementById('btnSend');
+    const msg1     = document.getElementById('msg1');
+
+    const step1    = document.getElementById('step1');
+    const step2    = document.getElementById('step2');
+    const codeEl   = document.getElementById('code');
+    const msg2     = document.getElementById('msg2');
+    const btnVerify= document.getElementById('btnVerify');
+    const btnResend= document.getElementById('btnResend');
+    const timerEl  = document.getElementById('timer');
+
+    // نمایش/عدم‌نمایش فیلد رمز ثابت بر اساس شماره ادمین
+    function toggleAdminBlock(){
+      const v = (phoneEl.value || "").trim();
+      adminBlk.style.display = (v === ADMIN_PHONE) ? "block" : "none";
+    }
+    phoneEl.addEventListener('input', toggleAdminBlock);
+
+    // توست ساده
+    function setMsg(el, text, type=""){
+      el.textContent = text || "";
+      el.className = "msg" + (type ? " " + type : "");
+    }
+
+    // تایمر ارسال مجدد
+    let t, remain = 60;
+    function startTimer(){
+      remain = 60;
+      btnResend.disabled = true;
+      timerEl.textContent = remain;
+      clearInterval(t);
+      t = setInterval(()=>{
+        remain--;
+        timerEl.textContent = remain;
+        if(remain<=0){ btnResend.disabled = false; clearInterval(t); }
+      },1000);
+    }
+
+    // مرحله ۱: درخواست کد
+    btnSend.addEventListener('click', async ()=>{
+      const phone = (phoneEl.value || "").trim();
+      const adminPin = (adminBlk.style.display === "block") ? (pinEl.value || "").trim() : undefined;
+
+      if(!/^09\d{9}$/.test(phone)){
+        setMsg(msg1, "شماره موبایل نامعتبر است.", "error");
+        return;
+      }
+      setMsg(msg1, "در حال ارسال کد...", "");
+      btnSend.disabled = true;
+
+      try{
+        const res = await fetch(`${API_BASE}/api/auth/request-otp`, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ phone, adminPinHint: !!adminPin }) // فقط اطلاع می‌دیم که فیلد نمایش داده شده
+        });
+        const data = await res.json();
+        if(!res.ok){
+          throw new Error(data?.error || "خطا در ارسال کد");
+        }
+        // موفق
+        setMsg(msg1, "کد تایید ارسال شد.", "ok");
+        step1.style.display = "none";
+        step2.style.display = "block";
+        startTimer();
+      }catch(err){
+        setMsg(msg1, err.message, "error");
+        btnSend.disabled = false;
+      }
+    });
+
+    // ارسال مجدد
+    btnResend.addEventListener('click', async ()=>{
+      btnSend.click();
+    });
+
+    // مرحله ۲: تایید کد و ورود
+    btnVerify.addEventListener('click', async ()=>{
+      const phone = (phoneEl.value || "").trim();
+      const code  = (codeEl.value  || "").trim();
+      const pin   = (adminBlk.style.display === "block") ? (pinEl.value || "").trim() : "";
+
+      if(!code || code.length < 4){
+        setMsg(msg2, "کد تایید نامعتبر است.", "error");
+        return;
+      }
+      setMsg(msg2, "در حال بررسی...", "");
+      btnVerify.disabled = true;
+
+      try{
+        const res = await fetch(`${API_BASE}/api/auth/verify`, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ phone, code, pin })
+        });
+        const data = await res.json();
+        if(!res.ok){
+          throw new Error(data?.error || "تایید کد ناموفق بود");
+        }
+
+        // اگر نقش مدیر باشد -> پنل مدیر؛ در غیر این صورت -> پروفایل مشتری
+        if(data.role === "admin"){
+          window.location.href = "./admin.html?token=" + encodeURIComponent(data.token || "");
+        }else{
+          window.location.href = "./club.html?token=" + encodeURIComponent(data.token || "");
+        }
+      }catch(err){
+        setMsg(msg2, err.message, "error");
+        btnVerify.disabled = false;
+      }
+    });
+
+    // مقداردهی اولیه
+    toggleAdminBlock();
+  </script>
 </body>
 </html>
