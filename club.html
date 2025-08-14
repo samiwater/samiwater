@@ -1,120 +1,126 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ورود | باشگاه مشتریان سامی</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ورود | SamiWater</title>
   <style>
-    body{margin:0;background:#0f3a2c;color:#fff;font-family:IRANSans, Vazirmatn, sans-serif}
-    .wrap{max-width:520px;margin:40px auto;padding:24px;border:1px solid #1d5a46;border-radius:20px;background:linear-gradient(180deg,#0f3a2c,#0b2d23)}
-    .brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-    .badge{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#113f31,#0a2b21);display:flex;align-items:center;justify-content:center;border:1px solid #2a6a52}
-    .badge img{width:26px;height:26px;object-fit:contain}
-    h1{margin:0;font-size:22px;color:#d4af37}
-    label{display:block;margin:14px 0 6px}
-    input{width:100%;padding:14px 12px;border-radius:12px;border:1px solid #2a6a52;background:#0c2f24;color:#fff;font-size:16px;outline:none}
-    button{width:100%;margin-top:14px;padding:14px;border-radius:14px;border:none;background:#d4af37;color:#083427;font-weight:700;font-size:17px}
-    .hint{margin-top:10px;color:#cbd5d1;font-size:13px}
-    .pinWrap{display:none}
-    .otpWrap{display:none}
-    .gold{color:#d4af37}
+    :root{
+      --green:#0f3b2e; --green-2:#0b2e24; --gold:#d4af37; --gold-2:#f1d26a;
+      --card: #123e31; --muted:#b8c7c2;
+    }
+    body{margin:0;background:linear-gradient(180deg,var(--green),var(--green-2));
+      font-family:Tahoma, Vazirmatn, sans-serif;color:#fff}
+    .wrap{max-width:520px;margin:40px auto;padding:24px}
+    .card{background:linear-gradient(180deg,#10382c,#0b2e24);border:1px solid rgba(212,175,55,.35);
+      border-radius:20px;padding:22px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    h1{margin:0 0 8px;font-size:22px;color:var(--gold-2);letter-spacing:.5px}
+    .brand{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#145, #0a3329);
+      border:1px solid rgba(212,175,55,.45);display:flex;align-items:center;justify-content:center;
+      font-weight:800;color:var(--gold-2)}
+    label{display:block;margin:14px 6px 6px;color:#e9f5f1;font-size:13px}
+    input{width:100%;padding:14px 12px;border-radius:14px;border:1px solid rgba(212,175,55,.35);
+      background:#0e2f25;color:#fff;font-size:16px;outline:none}
+    input::placeholder{color:#88a39a}
+    .btn{width:100%;margin-top:16px;background:linear-gradient(180deg,var(--gold-2),var(--gold));
+      color:#112; border:none;border-radius:14px;padding:12px 14px;font-size:18px;font-weight:700}
+    .hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.9}
+    .hidden{display:none}
+    .center{ text-align:center }
+    .note{margin-top:12px;font-size:12px;color:#cfdfda}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="brand">
-      <div class="badge"><img src="logo-samiwater.png" alt="SA"></div>
-      <h1>SamiWater | ورود</h1>
-    </div>
+    <div class="card">
+      <div class="brand">
+        <div class="logo">SA</div>
+        <h1>SamiWater | ورود</h1>
+      </div>
 
-    <label>شماره موبایل</label>
-    <input id="phone" inputmode="numeric" placeholder="مثلاً 09131234567"/>
+      <!-- مرحله ۱ -->
+      <div id="step1">
+        <label>شماره موبایل</label>
+        <input id="phone" inputmode="numeric" placeholder="مثلاً 09131234567" />
 
-    <div class="pinWrap" id="pinWrap">
-      <label>PIN اَدمین (فقط برای مدیر)</label>
-      <input id="pin" inputmode="numeric" maxlength="6" placeholder="مثلاً 2468"/>
-    </div>
+        <label>PIN (فقط برای مدیر)</label>
+        <input id="pin" inputmode="numeric" placeholder="مثلاً 2468" />
 
-    <button id="btnReq">ارسال کُد تأیید</button>
+        <button class="btn" id="btnStart">ادامه</button>
+        <div class="hint">اگر با شماره مدیر وارد شوید، <b>PIN</b> را هم وارد کنید. در حالت تست، کد تأیید در پیام بعدی نمایش داده می‌شود.</div>
+      </div>
 
-    <div class="otpWrap" id="otpWrap">
-      <label>کُد تأیید</label>
-      <input id="otp" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی"/>
-      <button id="btnVerify">تأیید و ورود</button>
-      <div class="hint" id="devNote"></div>
-    </div>
-
-    <div class="hint">
-      اگر با شماره مدیر وارد می‌شوید، <span class="gold">PIN</span> را هم وارد کنید. در حالت تست، کُد تأیید در پاسخ نمایش داده می‌شود.
+      <!-- مرحله ۲ -->
+      <div id="step2" class="hidden">
+        <div class="center" style="margin-bottom:10px;color:#d7c27a">کد تأیید ارسال شد</div>
+        <label>کد تأیید</label>
+        <input id="code" inputmode="numeric" placeholder="مثلاً 111111" />
+        <button class="btn" id="btnVerify">ورود</button>
+        <div id="devCode" class="note"></div>
+      </div>
     </div>
   </div>
 
-<script>
-const API = "https://samiwater-backend.onrender.com"; // آدرس بک‌اند خودت
+  <script>
+    // ✅ این خط مهمه:
+    const API_BASE = "https://samiwater-backend.onrender.com";
 
-const ADMIN_PHONE = "09384129843"; // فقط برای نمایش PIN field
-const phoneEl = document.getElementById('phone');
-const pinWrap = document.getElementById('pinWrap');
-const pinEl = document.getElementById('pin');
-const btnReq = document.getElementById('btnReq');
-const otpWrap = document.getElementById('otpWrap');
-const otpEl = document.getElementById('otp');
-const btnVerify = document.getElementById('btnVerify');
-const devNote = document.getElementById('devNote');
+    const $ = (s) => document.querySelector(s);
+    const step1 = $("#step1");
+    const step2 = $("#step2");
+    let loginState = { phone: "", role: "user" };
 
-phoneEl.addEventListener('input', ()=>{
-  const p = (phoneEl.value||"").trim();
-  pinWrap.style.display = (p === ADMIN_PHONE) ? "block" : "none";
-});
+    $("#btnStart").onclick = async () => {
+      const phone = $("#phone").value.trim();
+      const pin = $("#pin").value.trim();
+      if(!phone){ alert("شماره را وارد کنید"); return; }
 
-btnReq.onclick = async () => {
-  const phone = (phoneEl.value||"").trim();
-  if(!phone){ alert("شماره را وارد کنید"); return; }
+      try{
+        const r = await fetch(`${API_BASE}/api/auth/start`, {
+          method:"POST", headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ phone, pin })
+        });
+        const j = await r.json();
+        if(!r.ok || !j.ok){ alert(j.error || "Route not found"); return; }
 
-  const payload = { phone };
-  if(phone === ADMIN_PHONE){
-    payload.pin = (pinEl.value||"").trim();
-    if(!payload.pin){ alert("PIN ادمین را وارد کنید"); return; }
-  }
+        loginState.phone = phone;
+        loginState.role = j.role || "user";
 
-  btnReq.disabled = true;
-  try{
-    const r = await fetch(API + "/api/auth/request-otp", {
-      method:"POST", headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    const data = await r.json();
-    if(!r.ok){ throw new Error(data.error || "خطا"); }
-    otpWrap.style.display = "block";
-    devNote.textContent = data.devCode ? ("کُد برای تست: " + data.devCode) : "";
-  }catch(e){
-    alert(e.message);
-  }finally{
-    btnReq.disabled = false;
-  }
-};
+        // نشان دادن devCode برای تست
+        $("#devCode").textContent = j.devCode ? `کد تست: ${j.devCode}` : "";
 
-btnVerify.onclick = async () => {
-  const phone = (phoneEl.value||"").trim();
-  const code = (otpEl.value||"").trim();
-  if(!code){ alert("کُد را وارد کنید"); return; }
-  btnVerify.disabled = true;
-  try{
-    const r = await fetch(API + "/api/auth/verify", {
-      method:"POST", headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ phone, code })
-    });
-    const data = await r.json();
-    if(!r.ok){ throw new Error(data.error || "خطا در تایید"); }
-    localStorage.setItem("sami_token", data.token);
-    localStorage.setItem("sami_role", data.role);
-    location.href = "dashboard.html";
-  }catch(e){
-    alert(e.message);
-  }finally{
-    btnVerify.disabled = false;
-  }
-};
-</script>
+        step1.classList.add("hidden");
+        step2.classList.remove("hidden");
+        $("#code").focus();
+      }catch(e){
+        alert("خطا در ارتباط با سرور");
+      }
+    };
+
+    $("#btnVerify").onclick = async () => {
+      const code = $("#code").value.trim();
+      if(!code){ alert("کد تأیید را وارد کنید"); return; }
+      try{
+        const r = await fetch(`${API_BASE}/api/auth/verify`, {
+          method:"POST", headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ phone: loginState.phone, code })
+        });
+        const j = await r.json();
+        if(!r.ok || !j.ok){ alert(j.error || "Route not found"); return; }
+
+        // ذخیره برای داشبورد
+        localStorage.setItem("sw_role", j.role);
+        localStorage.setItem("sw_phone", loginState.phone);
+        localStorage.setItem("sw_token", j.token || "");
+        localStorage.setItem("sw_api", API_BASE);
+
+        // رفتن به داشبورد
+        location.href = "dashboard.html";
+      }catch(e){
+        alert("خطا در تایید کد");
+      }
+    };
+  </script>
 </body>
 </html>
