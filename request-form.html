@@ -1,164 +1,153 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>فرم ثبت درخواست | SamiWater</title>
-  <style>
-    :root{
-      --green:#0f3d2e; --green-2:#134935; --gold:#d4af37; --text:#f7f7f7; --muted:#cfd8d3;
-      --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.25);
-    }
-    *{box-sizing:border-box}
-    body{
-      font-family:Tahoma,Arial,sans-serif; margin:0; color:var(--text);
-      background:radial-gradient(1200px 600px at 20% 0%, #114533, var(--green));
-      min-height:100vh; display:flex; align-items:center; justify-content:center;
-      padding:20px;
-    }
-    .card{
-      width:100%; max-width:640px; background:linear-gradient(180deg,var(--green-2),var(--green));
-      border:1px solid rgba(212,175,55,.25); border-radius:var(--radius); box-shadow:var(--shadow);
-      padding:22px;
-    }
-    .head{display:flex; align-items:center; gap:12px; margin-bottom:8px}
-    .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#1a5a43,#0c2a20);display:grid;place-items:center;border:1px solid rgba(212,175,55,.35);color:var(--gold);font-weight:700}
-    .title{font-size:18px;font-weight:700}
-    .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
-    label{display:block;font-size:13px;margin:10px 0 6px}
-    input,textarea{
-      width:100%; padding:12px 12px; border-radius:12px; border:1px solid #e6e6e6;
-      font-size:15px; color:#222; background:#fff;
-    }
-    textarea{min-height:96px; resize:vertical}
-    .btn{
-      width:100%; margin-top:14px; padding:13px 12px; border-radius:12px;
-      border:1px solid #b8942e; background:linear-gradient(180deg,#f1d36a,#d4af37);
-      color:#2b2200; font-weight:700; font-size:16px;
-    }
-    .info{margin-top:6px; font-size:12px; color:#ffe79a}
-    .msg{margin-top:10px; font-size:14px; color:#ffe79a}
-  </style>
-  <!-- تاریخ شمسی -->
-  <script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.1.0/index.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SamiWater | ثبت درخواست</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{ --green:#0f3b2d; --panel:#0f3b2db3; --gold:#d9b24c; --gold-strong:#f2c94c; --ring:#3e6b57; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--green);font-family:"Vazirmatn",system-ui; color:#fff; padding:22px; display:flex; justify-content:center}
+.wrap{width:min(760px,100%);}
+.card{background:linear-gradient(180deg,#0f3b2df5,#0e392bb5); border:1px solid var(--ring); border-radius:18px; padding:24px; box-shadow:0 12px 30px #00000055}
+.brand{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.brand img{width:42px;height:42px;border-radius:9px;border:1px solid #355a49; object-fit:cover; background:#124432}
+.brand .title{font-size:22px;font-weight:800;color:var(--gold)}
+h1{margin:6px 0 14px; font-size:20px}
+.row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.label{margin:6px 0 6px; font-size:13px; color:#dbece5}
+.input, textarea, select{
+  width:100%; background:#0b2d23; border:1px solid #2e5a48; border-radius:12px; color:#fff;
+  padding:12px 14px; font-size:16px; outline:none;
+}
+textarea{min-height:110px; resize:vertical}
+.btn{width:100%; background:linear-gradient(180deg,#e2c15a,#cc9f2a); color:#1b2d23; border:none; padding:14px 16px; border-radius:14px; font-size:18px; font-weight:800; margin-top:16px}
+.helper{margin-top:10px; font-size:12px; color:#cfe0d9}
+.err{margin-top:10px;color:#ffc6c6;font-size:13px;display:none}
+</style>
 </head>
 <body>
+<div class="wrap">
   <div class="card">
-    <div class="head">
-      <div class="logo">SA</div>
+    <div class="brand">
+      <img src="/logo-samiwater.png" alt="SamiWater" /><div class="title">SamiWater</div>
+    </div>
+    <h1>ثبت درخواست خدمت</h1>
+
+    <div class="row">
       <div>
-        <div class="title">تکمیل مشخصات</div>
-        <div class="sub">اگر قبلاً مشتری بوده‌اید و شناسایی نشدید، یک‌بار این فرم کوتاه را پر کنید.</div>
+        <div class="label">شماره موبایل (از مرحله قبل)</div>
+        <input id="phone" class="input" disabled />
+      </div>
+      <div>
+        <div class="label">نام و نام خانوادگی *</div>
+        <input id="fullName" class="input" placeholder="مثلاً علی رضایی" />
       </div>
     </div>
 
-    <form id="requestForm">
-      <label>شماره موبایل</label>
-      <input id="phone" disabled />
+    <div class="row">
+      <div>
+        <div class="label">شهر *</div>
+        <input id="city" class="input" value="اصفهان" />
+      </div>
+      <div>
+        <div class="label">آدرس دقیق *</div>
+        <input id="address" class="input" placeholder="خیابان، کوچه، پلاک..." />
+      </div>
+    </div>
 
-      <label>نام و نام خانوادگی *</label>
-      <input id="name" placeholder="مثلاً علی رضایی" required />
+    <div class="row">
+      <div>
+        <div class="label">شماره دوم (اختیاری)</div>
+        <input id="altPhone" class="input" inputmode="numeric" placeholder="مثلاً 0935..." />
+      </div>
+      <div>
+        <div class="label">تاریخ تولد (اختیاری) - شمسی</div>
+        <div class="row" style="grid-template-columns:1fr 1fr 1fr; gap:8px;">
+          <select id="bDay" class="input">
+            <option value="">روز</option>
+            <script>for(let d=1; d<=31; d++)document.write(`<option value="${d}">${d}</option>`);</script>
+          </select>
+          <select id="bMonth" class="input">
+            <option value="">ماه</option>
+            <option value="1">فروردین</option><option value="2">اردیبهشت</option>
+            <option value="3">خرداد</option><option value="4">تیر</option>
+            <option value="5">مرداد</option><option value="6">شهریور</option>
+            <option value="7">مهر</option><option value="8">آبان</option>
+            <option value="9">آذر</option><option value="10">دی</option>
+            <option value="11">بهمن</option><option value="12">اسفند</option>
+          </select>
+          <select id="bYear" class="input">
+            <option value="">سال</option>
+            <script>for(let y=1399; y>=1330; y--)document.write(`<option value="${y}">${y}</option>`);</script>
+          </select>
+        </div>
+      </div>
+    </div>
 
-      <label>شهر *</label>
-      <input id="city" placeholder="اصفهان" required />
+    <div class="label">توضیح کوتاه درباره مشکل (اختیاری)</div>
+    <textarea id="desc" class="input" placeholder="..."></textarea>
 
-      <label>آدرس دقیق *</label>
-      <textarea id="address" placeholder="خیابان، کوچه، پلاک..." required></textarea>
-
-      <label>شماره دوم (اختیاری)</label>
-      <input id="altPhone" placeholder="تلفن ثابت یا همراه" />
-
-      <label>تاریخ تولد (اختیاری) — شمسی</label>
-      <input id="birthdateJalali" placeholder="مثلاً 1375/02/15" />
-
-      <div id="serviceInfo" class="info"></div>
-
-      <button class="btn" type="submit">ثبت نهایی</button>
-      <div id="msg" class="msg"></div>
-    </form>
+    <button id="submit" class="btn">ثبت نهایی</button>
+    <div id="err" class="err"></div>
+    <div class="helper">پس از ثبت، کد پیگیری برای شما نمایش داده می‌شود.</div>
   </div>
+</div>
 
 <script>
-  const API_BASE="https://samiwater-backend.onrender.com/api";
+const API = "https://samiwater-backend.onrender.com";
+const qs = new URLSearchParams(location.search);
+const phone = (qs.get("phone")||"").replace(/\D/g,'');
+const sourcePath = (qs.get("src")||"urgent");
+document.getElementById("phone").value = phone;
 
-  const sourceToIssue={
-    urgent:"درخواست فوری",
-    maintenance:"سرویس دوره‌ای / تعویض فیلتر",
-    repair:"تعمیر",
-    install:"نصب",
-    move:"اتصال/جابجایی",
-    visit:"بازدید",
-    other:"سایر",
-    web_form:"سایر",
-  };
+function val(id){return document.getElementById(id).value.trim()}
 
-  function getSource(){
-    const p=new URLSearchParams(location.search);
-    return (p.get("source")||sessionStorage.getItem("samiwater_type")||"web_form").toLowerCase();
-  }
-
-  const phoneStored=sessionStorage.getItem("samiwater_phone")||"";
-  const sourcePath=getSource();
-  const issueType=sourceToIssue[sourcePath]||sourceToIssue.other;
-  document.getElementById("phone").value=phoneStored;
-  document.getElementById("serviceInfo").textContent="نوع خدمت: "+issueType+" (تشخیص از مسیر)";
-
-  // JALALI -> ISO
-  function jalaliToGregorianISO(jalaliStr){
-    if(!jalaliStr) return null;
-    const m=/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/.exec(jalaliStr.trim());
-    if(!m) return null;
-    const jy=+m[1], jm=+m[2], jd=+m[3];
-    const g=window.jalaali.toGregorian(jy,jm,jd);
-    const mm=String(g.gm).padStart(2,"0"), dd=String(g.gd).padStart(2,"0");
-    return `${g.gy}-${mm}-${dd}`;
-  }
-
-  document.getElementById("requestForm").addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const msg=document.getElementById("msg");
-
-    const phone=phoneStored.trim();
-    const fullName=document.getElementById("name").value.trim();
-    const city=(document.getElementById("city").value||"اصفهان").trim();
-    const address=document.getElementById("address").value.trim();
-    const altPhone=document.getElementById("altPhone").value.trim();
-    const birthJ=document.getElementById("birthdateJalali").value.trim();
-    const birthISO=jalaliToGregorianISO(birthJ);
-
-    if(!/^09\d{9}$/.test(phone)){ msg.textContent="❌ شماره معتبر نیست."; return; }
-    if(!fullName||!city||!address){ msg.textContent="❌ فیلدهای ستاره‌دار را پر کنید."; return; }
-
-    msg.textContent="در حال ارسال...";
-
-    try{
-      // 1) ساخت مشتری (409 اهمیتی ندارد)
-      const cRes=await fetch(`${API_BASE}/customers`,{
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({fullName,phone,address,altPhone,birthdate:birthISO||undefined,city})
-      });
-      if(!(cRes.ok||cRes.status===409)){
-        const err=await cRes.json().catch(()=>({}));
-        msg.textContent="❌ خطا در ثبت مشتری: "+(err.error||cRes.statusText); return;
-      }
-
-      // 2) ثبت درخواست
-      const rRes=await fetch(`${API_BASE}/requests`,{
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({phone,issueType,sourcePath})
-      });
-      if(!rRes.ok){
-        const err=await rRes.json().catch(()=>({}));
-        msg.textContent="❌ خطا در ثبت درخواست: "+(err.error||rRes.statusText); return;
-      }
-
-      const data=await rRes.json();
-      sessionStorage.setItem("samiwater_invoice",data?.invoiceCode||"—");
-      location.href="request-confirmed.html";
-    }catch(e2){
-      console.error(e2); msg.textContent="❌ ارتباط با سرور برقرار نشد.";
-    }
+async function createCustomer(payload){
+  const r = await fetch(`${API}/api/customers`,{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
   });
+  const j = await r.json();
+  if(!r.ok) throw new Error(j.error||"خطا در ایجاد مشتری");
+  return j;
+}
+async function createRequest(phone, issueType){
+  const r = await fetch(`${API}/api/requests`,{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ phone, issueType, sourcePath })
+  });
+  if(r.status===429){
+    location.href = `request-confirmed.html?code=spam`;
+    return null;
+  }
+  const j = await r.json();
+  if(!r.ok) throw new Error(j.error||"ثبت درخواست ناموفق");
+  return j;
+}
+
+document.getElementById("submit").addEventListener("click", async ()=>{
+  const err = document.getElementById("err"); err.style.display="none";
+  const fullName = val("fullName"); const city = val("city")||"اصفهان"; const address = val("address");
+  if(!/^09\d{9}$/.test(phone)){ err.textContent="شماره معتبر نیست."; err.style.display="block"; return; }
+  if(!fullName || !address){ err.textContent="نام کامل و آدرس الزامی است."; err.style.display="block"; return; }
+
+  const altPhone = val("altPhone");
+  const birthJY = document.getElementById("bYear").value || undefined;
+  const birthJM = document.getElementById("bMonth").value || undefined;
+  const birthJD = document.getElementById("bDay").value || undefined;
+
+  try{
+    await createCustomer({ fullName, phone, address, altPhone, city, birthJY, birthJM, birthJD });
+    const req = await createRequest(phone, "درخواست از فرم وب");
+    if(req) location.href = `request-confirmed.html?code=${encodeURIComponent(req.invoiceCode)}`;
+  }catch(e){
+    err.textContent = e.message || "خطای ناشناخته"; err.style.display="block";
+  }
+});
 </script>
 </body>
 </html>
