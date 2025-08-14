@@ -5,28 +5,55 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>فرم ثبت درخواست | SamiWater</title>
   <style>
-    body{font-family:Tahoma,Arial,sans-serif;background:#f6f7fb;color:#222;margin:0}
-    .wrap{max-width:560px;margin:24px auto;padding:16px}
-    .card{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:18px}
-    .title{font-size:18px;margin-bottom:6px}
-    .sub{font-size:13px;color:#666;margin-bottom:14px}
-    .row{display:flex;gap:10px}
-    .col{flex:1}
+    :root{
+      --green:#0f3d2e; --green-2:#134935; --gold:#d4af37; --text:#f7f7f7; --muted:#cfd8d3;
+      --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:Tahoma,Arial,sans-serif; margin:0; color:var(--text);
+      background:radial-gradient(1200px 600px at 20% 0%, #114533, var(--green));
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      padding:20px;
+    }
+    .card{
+      width:100%; max-width:640px; background:linear-gradient(180deg,var(--green-2),var(--green));
+      border:1px solid rgba(212,175,55,.25); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:22px;
+    }
+    .head{display:flex; align-items:center; gap:12px; margin-bottom:8px}
+    .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#1a5a43,#0c2a20);display:grid;place-items:center;border:1px solid rgba(212,175,55,.35);color:var(--gold);font-weight:700}
+    .title{font-size:18px;font-weight:700}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
     label{display:block;font-size:13px;margin:10px 0 6px}
-    input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:15px}
-    textarea{min-height:96px;resize:vertical}
-    .btn{width:100%;margin-top:14px;background:#22c55e;color:#fff;border:0;padding:12px;border-radius:10px;font-size:16px}
-    .msg{margin-top:10px;font-size:14px}
+    input,textarea{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid #e6e6e6;
+      font-size:15px; color:#222; background:#fff;
+    }
+    textarea{min-height:96px; resize:vertical}
+    .btn{
+      width:100%; margin-top:14px; padding:13px 12px; border-radius:12px;
+      border:1px solid #b8942e; background:linear-gradient(180deg,#f1d36a,#d4af37);
+      color:#2b2200; font-weight:700; font-size:16px;
+    }
+    .info{margin-top:6px; font-size:12px; color:#ffe79a}
+    .msg{margin-top:10px; font-size:14px; color:#ffe79a}
   </style>
+  <!-- تاریخ شمسی -->
+  <script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.1.0/index.min.js"></script>
 </head>
 <body>
-<div class="wrap">
   <div class="card">
-    <div class="title">ثبت درخواست خدمت</div>
-    <div class="sub">اطلاعات زیر را کامل کنید. اگر قبلاً مشتری بوده‌اید با همان شماره ثبت می‌شود.</div>
+    <div class="head">
+      <div class="logo">SA</div>
+      <div>
+        <div class="title">تکمیل مشخصات</div>
+        <div class="sub">اگر قبلاً مشتری بوده‌اید و شناسایی نشدید، یک‌بار این فرم کوتاه را پر کنید.</div>
+      </div>
+    </div>
 
     <form id="requestForm">
-      <label>شماره موبایل (از مرحله قبل):</label>
+      <label>شماره موبایل</label>
       <input id="phone" disabled />
 
       <label>نام و نام خانوادگی *</label>
@@ -38,119 +65,98 @@
       <label>آدرس دقیق *</label>
       <textarea id="address" placeholder="خیابان، کوچه، پلاک..." required></textarea>
 
-      <div class="row">
-        <div class="col">
-          <label>شماره دوم (اختیاری)</label>
-          <input id="altPhone" placeholder="تلفن ثابت یا همراه" />
-        </div>
-        <div class="col">
-          <label>تاریخ تولد (اختیاری)</label>
-          <input id="birthdate" type="date" />
-        </div>
-      </div>
+      <label>شماره دوم (اختیاری)</label>
+      <input id="altPhone" placeholder="تلفن ثابت یا همراه" />
 
-      <label>نوع خدمت/مشکل *</label>
-      <select id="issueType" required>
-        <option value="maintenance">سرویس دوره‌ای / تعویض فیلتر</option>
-        <option value="repair">تعمیر</option>
-        <option value="install">نصب</option>
-        <option value="connect">اتصال/جابجایی</option>
-        <option value="visit">بازدید</option>
-        <option value="other">سایر</option>
-      </select>
+      <label>تاریخ تولد (اختیاری) — شمسی</label>
+      <input id="birthdateJalali" placeholder="مثلاً 1375/02/15" />
 
-      <label>توضیحات (اختیاری)</label>
-      <textarea id="description" placeholder="توضیح کوتاه درباره مشکل..."></textarea>
+      <div id="serviceInfo" class="info"></div>
 
       <button class="btn" type="submit">ثبت نهایی</button>
       <div id="msg" class="msg"></div>
     </form>
   </div>
-</div>
 
 <script>
-  const API_BASE = "https://samiwater-backend.onrender.com/api";
-  const phoneStored = sessionStorage.getItem("samiwater_phone");
-  const sourcePath = sessionStorage.getItem("samiwater_type") || "web_form";
+  const API_BASE="https://samiwater-backend.onrender.com/api";
 
-  // مقداردهی اولیه
-  document.getElementById("phone").value = phoneStored || "";
+  const sourceToIssue={
+    urgent:"درخواست فوری",
+    maintenance:"سرویس دوره‌ای / تعویض فیلتر",
+    repair:"تعمیر",
+    install:"نصب",
+    move:"اتصال/جابجایی",
+    visit:"بازدید",
+    other:"سایر",
+    web_form:"سایر",
+  };
 
-  document.getElementById("requestForm").addEventListener("submit", async (e) => {
+  function getSource(){
+    const p=new URLSearchParams(location.search);
+    return (p.get("source")||sessionStorage.getItem("samiwater_type")||"web_form").toLowerCase();
+  }
+
+  const phoneStored=sessionStorage.getItem("samiwater_phone")||"";
+  const sourcePath=getSource();
+  const issueType=sourceToIssue[sourcePath]||sourceToIssue.other;
+  document.getElementById("phone").value=phoneStored;
+  document.getElementById("serviceInfo").textContent="نوع خدمت: "+issueType+" (تشخیص از مسیر)";
+
+  // JALALI -> ISO
+  function jalaliToGregorianISO(jalaliStr){
+    if(!jalaliStr) return null;
+    const m=/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/.exec(jalaliStr.trim());
+    if(!m) return null;
+    const jy=+m[1], jm=+m[2], jd=+m[3];
+    const g=window.jalaali.toGregorian(jy,jm,jd);
+    const mm=String(g.gm).padStart(2,"0"), dd=String(g.gd).padStart(2,"0");
+    return `${g.gy}-${mm}-${dd}`;
+  }
+
+  document.getElementById("requestForm").addEventListener("submit", async (e)=>{
     e.preventDefault();
-    const msg = document.getElementById("msg");
-    const phone = (phoneStored || "").trim();
-    const name = document.getElementById("name").value.trim();
-    const city = (document.getElementById("city").value || "اصفهان").trim();
-    const address = document.getElementById("address").value.trim();
-    const altPhone = document.getElementById("altPhone").value.trim();
-    const birthdate = document.getElementById("birthdate").value; // yyyy-mm-dd
-    const issueType = document.getElementById("issueType").value;
-    const description = document.getElementById("description").value.trim();
+    const msg=document.getElementById("msg");
 
-    if (!/^09\d{9}$/.test(phone)) {
-      msg.textContent = "❌ شماره موبایل معتبر نیست. به مرحله قبل برگردید.";
-      return;
-    }
-    if (!name || !city || !address) {
-      msg.textContent = "❌ لطفاً فیلدهای ستاره‌دار را تکمیل کنید.";
-      return;
-    }
+    const phone=phoneStored.trim();
+    const fullName=document.getElementById("name").value.trim();
+    const city=(document.getElementById("city").value||"اصفهان").trim();
+    const address=document.getElementById("address").value.trim();
+    const altPhone=document.getElementById("altPhone").value.trim();
+    const birthJ=document.getElementById("birthdateJalali").value.trim();
+    const birthISO=jalaliToGregorianISO(birthJ);
 
-    msg.textContent = "در حال ارسال اطلاعات...";
+    if(!/^09\d{9}$/.test(phone)){ msg.textContent="❌ شماره معتبر نیست."; return; }
+    if(!fullName||!city||!address){ msg.textContent="❌ فیلدهای ستاره‌دار را پر کنید."; return; }
 
-    try {
-      // 1) ایجاد مشتری (اگر وجود داشته باشد 409 می‌دهد که ایرادی ندارد)
-      const createCustomerRes = await fetch(`${API_BASE}/customers`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: name,
-          phone,
-          address,
-          altPhone,
-          birthdate: birthdate || undefined,
-          city
-        })
+    msg.textContent="در حال ارسال...";
+
+    try{
+      // 1) ساخت مشتری (409 اهمیتی ندارد)
+      const cRes=await fetch(`${API_BASE}/customers`,{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({fullName,phone,address,altPhone,birthdate:birthISO||undefined,city})
       });
-
-      if (!(createCustomerRes.ok || createCustomerRes.status === 409)) {
-        const err = await createCustomerRes.json().catch(() => ({}));
-        msg.textContent = "❌ خطا در ثبت مشتری: " + (err.error || createCustomerRes.statusText);
-        return;
+      if(!(cRes.ok||cRes.status===409)){
+        const err=await cRes.json().catch(()=>({}));
+        msg.textContent="❌ خطا در ثبت مشتری: "+(err.error||cRes.statusText); return;
       }
 
-      // 2) ثبت درخواست خدمت (issueType انتخابی + توضیحات را به انتها اضافه می‌کنیم)
-      const composedIssue = description ? `${issueType} - ${description}` : issueType;
-
-      const createReqRes = await fetch(`${API_BASE}/requests`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone,
-          issueType: composedIssue,
-          sourcePath
-        })
+      // 2) ثبت درخواست
+      const rRes=await fetch(`${API_BASE}/requests`,{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({phone,issueType,sourcePath})
       });
-
-      if (!createReqRes.ok) {
-        const err = await createReqRes.json().catch(() => ({}));
-        msg.textContent = "❌ خطا در ثبت درخواست: " + (err.error || createReqRes.statusText);
-        return;
+      if(!rRes.ok){
+        const err=await rRes.json().catch(()=>({}));
+        msg.textContent="❌ خطا در ثبت درخواست: "+(err.error||rRes.statusText); return;
       }
 
-      const data = await createReqRes.json();
-      const invoiceCode = data?.invoiceCode || "—";
-      sessionStorage.setItem("samiwater_invoice", invoiceCode);
-
-      msg.innerHTML = "✅ درخواست شما با موفقیت ثبت شد. کد پیگیری: <b>" + invoiceCode + "</b>";
-
-      setTimeout(() => {
-        window.location.href = "request-confirmed.html";
-      }, 900);
-    } catch (e2) {
-      console.error(e2);
-      msg.textContent = "❌ اتصال به سرور برقرار نشد. کمی بعد دوباره تلاش کنید.";
+      const data=await rRes.json();
+      sessionStorage.setItem("samiwater_invoice",data?.invoiceCode||"—");
+      location.href="request-confirmed.html";
+    }catch(e2){
+      console.error(e2); msg.textContent="❌ ارتباط با سرور برقرار نشد.";
     }
   });
 </script>
