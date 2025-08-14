@@ -1,47 +1,52 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>ثبت شد | SamiWater</title>
-  <style>
-    :root{--green:#0f3d2e;--green-2:#134935;--gold:#d4af37;--radius:18px;--shadow:0 10px 30px rgba(0,0,0,.25)}
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:Tahoma,Arial,sans-serif; color:#f7f7f7;
-      background:radial-gradient(1200px 600px at 20% 0%, #114533, var(--green));
-      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
-    }
-    .card{
-      width:100%; max-width:560px; text-align:center;
-      background:linear-gradient(180deg,var(--green-2),var(--green));
-      border:1px solid rgba(212,175,55,.25);
-      border-radius:var(--radius); box-shadow:var(--shadow); padding:28px 22px;
-    }
-    .logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(145deg,#1a5a43,#0c2a20);display:grid;place-items:center;border:1px solid rgba(212,175,55,.35);color:var(--gold);font-weight:700;margin:0 auto 10px}
-    h1{font-size:20px;margin:6px 0 6px}
-    .code{font-size:36px; font-weight:900; color:var(--gold); letter-spacing:2px; margin:6px 0 10px}
-    .btn{
-      display:inline-block; margin-top:8px; text-decoration:none;
-      padding:12px 18px; border-radius:12px; border:1px solid #b8942e;
-      background:linear-gradient(180deg,#f1d36a,#d4af37); color:#2b2200; font-weight:700;
-    }
-    .muted{color:#d6dfdb;font-size:13px;margin-top:8px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SamiWater | ثبت شد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{ --green:#0f3b2d; --panel:#0f3b2db3; --gold:#d9b24c; --gold-strong:#f2c94c; --ring:#3e6b57; }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--green);font-family:"Vazirmatn",system-ui; color:#fff; display:flex; align-items:center; justify-content:center; padding:20px}
+.card{width:min(640px,100%); background:linear-gradient(180deg,#0f3b2df5,#0e392bb5);
+  border:1px solid var(--ring); border-radius:18px; padding:28px 22px; text-align:center; box-shadow:0 12px 30px #00000055}
+.logo{width:56px;height:56px;margin:0 auto 12px;border-radius:12px;border:1px solid #355a49; background:#124432; object-fit:cover}
+h1{margin:4px 0 10px;font-size:22px}
+.code{font-size:56px; font-weight:900; color:var(--gold-strong); letter-spacing:2px; margin:8px 0 12px}
+.btn{display:inline-block;background:linear-gradient(180deg,#e2c15a,#cc9f2a); color:#1b2d23; border:none; padding:12px 18px; border-radius:14px; font-size:16px; font-weight:800; text-decoration:none}
+.note{margin-top:14px; font-size:13px; color:#d5e5de}
+.warn{color:#ffe08a}
+</style>
 </head>
 <body>
   <div class="card">
-    <div class="logo">SA</div>
+    <img src="/logo-samiwater.png" class="logo" alt="SamiWater">
     <h1>درخواست شما ثبت شد</h1>
-    <div class="muted">کد پیگیری شما:</div>
+    <div id="msg" class="note"></div>
     <div id="code" class="code">—</div>
     <a href="request-check.html" class="btn">بازگشت</a>
-    <div class="muted">همکاران ما برای هماهنگی با شما تماس می‌گیرند.</div>
+    <div class="note">همکاران ما برای هماهنگی با شما تماس می‌گیرند.</div>
   </div>
 
 <script>
-  document.getElementById("code").textContent =
-    sessionStorage.getItem("samiwater_invoice") || "—";
+const qs = new URLSearchParams(location.search);
+const code = qs.get("code");
+const codeEl = document.getElementById("code");
+const msgEl  = document.getElementById("msg");
+
+if(code === "spam"){
+  codeEl.textContent = "محدودیت";
+  msgEl.innerHTML = "برای جلوگیری از اسپم، هر شماره از یک مسیر فقط <span class='warn'>یک بار در ۲۴ ساعت</span> می‌تواند درخواست ثبت کند.";
+}else if(code){
+  codeEl.textContent = code;
+  msgEl.textContent = "کد پیگیری شما:";
+}else{
+  codeEl.textContent = "—";
+  msgEl.textContent = "درخواستی پیدا نشد.";
+}
 </script>
 </body>
 </html>
