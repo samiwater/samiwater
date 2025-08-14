@@ -1,93 +1,58 @@
-<!DOCTYPE html>
-<html lang="fa">
+<!doctype html>
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>بررسی شماره موبایل | SamiWater</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>بررسی شماره | SamiWater</title>
   <style>
-    body {
-      font-family: 'Vazirmatn', sans-serif;
-      background: linear-gradient(135deg, #006f6f, #0f403f);
-      color: white;
-      padding: 40px 20px;
-      direction: rtl;
-      text-align: center;
-    }
-    .container {
-      max-width: 450px;
-      margin: auto;
-      background-color: rgba(255, 255, 255, 0.08);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      backdrop-filter: blur(10px);
-    }
-    h2 {
-      color: #ffd700;
-      margin-bottom: 25px;
-      font-size: 24px;
-    }
-    input, button {
-      width: 100%;
-      font-size: 18px;
-      padding: 14px;
-      margin-top: 15px;
-      border-radius: 12px;
-      border: none;
-    }
-    button {
-      background-color: #ffd700;
-      color: #003f3f;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #e6c200;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 16px;
-    }
+    body{font-family:Tahoma,Arial,sans-serif;background:#f6f7fb;color:#222;margin:0}
+    .wrap{max-width:480px;margin:24px auto;padding:16px}
+    .card{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:18px}
+    .title{font-size:18px;margin-bottom:12px}
+    .input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:16px}
+    .btn{width:100%;margin-top:12px;background:#0ea5e9;color:#fff;border:0;padding:12px;border-radius:10px;font-size:16px}
+    .hint{font-size:12px;color:#666;margin-top:8px}
+    .msg{margin-top:10px;font-size:14px}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>بررسی شماره موبایل</h2>
-    <input type="tel" id="phone" placeholder="شماره موبایل را وارد کنید (مثلاً 09130000000)" />
-    <button onclick="checkPhone()">بررسی شماره</button>
-    <div id="result"></div>
+<div class="wrap">
+  <div class="card">
+    <div class="title">بررسی شماره موبایل</div>
+    <input id="phone" class="input" inputmode="numeric" placeholder="مثلاً 09131234567" />
+    <button class="btn" onclick="checkPhone()">ادامه</button>
+    <div id="result" class="msg"></div>
+    <div class="hint">شماره وارد شده برای پیدا کردن سوابق شما استفاده می‌شود.</div>
   </div>
+</div>
 
-  <script>
-    function checkPhone() {
-      const phone = document.getElementById("phone").value.trim();
-      const result = document.getElementById("result");
+<script>
+  const API_BASE = "https://samiwater-backend.onrender.com/api";
 
-      if (!phone || phone.length < 10 || !/^09\d{9}$/.test(phone)) {
-        result.innerText = "❌ لطفاً شماره موبایل معتبر وارد کنید.";
-        return;
-      }
+  function checkPhone() {
+    const phoneEl = document.getElementById("phone");
+    const result = document.getElementById("result");
+    const phone = (phoneEl.value || "").trim();
 
-      sessionStorage.setItem("samiwater_phone", phone);
-      sessionStorage.setItem("samiwater_type", "درخواست فوری");
-
-      fetch("https://script.google.com/macros/s/AKfycbyw2bMf0byTPsttd7Jle-1tWo8XnMxCrWVRAnaqMigilmCGIyVloIrdqm8E2diW5xl6/exec?check=true&phone=" + encodeURIComponent(phone))
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === "found") {
-            window.location.href = "/success.html"; // مسیر ثبت خودکار برای مشتری قدیمی
-          } else if (res.status === "not_found") {
-            window.location.href = "/request-form.html";
-          } else {
-            result.innerText = "❌ خطا در پاسخ سرور.";
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          result.innerText = "❌ اتصال به سرور برقرار نشد.";
-        });
+    if (!/^09\d{9}$/.test(phone)) {
+      result.textContent = "❌ لطفاً شماره موبایل معتبر (11 رقمی) وارد کنید.";
+      return;
     }
-  </script>
+
+    result.textContent = "در حال بررسی...";
+    sessionStorage.setItem("samiwater_phone", phone);
+    sessionStorage.setItem("samiwater_type", "web_form");
+
+    fetch(`${API_BASE}/customers/phone/${encodeURIComponent(phone)}`)
+      .then(async (res) => {
+        // چه مشتری پیدا شود چه نه، می‌رویم به فرم (در فرم اگر مشتری نبود، ساخته می‌شود)
+        window.location.href = "request-form.html";
+      })
+      .catch((e) => {
+        console.error(e);
+        result.textContent = "❌ اتصال به سرور برقرار نشد. دوباره تلاش کنید.";
+      });
+  }
+</script>
 </body>
 </html>
