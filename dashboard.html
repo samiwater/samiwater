@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>داشبورد | SamiWater</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root{--green:#0d4638;--gold:#d4af37}
+    body{margin:0;background:#0d4638;color:#fff;font-family:IRANSans,sans-serif}
+    header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(212,175,55,.25)}
+    header img{width:36px;height:36px;border-radius:10px;border:1px solid rgba(240,193,75,.4)}
+    header h1{font-size:18px;margin:0;color:#f0c14b}
+    .wrap{max-width:980px;margin:18px auto;padding:0 16px}
+    .card{background:rgba(13,70,56,.85);border:1px solid rgba(212,175,55,.35);
+      border-radius:16px;padding:16px;margin-bottom:14px}
+    .btn{background:linear-gradient(180deg,#f6d36b,#d4af37);color:#19342d;border:0;border-radius:10px;
+      padding:10px 12px;font-weight:700;cursor:pointer}
+    .muted{color:#b5d1c9;font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid rgba(240,193,75,.18);padding:10px 8px;text-align:right}
+    th{color:#f0c14b;font-weight:800}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+<header>
+  <img src="logo-samiwater.png" alt="">
+  <h1>داشبورد</h1>
+  <div style="margin-inline-start:auto">
+    <button class="btn" id="logoutBtn">خروج</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div id="welcome" class="muted">درحال بارگذاری...</div>
+  </div>
+
+  <div id="adminArea" class="card" style="display:none">
+    <h3>مدیریت</h3>
+    <div class="row">
+      <button class="btn" onclick="loadAllCustomers()">لیست مشتری‌ها</button>
+      <button class="btn" onclick="loadAllRequests()">لیست درخواست‌ها</button>
+    </div>
+    <div id="adminData"></div>
+  </div>
+
+  <div id="userArea" class="card" style="display:none">
+    <h3>سوابق شما</h3>
+    <div id="userData" class="muted">هیچ سابقه‌ای یافت نشد.</div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = "https://samiwater-backend.onrender.com";
+  const token = localStorage.getItem("token");
+  const role  = localStorage.getItem("role");
+
+  if(!token){ location.href="/login.html"; }
+
+  const welcome = document.getElementById("welcome");
+  const adminArea = document.getElementById("adminArea");
+  const adminData = document.getElementById("adminData");
+  const userArea  = document.getElementById("userArea");
+  const userData  = document.getElementById("userData");
+
+  // اطلاعات من
+  (async () => {
+    try{
+      const r = await fetch(`${API_BASE}/api/auth/me`,{
+        headers:{ Authorization:`Bearer ${token}` }
+      });
+      const me = await r.json();
+      if(!r.ok){ throw new Error(me.error||"لطفاً دوباره وارد شوید"); }
+      welcome.innerHTML = `سلام ${me.fullName || me.phone}! نقش شما: <b>${me.role}</b>`;
+      if(me.role === "admin"){
+        adminArea.style.display = "block";
+      }else{
+        userArea.style.display = "block";
+        // سوابق خود کاربر
+        const rr = await fetch(`${API_BASE}/api/requests?phone=${encodeURIComponent(me.phone)}`);
+        const rows = await rr.json();
+        userData.innerHTML = buildTable(rows);
+      }
+    }catch(e){
+      welcome.textContent = e.message;
+    }
+  })();
+
+  // دکمه خروج
+  document.getElementById("logoutBtn").onclick = ()=>{
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    location.href="/login.html";
+  };
+
+  function buildTable(rows){
+    if(!Array.isArray(rows) || rows.length===0) return '<div class="muted">موردی نیست.</div>';
+    return `
+      <table>
+        <thead><tr>
+          <th>کد</th><th>تاریخ</th><th>مسیر</th><th>نوع</th><th>تلفن</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(x=>`
+            <tr>
+              <td>${x.invoiceCode||"-"}</td>
+              <td>${new Date(x.createdAt).toLocaleString('fa-IR')}</td>
+              <td>${x.sourcePath||"-"}</td>
+              <td>${x.issueType||"-"}</td>
+              <td>${x.phone||"-"}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // مدیر: همه مشتری‌ها
+  async function loadAllCustomers(){
+    adminData.innerHTML="درحال دریافت مشتری‌ها...";
+    const r = await fetch(`${API_BASE}/api/customers`);
+    const rows = await r.json();
+    adminData.innerHTML = buildTableCustomers(rows);
+  }
+  function buildTableCustomers(rows){
+    if(!rows?.length) return '<div class="muted">مشتری وجود ندارد.</div>';
+    return `<table>
+      <thead><tr><th>نام</th><th>تلفن</th><th>شهر</th><th>عضویت</th></tr></thead>
+      <tbody>
+      ${rows.map(c=>`
+        <tr>
+          <td>${c.fullName||"-"}</td>
+          <td>${c.phone||"-"}</td>
+          <td>${c.city||"-"}</td>
+          <td>${new Date(c.joinedAt||c.createdAt).toLocaleDateString('fa-IR')}</td>
+        </tr>`).join("")}
+      </tbody></table>`;
+  }
+
+  // مدیر: همه درخواست‌ها
+  async function loadAllRequests(){
+    adminData.innerHTML="درحال دریافت درخواست‌ها...";
+    const r = await fetch(`${API_BASE}/api/requests`);
+    const rows = await r.json();
+    adminData.innerHTML = buildTable(rows);
+  }
+</script>
+</body>
+</html>
