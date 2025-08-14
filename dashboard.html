@@ -1,134 +1,320 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
   <title>داشبورد | SamiWater</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    body{margin:0;background:#0f3a2c;color:#fff;font-family:IRANSans, Vazirmatn, sans-serif}
-    .container{max-width:980px;margin:30px auto;padding:0 16px}
-    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .badge{width:40px;height:40px;border-radius:10px;background:linear-gradient(145deg,#113f31,#0a2b21);display:flex;align-items:center;justify-content:center;border:1px solid #2a6a52}
-    .badge img{width:24px;height:24px}
-    h1{margin:0;font-size:20px;color:#d4af37}
-    button{background:#d4af37;border:none;color:#083427;border-radius:10px;padding:10px 16px;font-weight:700}
-    .card{border:1px solid #1d5a46;border-radius:16px;padding:16px;background:#0b2d23;margin-bottom:14px}
-    .gold{color:#d4af37}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid #1d5a46;text-align:right}
-    select{background:#0c2f24;color:#fff;border:1px solid #2a6a52;border-radius:8px;padding:6px}
+    :root{
+      --green:#0f3a2f; --green-2:#0b2e25; --gold:#d4a31f; --gold-2:#e6c35a;
+      --text:#e9f1ed; --muted:#a7c0b8; --card:#0d2b23; --ring:#15493b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Vazirmatn',sans-serif;background:linear-gradient(180deg,#0b2e25,#0f3a2f 30%,#0b2e25);color:var(--text)}
+    .wrap{max-width:1200px;padding:24px 16px;margin:0 auto}
+    .head{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:16px}
+    .badge{background:linear-gradient(180deg,#164f40,#0d3b2f);border:1px solid var(--ring);color:var(--gold-2);padding:6px 10px;border-radius:12px;font-weight:700}
+    .logout{background:var(--gold);color:#123;padding:8px 14px;border:none;border-radius:12px;font-weight:700}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:16px}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:14px;box-shadow:0 0 0 1px rgba(0,0,0,.05) inset}
+    .title{font-weight:700;color:var(--gold-2);margin:0 0 10px}
+    .muted{color:var(--muted);font-size:.92rem}
+    .tabs{display:flex;gap:8px;margin-bottom:10px}
+    .tab{background:#0e342a;border:1px solid var(--ring);padding:8px 12px;border-radius:12px;color:var(--muted);cursor:pointer}
+    .tab.active{color:var(--gold-2);border-color:var(--gold)}
+    .toolbar{display:grid;grid-template-columns:repeat(5, minmax(120px,1fr));gap:8px;margin-bottom:10px}
+    .input,.select{width:100%;background:#113b31;border:1px solid var(--ring);border-radius:12px;color:var(--text);padding:8px 10px}
+    .table-wrap{overflow:auto;border:1px solid var(--ring);border-radius:16px;background:var(--card)}
+    table{width:100%;border-collapse:collapse;min-width:900px}
+    th,td{padding:10px 12px;border-bottom:1px solid #0f4537}
+    th{position:sticky;top:0;background:#0e342a;color:var(--gold-2);text-align:right}
+    tr:hover td{background:#0f332a}
+    .status{background:#123;border:1px solid var(--ring);color:var(--text);border-radius:12px;padding:6px 10px;appearance:none}
+    .clickable{cursor:pointer;color:var(--gold-2)}
+    /* modal */
+    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+    .modal{max-width:520px;width:100%;background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:16px}
+    .modal h3{margin:0 0 10px;color:var(--gold-2)}
+    .modal .row{display:grid;grid-template-columns:120px 1fr;gap:8px;margin:6px 0}
+    .btn{background:var(--gold);color:#123;border:none;border-radius:10px;padding:8px 12px;font-weight:700}
+    .btn.outline{background:transparent;color:var(--gold-2);border:1px solid var(--gold)}
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="top">
-    <div class="brand">
-      <div class="badge"><img src="logo-samiwater.png" alt=""></div>
-      <h1>داشبورد SamiWater</h1>
+  <div class="wrap">
+    <div class="head">
+      <div class="badge">داشبورد SamiWater</div>
+      <button class="logout" id="btnLogout">خروج</button>
     </div>
-    <div>
-      <button onclick="logout()">خروج</button>
+
+    <div class="cards">
+      <div class="card"><div class="title">نقش شما</div><div id="roleBox" class="muted">—</div></div>
+      <div class="card">
+        <div class="title">آمار</div>
+        <div class="muted">مشتریان: <b id="statCustomers">0</b></div>
+        <div class="muted">کل درخواست‌ها: <b id="statRequests">0</b> | در انتظار: <b id="statPending">0</b></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" id="tabRequests">درخواست‌ها</div>
+      <div class="tab" id="tabCustomers">مشتریان</div>
+    </div>
+
+    <!-- Requests toolbar -->
+    <div id="reqToolbar" class="toolbar">
+      <input class="input" id="qCode" placeholder="جست‌وجوی کد" />
+      <input class="input" id="qPhone" placeholder="جست‌وجوی موبایل" />
+      <input class="input" id="qType" placeholder="جست‌وجوی نوع" />
+      <input class="input" id="qPath" placeholder="جست‌وجوی مسیر" />
+      <select class="select" id="qStatus">
+        <option value="">همه وضعیت‌ها</option>
+        <option value="pending">در انتظار</option>
+        <option value="assigned">ارجاع‌شده</option>
+        <option value="done">تکمیل شد</option>
+        <option value="canceled">لغو شد</option>
+      </select>
+    </div>
+
+    <!-- Requests table -->
+    <div id="reqCard" class="card">
+      <div class="title">آخرین درخواست‌ها</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>کد</th><th>موبایل</th><th>نوع</th><th>مسیر</th><th>زمان</th><th>وضعیت</th>
+            </tr>
+          </thead>
+          <tbody id="reqTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Customers table -->
+    <div id="custCard" class="card" style="display:none">
+      <div class="title">اطلاعات مشتریان</div>
+      <div class="toolbar" style="grid-template-columns:repeat(3, minmax(160px,1fr))">
+        <input class="input" id="cqPhone" placeholder="موبایل" />
+        <input class="input" id="cqName" placeholder="نام" />
+        <input class="input" id="cqCity" placeholder="شهر" />
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>نام</th><th>موبایل</th><th>شهر</th><th>آدرس</th><th>تخفیف</th></tr>
+          </thead>
+          <tbody id="custTbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <div id="roleLine" class="card"></div>
-  <div id="body"></div>
-</div>
-
-<script>
-const API = "https://samiwater-backend.onrender.com";
-
-function token(){ return localStorage.getItem("sami_token"); }
-function logout(){ localStorage.removeItem("sami_token"); localStorage.removeItem("sami_role"); location.href="club.html"; }
-
-async function load(){
-  const t = token();
-  if(!t){ location.href="club.html"; return; }
-
-  const r = await fetch(API + "/api/me", { headers: { "Authorization": "Bearer " + t }});
-  const data = await r.json();
-  if(!r.ok){ alert(data.error||"خطا"); logout(); return; }
-
-  document.getElementById("roleLine").innerHTML =
-    `نقش شما: <b class="gold">${data.role === 'admin' ? 'مدیر' : 'مشتری'}</b>`;
-
-  const body = document.getElementById("body");
-  if(data.role === "admin"){
-    const s = data.stats;
-    const rows = (data.lastRequests||[]).map(x => `
-      <tr>
-        <td>${x.invoiceCode}</td>
-        <td>${x.phone}</td>
-        <td>${x.issueType}</td>
-        <td>${x.sourcePath||'-'}</td>
-        <td>${new Date(x.createdAt).toLocaleString('fa-IR')}</td>
-        <td>
-          <select data-id="${x._id}" onchange="changeStatus(event)">
-            ${["pending","assigned","done","canceled"].map(st => `<option value="${st}" ${st===x.status?'selected':''}>${st}</option>`).join("")}
-          </select>
-        </td>
-      </tr>
-    `).join("");
-
-    body.innerHTML = `
-      <div class="card">
-        <div>تعداد مشتریان: <b class="gold">${s.totalCustomers}</b></div>
-        <div>کل درخواست‌ها: <b class="gold">${s.totalRequests}</b> | در انتظار: <b class="gold">${s.pending}</b></div>
+  <!-- Modal -->
+  <div class="modal-back" id="mb">
+    <div class="modal">
+      <h3>مشخصات مشتری</h3>
+      <div class="row"><div>نام:</div><div id="mName">—</div></div>
+      <div class="row"><div>موبایل:</div><div id="mPhone">—</div></div>
+      <div class="row"><div>شهر:</div><div id="mCity">—</div></div>
+      <div class="row"><div>آدرس:</div><div id="mAddr">—</div></div>
+      <div class="row"><div>تخفیف:</div>
+        <div><input id="mDisc" class="input" style="max-width:120px" type="number" min="0" max="100" /> %</div>
       </div>
-      <div class="card">
-        <h3>آخرین درخواست‌ها</h3>
-        <table>
-          <thead><tr><th>کد</th><th>موبایل</th><th>نوع</th><th>مسیر</th><th>زمان</th><th>وضعیت</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button class="btn outline" id="mClose">بستن</button>
+        <button class="btn" id="mSave">ذخیره تخفیف</button>
       </div>
-    `;
-  } else {
-    const c = data.customer || {};
-    const rows = (data.myRequests||[]).map(x => `
-      <tr>
-        <td>${x.invoiceCode}</td>
-        <td>${x.issueType}</td>
-        <td>${x.sourcePath||'-'}</td>
-        <td>${x.status}</td>
-        <td>${new Date(x.createdAt).toLocaleString('fa-IR')}</td>
-      </tr>
-    `).join("");
+    </div>
+  </div>
 
-    body.innerHTML = `
-      <div class="card">
-        <h3>اطلاعات شما</h3>
-        <div>نام: <b class="gold">${c.fullName||'-'}</b></div>
-        <div>موبایل: <b class="gold">${c.phone||'-'}</b></div>
-        <div>شهر: <b class="gold">${c.city||'-'}</b></div>
-        <div>آدرس: <b class="gold">${c.address||'-'}</b></div>
-        <div>تولد: <b class="gold">${c.birthYear||'-'}/${c.birthMonth||'-'}/${c.birthDay||'-'}</b></div>
-      </div>
-      <div class="card">
-        <h3>درخواست‌های شما</h3>
-        <table>
-          <thead><tr><th>کد</th><th>نوع</th><th>مسیر</th><th>وضعیت</th><th>زمان</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    `;
-  }
-}
+  <script>
+    const API = "https://samiwater-backend.onrender.com";
+    const token = localStorage.getItem("sw_token");
+    if(!token) location.href="/club.html";
 
-window.changeStatus = async (e) => {
-  const id = e.target.getAttribute("data-id");
-  const status = e.target.value;
-  const r = await fetch(API + "/api/admin/requests/" + id, {
-    method:"PATCH",
-    headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token() },
-    body: JSON.stringify({ status })
-  });
-  const data = await r.json();
-  if(!r.ok){ alert(data.error||"خطا"); }
-};
+    const STATUS_OPTIONS = [
+      { value:"pending",  label:"در انتظار" },
+      { value:"assigned", label:"ارجاع‌شده" },
+      { value:"done",     label:"تکمیل شد" },
+      { value:"canceled", label:"لغو شد" }
+    ];
+    const STATUS_LABEL = Object.fromEntries(STATUS_OPTIONS.map(o => [o.value,o.label]));
+    const PATH_LABEL = {
+      "web_form":"درخواست فوری","services":"خدمات","maintenance":"سرویس دوره‌ای","repair":"تعمیر",
+      "install":"نصب","relocate":"اتصال/جابجایی","visit":"بازدید","cafe":"کافه و رستوران","add_tank":"اضافه کردن مخزن"
+    };
+    const formatSourcePath = s => !s ? "—" : (s==="web_form" ? PATH_LABEL[s] :
+      s.split(",").map(x=>PATH_LABEL[x.trim()]||x.trim()).join("، "));
+    const formatJalali = ts => { try{
+      const d=new Date(ts); const f1=new Intl.DateTimeFormat("fa-IR-u-ca-persian",{dateStyle:"short"});
+      const f2=new Intl.DateTimeFormat("fa-IR-u-ca-persian",{timeStyle:"short"}); return f1.format(d)+"، "+f2.format(d);
+    }catch(e){return "—"} };
 
-load();
-</script>
+    const qs = s => document.querySelector(s);
+    const mb = qs("#mb"); const mName=qs("#mName"), mPhone=qs("#mPhone"), mCity=qs("#mCity"), mAddr=qs("#mAddr"), mDisc=qs("#mDisc");
+    let currentCustomer=null;
+
+    // Tabs
+    qs("#tabRequests").onclick=()=>switchTab("req");
+    qs("#tabCustomers").onclick=()=>switchTab("cust");
+    function switchTab(k){
+      const r = k==="req";
+      qs("#tabRequests").classList.toggle("active", r);
+      qs("#tabCustomers").classList.toggle("active", !r);
+      qs("#reqToolbar").style.display = r? "grid":"none";
+      qs("#reqCard").style.display = r? "block":"none";
+      qs("#custCard").style.display = r? "none":"block";
+      if(!r) loadCustomers();
+    }
+
+    // Logout
+    qs("#btnLogout").onclick=()=>{ localStorage.removeItem("sw_token"); location.href="/club.html"; };
+
+    // Init
+    let allRequests=[];
+    init();
+    async function init(){
+      const me = await apiGet("/api/admin/me");
+      qs("#roleBox").innerText = me?.role==="admin" ? "مدیر" : "کاربر";
+      qs("#statCustomers").innerText = me?.stats?.customers ?? 0;
+      qs("#statRequests").innerText  = me?.stats?.requests ?? 0;
+      qs("#statPending").innerText   = me?.stats?.pending ?? 0;
+
+      allRequests = await apiGet("/api/admin/requests?limit=300") || [];
+      bindRequestFilters();
+      renderRequests(allRequests);
+    }
+
+    function bindRequestFilters(){
+      ["#qCode","#qPhone","#qType","#qPath","#qStatus"].forEach(id=>{
+        qs(id).addEventListener("input", applyReqFilters);
+        qs(id).addEventListener("change", applyReqFilters);
+      });
+    }
+    function applyReqFilters(){
+      const qCode=qs("#qCode").value.trim(); const qPhone=qs("#qPhone").value.trim();
+      const qType=qs("#qType").value.trim(); const qPath=qs("#qPath").value.trim();
+      const qStatus=qs("#qStatus").value;
+      const f = allRequests.filter(r=>{
+        if(qCode && !(r.invoiceCode||"").includes(qCode)) return false;
+        if(qPhone && !(r.phone||"").includes(qPhone)) return false;
+        if(qType && !(r.issueType||"").includes(qType)) return false;
+        if(qPath && !formatSourcePath(r.sourcePath).includes(qPath)) return false;
+        if(qStatus && r.status!==qStatus) return false;
+        return true;
+      });
+      renderRequests(f);
+    }
+
+    function renderRequests(rows){
+      const tb = qs("#reqTbody"); tb.innerHTML="";
+      rows.forEach(row=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${row.invoiceCode || "—"}</td>
+          <td><span class="clickable" data-phone="${row.phone||""}">${row.phone||"—"}</span></td>
+          <td>${row.issueType || "—"}</td>
+          <td>${formatSourcePath(row.sourcePath)}</td>
+          <td class="muted">${formatJalali(row.createdAt)}</td>
+          <td>${renderStatusSelect(row._id,row.status)}</td>`;
+        tb.appendChild(tr);
+        attachStatusListener(row._id,row.status);
+      });
+
+      // bind phone click
+      tb.querySelectorAll('[data-phone]').forEach(el=>{
+        el.addEventListener('click',()=>openCustomerModal(el.dataset.phone));
+      });
+    }
+
+    function renderStatusSelect(id,current){
+      const opts = STATUS_OPTIONS.map(o=>`<option value="${o.value}" ${o.value===current?"selected":""}>${o.label}</option>`).join("");
+      return `<select class="status" data-id="${id}">${opts}</select>`;
+    }
+    function attachStatusListener(id,current){
+      const sel=document.querySelector(`select.status[data-id="${id}"]`);
+      if(!sel) return;
+      sel.addEventListener("change", async ()=>{
+        const ok = await apiPatch(`/api/admin/requests/${id}/status`, {status: sel.value});
+        if(!ok) sel.value=current;
+      });
+    }
+
+    // Modal customer detail
+    async function openCustomerModal(phone){
+      const c = await apiGet(`/api/customers/phone/${encodeURIComponent(phone)}`);
+      if(!c){ alert("مشتری یافت نشد"); return; }
+      currentCustomer=c;
+      mName.textContent=c.fullName||"—"; mPhone.textContent=c.phone||"—";
+      mCity.textContent=c.city||"—"; mAddr.textContent=c.address||"—";
+      mDisc.value = (c.discountPercent ?? 0);
+      mb.style.display="flex";
+    }
+    qs("#mClose").onclick=()=>mb.style.display="none";
+    qs("#mSave").onclick=async ()=>{
+      if(!currentCustomer) return;
+      const discountPercent = Math.max(0, Math.min(100, Number(mDisc.value||0)));
+      const ok = await apiPatch(`/api/admin/customers/${currentCustomer._id}/discount`, {discountPercent});
+      if(ok){ alert("ذخیره شد"); mb.style.display="none"; }
+      else alert("ذخیره تخفیف ناموفق بود");
+    };
+
+    // Customers table
+    let allCustomers=[];
+    async function loadCustomers(){
+      allCustomers = await apiGet("/api/customers") || [];
+      bindCustomerFilters();
+      renderCustomers(allCustomers);
+    }
+    function bindCustomerFilters(){
+      ["#cqPhone","#cqName","#cqCity"].forEach(id=>{
+        qs(id).oninput=()=>applyCustFilters();
+      });
+    }
+    function applyCustFilters(){
+      const p=qs("#cqPhone").value.trim(), n=qs("#cqName").value.trim(), c=qs("#cqCity").value.trim();
+      const f = allCustomers.filter(x=>
+        (!p || (x.phone||"").includes(p)) &&
+        (!n || (x.fullName||"").includes(n)) &&
+        (!c || (x.city||"").includes(c))
+      );
+      renderCustomers(f);
+    }
+    function renderCustomers(rows){
+      const tb = qs("#custTbody"); tb.innerHTML="";
+      rows.forEach(x=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${x.fullName||"—"}</td>
+          <td><span class="clickable" data-phone="${x.phone||""}">${x.phone||"—"}</span></td>
+          <td>${x.city||"—"}</td>
+          <td class="muted">${x.address||"—"}</td>
+          <td class="muted">${x.discountPercent ?? 0}%</td>`;
+        tb.appendChild(tr);
+      });
+      tb.querySelectorAll('[data-phone]').forEach(el=>{
+        el.addEventListener('click',()=>openCustomerModal(el.dataset.phone));
+      });
+    }
+
+    // --- helpers
+    async function apiGet(path){
+      const res = await fetch(API+path,{headers:{Authorization:"Bearer "+token}});
+      if(res.status===401){ localStorage.removeItem("sw_token"); location.href="/club.html"; return; }
+      return res.ok ? res.json() : null;
+    }
+    async function apiPatch(path, body){
+      try{
+        const res = await fetch(API+path,{method:"PATCH",headers:{
+          "Content-Type":"application/json", Authorization:"Bearer "+token
+        },body:JSON.stringify(body)});
+        return res.ok;
+      }catch{ return false; }
+    }
+  </script>
 </body>
 </html>
