@@ -1,153 +1,115 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SamiWater | ثبت درخواست</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
-<style>
-:root{ --green:#0f3b2d; --panel:#0f3b2db3; --gold:#d9b24c; --gold-strong:#f2c94c; --ring:#3e6b57; }
-*{box-sizing:border-box}
-body{margin:0;background:var(--green);font-family:"Vazirmatn",system-ui; color:#fff; padding:22px; display:flex; justify-content:center}
-.wrap{width:min(760px,100%);}
-.card{background:linear-gradient(180deg,#0f3b2df5,#0e392bb5); border:1px solid var(--ring); border-radius:18px; padding:24px; box-shadow:0 12px 30px #00000055}
-.brand{display:flex; align-items:center; gap:12px; margin-bottom:14px}
-.brand img{width:42px;height:42px;border-radius:9px;border:1px solid #355a49; object-fit:cover; background:#124432}
-.brand .title{font-size:22px;font-weight:800;color:var(--gold)}
-h1{margin:6px 0 14px; font-size:20px}
-.row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-@media(max-width:640px){.row{grid-template-columns:1fr}}
-.label{margin:6px 0 6px; font-size:13px; color:#dbece5}
-.input, textarea, select{
-  width:100%; background:#0b2d23; border:1px solid #2e5a48; border-radius:12px; color:#fff;
-  padding:12px 14px; font-size:16px; outline:none;
-}
-textarea{min-height:110px; resize:vertical}
-.btn{width:100%; background:linear-gradient(180deg,#e2c15a,#cc9f2a); color:#1b2d23; border:none; padding:14px 16px; border-radius:14px; font-size:18px; font-weight:800; margin-top:16px}
-.helper{margin-top:10px; font-size:12px; color:#cfe0d9}
-.err{margin-top:10px;color:#ffc6c6;font-size:13px;display:none}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>فرم ثبت مشتری | SamiWater</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body{background:#083b31;color:#f7f7f7;font-family:IRANSans, Vazirmatn, sans-serif}
+    .card{max-width:680px;margin:28px auto;padding:22px;border:1px solid #335f55;border-radius:18px;background:#0e4a3f}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    label{font-weight:700}
+    .input, textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2f5c51;background:#f3f7f6;color:#072b24}
+    textarea{min-height:100px}
+    .btn{width:100%;padding:14px;border-radius:14px;background:#f3c842;color:#10352c;font-weight:800;font-size:18px;border:none;margin-top:10px}
+    @media(min-width:640px){ .row.two{grid-template-columns:1fr 1fr} }
+  </style>
 </head>
 <body>
-<div class="wrap">
   <div class="card">
-    <div class="brand">
-      <img src="/logo-samiwater.png" alt="SamiWater" /><div class="title">SamiWater</div>
-    </div>
-    <h1>ثبت درخواست خدمت</h1>
+    <h2 style="margin-top:0;color:#f3c842">ثبت مشخصات مشتری</h2>
 
-    <div class="row">
+    <div class="row two">
       <div>
-        <div class="label">شماره موبایل (از مرحله قبل)</div>
-        <input id="phone" class="input" disabled />
+        <label>شماره موبایل</label>
+        <input id="phone" class="input" readonly />
       </div>
       <div>
-        <div class="label">نام و نام خانوادگی *</div>
+        <label>نام و نام‌خانوادگی</label>
         <input id="fullName" class="input" placeholder="مثلاً علی رضایی" />
       </div>
     </div>
 
-    <div class="row">
+    <div class="row two">
       <div>
-        <div class="label">شهر *</div>
+        <label>شهر</label>
         <input id="city" class="input" value="اصفهان" />
       </div>
       <div>
-        <div class="label">آدرس دقیق *</div>
-        <input id="address" class="input" placeholder="خیابان، کوچه، پلاک..." />
+        <label>تلفن دوم (اختیاری)</label>
+        <input id="altPhone" class="input" placeholder="مثلاً 0913..." />
       </div>
     </div>
 
     <div class="row">
       <div>
-        <div class="label">شماره دوم (اختیاری)</div>
-        <input id="altPhone" class="input" inputmode="numeric" placeholder="مثلاً 0935..." />
-      </div>
-      <div>
-        <div class="label">تاریخ تولد (اختیاری) - شمسی</div>
-        <div class="row" style="grid-template-columns:1fr 1fr 1fr; gap:8px;">
-          <select id="bDay" class="input">
-            <option value="">روز</option>
-            <script>for(let d=1; d<=31; d++)document.write(`<option value="${d}">${d}</option>`);</script>
-          </select>
-          <select id="bMonth" class="input">
-            <option value="">ماه</option>
-            <option value="1">فروردین</option><option value="2">اردیبهشت</option>
-            <option value="3">خرداد</option><option value="4">تیر</option>
-            <option value="5">مرداد</option><option value="6">شهریور</option>
-            <option value="7">مهر</option><option value="8">آبان</option>
-            <option value="9">آذر</option><option value="10">دی</option>
-            <option value="11">بهمن</option><option value="12">اسفند</option>
-          </select>
-          <select id="bYear" class="input">
-            <option value="">سال</option>
-            <script>for(let y=1399; y>=1330; y--)document.write(`<option value="${y}">${y}</option>`);</script>
-          </select>
-        </div>
+        <label>آدرس دقیق</label>
+        <textarea id="address" class="input" placeholder="خیابان، کوچه، پلاک ..."></textarea>
       </div>
     </div>
 
-    <div class="label">توضیح کوتاه درباره مشکل (اختیاری)</div>
-    <textarea id="desc" class="input" placeholder="..."></textarea>
-
-    <button id="submit" class="btn">ثبت نهایی</button>
-    <div id="err" class="err"></div>
-    <div class="helper">پس از ثبت، کد پیگیری برای شما نمایش داده می‌شود.</div>
+    <button id="submitBtn" class="btn">ثبت نهایی</button>
   </div>
-</div>
 
-<script>
-const API = "https://samiwater-backend.onrender.com";
-const qs = new URLSearchParams(location.search);
-const phone = (qs.get("phone")||"").replace(/\D/g,'');
-const sourcePath = (qs.get("src")||"urgent");
-document.getElementById("phone").value = phone;
+  <script>
+    const API = "https://samiwater-backend.onrender.com";
 
-function val(id){return document.getElementById(id).value.trim()}
+    function normalizePhone(p){
+      if(!p) return "";
+      p = p.replace(/[^\d]/g,"");
+      if(p.startsWith("0098")) p = "0"+p.slice(3);
+      if(p.startsWith("98"))   p = "0"+p.slice(2);
+      return p;
+    }
 
-async function createCustomer(payload){
-  const r = await fetch(`${API}/api/customers`,{
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  });
-  const j = await r.json();
-  if(!r.ok) throw new Error(j.error||"خطا در ایجاد مشتری");
-  return j;
-}
-async function createRequest(phone, issueType){
-  const r = await fetch(`${API}/api/requests`,{
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ phone, issueType, sourcePath })
-  });
-  if(r.status===429){
-    location.href = `request-confirmed.html?code=spam`;
-    return null;
-  }
-  const j = await r.json();
-  if(!r.ok) throw new Error(j.error||"ثبت درخواست ناموفق");
-  return j;
-}
+    const qp = new URLSearchParams(location.search);
+    const phoneFromQS = normalizePhone(qp.get("phone") || "");
+    document.getElementById("phone").value = phoneFromQS;
 
-document.getElementById("submit").addEventListener("click", async ()=>{
-  const err = document.getElementById("err"); err.style.display="none";
-  const fullName = val("fullName"); const city = val("city")||"اصفهان"; const address = val("address");
-  if(!/^09\d{9}$/.test(phone)){ err.textContent="شماره معتبر نیست."; err.style.display="block"; return; }
-  if(!fullName || !address){ err.textContent="نام کامل و آدرس الزامی است."; err.style.display="block"; return; }
+    async function apiPost(url, body){
+      const r = await fetch(url, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(body)
+      });
+      const data = await r.json().catch(()=> ({}));
+      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
+      return data;
+    }
 
-  const altPhone = val("altPhone");
-  const birthJY = document.getElementById("bYear").value || undefined;
-  const birthJM = document.getElementById("bMonth").value || undefined;
-  const birthJD = document.getElementById("bDay").value || undefined;
+    async function createRequestFor(phone){
+      const sourcePath = sessionStorage.getItem("sw_source") || "ems";
+      const issueType  = sessionStorage.getItem("sw_issue")  || "urgent";
+      const doc = await apiPost(`${API}/api/requests`, { phone, issueType, sourcePath });
+      location.href = `/request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}`;
+    }
 
-  try{
-    await createCustomer({ fullName, phone, address, altPhone, city, birthJY, birthJM, birthJD });
-    const req = await createRequest(phone, "درخواست از فرم وب");
-    if(req) location.href = `request-confirmed.html?code=${encodeURIComponent(req.invoiceCode)}`;
-  }catch(e){
-    err.textContent = e.message || "خطای ناشناخته"; err.style.display="block";
-  }
-});
-</script>
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const fullName = document.getElementById("fullName").value.trim();
+      const phone    = normalizePhone(document.getElementById("phone").value);
+      const address  = document.getElementById("address").value.trim();
+      const altPhone = document.getElementById("altPhone").value.trim();
+      const city     = document.getElementById("city").value.trim() || "اصفهان";
+
+      if(!fullName || !phone || !address){
+        alert("نام، موبایل و آدرس الزامی است.");
+        return;
+      }
+
+      try{
+        // 1) ایجاد مشتری (اگر وجود داشت 409 می‌گیریم که مشکلی نیست)
+        try{
+          await apiPost(`${API}/api/customers`, { fullName, phone, address, altPhone, city });
+        }catch(e){
+          // اگر 409 بود یعنی مشتری از قبل هست → رد می‌شویم
+        }
+        // 2) ساخت درخواست با مسیر/مشکل
+        await createRequestFor(phone);
+      }catch(e){
+        alert("خطا: "+ e.message);
+      }
+    });
+  </script>
 </body>
 </html>
