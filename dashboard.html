@@ -1,247 +1,246 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>داشبورد | SamiWater</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    :root{--green:#0f3b2e;--green2:#0b2e24;--gold:#d4af37;--gold2:#f1d26a}
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,var(--green),var(--green2));color:#fff;font-family:Tahoma,Vazirmatn,sans-serif}
-    .wrap{max-width:1200px;margin:24px auto;padding:0 12px}
-    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-    .logo{display:flex;gap:8px;align-items:center}
-    .ico{width:36px;height:36px;border-radius:10px;border:1px solid rgba(212,175,55,.45);
-      background:linear-gradient(145deg,#145,#0a3329);display:flex;align-items:center;justify-content:center;color:#f6e5a4;font-weight:800}
-    .badge{background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.35);padding:6px 10px;border-radius:12px}
-    button{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#112;border:none;border-radius:12px;padding:8px 12px;font-weight:700}
-    .card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:12px;margin-top:12px}
-    .filters{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-    input,select{background:#0e2f25;color:#fff;border:1px solid rgba(212,175,55,.35);border-radius:10px;padding:8px 10px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border-bottom:1px solid rgba(212,175,55,.15);padding:8px 6px;font-size:14px;white-space:nowrap}
-    th{color:#f1d26a;text-align:right}
-    .statusSel{padding:4px 8px;border:1px solid rgba(212,175,55,.35);border-radius:10px;background:#0e2f25;color:#fff}
-    .muted{color:#c9d6d2}
-    /* modal */
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px}
-    .box{max-width:600px;width:100%;background:#0e2f25;border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:16px}
-    .grid{display:grid;grid-template-columns:140px 1fr;gap:10px}
-    .kv{display:contents}
-    .kv b{color:#f1d26a}
+    body{background:#052e27;color:#eaf5f2;font-family:IRANSans, Vazirmatn, sans-serif}
+    .wrap{max-width:1100px;margin:20px auto;padding:10px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .btn{background:#f3c842;color:#10352c;border:none;border-radius:12px;padding:10px 16px;font-weight:800}
+    .card{border:1px solid #2f5c51;background:#0e4a3f;border-radius:18px;padding:16px;margin-top:14px}
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    th,td{padding:10px 8px}
+    tr{background:#0b4036;border-radius:12px}
+    .pill{padding:6px 10px;border-radius:20px;border:1px solid #2b5a50}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal .box{max-width:560px;background:#0e4a3f;border:1px solid #2f5c51;border-radius:16px;padding:18px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .input, select{padding:10px 12px;border-radius:12px;border:1px solid #2f5c51;background:#f5faf9;color:#073128}
+    .muted{opacity:.75}
+    a.phone{color:#f3c842;text-decoration:underline}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
-      <div class="logo">
-        <div class="ico">SA</div>
-        <div>
-          <div style="font-weight:700">SamiWater داشبورد</div>
-          <div id="roleRow" class="badge">نقش: —</div>
-        </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="logout" class="btn">خروج</button>
+        <span class="pill">نقش: <b id="roleLbl">—</b></span>
       </div>
-      <div><button id="logout">خروج</button></div>
+      <h2 style="color:#f3c842;margin:8px 0">SamiWater داشبورد</h2>
     </div>
 
-    <div class="card"><div id="stats">در حال بارگذاری…</div></div>
+    <div class="card" id="stats">در حال بارگذاری...</div>
 
     <div class="card">
-      <div style="margin-bottom:6px;color:#f1d26a">آخرین درخواست‌ها</div>
+      <h3 style="margin-top:0">آخرین درخواست‌ها</h3>
 
-      <div class="filters">
-        <input id="qPhone" placeholder="جستجو: موبایل" />
-        <select id="qStatus">
+      <div class="grid2" style="margin-bottom:10px">
+        <input id="qPhone" class="input" placeholder="فیلتر: موبایل" />
+        <select id="qStatus" class="input">
           <option value="">همه وضعیت‌ها</option>
           <option value="pending">در انتظار</option>
-          <option value="assigned">ارجاع‌شده</option>
-          <option value="done">انجام‌شده</option>
-          <option value="canceled">لغوشده</option>
+          <option value="assigned">ارجاع شده</option>
+          <option value="done">انجام شد</option>
+          <option value="canceled">لغو شد</option>
         </select>
-        <input id="qSource" placeholder="جستجو: مسیر" />
-        <button id="applyFilters">اعمال فیلتر</button>
       </div>
+      <input id="qSource" class="input" placeholder="جستجو: مسیر" />
 
-      <div style="overflow:auto">
-        <table id="tbl">
+      <button id="applyFilter" class="btn" style="margin-top:10px">اعمال فیلتر</button>
+
+      <div style="overflow-x:auto;margin-top:12px">
+        <table>
           <thead>
             <tr>
-              <th>کد</th><th>موبایل</th><th>نوع</th><th>مسیر</th><th>زمان</th><th>وضعیت</th><th>تخفیف (%)</th>
+              <th>کد</th>
+              <th>موبایل</th>
+              <th>نوع</th>
+              <th>مسیر</th>
+              <th>زمان</th>
+              <th>وضعیت</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody id="rows"></tbody>
         </table>
       </div>
-      <div class="muted" style="margin-top:6px">برای دیدن اطلاعات مشتری روی شماره موبایل کلیک کنید.</div>
+      <div class="muted" style="margin-top:8px">برای دیدن اطلاعات مشتری روی شماره موبایل کلیک کنید.</div>
     </div>
   </div>
 
-  <!-- Modal: customer -->
-  <div id="customerModal" class="modal">
+  <!-- Modal: اطلاعات مشتری -->
+  <div id="modal" class="modal">
     <div class="box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <h3 style="margin:0;color:#f1d26a">مشخصات مشتری</h3>
-        <button id="closeModal">بستن</button>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0;color:#f3c842">مشخصات مشتری</h3>
+        <button id="closeModal" class="btn" style="background:#2e5e53;color:#fff">بستن</button>
       </div>
-      <div id="custBody" class="grid"></div>
+      <div id="cBody" style="margin-top:12px"></div>
     </div>
   </div>
 
   <script>
-    const API_BASE = localStorage.getItem("sw_api") || "https://samiwater-backend.onrender.com";
+    const API = "https://samiwater-backend.onrender.com";
     const role = localStorage.getItem("sw_role") || "user";
-    document.getElementById("roleRow").textContent = `نقش: ${role === "admin" ? "مدیر" : "کاربر"}`;
+    const phoneSelf = localStorage.getItem("sw_phone") || "";
 
+    document.getElementById("roleLbl").textContent = (role === "admin" ? "مدیر" : "کاربر");
     document.getElementById("logout").onclick = () => {
-      localStorage.removeItem("sw_role");localStorage.removeItem("sw_phone");
-      localStorage.removeItem("sw_token");location.href="club.html";
+      localStorage.removeItem("sw_role");
+      localStorage.removeItem("sw_phone");
+      location.href = "/club-login.html";
     };
 
-    const statusFa = { pending:"در انتظار", assigned:"ارجاع‌شده", done:"انجام‌شده", canceled:"لغوشده" };
-    const statusEnByFa = { "در انتظار":"pending", "ارجاع‌شده":"assigned", "انجام‌شده":"done", "لغوشده":"canceled" };
+    // برچسب فارسی وضعیت/مسیر
+    const statusFa = { pending:"در انتظار", assigned:"ارجاع شده", done:"انجام شد", canceled:"لغو شد" };
+    const sourceLabels = {
+      "ems":"درخواست فوری",
+      "web_form":"درخواست فوری",
+      "services/maintenance":"خدمات › سرویس دوره‌ای",
+      "services/install":"خدمات › نصب",
+      "services/repair":"خدمات › تعمیر",
+      "services/move":"خدمات › اتصال/جابجایی",
+      "services/visit":"خدمات › بازدید",
+      "services/other":"خدمات › سایر"
+    };
+    const fmtSource = v => sourceLabels[v] ?? (v ? v.replaceAll("/"," › ") : "—");
 
-    const $ = s=>document.querySelector(s);
-    const tbody = $("#tbl tbody");
-
-    async function loadStats(){
+    function toJalali(ts){
       try{
-        const r = await fetch(`${API_BASE}/api/admin/stats`);
-        const j = await r.json();
-        if(r.ok){
-          $("#stats").textContent = `مشتریان: ${j.totalCustomers} | کل درخواست‌ها: ${j.totalRequests} | در انتظار: ${j.pendingCount}`;
-        }else{ $("#stats").textContent = "خطا در دریافت آمار"; }
-      }catch{ $("#stats").textContent = "عدم دسترسی به سرور"; }
+        return new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+          year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"
+        }).format(new Date(ts));
+      }catch{ return ts; }
     }
 
-    let allRows = [];
-    async function loadRequests(){
-      const r = await fetch(`${API_BASE}/api/admin/requests?limit=300`);
-      const j = await r.json();
-      if(!r.ok){ alert(j.error || "خطا در دریافت لیست"); return; }
-      allRows = j;
+    async function apiGet(url){
+      const r = await fetch(url);
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }
+    async function apiPatch(url, body){
+      const r = await fetch(url, { method:"PATCH", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) });
+      const data = await r.json().catch(()=> ({}));
+      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
+      return data;
+    }
+
+    // آمار + لیست
+    let allRequests = [];
+    async function loadAll(){
+      const reqs = await apiGet(`${API}/api/requests`);
+      allRequests = reqs;
+      const customers = await apiGet(`${API}/api/customers`);
+      document.getElementById("stats").innerHTML =
+        `مشتریان: <b>${customers.length}</b> | کل درخواست‌ها: <b>${reqs.length}</b> | در انتظار: <b>${reqs.filter(r=>r.status==='pending').length}</b>`;
       renderRows();
     }
 
     function renderRows(){
-      const qPhone=$("#qPhone").value.trim(), qStatus=$("#qStatus").value, qSource=$("#qSource").value.trim();
-      const rows = allRows.filter(x =>
-        (!qPhone || (x.phone||"").includes(qPhone)) &&
-        (!qStatus || x.status===qStatus) &&
-        (!qSource || (x.sourcePath||"").includes(qSource))
-      );
+      const qPhone = (document.getElementById("qPhone").value || "").trim();
+      const qStatus= (document.getElementById("qStatus").value || "");
+      const qSource= (document.getElementById("qSource").value || "").trim();
 
-      tbody.innerHTML="";
-      for(const r of rows){
-        const tr=document.createElement("tr");
-        const timeStr = r.createdAt ? new Date(r.createdAt).toLocaleString("fa-IR") : "-";
-        tr.innerHTML = `
-          <td>${r.invoiceCode}</td>
-          <td><a href="#" class="custLink" data-phone="${r.phone}" style="color:#f1d26a">${r.phone}</a></td>
-          <td>${r.issueType||"-"}</td>
-          <td>${r.sourcePath||"-"}</td>
-          <td>${timeStr}</td>
-          <td>
-            ${
-              role==="admin"
-              ? `<select class="statusSel" data-id="${r._id}">
-                   <option ${r.status==="pending"?"selected":""}>در انتظار</option>
-                   <option ${r.status==="assigned"?"selected":""}>ارجاع‌شده</option>
-                   <option ${r.status==="done"?"selected":""}>انجام‌شده</option>
-                   <option ${r.status==="canceled"?"selected":""}>لغوشده</option>
-                 </select>`
-              : (statusFa[r.status] || r.status || "-")
+      let list = allRequests.slice().sort((a,b)=> (b.createdAt||"").localeCompare(a.createdAt||""));
+
+      if(qPhone)  list = list.filter(r => (r.phone||"").includes(qPhone));
+      if(qStatus) list = list.filter(r => (r.status||"")===qStatus);
+      if(qSource) list = list.filter(r => fmtSource(r.sourcePath).includes(qSource));
+
+      const rows = list.map(r => {
+        const st = r.status || "pending";
+        const stFa = statusFa[st] || st;
+        const timeFa = toJalali(r.createdAt);
+        const issue = r.issueType || "—";
+        const sourceFa = fmtSource(r.sourcePath);
+
+        // فقط مدیر اجازه تغییر وضعیت دارد
+        const statusCell = (role === "admin")
+          ? `<select data-id="${r._id}" class="input selStatus">
+               <option value="pending"  ${st==='pending'?'selected':''}>در انتظار</option>
+               <option value="assigned" ${st==='assigned'?'selected':''}>ارجاع شده</option>
+               <option value="done"     ${st==='done'?'selected':''}>انجام شد</option>
+               <option value="canceled" ${st==='canceled'?'selected':''}>لغو شد</option>
+             </select>`
+          : `<span class="pill">${stFa}</span>`;
+
+        return `<tr>
+          <td>${r.invoiceCode || "—"}</td>
+          <td><a href="#" class="phone" data-phone="${r.phone}">${r.phone}</a></td>
+          <td>${issue}</td>
+          <td>${sourceFa}</td>
+          <td>${timeFa}</td>
+          <td>${statusCell}</td>
+        </tr>`;
+      }).join("");
+
+      document.getElementById("rows").innerHTML = rows || `<tr><td colspan="6" class="muted">موردی یافت نشد.</td></tr>`;
+
+      // رویدادهای تغییر وضعیت
+      if(role === "admin"){
+        document.querySelectorAll(".selStatus").forEach(sel=>{
+          sel.addEventListener("change", async (e)=>{
+            const id = sel.getAttribute("data-id");
+            const value = sel.value;
+            try{
+              await apiPatch(`${API}/api/requests/${id}`, { status:value });
+            }catch(err){
+              alert("خطا در تغییر وضعیت: "+ err.message);
             }
-          </td>
-          <td>
-            ${
-              role==="admin"
-              ? `<div style="display:flex;gap:6px;align-items:center">
-                   <input type="number" min="0" max="100" value="${r.discountPercent||0}" style="width:80px" class="discInp" data-id="${r._id}" />
-                   <button class="discBtn" data-id="${r._id}">اعمال</button>
-                 </div>`
-              : (r.discountPercent? r.discountPercent+"%" : "—")
-            }
-          </td>
-        `;
-        tbody.appendChild(tr);
+          });
+        });
       }
 
-      // کلیک روی شماره → مودال
-      document.querySelectorAll(".custLink").forEach(a=>{
-        a.onclick = async (e)=>{
+      // کلیک روی شماره برای دیدن مشتری
+      document.querySelectorAll("a.phone").forEach(a=>{
+        a.addEventListener("click", async (e)=>{
           e.preventDefault();
-          const phone=a.dataset.phone;
+          const ph = a.getAttribute("data-phone");
           try{
-            const r = await fetch(`${API_BASE}/api/customers/phone/${phone}`);
-            const c = await r.json();
-            if(!r.ok){ alert(c.error||"مشتری پیدا نشد"); return; }
+            const c = await apiGet(`${API}/api/customers/phone/${encodeURIComponent(ph)}`);
             showCustomer(c);
-          }catch{ alert("خطا در دریافت اطلاعات مشتری"); }
-        };
+          }catch(err){
+            alert("مشتری یافت نشد");
+          }
+        });
       });
-
-      // تغییر وضعیت (فقط مدیر)
-      if(role==="admin"){
-        document.querySelectorAll(".statusSel").forEach(sel=>{
-          sel.onchange = async ()=>{
-            const id = sel.dataset.id;
-            const faVal = sel.value;
-            const enVal = statusEnByFa[faVal] || "pending";
-            try{
-              const r = await fetch(`${API_BASE}/api/admin/requests/${id}/status`,{
-                method:"PATCH",headers:{ "Content-Type":"application/json" },
-                body: JSON.stringify({ status: enVal })
-              });
-              const j = await r.json();
-              if(!r.ok) alert(j.error||"خطا در تغییر وضعیت");
-            }catch{ alert("ارتباط با سرور برقرار نشد"); }
-          };
-        });
-
-        // اعمال تخفیف روی درخواست
-        document.querySelectorAll(".discBtn").forEach(btn=>{
-          btn.onclick = async ()=>{
-            const id=btn.dataset.id;
-            const inp = tbody.querySelector(`.discInp[data-id="${id}"]`);
-            let v = Number(inp.value||0);
-            if(v<0) v=0; if(v>100) v=100;
-            try{
-              const r = await fetch(`${API_BASE}/api/admin/requests/${id}/discount`,{
-                method:"PATCH",headers:{ "Content-Type":"application/json" },
-                body: JSON.stringify({ discountPercent: v })
-              });
-              const j = await r.json();
-              if(!r.ok) alert(j.error||"خطا در اعمال تخفیف");
-            }catch{ alert("ارتباط با سرور برقرار نشد"); }
-          };
-        });
-      }
     }
 
     // مودال مشتری
-    const modal=document.getElementById("customerModal");
-    const custBody=document.getElementById("custBody");
-    document.getElementById("closeModal").onclick=()=>modal.style.display="none";
-    modal.onclick=(e)=>{ if(e.target===modal) modal.style.display="none"; };
+    const modal = document.getElementById("modal");
+    document.getElementById("closeModal").onclick = ()=> modal.style.display="none";
 
     function showCustomer(c){
-      custBody.innerHTML = `
-        <div class="kv"><b>نام</b><div>${c.fullName||"—"}</div></div>
-        <div class="kv"><b>موبایل</b><div>${c.phone||"—"}</div></div>
-        <div class="kv"><b>شهر</b><div>${c.city||"—"}</div></div>
-        <div class="kv"><b>آدرس</b><div style="white-space:normal">${c.address||"—"}</div></div>
-        <div class="kv"><b>تلفن دوم</b><div>${c.altPhone||"—"}</div></div>
-        <div class="kv"><b>عضویت</b><div>${c.joinedAt? new Date(c.joinedAt).toLocaleDateString("fa-IR"):"—"}</div></div>
-        <div class="kv"><b>تخفیف مشتری</b><div>${(c.discountPercent??0)}%</div></div>
-      `;
+      const body = `
+        <div class="grid2">
+          <div><div class="muted">نام</div><div style="font-weight:800">${c.fullName||"—"}</div></div>
+          <div><div class="muted">موبایل</div><div style="font-weight:800">${c.phone||"—"}</div></div>
+          <div><div class="muted">شهر</div><div>${c.city||"—"}</div></div>
+          <div><div class="muted">تلفن دوم</div><div>${c.altPhone||"—"}</div></div>
+          <div class="grid2" style="grid-column:1 / -1">
+            <div><div class="muted">عضویت</div><div>${toJalali(c.joinedAt||c.createdAt||"")}</div></div>
+            <div><div class="muted">تخفیف مشتری</div><div>${(c.discountPercent??0)}%</div></div>
+          </div>
+          <div style="grid-column:1 / -1"><div class="muted">آدرس</div><div>${c.address||"—"}</div></div>
+        </div>`;
+      document.getElementById("cBody").innerHTML = body;
       modal.style.display="flex";
     }
 
-    // فیلتر
-    document.getElementById("applyFilters").onclick = renderRows;
+    document.getElementById("applyFilter").onclick = renderRows;
 
-    // شروع
-    loadStats(); loadRequests();
+    // محدودیت دسترسی: اگر کاربر عادی است، فقط درخواست‌های مربوط به خودش را نشان بده
+    async function init(){
+      await loadAll();
+      if(role !== "admin" && phoneSelf){
+        allRequests = allRequests.filter(r => r.phone === phoneSelf);
+        renderRows();
+      }
+    }
+    init();
   </script>
 </body>
 </html>
