@@ -1,92 +1,121 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ورود | SamiWater</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    :root{--green:#0f3b2e;--green2:#0b2e24;--gold:#d4af37;--gold2:#f1d26a}
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,var(--green),var(--green2));color:#fff;
-      font-family:Tahoma,Vazirmatn,sans-serif}
-    .wrap{max-width:520px;margin:40px auto;padding:0 12px}
-    .card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:16px}
-    .brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-    .ico{width:42px;height:42px;border-radius:12px;border:1px solid rgba(212,175,55,.45);
-      background:linear-gradient(145deg,#145,#0a3329);display:flex;align-items:center;justify-content:center;color:#f6e5a4;font-weight:800}
-    label{display:block;margin:10px 4px 6px}
-    input{width:100%;background:#0e2f25;color:#fff;border:1px solid rgba(212,175,55,.35);border-radius:10px;padding:10px}
-    button{width:100%;margin-top:14px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#112;border:none;border-radius:12px;padding:12px;font-weight:700}
-    .muted{color:#c9d6d2;font-size:13px;margin-top:8px}
-    .pinRow,.otpRow{display:none}
+    body{background:#083b31;color:#f7f7f7;font-family:IRANSans, Vazirmatn, sans-serif}
+    .card{max-width:560px;margin:28px auto;padding:22px;border:1px solid #335f55;border-radius:18px;background:#0e4a3f}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .badge{width:48px;height:48px;border-radius:12px;background:linear-gradient(145deg,#0e4a3f,#063429);
+           display:grid;place-items:center;border:1px solid #315a50;color:#f3c842;font-weight:900}
+    .input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #2f5c51;background:#f3f7f6;color:#072b24;
+           font-size:18px;margin:8px 0}
+    .btn{width:100%;padding:14px;border-radius:14px;background:#f3c842;color:#10352c;font-weight:800;font-size:18px;border:none}
+    .hint{opacity:.85;font-size:13px;margin-top:12px;line-height:1.9}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="brand">
-        <div class="ico">SA</div>
-        <h2 style="margin:0">ورود | <span style="color:#f1d26a">SamiWater</span></h2>
-      </div>
+  <div class="card">
+    <div class="brand">
+      <h2 style="margin:0;color:#f3c842">ورود | <span style="color:#f3c842">SamiWater</span></h2>
+      <div class="badge">SA</div>
+    </div>
 
-      <label>شماره موبایل</label>
-      <input id="phone" placeholder="09131234567" inputmode="numeric" />
+    <label>شماره موبایل</label>
+    <input id="phone" class="input" placeholder="مثلاً 09131234567" inputmode="numeric" />
 
-      <div class="pinRow" id="pinRow">
-        <label>PIN (فقط برای مدیر)</label>
-        <input id="pin" placeholder="مثلاً 2468" inputmode="numeric" />
-      </div>
+    <label>PIN (فقط برای مدیر)</label>
+    <input id="pin" class="input" placeholder="در صورت مدیر بودن" inputmode="numeric" />
 
-      <div class="otpRow" id="otpRow">
-        <label>کد تأیید (تست)</label>
-        <input id="otp" placeholder="111111" inputmode="numeric" />
-      </div>
+    <button id="goBtn" class="btn">ادامه</button>
 
-      <button id="btn">ادامه</button>
-      <div class="muted">اگر با شماره مدیر وارد شوید، PIN را هم وارد کنید. (OTP تست: 111111)</div>
+    <div class="hint">
+      اگر از «درخواست فوری» وارد شده‌اید، درخواست شما به‌صورت فوری ثبت می‌شود.  
+      اگر مشتری جدید هستید، در مرحله‌ی بعد فرم کوتاه نمایش داده می‌شود.
     </div>
   </div>
 
   <script>
-    // ====== تنظیمات مدیر ======
-    const ADMIN_PIN = "2468";
-    const ADMIN_PHONES = ["09384129843"]; // می‌تونی بیشتر هم بذاری
-    const normalize = (p) => (p||"").replace(/\D/g,"").slice(-10);
-    const isAdminPhone = (p) => ADMIN_PHONES.map(normalize).includes(normalize(p));
+    // --- پیکربندی ثابت‌ها
+    const API = "https://samiwater-backend.onrender.com";
+    const ADMIN_PHONE = "09384129843";
+    const ADMIN_PIN   = "2468";
 
-    const phoneInput = document.getElementById("phone");
-    const pinRow = document.getElementById("pinRow");
-    const otpRow = document.getElementById("otpRow");
-    const btn = document.getElementById("btn");
+    // --- پارامترهای مسیر ورودی
+    const qp = new URLSearchParams(location.search);
+    const swSource = qp.get("source") || "ems";     // پیش‌فرض: درخواست فوری
+    const swIssue  = qp.get("issue")  || "urgent";  // پیش‌فرض: فوری
 
-    // OTP تست را همیشه نشان بده (فعلاً)
-    otpRow.style.display = "block";
+    // در session نگه می‌داریم تا مرحله بعد
+    sessionStorage.setItem("sw_source", swSource);
+    sessionStorage.setItem("sw_issue",  swIssue);
 
-    phoneInput.addEventListener("input", ()=>{
-      pinRow.style.display = isAdminPhone(phoneInput.value) ? "block" : "none";
-    });
+    function normalizePhone(p){
+      if(!p) return "";
+      p = p.replace(/[^\d]/g,"");
+      if(p.startsWith("0098")) p = "0"+p.slice(3);
+      if(p.startsWith("98"))   p = "0"+p.slice(2);
+      return p;
+    }
 
-    btn.onclick = ()=>{
-      const phone = phoneInput.value.trim();
-      const otp = (document.getElementById("otp").value||"").trim();
-      if (!phone){ alert("شماره را وارد کنید"); return; }
-      if (otp !== "111111"){ alert("کد تأیید نادرست است (تست: 111111)"); return; }
+    async function apiGet(url){
+      const r = await fetch(url);
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }
 
-      let role = "user";
-      if (isAdminPhone(phone)) {
-        const pin = (document.getElementById("pin").value||"").trim();
-        if (pin !== ADMIN_PIN){ alert("PIN مدیر اشتباه است"); return; }
-        role = "admin";
+    async function apiPost(url, body){
+      const r = await fetch(url, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(body)
+      });
+      const data = await r.json().catch(()=> ({}));
+      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
+      return data;
+    }
+
+    async function createRequestFor(phone){
+      const sourcePath = sessionStorage.getItem("sw_source") || "ems";
+      const issueType  = sessionStorage.getItem("sw_issue")  || "urgent";
+      const doc = await apiPost(`${API}/api/requests`, { phone, issueType, sourcePath });
+      location.href = `/request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}`;
+    }
+
+    document.getElementById("goBtn").addEventListener("click", async () => {
+      const phone = normalizePhone(document.getElementById("phone").value);
+      const pin   = (document.getElementById("pin").value || "").trim();
+
+      if(!/^0\d{10}$/.test(phone)){
+        alert("شماره موبایل معتبر نیست.");
+        return;
       }
 
-      // ذخیره‌ی وضعیت برای داشبورد
-      localStorage.setItem("sw_role", role);
-      localStorage.setItem("sw_phone", normalize(phone));
-      localStorage.setItem("sw_token", "devtoken");
-      localStorage.setItem("sw_api", "https://samiwater-backend.onrender.com");
+      // ورود مدیر
+      if(phone === ADMIN_PHONE && pin === ADMIN_PIN){
+        localStorage.setItem("sw_role","admin");
+        localStorage.setItem("sw_phone",phone);
+        location.href = "/dashboard.html";
+        return;
+      }
 
-      location.href = "dashboard.html";
-    };
+      // کاربر عادی
+      localStorage.setItem("sw_role","user");
+      localStorage.setItem("sw_phone",phone);
+
+      try{
+        // آیا مشتری از قبل وجود دارد؟
+        await apiGet(`${API}/api/customers/phone/${encodeURIComponent(phone)}`);
+        // وجود دارد → مستقیم درخواست بساز
+        await createRequestFor(phone);
+      }catch(e){
+        // وجود ندارد → بفرست به فرم ثبت مشتری
+        location.href = `/request-form.html?phone=${encodeURIComponent(phone)}`;
+      }
+    });
   </script>
 </body>
 </html>
