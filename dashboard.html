@@ -1,246 +1,177 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>داشبورد | SamiWater</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body{background:#052e27;color:#eaf5f2;font-family:IRANSans, Vazirmatn, sans-serif}
-    .wrap{max-width:1100px;margin:20px auto;padding:10px}
-    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-    .btn{background:#f3c842;color:#10352c;border:none;border-radius:12px;padding:10px 16px;font-weight:800}
-    .card{border:1px solid #2f5c51;background:#0e4a3f;border-radius:18px;padding:16px;margin-top:14px}
-    table{width:100%;border-collapse:separate;border-spacing:0 10px}
-    th,td{padding:10px 8px}
-    tr{background:#0b4036;border-radius:12px}
-    .pill{padding:6px 10px;border-radius:20px;border:1px solid #2b5a50}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
-    .modal .box{max-width:560px;background:#0e4a3f;border:1px solid #2f5c51;border-radius:16px;padding:18px}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .input, select{padding:10px 12px;border-radius:12px;border:1px solid #2f5c51;background:#f5faf9;color:#073128}
-    .muted{opacity:.75}
-    a.phone{color:#f3c842;text-decoration:underline}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>داشبورد | SamiWater</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  body{background:#0e3b2f;color:#fff;font-family:sans-serif}
+  .wrap{max-width:1100px;margin:20px auto;padding:12px}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .pill{padding:6px 12px;border:1px solid #2a644e;border-radius:14px;background:#0f3f33}
+  .btn{height:42px;padding:0 16px;border-radius:12px;border:none;background:#f2c846}
+  table{width:100%;border-collapse:separate;border-spacing:0 10px}
+  th,td{padding:10px 12px;background:#0f3f33;border-top:1px solid #1c5643;border-bottom:1px solid #1c5643}
+  th{background:#124334}
+  a.num{color:#f2d46a;text-decoration:underline}
+  .chip{padding:4px 10px;border-radius:12px;border:1px solid #2b674f;background:#0f3f33}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center}
+  .modal .card{width:min(560px,92vw);background:#0f3f33;border:1px solid #295f4a;border-radius:18px;padding:18px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .lbl{opacity:.9}
+  input[type=number]{width:120px;height:40px;border-radius:10px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 10px}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div style="display:flex;gap:10px;align-items:center">
-        <button id="logout" class="btn">خروج</button>
-        <span class="pill">نقش: <b id="roleLbl">—</b></span>
-      </div>
-      <h2 style="color:#f3c842;margin:8px 0">SamiWater داشبورد</h2>
-    </div>
+<div class="wrap">
+  <div class="top">
+    <div class="pill">نقش: <b id="roleTxt">—</b></div>
+    <button class="btn" id="logout">خروج</button>
+  </div>
 
-    <div class="card" id="stats">در حال بارگذاری...</div>
+  <div class="pill" id="stats" style="margin-bottom:12px">...</div>
 
-    <div class="card">
-      <h3 style="margin-top:0">آخرین درخواست‌ها</h3>
-
-      <div class="grid2" style="margin-bottom:10px">
-        <input id="qPhone" class="input" placeholder="فیلتر: موبایل" />
-        <select id="qStatus" class="input">
-          <option value="">همه وضعیت‌ها</option>
-          <option value="pending">در انتظار</option>
-          <option value="assigned">ارجاع شده</option>
-          <option value="done">انجام شد</option>
-          <option value="canceled">لغو شد</option>
-        </select>
-      </div>
-      <input id="qSource" class="input" placeholder="جستجو: مسیر" />
-
-      <button id="applyFilter" class="btn" style="margin-top:10px">اعمال فیلتر</button>
-
-      <div style="overflow-x:auto;margin-top:12px">
-        <table>
-          <thead>
-            <tr>
-              <th>کد</th>
-              <th>موبایل</th>
-              <th>نوع</th>
-              <th>مسیر</th>
-              <th>زمان</th>
-              <th>وضعیت</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-      <div class="muted" style="margin-top:8px">برای دیدن اطلاعات مشتری روی شماره موبایل کلیک کنید.</div>
+  <div class="pill" style="padding:12px;margin-bottom:12px">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <input id="fPhone" placeholder="جستجو: موبایل" style="height:40px;border-radius:10px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 10px" />
+      <select id="fStatus" style="height:40px;border-radius:10px;background:#eaf3ef;color:#07241c;border:1px solid #2a644e">
+        <option value="">همه وضعیت‌ها</option>
+        <option value="pending">در انتظار</option>
+        <option value="assigned">ارجاع شد</option>
+        <option value="done">انجام شد</option>
+        <option value="canceled">لغو شد</option>
+      </select>
+      <input id="fPath" placeholder="جستجو: مسیر" style="height:40px;border-radius:10px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 10px" />
+      <button class="btn" id="doFilter">اعمال فیلتر</button>
     </div>
   </div>
 
-  <!-- Modal: اطلاعات مشتری -->
-  <div id="modal" class="modal">
-    <div class="box">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0;color:#f3c842">مشخصات مشتری</h3>
-        <button id="closeModal" class="btn" style="background:#2e5e53;color:#fff">بستن</button>
-      </div>
-      <div id="cBody" style="margin-top:12px"></div>
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th>کد</th><th>موبایل</th><th>نوع</th><th>مسیر</th><th>زمان</th><th>وضعیت</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Modal: Customer details + discount edit -->
+<div class="modal" id="cusModal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0;color:#f2c846">مشخصات مشتری</h3>
+      <button class="btn" id="closeCus">بستن</button>
+    </div>
+
+    <div class="row" id="cusRows"></div>
+
+    <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
+      <span class="lbl">تخفیف مشتری:</span>
+      <input type="number" id="discInput" min="0" max="100" />
+      <button class="btn" id="saveDisc">ذخیره تخفیف</button>
     </div>
   </div>
+</div>
 
-  <script>
-    const API = "https://samiwater-backend.onrender.com";
-    const role = localStorage.getItem("sw_role") || "user";
-    const phoneSelf = localStorage.getItem("sw_phone") || "";
+<script>
+  const API = "https://kend.onrender.com";
+  const role = localStorage.getItem('role');
+  const adminPhone = localStorage.getItem('adminPhone');
+  if (role !== 'admin' || adminPhone !== '09384129843') {
+    // هرکسی غیر از مدیر اصلاً اجازه دیدن این صفحه را ندارد
+    window.location.href = 'club-login.html';
+  }
 
-    document.getElementById("roleLbl").textContent = (role === "admin" ? "مدیر" : "کاربر");
-    document.getElementById("logout").onclick = () => {
-      localStorage.removeItem("sw_role");
-      localStorage.removeItem("sw_phone");
-      location.href = "/club-login.html";
-    };
+  document.getElementById('roleTxt').textContent = 'مدیر';
+  document.getElementById('logout').onclick = () => {
+    localStorage.removeItem('role'); localStorage.removeItem('adminPhone');
+    location.href = 'club-login.html';
+  };
 
-    // برچسب فارسی وضعیت/مسیر
-    const statusFa = { pending:"در انتظار", assigned:"ارجاع شده", done:"انجام شد", canceled:"لغو شد" };
-    const sourceLabels = {
-      "ems":"درخواست فوری",
-      "web_form":"درخواست فوری",
-      "services/maintenance":"خدمات › سرویس دوره‌ای",
-      "services/install":"خدمات › نصب",
-      "services/repair":"خدمات › تعمیر",
-      "services/move":"خدمات › اتصال/جابجایی",
-      "services/visit":"خدمات › بازدید",
-      "services/other":"خدمات › سایر"
-    };
-    const fmtSource = v => sourceLabels[v] ?? (v ? v.replaceAll("/"," › ") : "—");
+  const tbody = document.querySelector('#tbl tbody');
+  const fPhone = document.getElementById('fPhone');
+  const fStatus = document.getElementById('fStatus');
+  const fPath = document.getElementById('fPath');
+  document.getElementById('doFilter').onclick = load;
 
-    function toJalali(ts){
-      try{
-        return new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
-          year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"
-        }).format(new Date(ts));
-      }catch{ return ts; }
-    }
+  async function load() {
+    const res = await fetch(API + "/api/requests");
+    const items = await res.json();
+    document.getElementById('stats').textContent =
+      `مشتریان: — | کل درخواست‌ها: ${items.length}`;
 
-    async function apiGet(url){
-      const r = await fetch(url);
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      return r.json();
-    }
-    async function apiPatch(url, body){
-      const r = await fetch(url, { method:"PATCH", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) });
-      const data = await r.json().catch(()=> ({}));
-      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
-      return data;
-    }
+    const qPhone = fPhone.value.trim();
+    const qStatus = fStatus.value;
+    const qPath = fPath.value.trim();
 
-    // آمار + لیست
-    let allRequests = [];
-    async function loadAll(){
-      const reqs = await apiGet(`${API}/api/requests`);
-      allRequests = reqs;
-      const customers = await apiGet(`${API}/api/customers`);
-      document.getElementById("stats").innerHTML =
-        `مشتریان: <b>${customers.length}</b> | کل درخواست‌ها: <b>${reqs.length}</b> | در انتظار: <b>${reqs.filter(r=>r.status==='pending').length}</b>`;
-      renderRows();
-    }
+    const faStatus = {pending:"در انتظار",assigned:"ارجاع شد",done:"انجام شد",canceled:"لغو شد"};
 
-    function renderRows(){
-      const qPhone = (document.getElementById("qPhone").value || "").trim();
-      const qStatus= (document.getElementById("qStatus").value || "");
-      const qSource= (document.getElementById("qSource").value || "").trim();
+    tbody.innerHTML = "";
+    items
+      .filter(r => (qPhone? r.phone.includes(qPhone):true))
+      .filter(r => (qStatus? r.status===qStatus:true))
+      .filter(r => (qPath? String(r.sourcePath||'').includes(qPath):true))
+      .forEach(r => {
+        const tr = document.createElement('tr');
 
-      let list = allRequests.slice().sort((a,b)=> (b.createdAt||"").localeCompare(a.createdAt||""));
+        const t = new Date(r.createdAt||r.created_at||r.created);
+        const fa = new Intl.DateTimeFormat("fa-IR-u-ca-persian",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(t);
 
-      if(qPhone)  list = list.filter(r => (r.phone||"").includes(qPhone));
-      if(qStatus) list = list.filter(r => (r.status||"")===qStatus);
-      if(qSource) list = list.filter(r => fmtSource(r.sourcePath).includes(qSource));
-
-      const rows = list.map(r => {
-        const st = r.status || "pending";
-        const stFa = statusFa[st] || st;
-        const timeFa = toJalali(r.createdAt);
-        const issue = r.issueType || "—";
-        const sourceFa = fmtSource(r.sourcePath);
-
-        // فقط مدیر اجازه تغییر وضعیت دارد
-        const statusCell = (role === "admin")
-          ? `<select data-id="${r._id}" class="input selStatus">
-               <option value="pending"  ${st==='pending'?'selected':''}>در انتظار</option>
-               <option value="assigned" ${st==='assigned'?'selected':''}>ارجاع شده</option>
-               <option value="done"     ${st==='done'?'selected':''}>انجام شد</option>
-               <option value="canceled" ${st==='canceled'?'selected':''}>لغو شد</option>
-             </select>`
-          : `<span class="pill">${stFa}</span>`;
-
-        return `<tr>
-          <td>${r.invoiceCode || "—"}</td>
-          <td><a href="#" class="phone" data-phone="${r.phone}">${r.phone}</a></td>
-          <td>${issue}</td>
-          <td>${sourceFa}</td>
-          <td>${timeFa}</td>
-          <td>${statusCell}</td>
-        </tr>`;
-      }).join("");
-
-      document.getElementById("rows").innerHTML = rows || `<tr><td colspan="6" class="muted">موردی یافت نشد.</td></tr>`;
-
-      // رویدادهای تغییر وضعیت
-      if(role === "admin"){
-        document.querySelectorAll(".selStatus").forEach(sel=>{
-          sel.addEventListener("change", async (e)=>{
-            const id = sel.getAttribute("data-id");
-            const value = sel.value;
-            try{
-              await apiPatch(`${API}/api/requests/${id}`, { status:value });
-            }catch(err){
-              alert("خطا در تغییر وضعیت: "+ err.message);
-            }
-          });
-        });
-      }
-
-      // کلیک روی شماره برای دیدن مشتری
-      document.querySelectorAll("a.phone").forEach(a=>{
-        a.addEventListener("click", async (e)=>{
-          e.preventDefault();
-          const ph = a.getAttribute("data-phone");
-          try{
-            const c = await apiGet(`${API}/api/customers/phone/${encodeURIComponent(ph)}`);
-            showCustomer(c);
-          }catch(err){
-            alert("مشتری یافت نشد");
-          }
-        });
+        tr.innerHTML = `
+          <td>${r.invoiceCode||"-"}</td>
+          <td><a class="num" href="#" data-phone="${r.phone}">${r.phone}</a></td>
+          <td>${r.issueType||"سایر"}</td>
+          <td>${(r.sourcePath==="web_form"||r.sourcePath==="درخواست فوری")?"درخواست فوری":(r.sourcePath||"-")}</td>
+          <td>${fa.replace(","," | ")}</td>
+          <td><span class="chip">${faStatus[r.status]||r.status}</span></td>
+        `;
+        tbody.appendChild(tr);
       });
-    }
+  }
 
-    // مودال مشتری
-    const modal = document.getElementById("modal");
-    document.getElementById("closeModal").onclick = ()=> modal.style.display="none";
+  // باز کردن مودال مشتری با کلیک روی شماره
+  tbody.addEventListener('click', async (e)=>{
+    const a = e.target.closest('a.num');
+    if(!a) return;
+    const ph = a.dataset.phone;
 
-    function showCustomer(c){
-      const body = `
-        <div class="grid2">
-          <div><div class="muted">نام</div><div style="font-weight:800">${c.fullName||"—"}</div></div>
-          <div><div class="muted">موبایل</div><div style="font-weight:800">${c.phone||"—"}</div></div>
-          <div><div class="muted">شهر</div><div>${c.city||"—"}</div></div>
-          <div><div class="muted">تلفن دوم</div><div>${c.altPhone||"—"}</div></div>
-          <div class="grid2" style="grid-column:1 / -1">
-            <div><div class="muted">عضویت</div><div>${toJalali(c.joinedAt||c.createdAt||"")}</div></div>
-            <div><div class="muted">تخفیف مشتری</div><div>${(c.discountPercent??0)}%</div></div>
-          </div>
-          <div style="grid-column:1 / -1"><div class="muted">آدرس</div><div>${c.address||"—"}</div></div>
-        </div>`;
-      document.getElementById("cBody").innerHTML = body;
-      modal.style.display="flex";
-    }
+    const r = await fetch(API + "/api/customers/phone/" + ph);
+    if(!r.ok){ alert("مشتری پیدا نشد"); return; }
+    const c = await r.json();
 
-    document.getElementById("applyFilter").onclick = renderRows;
+    const rows = document.getElementById('cusRows');
+    rows.innerHTML = `
+      <div><div class="lbl">نام</div><div>${c.fullName||"-"}</div></div>
+      <div><div class="lbl">موبایل</div><div>${c.phone||"-"}</div></div>
+      <div><div class="lbl">شهر</div><div>${c.city||"-"}</div></div>
+      <div><div class="lbl">آدرس</div><div>${c.address||"-"}</div></div>
+      <div><div class="lbl">تلفن دوم</div><div>${c.altPhone||"-"}</div></div>
+      <div><div class="lbl">عضویت</div><div>${
+          c.createdAt? new Intl.DateTimeFormat("fa-IR-u-ca-persian",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(new Date(c.createdAt)) : "-"
+      }</div></div>
+    `;
+    document.getElementById('discInput').value = Number(c.discountPercent||0);
+    document.getElementById('saveDisc').onclick = async ()=>{
+      const val = Number(document.getElementById('discInput').value||0);
+      if (val<0 || val>100){ alert("درصد بین 0 تا 100"); return; }
+      const rr = await fetch(API + "/api/customers/"+encodeURIComponent(ph)+"/discount",{
+        method:"PATCH",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({percent:val})
+      });
+      if(rr.ok){ alert("ذخیره شد"); } else { alert("خطا در ذخیره تخفیف"); }
+    };
 
-    // محدودیت دسترسی: اگر کاربر عادی است، فقط درخواست‌های مربوط به خودش را نشان بده
-    async function init(){
-      await loadAll();
-      if(role !== "admin" && phoneSelf){
-        allRequests = allRequests.filter(r => r.phone === phoneSelf);
-        renderRows();
-      }
-    }
-    init();
-  </script>
+    document.getElementById('cusModal').style.display='flex';
+  });
+
+  document.getElementById('closeCus').onclick = ()=> {
+    document.getElementById('cusModal').style.display='none';
+  };
+
+  load();
+</script>
 </body>
 </html>
