@@ -2,113 +2,80 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ورود | SamiWater</title>
-  <link rel="icon" href="logo-samiwater.png" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    @font-face{font-family:IRANSans;src:local("IRANSans"),local("IRANSansX");}
-    :root{
-      --g:#0e3b2f; --g2:#0a2c23; --gold:#f0c24a; --gold2:#caa03b; --card:#103d31; --muted:#b8c3be;
-    }
-    *{box-sizing:border-box;font-family:IRANSans,system-ui,-apple-system,Segoe UI,Roboto}
-    body{margin:0;background:linear-gradient(180deg,var(--g),var(--g2));color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-    .card{width:min(560px,96vw);background:var(--card);border:1px solid #194c3d;border-radius:18px;padding:20px 18px 24px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    .hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-    .badge{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#173f33,#0c2f25);display:flex;align-items:center;justify-content:center;border:1px solid #1b4b3c;color:#f3d46d;font-weight:800}
-    h1{font-size:24px;margin:0;color:var(--gold)}
-    .sub{opacity:.75;margin:6px 0 18px}
-    label{display:block;margin:10px 0 6px}
-    input{width:100%;padding:14px 12px;border-radius:12px;border:1px solid #1b4b3c;background:#eaf3ef;color:#0b1b15;font-size:17px;outline:none}
-    .help{font-size:13px;opacity:.8;margin-top:6px}
-    .btn{width:100%;margin-top:18px;background:linear-gradient(180deg,var(--gold),var(--gold2));color:#143227;font-weight:800;border:none;border-radius:14px;padding:14px 16px;font-size:18px}
-    .pinWrap{display:none;transition:.2s}
-    .pinWrap.show{display:block}
-    .note{margin-top:16px;border-top:1px solid #174c3d;padding-top:12px;opacity:.9}
+    body{background:#0e3b2f;color:#fff;font-family:sans-serif}
+    .card{max-width:560px;margin:28px auto;background:#0f3f33;border:1px solid #19533f;border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+    .logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .badge{width:48px;height:48px;border-radius:14px;background:#113d32;
+      display:flex;align-items:center;justify-content:center;border:1px solid #2a644e}
+    h1{margin:0;font-size:26px;color:#f5cc52}
+    label{display:block;margin:14px 0 6px}
+    input{width:100%;height:52px;border-radius:14px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 14px;font-size:18px}
+    .btn{width:100%;height:56px;border-radius:16px;background:#f2c846;border:none;font-size:20px;margin-top:18px}
+    .muted{opacity:.9;margin-top:18px;line-height:1.8}
   </style>
 </head>
 <body>
-  <form class="card" id="loginForm">
-    <div class="hdr">
+  <div class="card">
+    <div class="logo">
       <div class="badge">SA</div>
-      <h1>ورود | <span style="color:var(--gold)">SamiWater</span></h1>
+      <h1>ورود | SamiWater</h1>
     </div>
 
-    <label for="phone">شماره موبایل</label>
-    <input id="phone" inputmode="numeric" autocomplete="tel" placeholder="مثلاً 09131234567" />
+    <label>شماره موبایل</label>
+    <input id="phone" placeholder="مثلاً 09131234567" inputmode="tel" />
 
-    <div id="pinWrap" class="pinWrap">
-      <label for="pin">PIN (فقط برای مدیر)</label>
-      <input id="pin" inputmode="numeric" placeholder="در صورت مدیر بودن" />
-      <div class="help">اگر شماره مدیر باشد، ورود مدیر با PIN فعال می‌شود.</div>
+    <div id="pinWrap" style="display:none">
+      <label>PIN (فقط برای مدیر)</label>
+      <input id="pin" placeholder="در صورت مدیر بودن" inputmode="numeric" />
     </div>
 
-    <button class="btn" type="submit">ادامه</button>
+    <button class="btn" id="goBtn">ادامه</button>
 
-    <div class="note help">
-      اگر از «درخواست فوری» وارد شده‌اید، درخواست شما به‌صورت فوری ثبت می‌شود. اگر مشتری جدید باشید، در مرحله‌ی بعد فرم کوتاه نمایش داده می‌شود.
+    <div class="muted">
+      اگر از «درخواست فوری» وارد شده‌اید، درخواست شما به‌صورت فوری ثبت می‌شود. اگر مشتری جدید هستید، در مرحله‌ی بعد فرم کوتاه نمایش داده می‌شود.
     </div>
-  </form>
+  </div>
 
-  <script>
-    // ===== تنظیمات =====
-    const BACKEND_BASE = "https://samiwater-backend.onrender.com";
-    const ADMIN_PHONE  = "09384129843";   // ← شماره مدیر
-    const ADMIN_PIN    = "2468";          // ← PIN ثابت مدیر
+<script>
+  const ADMIN_PHONE = "09384129843";
+  const ADMIN_PIN   = "2468";
 
-    const phoneEl = document.getElementById("phone");
-    const pinEl   = document.getElementById("pin");
-    const pinWrap = document.getElementById("pinWrap");
-    const form    = document.getElementById("loginForm");
+  const phoneEl = document.getElementById('phone');
+  const pinWrap = document.getElementById('pinWrap');
+  const pinEl   = document.getElementById('pin');
+  const goBtn   = document.getElementById('goBtn');
 
-    // فقط رقم؛ 0 با ۰ فارسی هم اوکی
-    const digits = s => (s||"").replace(/[^\d]/g,"");
-    const isAdminPhone = p => digits(p) === digits(ADMIN_PHONE);
+  phoneEl.addEventListener('input', () => {
+    const ph = phoneEl.value.trim();
+    pinWrap.style.display = (ph === ADMIN_PHONE) ? 'block' : 'none';
+  });
 
-    function togglePIN(){
-      if(isAdminPhone(phoneEl.value)){
-        pinWrap.classList.add("show");
-      }else{
-        pinWrap.classList.remove("show");
-        pinEl.value = "";
-      }
+  goBtn.addEventListener('click', () => {
+    const ph = phoneEl.value.trim();
+    if (!/^09\d{9}$/.test(ph)) { alert('شماره موبایل معتبر وارد کنید'); return; }
+
+    // فعلاً فقط مدیر حق ورود به داشبورد دارد
+    if (ph !== ADMIN_PHONE) {
+      alert('فعلاً دسترسی فقط برای مدیر فعال است.');
+      // در آینده اینجا می‌بَریم به نسخهٔ کاربری (نمایش سوابق و ...).
+      return;
     }
-    phoneEl.addEventListener("input", togglePIN);
-    togglePIN(); // بار اول
 
-    form.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const phone = digits(phoneEl.value);
-      if(!phone){ alert("شماره موبایل را وارد کنید."); return; }
+    // مدیر: پین الزامی
+    if (pinEl.value.trim() !== ADMIN_PIN) {
+      alert('PIN مدیر نادرست است.');
+      return;
+    }
 
-      // اگر مدیر است، PIN لازم است
-      if(isAdminPhone(phone)){
-        if(digits(pinEl.value) !== digits(ADMIN_PIN)){
-          alert("PIN مدیر صحیح نیست."); return;
-        }
-      }
-
-      // مرحله 1: استعلام مشتری
-      let isKnown = false;
-      try{
-        const r = await fetch(`${BACKEND_BASE}/api/customers/phone/${phone}`);
-        isKnown = r.ok;
-      }catch(_){}
-
-      // نقش
-      const role = isAdminPhone(phone) ? "admin" : "user";
-
-      // هدایت:
-      // اگر کاربر جدید است → به فرم ثبت کوتاه
-      // اگر قبلاً مشتری بوده → مستقیم داشبورد/مرحله بعد
-      const qs = new URLSearchParams({ phone, role });
-      if(isKnown){
-        // مستقیم به داشبورد (در هر دو نقش)
-        location.href = `dashboard.html?${qs.toString()}`;
-      }else{
-        // به چک/فرم (همان صفحه‌ی قدیمی شما برای ثبت)
-        location.href = `request-form.html?${qs.toString()}`;
-      }
-    });
-  </script>
+    // ذخیره نقش و ورود به داشبورد
+    localStorage.setItem('role', 'admin');
+    localStorage.setItem('adminPhone', ph);
+    window.location.href = 'dashboard.html';
+  });
+</script>
 </body>
 </html>
