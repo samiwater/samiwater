@@ -5,121 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ورود | SamiWater</title>
   <style>
-    :root{
-      --green:#0f3b2e; --green-2:#0b2e24; --gold:#d4af37; --gold-2:#f1d26a;
-      --card: #123e31; --muted:#b8c7c2;
-    }
-    body{margin:0;background:linear-gradient(180deg,var(--green),var(--green-2));
-      font-family:Tahoma, Vazirmatn, sans-serif;color:#fff}
-    .wrap{max-width:520px;margin:40px auto;padding:24px}
-    .card{background:linear-gradient(180deg,#10382c,#0b2e24);border:1px solid rgba(212,175,55,.35);
-      border-radius:20px;padding:22px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-    h1{margin:0 0 8px;font-size:22px;color:var(--gold-2);letter-spacing:.5px}
-    .brand{display:flex;gap:10px;align-items:center;margin-bottom:14px}
-    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#145, #0a3329);
-      border:1px solid rgba(212,175,55,.45);display:flex;align-items:center;justify-content:center;
-      font-weight:800;color:var(--gold-2)}
-    label{display:block;margin:14px 6px 6px;color:#e9f5f1;font-size:13px}
-    input{width:100%;padding:14px 12px;border-radius:14px;border:1px solid rgba(212,175,55,.35);
-      background:#0e2f25;color:#fff;font-size:16px;outline:none}
-    input::placeholder{color:#88a39a}
-    .btn{width:100%;margin-top:16px;background:linear-gradient(180deg,var(--gold-2),var(--gold));
-      color:#112; border:none;border-radius:14px;padding:12px 14px;font-size:18px;font-weight:700}
-    .hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.9}
-    .hidden{display:none}
-    .center{ text-align:center }
-    .note{margin-top:12px;font-size:12px;color:#cfdfda}
+    :root{--green:#0f3b2e;--green2:#0b2e24;--gold:#d4af37;--gold2:#f1d26a}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--green),var(--green2));color:#fff;
+      font-family:Tahoma,Vazirmatn,sans-serif}
+    .wrap{max-width:520px;margin:40px auto;padding:0 12px}
+    .card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:16px}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .ico{width:42px;height:42px;border-radius:12px;border:1px solid rgba(212,175,55,.45);
+      background:linear-gradient(145deg,#145,#0a3329);display:flex;align-items:center;justify-content:center;color:#f6e5a4;font-weight:800}
+    label{display:block;margin:10px 4px 6px}
+    input{width:100%;background:#0e2f25;color:#fff;border:1px solid rgba(212,175,55,.35);border-radius:10px;padding:10px}
+    button{width:100%;margin-top:14px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#112;border:none;border-radius:12px;padding:12px;font-weight:700}
+    .muted{color:#c9d6d2;font-size:13px;margin-top:8px}
+    .pinRow,.otpRow{display:none}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <div class="brand">
-        <div class="logo">SA</div>
-        <h1>SamiWater | ورود</h1>
+        <div class="ico">SA</div>
+        <h2 style="margin:0">ورود | <span style="color:#f1d26a">SamiWater</span></h2>
       </div>
 
-      <!-- مرحله ۱ -->
-      <div id="step1">
-        <label>شماره موبایل</label>
-        <input id="phone" inputmode="numeric" placeholder="مثلاً 09131234567" />
+      <label>شماره موبایل</label>
+      <input id="phone" placeholder="09131234567" inputmode="numeric" />
 
+      <div class="pinRow" id="pinRow">
         <label>PIN (فقط برای مدیر)</label>
-        <input id="pin" inputmode="numeric" placeholder="مثلاً 2468" />
-
-        <button class="btn" id="btnStart">ادامه</button>
-        <div class="hint">اگر با شماره مدیر وارد شوید، <b>PIN</b> را هم وارد کنید. در حالت تست، کد تأیید در پیام بعدی نمایش داده می‌شود.</div>
+        <input id="pin" placeholder="مثلاً 2468" inputmode="numeric" />
       </div>
 
-      <!-- مرحله ۲ -->
-      <div id="step2" class="hidden">
-        <div class="center" style="margin-bottom:10px;color:#d7c27a">کد تأیید ارسال شد</div>
-        <label>کد تأیید</label>
-        <input id="code" inputmode="numeric" placeholder="مثلاً 111111" />
-        <button class="btn" id="btnVerify">ورود</button>
-        <div id="devCode" class="note"></div>
+      <div class="otpRow" id="otpRow">
+        <label>کد تأیید (تست)</label>
+        <input id="otp" placeholder="111111" inputmode="numeric" />
       </div>
+
+      <button id="btn">ادامه</button>
+      <div class="muted">اگر با شماره مدیر وارد شوید، PIN را هم وارد کنید. (OTP تست: 111111)</div>
     </div>
   </div>
 
   <script>
-    // ✅ این خط مهمه:
-    const API_BASE = "https://samiwater-backend.onrender.com";
+    // ====== تنظیمات مدیر ======
+    const ADMIN_PIN = "2468";
+    const ADMIN_PHONES = ["09384129843"]; // می‌تونی بیشتر هم بذاری
+    const normalize = (p) => (p||"").replace(/\D/g,"").slice(-10);
+    const isAdminPhone = (p) => ADMIN_PHONES.map(normalize).includes(normalize(p));
 
-    const $ = (s) => document.querySelector(s);
-    const step1 = $("#step1");
-    const step2 = $("#step2");
-    let loginState = { phone: "", role: "user" };
+    const phoneInput = document.getElementById("phone");
+    const pinRow = document.getElementById("pinRow");
+    const otpRow = document.getElementById("otpRow");
+    const btn = document.getElementById("btn");
 
-    $("#btnStart").onclick = async () => {
-      const phone = $("#phone").value.trim();
-      const pin = $("#pin").value.trim();
-      if(!phone){ alert("شماره را وارد کنید"); return; }
+    // OTP تست را همیشه نشان بده (فعلاً)
+    otpRow.style.display = "block";
 
-      try{
-        const r = await fetch(`${API_BASE}/api/auth/start`, {
-          method:"POST", headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ phone, pin })
-        });
-        const j = await r.json();
-        if(!r.ok || !j.ok){ alert(j.error || "Route not found"); return; }
+    phoneInput.addEventListener("input", ()=>{
+      pinRow.style.display = isAdminPhone(phoneInput.value) ? "block" : "none";
+    });
 
-        loginState.phone = phone;
-        loginState.role = j.role || "user";
+    btn.onclick = ()=>{
+      const phone = phoneInput.value.trim();
+      const otp = (document.getElementById("otp").value||"").trim();
+      if (!phone){ alert("شماره را وارد کنید"); return; }
+      if (otp !== "111111"){ alert("کد تأیید نادرست است (تست: 111111)"); return; }
 
-        // نشان دادن devCode برای تست
-        $("#devCode").textContent = j.devCode ? `کد تست: ${j.devCode}` : "";
-
-        step1.classList.add("hidden");
-        step2.classList.remove("hidden");
-        $("#code").focus();
-      }catch(e){
-        alert("خطا در ارتباط با سرور");
+      let role = "user";
+      if (isAdminPhone(phone)) {
+        const pin = (document.getElementById("pin").value||"").trim();
+        if (pin !== ADMIN_PIN){ alert("PIN مدیر اشتباه است"); return; }
+        role = "admin";
       }
-    };
 
-    $("#btnVerify").onclick = async () => {
-      const code = $("#code").value.trim();
-      if(!code){ alert("کد تأیید را وارد کنید"); return; }
-      try{
-        const r = await fetch(`${API_BASE}/api/auth/verify`, {
-          method:"POST", headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ phone: loginState.phone, code })
-        });
-        const j = await r.json();
-        if(!r.ok || !j.ok){ alert(j.error || "Route not found"); return; }
+      // ذخیره‌ی وضعیت برای داشبورد
+      localStorage.setItem("sw_role", role);
+      localStorage.setItem("sw_phone", normalize(phone));
+      localStorage.setItem("sw_token", "devtoken");
+      localStorage.setItem("sw_api", "https://samiwater-backend.onrender.com");
 
-        // ذخیره برای داشبورد
-        localStorage.setItem("sw_role", j.role);
-        localStorage.setItem("sw_phone", loginState.phone);
-        localStorage.setItem("sw_token", j.token || "");
-        localStorage.setItem("sw_api", API_BASE);
-
-        // رفتن به داشبورد
-        location.href = "dashboard.html";
-      }catch(e){
-        alert("خطا در تایید کد");
-      }
+      location.href = "dashboard.html";
     };
   </script>
 </body>
