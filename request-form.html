@@ -14,11 +14,15 @@
     textarea{min-height:100px}
     .btn{width:100%;padding:14px;border-radius:14px;background:#f3c842;color:#10352c;font-weight:800;font-size:18px;border:none;margin-top:10px}
     @media(min-width:640px){ .row.two{grid-template-columns:1fr 1fr} }
+    .info{margin:10px 0;padding:10px;border:1px dashed #8ab;border-radius:10px;font-size:14px;background:#0c4237;color:#e9f7f3}
+    .warn{color:#ffe3a3;font-size:13px;margin-top:6px}
   </style>
 </head>
 <body>
   <div class="card">
     <h2 style="margin-top:0;color:#f3c842">ثبت مشخصات مشتری</h2>
+
+    <div id="prefInfo" class="info" style="display:none"></div>
 
     <div class="row two">
       <div>
@@ -50,6 +54,7 @@
     </div>
 
     <button id="submitBtn" class="btn">ثبت نهایی</button>
+    <div id="msg" class="warn"></div>
   </div>
 
   <script>
@@ -63,10 +68,6 @@
       return p;
     }
 
-    const qp = new URLSearchParams(location.search);
-    const phoneFromQS = normalizePhone(qp.get("phone") || "");
-    document.getElementById("phone").value = phoneFromQS;
-
     async function apiPost(url, body){
       const r = await fetch(url, {
         method:"POST",
@@ -77,20 +78,58 @@
       if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
       return data;
     }
-
-    async function createRequestFor(phone){
-      const sourcePath = sessionStorage.getItem("sw_source") || "ems";
-      const issueType  = sessionStorage.getItem("sw_issue")  || "urgent";
-      const doc = await apiPost(`${API}/api/requests`, { phone, issueType, sourcePath });
-      location.href = `/request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}`;
+    async function apiGet(url){
+      const r = await fetch(url);
+      const data = await r.json().catch(()=> ({}));
+      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
+      return data;
     }
 
+    // ====== ورودی‌های صفحه قبل
+    const qp = new URLSearchParams(location.search);
+    const phoneFromQS = normalizePhone(qp.get("phone") || "");
+    const preferredDate   = (qp.get("pd") || "").trim();   // YYYY-MM-DD
+    const preferredWindow = (qp.get("pw") || "").trim();   // e.g. 11-13
+    document.getElementById("phone").value = phoneFromQS;
+
+    // نمایش خلاصه ترجیح زمانی (اگر وجود داشته باشد)
+    const prefInfo = document.getElementById("prefInfo");
+    if (preferredDate && preferredWindow) {
+      prefInfo.style.display = "block";
+      prefInfo.innerHTML = `ترجیح زمانی شما: <b>${preferredDate}</b> – <b>${preferredWindow}</b> (اختیاری)`;
+    }
+
+    // برای ساخت درخواست (همان روال قبلی ولی با ارسال prefer ها)
+    async function createRequestFor({ phone, reservationId = undefined }) {
+      const sourcePath = sessionStorage.getItem("sw_source") || (qp.get("src") || "ems");
+      const issueType  = sessionStorage.getItem("sw_issue")  || "urgent";
+      const payload = {
+        phone,
+        issueType,
+        sourcePath,
+      };
+      if (preferredDate)   payload.preferredDate = preferredDate;
+      if (preferredWindow) payload.preferredWindow = preferredWindow;
+      if (reservationId)   payload.reservationId = reservationId;
+
+      const doc = await apiPost(`${API}/api/requests`, payload);
+      // هدایت به صفحه تایید
+      const extraQ = new URLSearchParams({
+        pd: preferredDate || "",
+        pw: preferredWindow || ""
+      }).toString();
+      location.href = `/request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}&${extraQ}`;
+    }
+
+    // ساخت/یافتن مشتری و سپس رزرو اختیاری اسلات و ساخت درخواست
     document.getElementById("submitBtn").addEventListener("click", async () => {
       const fullName = document.getElementById("fullName").value.trim();
       const phone    = normalizePhone(document.getElementById("phone").value);
       const address  = document.getElementById("address").value.trim();
       const altPhone = document.getElementById("altPhone").value.trim();
       const city     = document.getElementById("city").value.trim() || "اصفهان";
+      const msg      = document.getElementById("msg");
+      msg.textContent = "";
 
       if(!fullName || !phone || !address){
         alert("نام، موبایل و آدرس الزامی است.");
@@ -99,13 +138,40 @@
 
       try{
         // 1) ایجاد مشتری (اگر وجود داشت 409 می‌گیریم که مشکلی نیست)
+        let customerId = null;
         try{
-          await apiPost(`${API}/api/customers`, { fullName, phone, address, altPhone, city });
+          const created = await apiPost(`${API}/api/customers`, { fullName, phone, address, altPhone, city });
+          if (created && created._id) customerId = created._id;
         }catch(e){
-          // اگر 409 بود یعنی مشتری از قبل هست → رد می‌شویم
+          // اگر قبلاً بوده، از روی شماره پیدا می‌کنیم
         }
-        // 2) ساخت درخواست با مسیر/مشکل
-        await createRequestFor(phone);
+        if (!customerId) {
+          try {
+            const found = await apiGet(`${API}/api/customers/phone/${phone}`);
+            if (found && found._id) customerId = found._id;
+          } catch(e) {/* اگر نبود هم مهم نیست، ادامه می‌دهیم */}
+        }
+
+        // 2) اگر ترجیح زمانی داریم، تلاش برای رزرو اسلات (اختیاری)
+        let reservationId = null;
+        if (customerId && preferredDate && preferredWindow) {
+          try {
+            const resv = await apiPost(`${API}/reservations`, {
+              customerId,
+              serviceType: "general_service",
+              date: preferredDate,
+              window: preferredWindow,
+              source: "self"
+            });
+            reservationId = resv && resv._id ? resv._id : null;
+          } catch(e) {
+            // اگر پر شده بود یا خطا داشت، فقط پیام می‌دهیم و ادامه می‌دهیم
+            msg.textContent = "توجه: بازه‌ی انتخابی شما در حال حاضر در دسترس نیست. درخواست شما بدون رزرو زمان قطعی ثبت می‌شود.";
+          }
+        }
+
+        // 3) ساخت درخواست با ارسال prefer ها و (در صورت موفقیت) reservationId
+        await createRequestFor({ phone, reservationId });
       }catch(e){
         alert("خطا: "+ e.message);
       }
