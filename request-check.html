@@ -90,28 +90,24 @@ function addDays(base,days){const d=new Date(base);d.setDate(d.getDate()+days);r
 function persianLabel(date){
   try {
     return new Intl.DateTimeFormat("fa-IR-u-ca-persian",{weekday:"long",day:"2-digit",month:"long"}).format(date);
-  } catch { // اگر Intl Persian نبود
-    return date.toLocaleDateString("fa-IR");
-  }
+  } catch { return date.toLocaleDateString("fa-IR"); }
 }
-
 async function fetchAvail(isoDate){
-  const r = await fetch(`${API}/reservations/availability?date=${isoDate}`);
+  const r=await fetch(`${API}/reservations/availability?date=${isoDate}`);
   if(!r.ok) throw new Error("availability failed");
   return r.json();
 }
 
+// ===== ویجت زمان
 (function initTimeWidget(){
-  const wrap = document.getElementById("time-pref");
-  const selDate = document.getElementById("tw-date");
-  const slotsBox = document.getElementById("tw-slots");
-  let selectedWindow = null;
+  const wrap=document.getElementById("time-pref");
+  const selDate=document.getElementById("tw-date");
+  const slotsBox=document.getElementById("tw-slots");
+  let selectedWindow=null;
 
-  // نمایش ویجت — زیر فیلد موبایل
-  wrap.hidden = false;
+  wrap.hidden=false;
 
-  // پرکردن 30 روز آینده
-  const today = new Date();
+  const today=new Date();
   for(let i=0;i<=30;i++){
     const d=addDays(today,i); const iso=toISO(d);
     const op=document.createElement("option");
@@ -122,14 +118,14 @@ async function fetchAvail(isoDate){
   function renderSlots(arr){
     slotsBox.innerHTML="";
     WINDOWS.forEach(w=>{
-      const item = arr.find(s=>s.window===w);
+      const item=arr.find(s=>s.window===w);
       const available = item ? item.available : true;
-      const div = document.createElement("div");
-      div.className = "tw-slot"+(available?"":" disabled");
-      div.textContent = w + (available ? "" : " (پر)");
+      const div=document.createElement("div");
+      div.className="tw-slot"+(available?"":" disabled");
+      div.textContent=w+(available?"":" (پر)");
       if(available){
-        div.onclick = ()=>{
-          selectedWindow = w;
+        div.onclick=()=>{
+          selectedWindow=w;
           [...slotsBox.querySelectorAll(".tw-slot")].forEach(el=>el.classList.remove("selected"));
           div.classList.add("selected");
         };
@@ -139,13 +135,11 @@ async function fetchAvail(isoDate){
   }
 
   async function load(){
-    selectedWindow = null;
-    renderSlots([]);
+    selectedWindow=null; renderSlots([]);
     try{
-      const data = await fetchAvail(selDate.value);
+      const data=await fetchAvail(selDate.value);
       renderSlots(data.slots||[]);
-    }catch(e){
-      // اگر API در دسترس نبود، همه را آزاد نشان می‌دهیم (اختیاری است)
+    }catch{
       renderSlots(WINDOWS.map(w=>({window:w,available:true})));
     }
   }
@@ -153,59 +147,66 @@ async function fetchAvail(isoDate){
   selDate.addEventListener("change", load);
   load();
 
-  // دسترس‌پذیر برای دکمهٔ ادامه
   window.__timePref__ = {
     get date(){ return selDate.value || null; },
     get window(){ return selectedWindow; }
   };
 })();
 
+// ===== دکمه ادامه با تایم‌اوت کوتاه (۲ ثانیه) و fallback قطعی
 document.getElementById("go").addEventListener("click", async ()=>{
-  const phone = onlyDigits(document.getElementById("phone").value);
-  const err = document.getElementById("err"); err.style.display="none";
+  const phone=onlyDigits(document.getElementById("phone").value);
+  const err=document.getElementById("err"); err.style.display="none";
   if(!/^09\d{9}$/.test(phone)){
-    err.textContent = "لطفاً شماره را به صورت 11 رقمی و با 09 وارد کنید."; err.style.display="block"; return;
+    err.textContent="لطفاً شماره را به صورت 11 رقمی و با 09 وارد کنید."; err.style.display="block"; return;
   }
 
-  // مقادیر انتخاب اختیاری
-  const prefDate = (window.__timePref__ && window.__timePref__.date) || null;
-  const prefWindow = (window.__timePref__ && window.__timePref__.window) || null;
+  const prefDate =(window.__timePref__&&window.__timePref__.date)||"";
+  const prefWindow=(window.__timePref__&&window.__timePref__.window)||"";
+
+  const goForm=()=>{
+    const q=new URLSearchParams({phone,src:getSourcePath(),pd:prefDate,pw:prefWindow}).toString();
+    location.href=`request-form.html?${q}`;
+  };
+
+  let timedOut=false;
+  const timer=setTimeout(()=>{ timedOut=true; goForm(); }, 2000); // 2s timeout
 
   try{
-    // آیا مشتری وجود دارد؟
-    const r = await fetch(`${API}/api/customers/phone/${phone}`);
-    if(r.ok){
-      // مشتری موجود → اگر زمان انتخاب شده، اول تلاش برای قفل اسلات
-      let reservationInfo = null;
+    // تلاش برای پیدا کردن مشتری قدیمی
+    const r = await fetch(`${API}/api/customers/phone/${phone}`, { cache:"no-store" });
+    if (timedOut) return; // already navigated
+    clearTimeout(timer);
+
+    if (r.ok) {
+      // مشتری قدیمی → تلاش برای رزرو (اگر انتخاب شده)
+      let reservationInfo=null;
       if (prefDate && prefWindow) {
-        try {
-          const cust = await r.json(); // انتظار: { _id, ... }
-          if (cust && cust._id) {
-            const makeRes = await fetch(`${API}/reservations`, {
+        try{
+          const cust=await r.json();
+          if(cust && cust._id){
+            const makeRes=await fetch(`${API}/reservations`,{
               method:"POST",
               headers:{ "Content-Type":"application/json" },
-              body: JSON.stringify({
-                customerId: cust._id,
-                serviceType: "general_service",
-                date: prefDate,
-                window: prefWindow,
-                source: "self"
+              body:JSON.stringify({
+                customerId:cust._id,
+                serviceType:"general_service",
+                date:prefDate,
+                window:prefWindow,
+                source:"self"
               })
             });
-            reservationInfo = await makeRes.json();
-            if (makeRes.status === 409) {
-              err.textContent = "این بازه همین الان پر شد. لطفاً بازهٔ دیگری را انتخاب کنید.";
-              err.style.display = "block";
+            reservationInfo=await makeRes.json();
+            if(makeRes.status===409){
+              err.textContent="این بازه همین الان پر شد. لطفاً بازهٔ دیگری را انتخاب کنید."; err.style.display="block";
               return;
             }
           }
-        } catch(e) {
-          // اگر رزرو موفق نشد، ادامه می‌دهیم؛ چون اختیاری است
-        }
+        }catch{ /* اختیاری بود */ }
       }
 
-      // سپس ساخت درخواست سرویس (مثل قبل) + ارسال ترجیح زمانی در بدنه (اختیاری)
-      const make = await fetch(`${API}/api/requests`, {
+      // ساخت درخواست نهایی
+      const make=await fetch(`${API}/api/requests`,{
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body:JSON.stringify({
@@ -214,28 +215,21 @@ document.getElementById("go").addEventListener("click", async ()=>{
           sourcePath:getSourcePath(),
           preferredDate: prefDate || undefined,
           preferredWindow: prefWindow || undefined,
-          reservationId: reservationInfo && reservationInfo._id ? reservationInfo._id : undefined
+          reservationId: (reservationInfo && reservationInfo._id) ? reservationInfo._id : undefined
         })
       });
-      if(make.status===429){ location.href = `request-confirmed.html?code=spam`; return; }
-      const reqDoc = await make.json();
+      const reqDoc=await make.json().catch(()=> ({}));
       if(make.ok){
-        location.href = `request-confirmed.html?code=${encodeURIComponent(reqDoc.invoiceCode)}`;
+        const extra=new URLSearchParams({pd:prefDate||"",pw:prefWindow||""}).toString();
+        location.href=`request-confirmed.html?code=${encodeURIComponent(reqDoc.invoiceCode||"ok")}&${extra}`;
       }else{
-        throw new Error(reqDoc.error || "ثبت نشد");
+        goForm(); // اگر ساخت درخواست نشد → فرم
       }
-    }else{
-      // مشتری جدید → پاس‌دادن انتخاب اختیاری به فرم بعدی تا آنجا ثبت شود
-      const q = new URLSearchParams({
-        phone,
-        src: getSourcePath(),
-        pd: prefDate || "",
-        pw: prefWindow || ""
-      }).toString();
-      location.href = `request-form.html?${q}`;
+    } else {
+      goForm(); // مشتری نبود → فرم
     }
   }catch(e){
-    err.textContent = "خطا در ارتباط. دوباره تلاش کنید."; err.style.display="block";
+    if (!timedOut) { clearTimeout(timer); goForm(); }
   }
 });
 </script>
