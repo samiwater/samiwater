@@ -8,40 +8,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --green:#0f3b2d;         /* سبز بک‌گراند */
-  --panel:#0f3b2db3;       /* باکس نیمه‌شفاف */
-  --gold:#d9b24c;          /* طلایی تایپوگرافی */
-  --gold-strong:#f2c94c;   /* طلایی پررنگ‌تر برای عدد/CTA */
-  --ring:#3e6b57;          /* خط دور کارت */
+  --green:#0f3b2d; --panel:#0f3b2db3; --gold:#d9b24c; --gold-strong:#f2c94c; --ring:#3e6b57;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-  margin:0;background:var(--green);
-  font-family:"Vazirmatn",system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  color:#fff; display:flex; align-items:center; justify-content:center; padding:20px;
-}
-.card{
-  width:min(640px,100%); background:linear-gradient(180deg,#0f3b2df5,#0e392bb5);
-  border:1px solid var(--ring); border-radius:18px; padding:28px 22px; position:relative;
-  box-shadow:0 12px 30px #00000055;
-}
-.brand{
-  display:flex; align-items:center; gap:12px; margin-bottom:18px;
-}
-.brand img{width:42px;height:42px;border-radius:9px;border:1px solid #355a49; object-fit:cover; background:#124432}
-.brand .title{font-size:24px; font-weight:800; letter-spacing:.5px; color:var(--gold)}
+body{margin:0;background:var(--green);font-family:"Vazirmatn",system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:min(640px,100%);background:linear-gradient(180deg,#0f3b2df5,#0e392bb5);border:1px solid var(--ring);border-radius:18px;padding:28px 22px;position:relative;box-shadow:0 12px 30px #00000055}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.brand img{width:42px;height:42px;border-radius:9px;border:1px solid #355a49;object-fit:cover;background:#124432}
+.brand .title{font-size:24px;font-weight:800;letter-spacing:.5px;color:var(--gold)}
 h1{font-size:20px;margin:6px 0 14px;font-weight:700;color:#fff}
 .note{font-size:13px;line-height:1.9;color:#dfeee8}
 .input{width:100%;background:#0b2d23;border:1px solid #2e5a48;border-radius:12px;color:#fff;font-size:18px;padding:14px 16px;outline:none}
 .input::placeholder{color:#8fb5a6}
-.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);
-  color:#1b2d23;border:none;padding:14px 16px;border-radius:14px;font-size:18px;font-weight:800}
+.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:14px 16px;border-radius:14px;font-size:18px;font-weight:800}
 .btn:active{transform:translateY(1px)}
 .helper{margin-top:12px;font-size:12px;color:#cfded7}
 .err{margin-top:10px;color:#ffc6c6;font-size:13px;display:none}
 .footer{margin-top:14px;font-size:12px;color:#b8d7cc}
 a{color:#9ad7ff;text-decoration:none}
+
+/* === Time Preference (اختیاری) === */
+.tw-box{border:1px solid #2e5a48;border-radius:14px;padding:12px;margin-top:14px;background:#0b2d23}
+.tw-title{font-weight:700;margin-bottom:6px;font-size:15px;color:#fff}
+.tw-sub{font-size:12px;color:#b9d7cc;margin-bottom:10px}
+.tw-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tw-select{padding:10px 12px;border:1px solid #3a6b57;border-radius:10px;background:#08261e;color:#fff}
+.tw-slots{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tw-slot{padding:8px 12px;border:1px solid #3a6b57;border-radius:10px;cursor:pointer;font-size:14px;background:#0a2a21}
+.tw-slot.disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
+.tw-slot.selected{border-color:#f2c94c;box-shadow:0 0 0 2px rgba(242,201,76,.18)}
+.small{font-size:11px;color:#9cc7b7;margin-top:6px}
 </style>
 </head>
 <body>
@@ -58,6 +55,19 @@ a{color:#9ad7ff;text-decoration:none}
     </p>
 
     <input id="phone" class="input" inputmode="numeric" placeholder="مثلاً 09131234567" />
+
+    <!-- باکس انتخاب زمان اختیاری -->
+    <div id="time-pref" class="tw-box" hidden>
+      <div class="tw-title">ترجیح زمانی (اختیاری)</div>
+      <div class="tw-sub">اگر زمان خاصی مدنظر دارید انتخاب کنید؛ نهایی‌سازی پس از تماس انجام می‌شود.</div>
+      <div class="tw-row">
+        <label>روز (شمسی):</label>
+        <select class="tw-select" id="tw-date"></select>
+      </div>
+      <div class="tw-slots" id="tw-slots"></div>
+      <div class="small">بازه‌ها: ۰۹–۱۱، ۱۱–۱۳، ۱۳–۱۵، ۱۵–۱۷، ۱۷–۱۹، ۱۹–۲۱</div>
+    </div>
+
     <button id="go" class="btn">ادامه</button>
     <div id="err" class="err"></div>
 
@@ -65,15 +75,90 @@ a{color:#9ad7ff;text-decoration:none}
   </div>
 
 <script>
-const API = "https://samiwater-backend.onrender.com";
+const API = "https://samiwater-backend.onrender.com"; // بک‌اند Render
+const WINDOWS = ["09-11","11-13","13-15","15-17","17-19","19-21"];
+
 function getSourcePath(){
   const p = new URLSearchParams(location.search);
   const src = (p.get("src")||"").toLowerCase();
-  // هر چیزی غیر از مقدارهای شناخته‌شده → فوری
   const map = {landing:"urgent", urgent:"urgent", web:"web_form"};
   return map[src] || "urgent";
 }
 function onlyDigits(s){return s.replace(/\D/g,'')}
+function toISO(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
+function addDays(base,days){const d=new Date(base);d.setDate(d.getDate()+days);return d}
+function persianLabel(date){
+  try {
+    return new Intl.DateTimeFormat("fa-IR-u-ca-persian",{weekday:"long",day:"2-digit",month:"long"}).format(date);
+  } catch { // اگر Intl Persian نبود
+    return date.toLocaleDateString("fa-IR");
+  }
+}
+
+async function fetchAvail(isoDate){
+  const r = await fetch(`${API}/reservations/availability?date=${isoDate}`);
+  if(!r.ok) throw new Error("availability failed");
+  return r.json();
+}
+
+(function initTimeWidget(){
+  const wrap = document.getElementById("time-pref");
+  const selDate = document.getElementById("tw-date");
+  const slotsBox = document.getElementById("tw-slots");
+  let selectedWindow = null;
+
+  // نمایش ویجت — زیر فیلد موبایل
+  wrap.hidden = false;
+
+  // پرکردن 30 روز آینده
+  const today = new Date();
+  for(let i=0;i<=30;i++){
+    const d=addDays(today,i); const iso=toISO(d);
+    const op=document.createElement("option");
+    op.value=iso; op.textContent=persianLabel(d)+" – "+iso;
+    selDate.appendChild(op);
+  }
+
+  function renderSlots(arr){
+    slotsBox.innerHTML="";
+    WINDOWS.forEach(w=>{
+      const item = arr.find(s=>s.window===w);
+      const available = item ? item.available : true;
+      const div = document.createElement("div");
+      div.className = "tw-slot"+(available?"":" disabled");
+      div.textContent = w + (available ? "" : " (پر)");
+      if(available){
+        div.onclick = ()=>{
+          selectedWindow = w;
+          [...slotsBox.querySelectorAll(".tw-slot")].forEach(el=>el.classList.remove("selected"));
+          div.classList.add("selected");
+        };
+      }
+      slotsBox.appendChild(div);
+    });
+  }
+
+  async function load(){
+    selectedWindow = null;
+    renderSlots([]);
+    try{
+      const data = await fetchAvail(selDate.value);
+      renderSlots(data.slots||[]);
+    }catch(e){
+      // اگر API در دسترس نبود، همه را آزاد نشان می‌دهیم (اختیاری است)
+      renderSlots(WINDOWS.map(w=>({window:w,available:true})));
+    }
+  }
+
+  selDate.addEventListener("change", load);
+  load();
+
+  // دسترس‌پذیر برای دکمهٔ ادامه
+  window.__timePref__ = {
+    get date(){ return selDate.value || null; },
+    get window(){ return selectedWindow; }
+  };
+})();
 
 document.getElementById("go").addEventListener("click", async ()=>{
   const phone = onlyDigits(document.getElementById("phone").value);
@@ -81,20 +166,58 @@ document.getElementById("go").addEventListener("click", async ()=>{
   if(!/^09\d{9}$/.test(phone)){
     err.textContent = "لطفاً شماره را به صورت 11 رقمی و با 09 وارد کنید."; err.style.display="block"; return;
   }
+
+  // مقادیر انتخاب اختیاری
+  const prefDate = (window.__timePref__ && window.__timePref__.date) || null;
+  const prefWindow = (window.__timePref__ && window.__timePref__.window) || null;
+
   try{
     // آیا مشتری وجود دارد؟
     const r = await fetch(`${API}/api/customers/phone/${phone}`);
     if(r.ok){
-      // مشتری موجود → مستقیماً درخواست بساز و برو صفحهٔ تایید
+      // مشتری موجود → اگر زمان انتخاب شده، اول تلاش برای قفل اسلات
+      let reservationInfo = null;
+      if (prefDate && prefWindow) {
+        try {
+          const cust = await r.json(); // انتظار: { _id, ... }
+          if (cust && cust._id) {
+            const makeRes = await fetch(`${API}/reservations`, {
+              method:"POST",
+              headers:{ "Content-Type":"application/json" },
+              body: JSON.stringify({
+                customerId: cust._id,
+                serviceType: "general_service",
+                date: prefDate,
+                window: prefWindow,
+                source: "self"
+              })
+            });
+            reservationInfo = await makeRes.json();
+            if (makeRes.status === 409) {
+              err.textContent = "این بازه همین الان پر شد. لطفاً بازهٔ دیگری را انتخاب کنید.";
+              err.style.display = "block";
+              return;
+            }
+          }
+        } catch(e) {
+          // اگر رزرو موفق نشد، ادامه می‌دهیم؛ چون اختیاری است
+        }
+      }
+
+      // سپس ساخت درخواست سرویس (مثل قبل) + ارسال ترجیح زمانی در بدنه (اختیاری)
       const make = await fetch(`${API}/api/requests`, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ phone, issueType:"خدمت از صفحه بررسی شماره", sourcePath:getSourcePath() })
+        body:JSON.stringify({
+          phone,
+          issueType:"خدمت از صفحه بررسی شماره",
+          sourcePath:getSourcePath(),
+          preferredDate: prefDate || undefined,
+          preferredWindow: prefWindow || undefined,
+          reservationId: reservationInfo && reservationInfo._id ? reservationInfo._id : undefined
+        })
       });
-      if(make.status===429){
-        location.href = `request-confirmed.html?code=spam`;
-        return;
-      }
+      if(make.status===429){ location.href = `request-confirmed.html?code=spam`; return; }
       const reqDoc = await make.json();
       if(make.ok){
         location.href = `request-confirmed.html?code=${encodeURIComponent(reqDoc.invoiceCode)}`;
@@ -102,8 +225,14 @@ document.getElementById("go").addEventListener("click", async ()=>{
         throw new Error(reqDoc.error || "ثبت نشد");
       }
     }else{
-      // مشتری جدید → برو فرم تکمیل اطلاعات
-      location.href = `request-form.html?phone=${phone}&src=${encodeURIComponent(getSourcePath())}`;
+      // مشتری جدید → پاس‌دادن انتخاب اختیاری به فرم بعدی تا آنجا ثبت شود
+      const q = new URLSearchParams({
+        phone,
+        src: getSourcePath(),
+        pd: prefDate || "",
+        pw: prefWindow || ""
+      }).toString();
+      location.href = `request-form.html?${q}`;
     }
   }catch(e){
     err.textContent = "خطا در ارتباط. دوباره تلاش کنید."; err.style.display="block";
