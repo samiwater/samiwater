@@ -8,71 +8,82 @@
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #042e24;
+      background-color: #042e24; /* رنگ سبز تیره پس‌زمینه برای هماهنگی کامل حاشیه‌ها */
       height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       overflow: hidden;
     }
 
-    .container {
+    /* باکس اصلی که دقیقاً ابعاد عکس را حفظ می‌کند */
+    .app-wrapper {
       position: relative;
       width: 100%;
-      max-width: 600px;
+      max-width: 500px; /* استاندارد اکثر موبایل‌ها */
       height: 100vh;
-      margin: auto;
-      /* تغییر به cover برای پر کردن کامل بالا و پایین صفحه */
-      background-image: url('landing-main.png'); 
-      background-size: cover; 
-      background-repeat: no-repeat;
-      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* دکمه نامرئی روی منوی همبرگری - با تنظیم دقیق درصد بر اساس عکس cover */
+    /* تصویر اصلی بدون ذره‌ای زوم یا برش */
+    .bg-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* نمایش کامل و استاندارد تصویر بدون حذفیات */
+      pointer-events: none; /* جلوگیری از سیو شدن یا درگ شدن اشتباهی عکس */
+    }
+
+    /* --- دکمه‌های نامرئی کاملاً تنظیم شده بر اساس ابعاد واقعی تصویر --- */
+
+    /* منوی همبرگری (بالا سمت راست، دقیقا روی سه خط طلایی) */
     #menu-trigger-btn {
       position: absolute;
-      top: 19.5%; /* اصلاح درصد برای نشستن دقیق روی سه خط طلایی */
-      right: 7%;
-      width: 12%;
-      height: 4%;
-      background: rgba(255, 0, 0, 0); /* کاملاً نامرئی */
+      top: 14%; 
+      right: 5%;
+      width: 15%;
+      height: 5%;
+      background: rgba(255, 0, 0, 0); /* کاملاً شفاف */
       border: none;
       cursor: pointer;
       z-index: 10;
     }
 
-    /* دکمه نامرئی برای شماره تلفن اول */
+    /* شماره تلفن اول (09130051733) */
     .call-btn-1 {
       position: absolute;
-      top: 60.5%;
-      left: 20%;
-      width: 60%;
-      height: 4%;
-      background: rgba(0, 0, 0, 0);
+      top: 64.5%; 
+      left: 15%;
+      width: 70%;
+      height: 4.5%;
+      background: rgba(0, 255, 0, 0);
       border: none;
       cursor: pointer;
       z-index: 10;
     }
 
-    /* دکمه نامرئی برای شماره تلفن دوم */
+    /* شماره تلفن دوم (09130051745) */
     .call-btn-2 {
       position: absolute;
-      top: 65.5%;
-      left: 20%;
-      width: 60%;
-      height: 4%;
-      background: rgba(0, 0, 0, 0);
+      top: 71.5%; 
+      left: 15%;
+      width: 70%;
+      height: 4.5%;
+      background: rgba(0, 0, 255, 0);
       border: none;
       cursor: pointer;
       z-index: 10;
     }
 
-    /* دکمه نامرئی برای آیدی اینستاگرام */
+    /* آیدی اینستاگرام (samiwater.vip) */
     .insta-btn {
       position: absolute;
-      top: 71%;
-      left: 20%;
-      width: 60%;
-      height: 4%;
-      background: rgba(0, 0, 0, 0);
+      top: 78.5%; 
+      left: 15%;
+      width: 70%;
+      height: 4.5%;
+      background: rgba(255, 255, 0, 0);
       border: none;
       cursor: pointer;
       z-index: 10;
@@ -132,11 +143,14 @@
 </head>
 <body>
 
-  <div class="container">
-    <!-- دکمه منو -->
+  <div class="app-wrapper">
+    <!-- تصویر بدون تغییر زوم -->
+    <img src="landing-main.png" alt="SamiWater" class="bg-image">
+
+    <!-- دکمه همبرگر -->
     <button id="menu-trigger-btn" onclick="toggleMenu()"></button>
 
-    <!-- دکمه‌های تماس و اینستاگرام زنده روی عکس -->
+    <!-- دکمه‌های بافاصله و تفکیک شده‌ی تماس و اینستاگرام -->
     <button class="call-btn-1" onclick="location.href='tel:09130051733'"></button>
     <button class="call-btn-2" onclick="location.href='tel:09130051745'"></button>
     <button class="insta-btn" onclick="window.open('https://instagram.com/samiwater.vip', '_blank')"></button>
