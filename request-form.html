@@ -6,7 +6,7 @@
   <title>فرم ثبت مشتری | SamiWater</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    body{background:#083b31;color:#f7f7f7;font-family:IRANSans, Vazirmatn, sans-serif}
+    body{background:#083b31;color:#f7f7f7;font-family:Tahoma, sans-serif}
     .card{max-width:680px;margin:28px auto;padding:22px;border:1px solid #335f55;border-radius:18px;background:#0e4a3f}
     .row{display:grid;grid-template-columns:1fr;gap:12px}
     label{font-weight:700}
@@ -21,162 +21,22 @@
 <body>
   <div class="card">
     <h2 style="margin-top:0;color:#f3c842">ثبت مشخصات مشتری</h2>
-
     <div id="prefInfo" class="info" style="display:none"></div>
-
     <div class="row two">
-      <div>
-        <label>شماره موبایل</label>
-        <input id="phone" class="input" readonly />
-      </div>
-      <div>
-        <label>نام و نام‌خانوادگی</label>
-        <input id="fullName" class="input" placeholder="مثلاً علی رضایی" />
-      </div>
+      <div><label>شماره موبایل</label><input id="phone" class="input" readonly /></div>
+      <div><label>نام و نام‌خانوادگی</label><input id="fullName" class="input" placeholder="مثلاً علی رضایی" /></div>
     </div>
-
     <div class="row two">
-      <div>
-        <label>شهر</label>
-        <input id="city" class="input" value="اصفهان" />
-      </div>
-      <div>
-        <label>تلفن دوم (اختیاری)</label>
-        <input id="altPhone" class="input" placeholder="مثلاً 0913..." />
-      </div>
+      <div><label>شهر</label><input id="city" class="input" value="اصفهان" /></div>
+      <div><label>تلفن دوم (اختیاری)</label><input id="altPhone" class="input" placeholder="مثلاً 0913..." /></div>
     </div>
-
     <div class="row">
-      <div>
-        <label>آدرس دقیق</label>
-        <textarea id="address" class="input" placeholder="خیابان، کوچه، پلاک ..."></textarea>
-      </div>
+      <div><label>آدرس دقیق</label><textarea id="address" class="input" placeholder="خیابان، کوچه، پلاک ..."></textarea></div>
     </div>
-
     <button id="submitBtn" class="btn">ثبت نهایی</button>
     <div id="msg" class="warn"></div>
   </div>
 
   <script>
     const API = "https://samiwater-backend.onrender.com";
-
-    function normalizePhone(p){
-      if(!p) return "";
-      p = p.replace(/[^\d]/g,"");
-      if(p.startsWith("0098")) p = "0"+p.slice(3);
-      if(p.startsWith("98"))   p = "0"+p.slice(2);
-      return p;
-    }
-
-    async function apiPost(url, body){
-      const r = await fetch(url, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(body)
-      });
-      const data = await r.json().catch(()=> ({}));
-      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
-      return data;
-    }
-    async function apiGet(url){
-      const r = await fetch(url);
-      const data = await r.json().catch(()=> ({}));
-      if(!r.ok) throw new Error(data.error || ("HTTP "+r.status));
-      return data;
-    }
-
-    // ====== ورودی‌های صفحه قبل
-    const qp = new URLSearchParams(location.search);
-    const phoneFromQS = normalizePhone(qp.get("phone") || "");
-    const preferredDate   = (qp.get("pd") || "").trim();   // YYYY-MM-DD
-    const preferredWindow = (qp.get("pw") || "").trim();   // e.g. 11-13
-    document.getElementById("phone").value = phoneFromQS;
-
-    // نمایش خلاصه ترجیح زمانی (اگر وجود داشته باشد)
-    const prefInfo = document.getElementById("prefInfo");
-    if (preferredDate && preferredWindow) {
-      prefInfo.style.display = "block";
-      prefInfo.innerHTML = `ترجیح زمانی شما: <b>${preferredDate}</b> – <b>${preferredWindow}</b> (اختیاری)`;
-    }
-
-    // برای ساخت درخواست (همان روال قبلی ولی با ارسال prefer ها)
-    async function createRequestFor({ phone, reservationId = undefined }) {
-      const sourcePath = sessionStorage.getItem("sw_source") || (qp.get("src") || "ems");
-      const issueType  = sessionStorage.getItem("sw_issue")  || "urgent";
-      const payload = {
-        phone,
-        issueType,
-        sourcePath,
-      };
-      if (preferredDate)   payload.preferredDate = preferredDate;
-      if (preferredWindow) payload.preferredWindow = preferredWindow;
-      if (reservationId)   payload.reservationId = reservationId;
-
-      const doc = await apiPost(`${API}/api/requests`, payload);
-      
-      // اصلاح آدرس‌دهی متناسب با ساختار ورسل بدون اسلش اضافی اول
-      const extraQ = new URLSearchParams({
-        pd: preferredDate || "",
-        pw: preferredWindow || ""
-      }).toString();
-      location.href = `request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}&${extraQ}`;
-    }
-
-    // ساخت/یافتن مشتری و سپس رزرو اختیاری اسلات و ساخت درخواست
-    document.getElementById("submitBtn").addEventListener("click", async () => {
-      const fullName = document.getElementById("fullName").value.trim();
-      const phone    = normalizePhone(document.getElementById("phone").value);
-      const address  = document.getElementById("address").value.trim();
-      const altPhone = document.getElementById("altPhone").value.trim();
-      const city     = document.getElementById("city").value.trim() || "اصفهان";
-      const msg      = document.getElementById("msg");
-      msg.textContent = "";
-
-      if(!fullName || !phone || !address){
-        alert("نام، موبایل و آدرس الزامی است.");
-        return;
-      }
-
-      try{
-        // 1) ایجاد مشتری (اگر وجود داشت 409 می‌گیریم که مشکلی نیست)
-        let customerId = null;
-        try{
-          const created = await apiPost(`${API}/api/customers`, { fullName, phone, address, altPhone, city });
-          if (created && created._id) customerId = created._id;
-        }catch(e){
-          // اگر قبلاً بوده، از روی شماره پیدا می‌کنیم
-        }
-        if (!customerId) {
-          try {
-            const found = await apiGet(`${API}/api/customers/phone/${phone}`);
-            if (found && found._id) customerId = found._id;
-          } catch(e) {/* اگر نبود هم مهم نیست، ادامه می‌دهیم */}
-        }
-
-        // 2) اگر ترجیح زمانی داریم، تلاش برای رزرو اسلات (اختیاری)
-        let reservationId = null;
-        if (customerId && preferredDate && preferredWindow) {
-          try {
-            const resv = await apiPost(`${API}/reservations`, {
-              customerId,
-              serviceType: "general_service",
-              date: preferredDate,
-              window: preferredWindow,
-              source: "self"
-            });
-            reservationId = resv && resv._id ? resv._id : null;
-          } catch(e) {
-            // اگر پر شده بود یا خطا داشت، فقط پیام می‌دهیم و ادامه می‌دهیم
-            msg.textContent = "توجه: بازه‌ی انتخابی شما در حال حاضر در دسترس نیست. درخواست شما بدون رزرو زمان قطعی ثبت می‌شود.";
-          }
-        }
-
-        // 3) ساخت درخواست با ارسال prefer ها و (در صورت موفقیت) reservationId
-        await createRequestFor({ phone, reservationId });
-      }catch(e){
-        alert("خطا: "+ e.message);
-      }
-    });
-  </script>
-</body>
-</html>
+    const qp = new
