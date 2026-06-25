@@ -7,7 +7,11 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
         body { background: #f1f5f9; color: #1e293b; padding: 20px; }
-        .header { background: #1e293b; color: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header { background: #1e293b; color: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header h1 { font-size: 18px; }
+        .nav-menu { display: flex; gap: 15px; }
+        .nav-menu a { color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .nav-menu a:hover { color: #fff; }
         .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -25,6 +29,11 @@
 
 <div class="header">
     <h1>پنل مدیریت سامی‌واتر</h1>
+    <nav class="nav-menu">
+        <a href="customers.html">بانک اطلاعات</a>
+        <a href="services.html">بانک خدمات</a>
+        <a href="users.html">مدیریت کاربران</a>
+    </nav>
     <button class="logout-btn" onclick="logout()">خروج</button>
 </div>
 
@@ -52,7 +61,6 @@
 <script>
     const API_BASE = "https://samiwater-backend.onrender.com/api";
 
-    // اصلاح کلید توکن: از 'admin_token' به 'token' تغییر یافت تا با login.html مچ شود
     const token = localStorage.getItem("token");
     if (!token) {
         window.location.href = "login.html";
