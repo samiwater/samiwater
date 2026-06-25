@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>SamiWater App | صفحه اصلی</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #042e24; /* رنگ هم‌خوان با بک‌گراند */
+      background-color: #042e24;
       height: 100%;
       overflow: hidden;
     }
@@ -17,36 +17,75 @@
       position: relative;
       width: 100%;
       max-width: 600px;
-      aspect-ratio: 9 / 16;
+      height: 100vh;
       margin: auto;
-      background-image: url('landing-main.png'); /* عکس اصلی اپلیکیشن شما */
-      background-size: contain;
+      /* تغییر به cover برای پر کردن کامل بالا و پایین صفحه */
+      background-image: url('landing-main.png'); 
+      background-size: cover; 
       background-repeat: no-repeat;
       background-position: center;
-      height: 100%;
     }
 
-    /* دکمه نامرئی روی منوی همبرگری (بالا سمت راست عکس) */
+    /* دکمه نامرئی روی منوی همبرگری - با تنظیم دقیق درصد بر اساس عکس cover */
     #menu-trigger-btn {
       position: absolute;
-      top: 3.5%;
-      right: 5%;
+      top: 19.5%; /* اصلاح درصد برای نشستن دقیق روی سه خط طلایی */
+      right: 7%;
       width: 12%;
-      height: 6%;
-      background: none;
+      height: 4%;
+      background: rgba(255, 0, 0, 0); /* کاملاً نامرئی */
       border: none;
       cursor: pointer;
       z-index: 10;
     }
 
-    /* ظاهر منوی کشویی همبرگری بعد از کلیک */
+    /* دکمه نامرئی برای شماره تلفن اول */
+    .call-btn-1 {
+      position: absolute;
+      top: 60.5%;
+      left: 20%;
+      width: 60%;
+      height: 4%;
+      background: rgba(0, 0, 0, 0);
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* دکمه نامرئی برای شماره تلفن دوم */
+    .call-btn-2 {
+      position: absolute;
+      top: 65.5%;
+      left: 20%;
+      width: 60%;
+      height: 4%;
+      background: rgba(0, 0, 0, 0);
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* دکمه نامرئی برای آیدی اینستاگرام */
+    .insta-btn {
+      position: absolute;
+      top: 71%;
+      left: 20%;
+      width: 60%;
+      height: 4%;
+      background: rgba(0, 0, 0, 0);
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* ظاهر منوی کشویی همبرگری */
     .overlay-menu {
       position: absolute;
       top: 0;
       right: -100%;
       width: 100%;
       height: 100%;
-      background: rgba(4, 38, 30, 0.97); /* سبز تیره مات لوکس */
+      background: rgba(4, 38, 30, 0.98);
       z-index: 20;
       transition: 0.4s ease;
       display: flex;
@@ -94,10 +133,15 @@
 <body>
 
   <div class="container">
-    <!-- دکمه نامرئی که دقیقاً می‌افتد روی شکل همبرگریِ عکس -->
+    <!-- دکمه منو -->
     <button id="menu-trigger-btn" onclick="toggleMenu()"></button>
 
-    <!-- منوی مخفی که با کلیک روی دکمه بالا باز می‌شود -->
+    <!-- دکمه‌های تماس و اینستاگرام زنده روی عکس -->
+    <button class="call-btn-1" onclick="location.href='tel:09130051733'"></button>
+    <button class="call-btn-2" onclick="location.href='tel:09130051745'"></button>
+    <button class="insta-btn" onclick="window.open('https://instagram.com/samiwater.vip', '_blank')"></button>
+
+    <!-- منوی همبرگری بازشونده -->
     <div class="overlay-menu" id="hamburgerMenu">
       <div class="close-btn" onclick="toggleMenu()">×</div>
       <div class="menu-links">
