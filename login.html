@@ -1,116 +1,73 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود به مدیریت سامی واتر</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; }
-        body { background: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; }
-        .login-box { background: #1e293b; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
-        h2 { color: #38bdf8; margin-bottom: 25px; font-size: 22px; }
-        .form-group { margin-bottom: 20px; text-align: right; }
-        label { display: block; margin-bottom: 8px; color: #94a3b8; font-size: 14px; }
-        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; text-align: center; font-size: 16px; color: #fff; outline: none; }
-        input:focus { border-color: #38bdf8; }
-        button { width: 100%; padding: 12px; background: #0288d1; border: none; color: #fff; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
-        button:hover { background: #039be5; }
-        .error { color: #f87171; font-size: 13px; margin-top: 15px; display: none; background: rgba(248,113,113,0.1); padding: 8px; border-radius: 4px; }
-        .step-2 { display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>پنل مدیریت | SamiWater</title>
+  <style>
+    body { background: #0c1a30; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { max-width: 400px; width: 90%; background: #13223c; border: 1px solid #1e335a; border-radius: 18px; padding: 28px; box-shadow: 0 8px 30px rgba(0,0,0,.4); text-align: center; }
+    h2 { color: #3498db; margin-bottom: 25px; font-size: 24px; }
+    label { display: block; text-align: right; margin: 14px 0 6px; color: #a5b8d4; font-size: 14px; }
+    input { width: 100%; height: 50px; border-radius: 12px; border: 1px solid #1e335a; background: #0f1b2e; color: #fff; padding: 0 14px; font-size: 16px; box-sizing: border-box; text-align: center; }
+    .btn { width: 100%; height: 52px; border-radius: 12px; background: #3498db; border: none; color: #fff; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.3s; }
+    .btn:hover { background: #2980b9; }
+    .error-text { color: #ff6b6b; margin-top: 15px; font-size: 14px; display: none; font-weight: bold; }
+  </style>
 </head>
 <body>
-
-<div class="login-box">
+  <div class="card">
     <h2>پنل مدیریت سامی‌وآتر</h2>
-    
-    <div id="step1">
-        <div class="form-group">
-            <label>شماره موبایل مدیر:</label>
-            <input type="text" id="phone" value="09335696042">
-        </div>
-        <div class="form-group">
-            <label>پین کد ورود (۵ رقمی):</label>
-            <input type="password" id="pin" placeholder="رمز ثابت را وارد کنید">
-        </div>
-        <button onclick="requestOTP()">ارسال کد تایید</button>
-    </div>
 
-    <div id="step2" class="step-2">
-        <div class="form-group">
-            <label>کد تایید ۶ رقمی:</label>
-            <input type="text" id="otpCode" placeholder="******">
-        </div>
-        <button onclick="verifyOTP()">ورود نهایی</button>
-    </div>
+    <label>نام کاربری</label>
+    <input id="adminUser" placeholder="نام کاربری خود را وارد کنید" autocomplete="off" />
 
-    <div id="errorMsg" class="error"></div>
-</div>
+    <label>پین کد ورود</label>
+    <input id="adminPin" type="password" placeholder="پین کد را وارد کنید" autocomplete="off" />
 
-<script>
-    // آدرس اتصال به بک‌اند
-    const API_BASE = "http://localhost:5000/api"; 
+    <button class="btn" onclick="checkAdminLogin()">ورود به سیستم</button>
 
-    function showErr(msg) {
-        const errDiv = document.getElementById("errorMsg");
-        errDiv.innerText = msg;
-        errDiv.style.display = "block";
-    }
+    <div class="error-text" id="error"></div>
+  </div>
 
-    async function requestOTP() {
-        const phone = document.getElementById("phone").value.trim();
-        const pin = document.getElementById("pin").value.trim();
-        showErr("");
+  <script>
+    const BACKEND_URL = "https://samiwater-backend.onrender.com";
 
-        try {
-            const res = await fetch(`${API_BASE}/auth/request-otp`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ phone, pin })
-            });
-            const data = await res.json();
+    async function checkAdminLogin() {
+      const username = document.getElementById('adminUser').value.trim();
+      const pin = document.getElementById('adminPin').value.trim();
+      const errorDiv = document.getElementById('error');
+      
+      errorDiv.style.display = 'none';
 
-            if (!res.ok) {
-                return showErr(data.error || "ورود ناموفق");
-            }
+      if (!username || !pin) {
+        errorDiv.innerText = "لطفاً نام کاربری و پین‌کد را وارد کنید";
+        errorDiv.style.display = 'block';
+        return;
+      }
 
-            // برای تست راحت بدون هزینه پیامک
-            if(data.dev_code) {
-                alert(`کد ورود موقت شما: ${data.dev_code}`);
-            }
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, pin })
+        });
+        const data = await response.json();
 
-            document.getElementById("step1").style.display = "none";
-            document.getElementById("step2").style.display = "block";
-        } catch (e) {
-            showErr("خطا در ارتباط با سرور");
+        if (data.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userRole', data.role);
+          localStorage.setItem('username', data.username);
+          window.location.href = 'dashboard.html';
+        } else {
+          errorDiv.innerText = data.error || "مشخصات ورود نادرست است";
+          errorDiv.style.display = 'block';
         }
+      } catch (err) {
+        errorDiv.innerText = "خطا در ارتباط با سرور بک‌اَند!";
+        errorDiv.style.display = 'block';
+      }
     }
-
-    async function verifyOTP() {
-        const phone = document.getElementById("phone").value.trim();
-        const code = document.getElementById("otpCode").value.trim();
-        showErr("");
-
-        try {
-            const res = await fetch(`${API_BASE}/auth/verify-otp`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ phone, code })
-            });
-            const data = await res.json();
-
-            if (!res.ok) {
-                return showErr(data.error || "کد اشتباه است");
-            }
-
-            // ذخیره توکن در مرورگر
-            localStorage.setItem("admin_token", data.token);
-            // هدایت به صفحه اصلی مدیریت
-            window.location.href = "main.html"; 
-        } catch (e) {
-            showErr("خطا در تایید کد");
-        }
-    }
-</script>
+  </script>
 </body>
 </html>
