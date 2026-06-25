@@ -2,60 +2,61 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>فرم ثبت مشتری | SamiWater</title>
+  <title>ثبت نهایی | SamiWater</title>
   <style>
-    body{background:#083b31;color:#f7f7f7;font-family:Tahoma, sans-serif}
-    .card{max-width:680px;margin:28px auto;padding:22px;border:1px solid #335f55;border-radius:18px;background:#0e4a3f}
-    .input{width:100%;padding:12px;border-radius:12px;border:1px solid #2f5c51;background:#f3f7f6;color:#072b24;margin-bottom:10px}
-    .btn{width:100%;padding:14px;border-radius:14px;background:#f3c842;color:#10352c;font-weight:800;font-size:18px;border:none}
+    body{background:#083b31;color:#fff;font-family:Tahoma}
+    .card{max-width:500px;margin:20px auto;padding:20px;background:#0e4a3f;border-radius:15px}
+    .input{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:none}
+    label{font-size:14px;color:#f3c842}
+    .btn{width:100%;padding:12px;background:#f3c842;border:none;border-radius:8px;font-weight:bold}
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>ثبت مشخصات مشتری</h2>
+    <h2>ثبت مشخصات</h2>
+    <label>شماره موبایل</label>
     <input id="phone" class="input" readonly />
-    <input id="fullName" class="input" placeholder="نام و نام‌خانوادگی" />
-    <input id="city" class="input" value="اصفهان" />
-    <input id="altPhone" class="input" placeholder="تلفن دوم (اختیاری)" />
-    <textarea id="address" class="input" placeholder="آدرس دقیق"></textarea>
-    <button id="submitBtn" class="btn">ثبت نهایی</button>
+    
+    <label>نام و نام‌خانوادگی</label>
+    <input id="fullName" class="input" placeholder="مثال: محمد نکهی" />
+    
+    <label>آدرس دقیق</label>
+    <input id="address" class="input" placeholder="مثال: خیابان تختی، پلاک ۱۰" />
+    
+    <label>توضیحات (اختیاری)</label>
+    <input id="notes" class="input" placeholder="مثال: ظهر زنگ نزنید" />
+
+    <button id="submitBtn" class="btn">ثبت نهایی و ارسال درخواست</button>
   </div>
 
   <script>
     const API = "https://samiwater-backend.onrender.com";
-    document.getElementById("phone").value = new URLSearchParams(location.search).get("phone") || "";
+    const phone = new URLSearchParams(location.search).get("phone");
+    document.getElementById("phone").value = phone;
 
     document.getElementById("submitBtn").addEventListener("click", async () => {
-      const body = {
-        fullName: document.getElementById("fullName").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        address: document.getElementById("address").value.trim(),
-        altPhone: document.getElementById("altPhone").value.trim(),
-        city: document.getElementById("city").value.trim()
+      const data = {
+        phone,
+        fullName: document.getElementById("fullName").value,
+        address: document.getElementById("address").value,
+        notes: document.getElementById("notes").value
       };
 
-      if(!body.fullName || !body.address) return alert("نام و آدرس الزامی است");
-
       try {
-        // ۱. ثبت مشتری در دیتابیس
+        // ۱. ثبت/آپدیت مشتری در بک‌اَند
         const res = await fetch(`${API}/api/customers`, {
           method: "POST",
           headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(body)
+          body: JSON.stringify(data)
         });
         
-        const data = await res.json();
-        
         if (res.ok) {
-          alert("ثبت با موفقیت انجام شد.");
+          // ۲. هدایت به صفحه تایید (بدونِ ارسالِ آیدی، چون بک‌اَند خودش آدرس رو مدیریت کرد)
           location.href = "request-confirmed.html";
         } else {
-          alert("خطا: " + (data.error || "مشکلی پیش آمد"));
+          alert("خطا در ثبت اطلاعات");
         }
-      } catch(e) { 
-        alert("خطای شبکه: " + e.message); 
-      }
+      } catch(e) { alert("خطا: " + e.message); }
     });
   </script>
 </body>
