@@ -18,15 +18,11 @@
 <body>
   <div class="card">
     <h2>پنل مدیریت سامی‌وآتر</h2>
-
     <label>نام کاربری</label>
-    <input id="adminUser" placeholder="نام کاربری خود را وارد کنید" autocomplete="off" />
-
+    <input id="adminUser" placeholder="نام کاربری" autocomplete="off" />
     <label>پین کد ورود</label>
-    <input id="adminPin" type="password" placeholder="پین کد را وارد کنید" autocomplete="off" />
-
+    <input id="adminPin" type="password" placeholder="پین کد" autocomplete="off" />
     <button class="btn" onclick="checkAdminLogin()">ورود به سیستم</button>
-
     <div class="error-text" id="error"></div>
   </div>
 
@@ -38,14 +34,6 @@
       const pin = document.getElementById('adminPin').value.trim();
       const errorDiv = document.getElementById('error');
       
-      errorDiv.style.display = 'none';
-
-      if (!username || !pin) {
-        errorDiv.innerText = "لطفاً نام کاربری و پین‌کد را وارد کنید";
-        errorDiv.style.display = 'block';
-        return;
-      }
-
       try {
         const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
           method: 'POST',
@@ -55,16 +43,20 @@
         const data = await response.json();
 
         if (data.ok) {
+          // ذخیره‌سازی تمام متغیرهای حیاتی برای اینکه داشبورد بیرون نپرد
           localStorage.setItem('token', data.token);
+          localStorage.setItem('role', data.role);
           localStorage.setItem('userRole', data.role);
           localStorage.setItem('username', data.username);
+          localStorage.setItem('adminPhone', '09384129843'); // برای سازگاری با داشبورد قدیمی
+          
           window.location.href = 'dashboard.html';
         } else {
-          errorDiv.innerText = data.error || "مشخصات ورود نادرست است";
+          errorDiv.innerText = data.error || "نام کاربری یا پین نادرست است";
           errorDiv.style.display = 'block';
         }
       } catch (err) {
-        errorDiv.innerText = "خطا در ارتباط با سرور بک‌اَند!";
+        errorDiv.innerText = "خطا در ارتباط با سرور!";
         errorDiv.style.display = 'block';
       }
     }
