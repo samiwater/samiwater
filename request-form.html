@@ -2,29 +2,26 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ثبت نهایی | SamiWater</title>
-  <style>
-    body{background:#083b31;color:#fff;font-family:Tahoma}
-    .card{max-width:500px;margin:20px auto;padding:20px;background:#0e4a3f;border-radius:15px}
-    .input{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:none}
-    label{font-size:14px;color:#f3c842}
-    .btn{width:100%;padding:12px;background:#f3c842;border:none;border-radius:8px;font-weight:bold}
-  </style>
+  <!-- لینکِ فایلِ استایلِ اصلیِ پروژه‌ت -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="card">
-    <h2>ثبت مشخصات</h2>
+    <h2>ثبت مشخصات مشتری</h2>
+    
     <label>شماره موبایل</label>
     <input id="phone" class="input" readonly />
     
     <label>نام و نام‌خانوادگی</label>
-    <input id="fullName" class="input" placeholder="مثال: محمد نکهی" />
+    <input id="fullName" class="input" placeholder="نام و نام‌خانوادگی خود را وارد کنید" />
     
     <label>آدرس دقیق</label>
-    <input id="address" class="input" placeholder="مثال: خیابان تختی، پلاک ۱۰" />
+    <input id="address" class="input" placeholder="آدرس دقیق محل سکونت" />
     
     <label>توضیحات (اختیاری)</label>
-    <input id="notes" class="input" placeholder="مثال: ظهر زنگ نزنید" />
+    <input id="notes" class="input" placeholder="مثلاً: ظهرها زنگ نزنید" />
 
     <button id="submitBtn" class="btn">ثبت نهایی و ارسال درخواست</button>
   </div>
@@ -34,6 +31,26 @@
     const phone = new URLSearchParams(location.search).get("phone");
     document.getElementById("phone").value = phone;
 
+    // ۱. چک کردن بانک به محض لود شدن
+    window.onload = async () => {
+      try {
+        const res = await fetch(`${API}/api/customers`);
+        const data = await res.json();
+        const existing = data.customers.find(c => c.phone === phone);
+        
+        if (existing) {
+          document.getElementById("fullName").value = existing.fullName;
+          if (existing.addresses.length > 0) {
+            document.getElementById("address").value = existing.addresses[0].fullAddress;
+          }
+          if (existing.notes) {
+            document.getElementById("notes").value = existing.notes;
+          }
+        }
+      } catch (e) { console.log("خطا در ارتباط با بانک اطلاعاتی"); }
+    };
+
+    // ۲. ثبت یا آپدیت
     document.getElementById("submitBtn").addEventListener("click", async () => {
       const data = {
         phone,
@@ -43,7 +60,6 @@
       };
 
       try {
-        // ۱. ثبت/آپدیت مشتری در بک‌اَند
         const res = await fetch(`${API}/api/customers`, {
           method: "POST",
           headers: {"Content-Type": "application/json"},
@@ -51,12 +67,11 @@
         });
         
         if (res.ok) {
-          // ۲. هدایت به صفحه تایید (بدونِ ارسالِ آیدی، چون بک‌اَند خودش آدرس رو مدیریت کرد)
           location.href = "request-confirmed.html";
         } else {
           alert("خطا در ثبت اطلاعات");
         }
-      } catch(e) { alert("خطا: " + e.message); }
+      } catch(e) { alert("خطا در شبکه"); }
     });
   </script>
 </body>
