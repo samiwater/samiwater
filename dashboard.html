@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت فاکتورها و خدمات - سامی واتر</title>
+    <title>پنل مدیریت سامی‌واتر</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
         body { background: #f1f5f9; color: #1e293b; padding: 20px; }
         .header { background: #1e293b; color: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 20px; }
         .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: right; font-size: 14px; }
-        th { background: #f8fafc; color: #475569; }
-        tr:nth-child(even) { background: #f8fafc; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        th { background: #f8fafc; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .status-pending { background: #fef3c7; color: #d97706; }
         .status-done { background: #dcfce7; color: #15803d; }
         .status-open { background: #e0f2fe; color: #0369a1; }
-        .action-select { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; }
+        .action-select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; }
         .error-msg { color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; display: none; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>پنل مدیریت درخواست‌ها و فاکتورهای سامی‌واتر</h1>
-    <button class="logout-btn" onclick="logout()">خروج از حساب</button>
+    <h1>پنل مدیریت سامی‌واتر</h1>
+    <button class="logout-btn" onclick="logout()">خروج</button>
 </div>
 
 <div id="errBox" class="error-msg"></div>
 
 <div class="card">
-    <h2>لیست کل درخواست‌ها / فاکتورها</h2>
+    <h2>لیست درخواست‌ها</h2>
     <div style="overflow-x: auto;">
         <table>
             <thead>
@@ -41,120 +39,84 @@
                     <th>کد فاکتور</th>
                     <th>نام مشتری</th>
                     <th>شماره تماس</th>
-                    <th>نوع مشکل / خدمت</th>
-                    <th>وضعیت فاکتور</th>
-                    <th>عملیات تغییر وضعیت</th>
+                    <th>نوع خدمت</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
                 </tr>
             </thead>
-            <tbody id="requestsTableBody">
-                <tr>
-                    <td colspan="6" style="text-align: center; color: #64748b;">در حال بارگذاری اطلاعات فاکتورها...</td>
-                </tr>
-            </tbody>
+            <tbody id="requestsTableBody"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // اتصال به آدرس بک‌اند زنده روی رندر
     const API_BASE = "https://samiwater-backend.onrender.com/api";
 
-    // امنیت صفحه: اگر توکن نباشد، اجازه نده صفحه را ببیند و شوتش کن به صفحه login
-    const token = localStorage.getItem("admin_token");
+    // اصلاح کلید توکن: از 'admin_token' به 'token' تغییر یافت تا با login.html مچ شود
+    const token = localStorage.getItem("token");
     if (!token) {
         window.location.href = "login.html";
     }
 
     function logout() {
-        localStorage.removeItem("admin_token");
+        localStorage.removeItem("token");
         window.location.href = "login.html";
     }
 
-    // بارگذاری لیست فاکتورها از سرور بک‌اَند
     async function loadRequests() {
-        const errBox = document.getElementById("errBox");
-        errBox.style.display = "none";
-        
         try {
             const res = await fetch(`${API_BASE}/requests`, {
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
             const data = await res.json();
-
-            if (!res.ok) throw new Error(data.error || "خطا در دریافت لیست فاکتورها");
+            
+            if (!res.ok) throw new Error(data.error || "خطا در دریافت اطلاعات");
 
             const tbody = document.getElementById("requestsTableBody");
             tbody.innerHTML = "";
 
-            if (!data.requests || data.requests.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">هیچ فاکتوری در سیستم ثبت نشده است.</td></tr>`;
-                return;
-            }
-
             data.requests.forEach(req => {
                 const tr = document.createElement("tr");
-
-                const clientName = req.snapshot?.fullName || (req.customer ? req.customer.fullName : "نامشخص");
-                const clientPhone = req.snapshot?.phone || (req.customer ? req.customer.phone : "نامشخص");
-
-                let statusClass = "status-pending";
-                let statusText = "در انتظار";
+                const clientName = req.snapshot?.fullName || "نامشخص";
+                const clientPhone = req.snapshot?.phone || "نامشخص";
+                
+                let statusClass = "status-pending", statusText = "در انتظار";
                 if(req.status === "done" || req.status === "completed") { statusClass = "status-done"; statusText = "انجام شده"; }
                 if(req.status === "open") { statusClass = "status-open"; statusText = "فاکتور باز"; }
 
                 tr.innerHTML = `
-                    <td style="font-weight: bold; color: #0288d1;">${req.invoiceCode || '---'}</td>
+                    <td>${req.invoiceCode || '---'}</td>
                     <td>${clientName}</td>
                     <td>${clientPhone}</td>
-                    <td>${translateIssue(req.issueType)}</td>
+                    <td>${req.issueType || 'سرویس'}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>
                         <select class="action-select" onchange="updateStatus('${req._id}', this.value)">
-                            <option value="">تغییر وضعیت به...</option>
                             <option value="open" ${req.status === 'open' ? 'selected' : ''}>فاکتور باز</option>
-                            <option value="done" ${req.status === 'done' || req.status === 'completed' ? 'selected' : ''}>انجام شده</option>
+                            <option value="done" ${req.status === 'done' ? 'selected' : ''}>انجام شده</option>
                             <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
                         </select>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
         } catch (e) {
+            const errBox = document.getElementById("errBox");
             errBox.innerText = e.message;
             errBox.style.display = "block";
         }
     }
 
-    function translateIssue(type) {
-        const issues = {
-            install: "نصب دستگاه", maintenance: "سرویس دوره‌ای", repair: "تعمیرات قطعات",
-            filter: "تعویض فیلتر", stage: "تعویض مرحله", aquarium: "خدمات آکواریوم", urgent: "درخواست فوری", other: "سایر موارد"
-        };
-        return issues[type] || type || "سرویس";
-    }
-
     async function updateStatus(id, newStatus) {
-        if(!newStatus) return;
         try {
-            const res = await fetch(`${API_BASE}/requests/${id}/status`, {
+            await fetch(`${API_BASE}/requests/${id}/status`, {
                 method: "PUT",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ status: newStatus })
             });
-            if (res.ok) {
-                loadRequests();
-            } else {
-                const data = await res.json();
-                alert("خطا در تغییر وضعیت: " + data.error);
-            }
-        } catch (e) {
-            alert("خطا در اتصال به سرور جهت تغییر وضعیت");
-        }
+            loadRequests();
+        } catch (e) { alert("خطا در به‌روزرسانی وضعیت"); }
     }
 
     window.onload = loadRequests;
