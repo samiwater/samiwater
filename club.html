@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ورود | SamiWater</title>
+  <title>باشگاه مشتریان | SamiWater</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     body{background:#0e3b2f;color:#fff;font-family:sans-serif}
@@ -14,68 +14,127 @@
     h1{margin:0;font-size:26px;color:#f5cc52}
     label{display:block;margin:14px 0 6px}
     input{width:100%;height:52px;border-radius:14px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 14px;font-size:18px}
-    .btn{width:100%;height:56px;border-radius:16px;background:#f2c846;border:none;font-size:20px;margin-top:18px}
-    .muted{opacity:.9;margin-top:18px;line-height:1.8}
+    .btn{width:100%;height:56px;border-radius:16px;background:#f2c846;border:none;font-size:20px;margin-top:18px;cursor:pointer;font-weight:bold}
+    .btn:hover{background:#e2ba3a}
+    .muted{opacity:.9;margin-top:18px;line-height:1.8;font-size:14px;color:#cbdcd6}
+    .msg{margin-top:12px;text-align:center;font-weight:bold;display:none}
+    .error-text{color:#ff6b6b}
+    .success-text{color:#6bffb4}
   </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">
       <div class="badge">SA</div>
-      <h1>ورود | SamiWater</h1>
+      <h1>باشگاه مشتریان | SamiWater</h1>
     </div>
 
-    <label>شماره موبایل</label>
-    <input id="phone" placeholder="مثلاً 09131234567" inputmode="tel" />
+    <div id="phoneSection">
+      <label>شماره موبایل</label>
+      <input id="phone" placeholder="مثلاً 09131234567" inputmode="tel" maxlength="11" />
+    </div>
 
-    <div id="pinWrap" style="display:none">
-      <label>PIN (فقط برای مدیر)</label>
-      <input id="pin" placeholder="در صورت مدیر بودن" inputmode="numeric" />
+    <!-- بخش ورود کد تایید که بعد از زدن دکمه ادامه ظاهر می‌شود -->
+    <div id="otpWrap" style="display:none">
+      <label style="color:#f5cc52">کد تایید پیامک شده را وارد کنید</label>
+      <input id="otpCode" placeholder="کد ۶ رقمی تایید" inputmode="numeric" maxlength="6" />
     </div>
 
     <button class="btn" id="goBtn">ادامه</button>
 
-    <div class="muted">
-      اگر از «درخواست فوری» وارد شده‌اید، درخواست شما به‌صورت فوری ثبت می‌شود. اگر مشتری جدید هستید، در مرحله‌ی بعد فرم کوتاه نمایش داده می‌شود.
+    <div class="msg id="statusMsg"></div>
+
+    <div class="muted" id="infoDesc">
+      جهت ورود به باشگاه مشتریان سامی‌و‌تر و مشاهده آنی سوابق فیلترها، خدمات دریافت شده، نام تکنسین و هزینه‌ها، شماره موبایل خود را وارد نمایید.
     </div>
   </div>
 
 <script>
-  const ADMIN_PHONE = "09384129843";
-  const ADMIN_PIN   = "2468";
+  const BACKEND_URL = "https://samiwater-backend.onrender.com";
+  let step = 1; // مرحله ۱: ارسال موبایل، مرحله ۲: تایید کد
 
   const phoneEl = document.getElementById('phone');
-  const pinWrap = document.getElementById('pinWrap');
-  const pinEl   = document.getElementById('pin');
+  const otpWrap = document.getElementById('otpWrap');
+  const otpCodeEl = document.getElementById('otpCode');
   const goBtn   = document.getElementById('goBtn');
+  const infoDesc = document.getElementById('infoDesc');
+  const statusMsg = document.getElementById('statusMsg');
 
-  phoneEl.addEventListener('input', () => {
+  goBtn.addEventListener('click', async () => {
     const ph = phoneEl.value.trim();
-    pinWrap.style.display = (ph === ADMIN_PHONE) ? 'block' : 'none';
-  });
+    
+    // مخفی کردن پیام‌های قبلی
+    statusMsg.style.display = 'none';
+    statusMsg.className = 'msg';
 
-  goBtn.addEventListener('click', () => {
-    const ph = phoneEl.value.trim();
-    if (!/^09\d{9}$/.test(ph)) { alert('شماره موبایل معتبر وارد کنید'); return; }
+    if (step === 1) {
+      // اعتبار سنجی شماره موبایل
+      if (!/^09\d{9}$/.test(ph)) { 
+        showMsg('لطفاً شماره موبایل معتبر (۱۱ رقم با شروع 09) وارد کنید.', 'error'); 
+        return; 
+      }
 
-    // فعلاً فقط مدیر حق ورود به داشبورد دارد
-    if (ph !== ADMIN_PHONE) {
-      alert('فعلاً دسترسی فقط برای مدیر فعال است.');
-      // در آینده اینجا می‌بَریم به نسخهٔ کاربری (نمایش سوابق و ...).
-      return;
+      try {
+        // ارسال شماره به بک‌اَند برای تولید کد تایید
+        const response = await fetch(`${BACKEND_URL}/api/auth/request-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: ph })
+        });
+        const data = await response.json();
+
+        if (data.ok) {
+          step = 2;
+          otpWrap.style.display = 'block';
+          phoneEl.disabled = true; // قفل کردن شماره
+          goBtn.innerText = "تایید و ورود";
+          infoDesc.innerText = "کد تایید ارسال شده به شماره موبایل خود را در کادر بالا وارد کنید تا تاریخچه فاکتورهای شما بارگذاری شود.";
+          
+          // نمایش کد تست جهت راحتی کار شما در تست سیستم
+          showMsg("کد تایید صادر شد (کد تست: " + (data.dev_code || "") + ")", 'success');
+        } else {
+          showMsg(data.error || "امکان ورود در حال حاضر مقدور نیست.", 'error');
+        }
+      } catch (err) {
+        showMsg("خطا در ارتباط با سرور بک‌اَند سامی‌و‌اتر!", 'error');
+      }
+
+    } else {
+      // فاز دوم: تایید کد OTP
+      const code = otpCodeEl.value.trim();
+      if (!code) { showMsg('لطفاً کد تایید را وارد کنید.', 'error'); return; }
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: ph, code: code })
+        });
+        const data = await response.json();
+
+        if (data.ok) {
+          // ذخیره توکن مشتری در مرورگر برای امنیت صفحات بعدی
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('role', 'customer');
+          localStorage.setItem('customerPhone', ph);
+          
+          // انتقال به صفحه جدید سوابق مشتری
+          window.location.href = 'profile.html';
+        } else {
+          showMsg(data.error || "کد وارد شده اشتباه است.", 'error');
+        }
+      } catch (err) {
+        showMsg("خطا در تایید کد ورود!", 'error');
+      }
     }
+  </script>
 
-    // مدیر: پین الزامی
-    if (pinEl.value.trim() !== ADMIN_PIN) {
-      alert('PIN مدیر نادرست است.');
-      return;
+  <script>
+    function showMsg(text, type) {
+      statusMsg.innerText = text;
+      statusMsg.classList.add(type === 'error' ? 'error-text' : 'success-text');
+      statusMsg.style.display = 'block';
     }
-
-    // ذخیره نقش و ورود به داشبورد
-    localStorage.setItem('role', 'admin');
-    localStorage.setItem('adminPhone', ph);
-    window.location.href = 'dashboard.html';
-  });
-</script>
+  </script>
 </body>
 </html>
