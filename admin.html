@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>SamiWater | داشبورد مدیریت ارشد</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #021f18;
+      color: #fff;
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #ffd700;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    h1 { color: #ffd700; font-size: 22px; margin: 0; }
+    .user-info { color: #e5c158; font-size: 14px; }
+    .logout-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    
+    /* استایل تب‌ها */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .tab {
+      background: #042e24;
+      border: 1px solid #2a5e4e;
+      color: #8fa39e;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    .tab.active {
+      background: #ffd700;
+      color: #042e24;
+      border-color: #ffd700;
+    }
+
+    .panel-section { display: none; }
+    .panel-section.active { display: block; }
+
+    /* استایل جداول */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: rgba(4, 38, 30, 0.4);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #2a5e4e;
+      padding: 12px;
+      text-align: center;
+    }
+    .data-table th { background: #042e24; color: #ffd700; }
+    .data-table tr:hover { background: rgba(4, 38, 30, 0.8); }
+
+    /* فرم ایجاد کاربر جدید */
+    .form-box {
+      background: rgba(4, 38, 30, 0.6);
+      border: 1px solid #2a5e4e;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      max-width: 500px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .form-group input, .form-group select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #2a5e4e;
+      background: #021f18;
+      color: #fff;
+    }
+    .submit-btn {
+      background: #ffd700;
+      color: #042e24;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .delete-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1>🏆 پنل مدیریت ارشد SamiWater</h1>
+      <div class="user-info" id="adminWelcome">خوش آمدید، مدیر ارشد</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">خروج</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('requests-sec', this)">📋 بانک درخواست‌ها</div>
+    <div class="tab" onclick="switchTab('users-sec', this)">👥 بانک اطلاعات مشتریان</div>
+    <div class="tab" id="staffTab" onclick="switchTab('staff-sec', this)">🔐 مدیریت دسترسی نیروها</div>
+  </div>
+
+  <div id="requests-sec" class="panel-section active">
+    <h2>لیست سرویس‌ها و تعمیرات ثبت شده</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>نام مشتری</th>
+          <th>شماره تماس</th>
+          <th>نوع سرویس</th>
+          <th>تاریخ ثبت</th>
+          <th>وضعیت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="5" style="color: #8fa39e;">در حال حاضر درخواستی ثبت نشده است.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="users-sec" class="panel-section">
+    <h2>لیست مشتریان وفادار سامانه</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>نام و نام خانوادگی</th>
+          <th>تلفن همراه</th>
+          <th>آدرس سکونت</th>
+          <th>امتیاز</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" style="color: #8fa39e;">لیست مشتریان خالی است.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="staff-sec" class="panel-section">
+    <h2>➕ ایجاد دسترسی برای نیروی جدید</h2>
+    <div class="form-box">
+      <div class="form-group">
+        <label>نام کاربری نیرو (مثلاً: ali_repair):</label>
+        <input type="text" id="newUsername" placeholder="نام کاربری به انگلیسی">
+      </div>
+      <div class="form-group">
+        <label>رمز عبور:</label>
+        <input type="password" id="newPassword" placeholder="******">
+      </div>
+      <div class="form-group">
+        <label>سطح دسترسی:</label>
+        <select id="newRole">
+          <option value="operator">نیروی کار عادی (فقط مشاهده درخواست‌ها)</option>
+          <option value="admin">مدیر ارشد (دسترسی کامل)</option>
+        </select>
+      </div>
+      <button class="submit-btn" onclick="createUser()">ذخیره و ایجاد کاربر</button>
+    </div>
+
+    <h2>👥 لیست نیروهای فعال و سطوح دسترسی</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>نام کاربری</th>
+          <th>سطح دسترسی</th>
+          <th>عملیات</th>
+        </tr>
+      </thead>
+      <tbody id="staff-list">
+        <tr>
+          <td>sami_master</td>
+          <td style="color: #ffd700;">مدیر ارشد (تو)</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>operator_1</td>
+          <td>نیروی کار عادی</td>
+          <td><button class="delete-btn" onclick="alert('بعد از اتصال به بک‌اند حذف می‌شود')">حذف نیرو</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // امنیت اولیه
+    if (localStorage.getItem('isAdmin') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    // شبیه‌سازی تشخیص سطح دسترسی (بعدا واقعی می‌شود)
+    const currentRole = localStorage.getItem('userRole') || 'admin'; 
+    if (currentRole === 'operator') {
+      document.getElementById('staffTab').style.display = 'none'; // مخفی کردن تب نیروها برای کارمند عادی
+      document.getElementById('adminWelcome').innerText = 'خوش آمدید، همکار گرامی';
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    function switchTab(sectionId, tabEl) {
+      if (sectionId === 'staff-sec' && currentRole === 'operator') {
+        alert('شما دسترسی به این بخش را ندارید!');
+        return;
+      }
+      document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      tabEl.classList.add('active');
+    }
+
+    function createUser() {
+      const user = document.getElementById('newUsername').value;
+      const pass = document.getElementById('newPassword').value;
+      const role = document.getElementById('newRole').value;
+      if(!user || !pass) { alert('لطفا همه فیلدها را پر کنید'); return; }
+      
+      alert(`کاربر ${user} با سطح دسترسی ${role} آماده ارسال به دیتابیس است!`);
+    }
+  </script>
+
+</body>
+</html>
