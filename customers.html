@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>بانک اطلاعات مشتریان | سامی‌واتر</title>
+    <style>
+        body { background: #f1f5f9; padding: 20px; font-family: Tahoma; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: right; font-size: 13px; }
+        th { background: #f8fafc; }
+        .addr-tag { background: #e0f2fe; padding: 2px 6px; border-radius: 4px; font-size: 11px; color: #0369a1; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>بانک اطلاعات مشتریان</h2>
+    <input type="text" id="search" style="padding: 8px; width: 100%; margin-bottom: 15px;" placeholder="جستجو بر اساس نام، موبایل یا شهر...">
+    <table id="customersTable">
+        <thead>
+            <tr>
+                <th>نام</th>
+                <th>موبایل</th>
+                <th>موبایل دوم</th>
+                <th>تاریخ تولد</th>
+                <th>تاریخ عضویت</th>
+                <th>آدرس‌ها</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</div>
+
+<script>
+    const API_BASE = "https://samiwater-backend.onrender.com/api";
+    const token = localStorage.getItem("token");
+
+    async function loadCustomers() {
+        try {
+            const res = await fetch(`${API_BASE}/customers`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const tbody = document.getElementById("tbody");
+            tbody.innerHTML = "";
+            
+            data.customers.forEach(c => {
+                const tr = document.createElement("tr");
+                
+                // نمایش آدرس‌ها (اگر موجود باشند)
+                let addrHtml = (c.addresses && c.addresses.length > 0) 
+                    ? c.addresses.map(a => `<div><span class="addr-tag">${a.label}</span> ${a.fullAddress} (${a.city})</div>`).join('')
+                    : 'آدرسی ثبت نشده';
+
+                tr.innerHTML = `
+                    <td>${c.fullName}</td>
+                    <td>${c.phone}</td>
+                    <td>${c.altPhone || '-'}</td>
+                    <td>${c.birthdate ? new Date(c.birthdate).toLocaleDateString('fa-IR') : '-'}</td>
+                    <td>${new Date(c.joinedAt).toLocaleDateString('fa-IR')}</td>
+                    <td>${addrHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (e) { alert("خطا در دریافت اطلاعات مشتریان"); }
+    }
+
+    window.onload = loadCustomers;
+</script>
+</body>
+</html>
