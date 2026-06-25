@@ -1,177 +1,163 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>داشبورد | SamiWater</title>
-<link rel="stylesheet" href="style.css" />
-<style>
-  body{background:#0e3b2f;color:#fff;font-family:sans-serif}
-  .wrap{max-width:1100px;margin:20px auto;padding:12px}
-  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .pill{padding:6px 12px;border:1px solid #2a644e;border-radius:14px;background:#0f3f33}
-  .btn{height:42px;padding:0 16px;border-radius:12px;border:none;background:#f2c846}
-  table{width:100%;border-collapse:separate;border-spacing:0 10px}
-  th,td{padding:10px 12px;background:#0f3f33;border-top:1px solid #1c5643;border-bottom:1px solid #1c5643}
-  th{background:#124334}
-  a.num{color:#f2d46a;text-decoration:underline}
-  .chip{padding:4px 10px;border-radius:12px;border:1px solid #2b674f;background:#0f3f33}
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center}
-  .modal .card{width:min(560px,92vw);background:#0f3f33;border:1px solid #295f4a;border-radius:18px;padding:18px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .lbl{opacity:.9}
-  input[type=number]{width:120px;height:40px;border-radius:10px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 10px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت فاکتورها و خدمات - سامی واتر</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+        body { background: #f1f5f9; color: #1e293b; padding: 20px; }
+        .header { background: #1e293b; color: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 20px; }
+        .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: right; font-size: 14px; }
+        th { background: #f8fafc; color: #475569; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-done { background: #dcfce7; color: #15803d; }
+        .status-open { background: #e0f2fe; color: #0369a1; }
+        .action-select { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; }
+        .error-msg { color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; display: none; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="pill">نقش: <b id="roleTxt">—</b></div>
-    <button class="btn" id="logout">خروج</button>
-  </div>
 
-  <div class="pill" id="stats" style="margin-bottom:12px">...</div>
-
-  <div class="pill" style="padding:12px;margin-bottom:12px">
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <input id="fPhone" placeholder="جستجو: موبایل" style="height:40px;border-radius:10px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 10px" />
-      <select id="fStatus" style="height:40px;border-radius:10px;background:#eaf3ef;color:#07241c;border:1px solid #2a644e">
-        <option value="">همه وضعیت‌ها</option>
-        <option value="pending">در انتظار</option>
-        <option value="assigned">ارجاع شد</option>
-        <option value="done">انجام شد</option>
-        <option value="canceled">لغو شد</option>
-      </select>
-      <input id="fPath" placeholder="جستجو: مسیر" style="height:40px;border-radius:10px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 10px" />
-      <button class="btn" id="doFilter">اعمال فیلتر</button>
-    </div>
-  </div>
-
-  <table id="tbl">
-    <thead>
-      <tr>
-        <th>کد</th><th>موبایل</th><th>نوع</th><th>مسیر</th><th>زمان</th><th>وضعیت</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<div class="header">
+    <h1>پنل مدیریت درخواست‌ها و فاکتورهای سامی‌واتر</h1>
+    <button class="logout-btn" onclick="logout()">خروج از حساب</button>
 </div>
 
-<!-- Modal: Customer details + discount edit -->
-<div class="modal" id="cusModal">
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h3 style="margin:0;color:#f2c846">مشخصات مشتری</h3>
-      <button class="btn" id="closeCus">بستن</button>
-    </div>
+<div id="errBox" class="error-msg"></div>
 
-    <div class="row" id="cusRows"></div>
-
-    <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
-      <span class="lbl">تخفیف مشتری:</span>
-      <input type="number" id="discInput" min="0" max="100" />
-      <button class="btn" id="saveDisc">ذخیره تخفیف</button>
+<div class="card">
+    <h2>لیست کل درخواست‌ها / فاکتورها</h2>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>کد فاکتور</th>
+                    <th>نام مشتری</th>
+                    <th>شماره تماس</th>
+                    <th>نوع مشکل / خدمت</th>
+                    <th>وضعیت فاکتور</th>
+                    <th>عملیات تغییر وضعیت</th>
+                </tr>
+            </thead>
+            <tbody id="requestsTableBody">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #64748b;">در حال بارگذاری اطلاعات فاکتورها...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-  </div>
 </div>
 
 <script>
-  const API = "https://kend.onrender.com";
-  const role = localStorage.getItem('role');
-  const adminPhone = localStorage.getItem('adminPhone');
-  if (role !== 'admin' || adminPhone !== '09384129843') {
-    // هرکسی غیر از مدیر اصلاً اجازه دیدن این صفحه را ندارد
-    window.location.href = 'club-login.html';
-  }
+    // اتصال به آدرس بک‌اند زنده روی رندر
+    const API_BASE = "https://samiwater-backend.onrender.com/api";
 
-  document.getElementById('roleTxt').textContent = 'مدیر';
-  document.getElementById('logout').onclick = () => {
-    localStorage.removeItem('role'); localStorage.removeItem('adminPhone');
-    location.href = 'club-login.html';
-  };
+    // امنیت صفحه: اگر توکن نباشد، اجازه نده صفحه را ببیند و شوتش کن به صفحه login
+    const token = localStorage.getItem("admin_token");
+    if (!token) {
+        window.location.href = "login.html";
+    }
 
-  const tbody = document.querySelector('#tbl tbody');
-  const fPhone = document.getElementById('fPhone');
-  const fStatus = document.getElementById('fStatus');
-  const fPath = document.getElementById('fPath');
-  document.getElementById('doFilter').onclick = load;
+    function logout() {
+        localStorage.removeItem("admin_token");
+        window.location.href = "login.html";
+    }
 
-  async function load() {
-    const res = await fetch(API + "/api/requests");
-    const items = await res.json();
-    document.getElementById('stats').textContent =
-      `مشتریان: — | کل درخواست‌ها: ${items.length}`;
+    // بارگذاری لیست فاکتورها از سرور بک‌اَند
+    async function loadRequests() {
+        const errBox = document.getElementById("errBox");
+        errBox.style.display = "none";
+        
+        try {
+            const res = await fetch(`${API_BASE}/requests`, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
 
-    const qPhone = fPhone.value.trim();
-    const qStatus = fStatus.value;
-    const qPath = fPath.value.trim();
+            if (!res.ok) throw new Error(data.error || "خطا در دریافت لیست فاکتورها");
 
-    const faStatus = {pending:"در انتظار",assigned:"ارجاع شد",done:"انجام شد",canceled:"لغو شد"};
+            const tbody = document.getElementById("requestsTableBody");
+            tbody.innerHTML = "";
 
-    tbody.innerHTML = "";
-    items
-      .filter(r => (qPhone? r.phone.includes(qPhone):true))
-      .filter(r => (qStatus? r.status===qStatus:true))
-      .filter(r => (qPath? String(r.sourcePath||'').includes(qPath):true))
-      .forEach(r => {
-        const tr = document.createElement('tr');
+            if (!data.requests || data.requests.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">هیچ فاکتوری در سیستم ثبت نشده است.</td></tr>`;
+                return;
+            }
 
-        const t = new Date(r.createdAt||r.created_at||r.created);
-        const fa = new Intl.DateTimeFormat("fa-IR-u-ca-persian",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(t);
+            data.requests.forEach(req => {
+                const tr = document.createElement("tr");
 
-        tr.innerHTML = `
-          <td>${r.invoiceCode||"-"}</td>
-          <td><a class="num" href="#" data-phone="${r.phone}">${r.phone}</a></td>
-          <td>${r.issueType||"سایر"}</td>
-          <td>${(r.sourcePath==="web_form"||r.sourcePath==="درخواست فوری")?"درخواست فوری":(r.sourcePath||"-")}</td>
-          <td>${fa.replace(","," | ")}</td>
-          <td><span class="chip">${faStatus[r.status]||r.status}</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
-  }
+                const clientName = req.snapshot?.fullName || (req.customer ? req.customer.fullName : "نامشخص");
+                const clientPhone = req.snapshot?.phone || (req.customer ? req.customer.phone : "نامشخص");
 
-  // باز کردن مودال مشتری با کلیک روی شماره
-  tbody.addEventListener('click', async (e)=>{
-    const a = e.target.closest('a.num');
-    if(!a) return;
-    const ph = a.dataset.phone;
+                let statusClass = "status-pending";
+                let statusText = "در انتظار";
+                if(req.status === "done" || req.status === "completed") { statusClass = "status-done"; statusText = "انجام شده"; }
+                if(req.status === "open") { statusClass = "status-open"; statusText = "فاکتور باز"; }
 
-    const r = await fetch(API + "/api/customers/phone/" + ph);
-    if(!r.ok){ alert("مشتری پیدا نشد"); return; }
-    const c = await r.json();
+                tr.innerHTML = `
+                    <td style="font-weight: bold; color: #0288d1;">${req.invoiceCode || '---'}</td>
+                    <td>${clientName}</td>
+                    <td>${clientPhone}</td>
+                    <td>${translateIssue(req.issueType)}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <select class="action-select" onchange="updateStatus('${req._id}', this.value)">
+                            <option value="">تغییر وضعیت به...</option>
+                            <option value="open" ${req.status === 'open' ? 'selected' : ''}>فاکتور باز</option>
+                            <option value="done" ${req.status === 'done' || req.status === 'completed' ? 'selected' : ''}>انجام شده</option>
+                            <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
 
-    const rows = document.getElementById('cusRows');
-    rows.innerHTML = `
-      <div><div class="lbl">نام</div><div>${c.fullName||"-"}</div></div>
-      <div><div class="lbl">موبایل</div><div>${c.phone||"-"}</div></div>
-      <div><div class="lbl">شهر</div><div>${c.city||"-"}</div></div>
-      <div><div class="lbl">آدرس</div><div>${c.address||"-"}</div></div>
-      <div><div class="lbl">تلفن دوم</div><div>${c.altPhone||"-"}</div></div>
-      <div><div class="lbl">عضویت</div><div>${
-          c.createdAt? new Intl.DateTimeFormat("fa-IR-u-ca-persian",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(new Date(c.createdAt)) : "-"
-      }</div></div>
-    `;
-    document.getElementById('discInput').value = Number(c.discountPercent||0);
-    document.getElementById('saveDisc').onclick = async ()=>{
-      const val = Number(document.getElementById('discInput').value||0);
-      if (val<0 || val>100){ alert("درصد بین 0 تا 100"); return; }
-      const rr = await fetch(API + "/api/customers/"+encodeURIComponent(ph)+"/discount",{
-        method:"PATCH",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({percent:val})
-      });
-      if(rr.ok){ alert("ذخیره شد"); } else { alert("خطا در ذخیره تخفیف"); }
-    };
+        } catch (e) {
+            errBox.innerText = e.message;
+            errBox.style.display = "block";
+        }
+    }
 
-    document.getElementById('cusModal').style.display='flex';
-  });
+    function translateIssue(type) {
+        const issues = {
+            install: "نصب دستگاه", maintenance: "سرویس دوره‌ای", repair: "تعمیرات قطعات",
+            filter: "تعویض فیلتر", stage: "تعویض مرحله", aquarium: "خدمات آکواریوم", urgent: "درخواست فوری", other: "سایر موارد"
+        };
+        return issues[type] || type || "سرویس";
+    }
 
-  document.getElementById('closeCus').onclick = ()=> {
-    document.getElementById('cusModal').style.display='none';
-  };
+    async function updateStatus(id, newStatus) {
+        if(!newStatus) return;
+        try {
+            const res = await fetch(`${API_BASE}/requests/${id}/status`, {
+                method: "PUT",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+            if (res.ok) {
+                loadRequests();
+            } else {
+                const data = await res.json();
+                alert("خطا در تغییر وضعیت: " + data.error);
+            }
+        } catch (e) {
+            alert("خطا در اتصال به سرور جهت تغییر وضعیت");
+        }
+    }
 
-  load();
+    window.onload = loadRequests;
 </script>
 </body>
 </html>
