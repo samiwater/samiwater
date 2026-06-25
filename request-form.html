@@ -113,12 +113,13 @@
       if (reservationId)   payload.reservationId = reservationId;
 
       const doc = await apiPost(`${API}/api/requests`, payload);
-      // هدایت به صفحه تایید
+      
+      // اصلاح آدرس‌دهی متناسب با ساختار ورسل بدون اسلش اضافی اول
       const extraQ = new URLSearchParams({
         pd: preferredDate || "",
         pw: preferredWindow || ""
       }).toString();
-      location.href = `/request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}&${extraQ}`;
+      location.href = `request-confirmed.html?code=${encodeURIComponent(doc.invoiceCode)}&${extraQ}`;
     }
 
     // ساخت/یافتن مشتری و سپس رزرو اختیاری اسلات و ساخت درخواست
