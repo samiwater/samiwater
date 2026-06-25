@@ -9,17 +9,14 @@
     body{background:#0e3b2f;color:#fff;font-family:sans-serif}
     .card{max-width:560px;margin:28px auto;background:#0f3f33;border:1px solid #19533f;border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
     .logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-    .badge{width:48px;height:48px;border-radius:14px;background:#113d32;
-      display:flex;align-items:center;justify-content:center;border:1px solid #2a644e}
+    .badge{width:48px;height:48px;border-radius:14px;background:#113d32;display:flex;align-items:center;justify-content:center;border:1px solid #2a644e}
     h1{margin:0;font-size:26px;color:#f5cc52}
     label{display:block;margin:14px 0 6px}
     input{width:100%;height:52px;border-radius:14px;border:1px solid #2a644e;background:#eaf3ef;color:#07241c;padding:0 14px;font-size:18px}
-    .btn{width:100%;height:56px;border-radius:16px;background:#f2c846;border:none;font-size:20px;margin-top:18px;cursor:pointer;font-weight:bold}
+    .btn{width:100%;height:56px;border-radius:16px;background:#f2c846;border:none;font-size:20px;margin-top:18px;cursor:pointer;font-weight:bold;color:#0e3b2f;}
     .btn:hover{background:#e2ba3a}
     .muted{opacity:.9;margin-top:18px;line-height:1.8;font-size:14px;color:#cbdcd6}
-    .msg{margin-top:12px;text-align:center;font-weight:bold;display:none}
-    .error-text{color:#ff6b6b}
-    .success-text{color:#6bffb4}
+    .status-msg { margin-top: 15px; font-weight: bold; text-align: center; font-size: 16px; display: none; }
   </style>
 </head>
 <body>
@@ -29,53 +26,47 @@
       <h1>باشگاه مشتریان | SamiWater</h1>
     </div>
 
-    <div id="phoneSection">
+    <div id="phoneWrap">
       <label>شماره موبایل</label>
       <input id="phone" placeholder="مثلاً 09131234567" inputmode="tel" maxlength="11" />
     </div>
 
-    <!-- بخش ورود کد تایید که بعد از زدن دکمه ادامه ظاهر می‌شود -->
     <div id="otpWrap" style="display:none">
-      <label style="color:#f5cc52">کد تایید پیامک شده را وارد کنید</label>
-      <input id="otpCode" placeholder="کد ۶ رقمی تایید" inputmode="numeric" maxlength="6" />
+      <label style="color:#f2c846">کد تایید پیامک شده</label>
+      <input id="otpCode" placeholder="کد تایید را وارد کنید" inputmode="numeric" maxlength="6" />
     </div>
 
     <button class="btn" id="goBtn">ادامه</button>
 
-    <div class="msg id="statusMsg"></div>
+    <div class="status-msg" id="statusBox"></div>
 
-    <div class="muted" id="infoDesc">
+    <div class="muted" id="descText">
       جهت ورود به باشگاه مشتریان سامی‌و‌تر و مشاهده آنی سوابق فیلترها، خدمات دریافت شده، نام تکنسین و هزینه‌ها، شماره موبایل خود را وارد نمایید.
     </div>
   </div>
 
 <script>
   const BACKEND_URL = "https://samiwater-backend.onrender.com";
-  let step = 1; // مرحله ۱: ارسال موبایل، مرحله ۲: تایید کد
+  let step = 1;
 
   const phoneEl = document.getElementById('phone');
   const otpWrap = document.getElementById('otpWrap');
   const otpCodeEl = document.getElementById('otpCode');
   const goBtn   = document.getElementById('goBtn');
-  const infoDesc = document.getElementById('infoDesc');
-  const statusMsg = document.getElementById('statusMsg');
+  const descText = document.getElementById('descText');
+  const statusBox = document.getElementById('statusBox');
 
   goBtn.addEventListener('click', async () => {
     const ph = phoneEl.value.trim();
-    
-    // مخفی کردن پیام‌های قبلی
-    statusMsg.style.display = 'none';
-    statusMsg.className = 'msg';
+    statusBox.style.display = 'none';
 
     if (step === 1) {
-      // اعتبار سنجی شماره موبایل
-      if (!/^09\d{9}$/.test(ph)) { 
-        showMsg('لطفاً شماره موبایل معتبر (۱۱ رقم با شروع 09) وارد کنید.', 'error'); 
-        return; 
+      if (!/^09\d{9}$/.test(ph)) {
+        showStatus('لطفاً شماره موبایل معتبر وارد کنید', '#ff6b6b');
+        return;
       }
 
       try {
-        // ارسال شماره به بک‌اَند برای تولید کد تایید
         const response = await fetch(`${BACKEND_URL}/api/auth/request-otp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -86,23 +77,20 @@
         if (data.ok) {
           step = 2;
           otpWrap.style.display = 'block';
-          phoneEl.disabled = true; // قفل کردن شماره
+          phoneEl.disabled = true;
           goBtn.innerText = "تایید و ورود";
-          infoDesc.innerText = "کد تایید ارسال شده به شماره موبایل خود را در کادر بالا وارد کنید تا تاریخچه فاکتورهای شما بارگذاری شود.";
-          
-          // نمایش کد تست جهت راحتی کار شما در تست سیستم
-          showMsg("کد تایید صادر شد (کد تست: " + (data.dev_code || "") + ")", 'success');
+          descText.innerText = "کد تایید با موفقیت صادر شد. آن را در کادر بالا وارد کنید تا وارد سوابق خود شوید.";
+          showStatus("کد تایید صادر شد (کد تست شما: " + data.dev_code + ")", '#6bffb4');
         } else {
-          showMsg(data.error || "امکان ورود در حال حاضر مقدور نیست.", 'error');
+          showStatus(data.error || "خطا در ارسال کد", '#ff6b6b');
         }
       } catch (err) {
-        showMsg("خطا در ارتباط با سرور بک‌اَند سامی‌و‌اتر!", 'error');
+        showStatus("خطا در ارتباط با سرور بک‌اَند!", '#ff6b6b');
       }
 
     } else {
-      // فاز دوم: تایید کد OTP
       const code = otpCodeEl.value.trim();
-      if (!code) { showMsg('لطفاً کد تایید را وارد کنید.', 'error'); return; }
+      if (!code) { showStatus('لطفاً کد تایید را وارد کنید', '#ff6b6b'); return; }
 
       try {
         const response = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
@@ -113,28 +101,26 @@
         const data = await response.json();
 
         if (data.ok) {
-          // ذخیره توکن مشتری در مرورگر برای امنیت صفحات بعدی
           localStorage.setItem('token', data.token);
           localStorage.setItem('role', 'customer');
           localStorage.setItem('customerPhone', ph);
           
-          // انتقال به صفحه جدید سوابق مشتری
+          // هدایت مشتری به صفحه سوابق
           window.location.href = 'profile.html';
         } else {
-          showMsg(data.error || "کد وارد شده اشتباه است.", 'error');
+          showStatus(data.error || "کد تایید اشتباه است", '#ff6b6b');
         }
       } catch (err) {
-        showMsg("خطا در تایید کد ورود!", 'error');
+        showStatus("خطا در تایید کد ورود!", '#ff6b6b');
       }
     }
-  </script>
+  });
 
-  <script>
-    function showMsg(text, type) {
-      statusMsg.innerText = text;
-      statusMsg.classList.add(type === 'error' ? 'error-text' : 'success-text');
-      statusMsg.style.display = 'block';
-    }
-  </script>
+  function showStatus(msg, color) {
+    statusBox.innerText = msg;
+    statusBox.style.color = color;
+    statusBox.style.display = 'block';
+  }
+</script>
 </body>
 </html>
