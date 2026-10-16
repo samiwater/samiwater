@@ -6,23 +6,32 @@
     <title>پنل مدیریت سامی‌واتر</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
-        body { background: #f1f5f9; color: #1e293b; padding: 20px; }
-        .header { background: #1e293b; color: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .header h1 { font-size: 18px; }
-        .nav-menu { display: flex; gap: 15px; }
-        .nav-menu a { color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: bold; }
-        .nav-menu a:hover { color: #fff; }
-        .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        body { background: #f1f5f9; color: #1e293b; padding: 15px; }
+        .header { background: #1e293b; color: #fff; padding: 18px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header h1 { font-size: 18px; color: #38bdf8; }
+        
+        /* استایل جدید دکمه‌های منو بدون خطای 404 */
+        .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-btn { background: #334155; color: #cbd5e1; border: 1px solid #475569; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .nav-btn:hover, .nav-btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+        
+        .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card h2 { font-size: 17px; margin-bottom: 12px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        
+        /* مدیریت نمایش تب‌ها در همان صفحه */
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: right; font-size: 14px; }
-        th { background: #f8fafc; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        th { background: #f8fafc; color: #334155; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
         .status-pending { background: #fef3c7; color: #d97706; }
         .status-done { background: #dcfce7; color: #15803d; }
         .status-open { background: #e0f2fe; color: #0369a1; }
         .action-select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; }
-        .error-msg { color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; display: none; margin-bottom: 15px; }
+        .error-msg { color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 6px; display: none; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -30,17 +39,19 @@
 <div class="header">
     <h1>پنل مدیریت سامی‌واتر</h1>
     <nav class="nav-menu">
-        <a href="customers.html">بانک اطلاعات</a>
-        <a href="services.html">بانک خدمات</a>
-        <a href="users.html">مدیریت کاربران</a>
+        <button class="nav-btn active" onclick="openTab('requests-tab', this)">📋 لیست درخواست‌ها</button>
+        <button class="nav-btn" onclick="openTab('customers-tab', this)">👥 بانک اطلاعات و تایمر</button>
+        <button class="nav-btn" onclick="openTab('services-tab', this)">🛠️ بانک خدمات و قطعات</button>
+        <button class="nav-btn" onclick="openTab('users-tab', this)">👨‍🔧 مدیریت کاربران و تکنسین</button>
     </nav>
     <button class="logout-btn" onclick="logout()">خروج</button>
 </div>
 
 <div id="errBox" class="error-msg"></div>
 
-<div class="card">
-    <h2>لیست درخواست‌ها</h2>
+<!-- تب ۱: لیست درخواست‌ها -->
+<div id="requests-tab" class="card tab-section active">
+    <h2>📋 لیست درخواست‌ها و فاکتورها</h2>
     <div style="overflow-x: auto;">
         <table>
             <thead>
@@ -53,17 +64,43 @@
                     <th>عملیات</th>
                 </tr>
             </thead>
-            <tbody id="requestsTableBody"></tbody>
+            <tbody id="requestsTableBody">
+                <tr><td colspan="6" style="text-align:center;">در حال دریافت اطلاعات از سرور...</td></tr>
+            </tbody>
         </table>
     </div>
 </div>
 
+<!-- تب ۲: بانک اطلاعات مشتریان و تایمر سرویس دوره‌ای -->
+<div id="customers-tab" class="card tab-section">
+    <h2>👥 بانک اطلاعات مشتریان و کنترل تایمر سرویس (۱۸۰ روزه)</h2>
+    <p style="color: #475569; line-height: 1.8;">در این بخش لیست کامل مشتریان، سوابق تعویض فیلتر و تنظیمات تغییر زمان آلارم سرویس دوره‌ای (کمتر یا بیشتر از ۱۸۰ روز یا غیرفعال‌سازی) قرار می‌گیرد.</p>
+</div>
+
+<!-- تب ۳: بانک خدمات و قطعات (Catalog) -->
+<div id="services-tab" class="card tab-section">
+    <h2>🛠️ بانک خدمات، فیلترها و قطعات (صدور فاکتور)</h2>
+    <p style="color: #475569; line-height: 1.8;">در این بخش قیمت روز قطعات، فیلترها و دستمزدها برای صدور فاکتور دیجیتال و ارسال لینک پیامکی به مشتری مدیریت می‌شود.</p>
+</div>
+
+<!-- تب ۴: مدیریت کاربران، تکنسین‌ها و تیکت‌ها -->
+<div id="users-tab" class="card tab-section">
+    <h2>👨‍🔧 مدیریت تکنسین‌ها، کاربران و تیکت‌های پشتیبانی</h2>
+    <p style="color: #475569; line-height: 1.8;">در این بخش تعریف تکنسین جدید، تخصیص درخواست‌ها و بررسی تیکت‌های مشتریان انجام می‌شود.</p>
+</div>
+
 <script>
     const API_BASE = "https://samiwater-backend.onrender.com/api";
+    const token = localStorage.getItem("token") || "";
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-        window.location.href = "login.html";
+    // تابع جابجایی بین بخش‌های پنل بدون رفرش و بدون خطای 404
+    function openTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        
+        const target = document.getElementById(tabId);
+        if (target) target.classList.add('active');
+        if (btnElement) btnElement.classList.add('active');
     }
 
     function logout() {
@@ -72,6 +109,8 @@
     }
 
     async function loadRequests() {
+        const errBox = document.getElementById("errBox");
+        const tbody = document.getElementById("requestsTableBody");
         try {
             const res = await fetch(`${API_BASE}/requests`, {
                 method: "GET",
@@ -79,10 +118,15 @@
             });
             const data = await res.json();
             
-            if (!res.ok) throw new Error(data.error || "خطا در دریافت اطلاعات");
+            if (!res.ok) throw new Error(data.error || data.message || "خطا در دریافت اطلاعات از سرور");
 
-            const tbody = document.getElementById("requestsTableBody");
             tbody.innerHTML = "";
+            errBox.style.display = "none";
+
+            if (!data.requests || data.requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">هنوز درخواستی ثبت نشده است.</td></tr>';
+                return;
+            }
 
             data.requests.forEach(req => {
                 const tr = document.createElement("tr");
@@ -110,9 +154,9 @@
                 tbody.appendChild(tr);
             });
         } catch (e) {
-            const errBox = document.getElementById("errBox");
-            errBox.innerText = e.message;
+            errBox.innerText = "پیام سرور: " + e.message;
             errBox.style.display = "block";
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444;">ارتباط با بانک درخواست‌ها برقرار نشد (نیاز به رفع باگ بک‌اند).</td></tr>';
         }
     }
 
