@@ -5,47 +5,118 @@
   <title>داشبورد مدیریت سامی‌واتر</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #021f18; color: #fff; font-family: Tahoma; padding: 20px; }
+    body { background: #021f18; color: #fff; font-family: Tahoma, sans-serif; padding: 15px; margin: 0; }
+    h1 { color: #ffd700; text-align: center; font-size: 1.5rem; margin-bottom: 20px; }
+    
+    /* استایل منوی تب‌بندی بالا */
+    .nav-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; }
+    .nav-btn { background: #042e24; color: #fff; border: 1px solid #2a5e4e; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-family: Tahoma; font-size: 0.9rem; transition: 0.2s; }
+    .nav-btn.active, .nav-btn:hover { background: #2a5e4e; color: #ffd700; border-color: #ffd700; font-weight: bold; }
+
+    /* استایل کارت‌ها و جداول */
     .card { background: #042e24; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #2a5e4e; }
-    .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(4, 38, 30, 0.4); }
-    .data-table th, .data-table td { border: 1px solid #2a5e4e; padding: 12px; text-align: center; }
-    .data-table th { color: #ffd700; }
+    .table-container { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(4, 38, 30, 0.4); font-size: 0.9rem; }
+    .data-table th, .data-table td { border: 1px solid #2a5e4e; padding: 10px; text-align: center; }
+    .data-table th { color: #ffd700; background: #042e24; }
+    
+    .panel-section { display: none; }
+    .panel-section.active { display: block; }
+    .status-badge { padding: 4px 8px; border-radius: 4px; background: #2a5e4e; font-size: 0.8rem; }
   </style>
 </head>
 <body>
-  <h1>🏆 پنل مدیریت ارشد</h1>
-  
-  <h2>📋 بانک درخواست‌ها</h2>
-  <table class="data-table">
-    <thead>
-      <tr><th>مشتری</th><th>شماره</th><th>سرویس</th><th>وضعیت</th></tr>
-    </thead>
-    <tbody id="req-body">
-      <tr><td colspan="4">در حال دریافت...</td></tr>
-    </tbody>
-  </table>
+
+  <h1>🏆 پنل مدیریت ارشد سامی‌واتر</h1>
+
+  <!-- دکمه‌های منوی مدیریت (بدون رفرش و بدون خطای 404) -->
+  <div class="nav-bar">
+    <button class="nav-btn active" onclick="switchTab('requests-section', this)">📋 بانک درخواست‌ها</button>
+    <button class="nav-btn" onclick="switchTab('customers-section', this)">👥 مشتریان و تایمر سرویس</button>
+    <button class="nav-btn" onclick="switchTab('catalog-section', this)">🛠️ بانک قطعات و خدمات</button>
+    <button class="nav-btn" onclick="switchTab('techs-section', this)">👨‍🔧 تکنسین‌ها و تیکت‌ها</button>
+  </div>
+
+  <!-- بخش ۱: بانک درخواست‌ها -->
+  <div id="requests-section" class="panel-section active">
+    <h2>📋 بانک درخواست‌ها</h2>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr><th>شماره فاکتور</th><th>مشتری</th><th>شماره تماس</th><th>سرویس</th><th>وضعیت</th></tr>
+        </thead>
+        <tbody id="req-body">
+          <tr><td colspan="5">در حال دریافت اطلاعات از سرور...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- بخش ۲: مدیریت مشتریان و تایمر ۱۸۰ روزه -->
+  <div id="customers-section" class="panel-section">
+    <h2>👥 مدیریت مشتریان و تایمر دوره‌ای</h2>
+    <div class="card">
+      <p>در این بخش لیست مشتریان و تنظیمات تایمر هوشمند (۱۸۰ روزه یا سفارشی) و دکمه فعال/غیرفعال‌سازی آلارم قرار می‌گیرد.</p>
+    </div>
+  </div>
+
+  <!-- بخش ۳: بانک قطعات و خدمات (Catalog) -->
+  <div id="catalog-section" class="panel-section">
+    <h2>🛠️ بانک قطعات، فیلترها و دستمزد</h2>
+    <div class="card">
+      <p>در این بخش قیمت روز فیلترها، پمپ‌ها و خدمات برای صدور خودکار فاکتور دیجیتال مدیریت می‌شود.</p>
+    </div>
+  </div>
+
+  <!-- بخش ۴: تکنسین‌ها و تیکت‌ها -->
+  <div id="techs-section" class="panel-section">
+    <h2>👨‍🔧 مدیریت تکنسین‌ها و تیکت‌های پشتیبانی</h2>
+    <div class="card">
+      <p>بخش اختصاص کار به تکنسین و بررسی تیکت‌های مشتریان.</p>
+    </div>
+  </div>
 
   <script>
     const API = "https://samiwater-backend.onrender.com";
-    
+
+    // تابع جابجایی بین تب‌ها بدون خطای 404
+    function switchTab(sectionId, btnElement) {
+      document.querySelectorAll('.panel-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.add('active');
+      if (btnElement) btnElement.classList.add('active');
+    }
+
+    // دریافت درخواست‌ها از بک‌اند
     window.onload = async () => {
-        // دریافت درخواست‌ها
+      const body = document.getElementById('req-body');
+      try {
         const res = await fetch(`${API}/api/service-requests`);
         const data = await res.json();
-        const body = document.getElementById('req-body');
-        
-        if (data.requests && data.requests.length > 0) {
-            body.innerHTML = data.requests.map(r => `
-                <tr class="card">
-                    <td>${r.snapshot.fullName}</td>
-                    <td>${r.snapshot.phone}</td>
-                    <td>${r.issueType}</td>
-                    <td>${r.status}</td>
-                </tr>
-            `).join('');
-        } else {
-            body.innerHTML = '<tr><td colspan="4">درخواستی ثبت نشده</td></tr>';
+
+        if (!res.ok) {
+          body.innerHTML = `<tr><td colspan="5" style="color: #ff6b6b;">خطای سرور: ${data.message || data.error || 'ارتباط با دیتابیس برقرار نشد'}</td></tr>`;
+          return;
         }
+
+        if (data.requests && data.requests.length > 0) {
+          body.innerHTML = data.requests.map(r => `
+            <tr>
+              <td>${r.invoiceNumber || '---'}</td>
+              <td>${r.snapshot?.fullName || 'نامشخص'}</td>
+              <td>${r.snapshot?.phone || '---'}</td>
+              <td>${r.issueType || '---'}</td>
+              <td><span class="status-badge">${r.status || 'ثبت شده'}</span></td>
+            </tr>
+          `).join('');
+        } else {
+          body.innerHTML = '<tr><td colspan="5">هنوز درخواستی در سیستم ثبت نشده است.</td></tr>';
+        }
+      } catch (err) {
+        body.innerHTML = '<tr><td colspan="5" style="color: #ff6b6b;">خطا در ارتباط با سرور بک‌اند (بررسی کنید سرور روشن باشد).</td></tr>';
+      }
     };
   </script>
 </body>
