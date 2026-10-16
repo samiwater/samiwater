@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>پنل مدیریت | SamiWater</title>
   <style>
-    body { background: #0c1a30; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    body { background: #0c1a30; color: #fff; font-family: Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
     .card { max-width: 400px; width: 90%; background: #13223c; border: 1px solid #1e335a; border-radius: 18px; padding: 28px; box-shadow: 0 8px 30px rgba(0,0,0,.4); text-align: center; }
     h2 { color: #3498db; margin-bottom: 25px; font-size: 24px; }
     label { display: block; text-align: right; margin: 14px 0 6px; color: #a5b8d4; font-size: 14px; }
     input { width: 100%; height: 50px; border-radius: 12px; border: 1px solid #1e335a; background: #0f1b2e; color: #fff; padding: 0 14px; font-size: 16px; box-sizing: border-box; text-align: center; }
     .btn { width: 100%; height: 52px; border-radius: 12px; background: #3498db; border: none; color: #fff; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.3s; }
     .btn:hover { background: #2980b9; }
-    .error-text { color: #ff6b6b; margin-top: 15px; font-size: 14px; display: none; font-weight: bold; }
+    .btn:disabled { background: #475569; cursor: wait; }
+    .error-text { color: #ff6b6b; margin-top: 15px; font-size: 14px; display: none; font-weight: bold; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -22,7 +23,7 @@
     <input id="adminUser" placeholder="نام کاربری" autocomplete="off" />
     <label>پین کد ورود</label>
     <input id="adminPin" type="password" placeholder="پین کد" autocomplete="off" />
-    <button class="btn" onclick="checkAdminLogin()">ورود به سیستم</button>
+    <button class="btn" id="loginBtn" onclick="checkAdminLogin()">ورود به سیستم</button>
     <div class="error-text" id="error"></div>
   </div>
 
@@ -33,7 +34,31 @@
       const username = document.getElementById('adminUser').value.trim();
       const pin = document.getElementById('adminPin').value.trim();
       const errorDiv = document.getElementById('error');
-      
+      const loginBtn = document.getElementById('loginBtn');
+
+      errorDiv.style.display = 'none';
+
+      if (!username || !pin) {
+        errorDiv.innerText = "لطفاً نام کاربری و پین کد را وارد کنید";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.innerText = "در حال بررسی...";
+
+      // ۱. شاه‌کلید مستقیم مدیر ارشد (حتی در صورت خاموش بودن سرور بک‌اند)
+      if (username.toLowerCase() === 'admin' && pin === '1234') {
+        localStorage.setItem('token', 'admin-master-token');
+        localStorage.setItem('role', 'admin');
+        localStorage.setItem('userRole', 'admin');
+        localStorage.setItem('username', 'admin');
+        localStorage.setItem('adminPhone', '09384129843');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      // ۲. بررسی از طریق سرور بک‌اند برای سایر کاربران
       try {
         const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
           method: 'POST',
@@ -43,21 +68,22 @@
         const data = await response.json();
 
         if (data.ok) {
-          // ذخیره‌سازی تمام متغیرهای حیاتی برای اینکه داشبورد بیرون نپرد
           localStorage.setItem('token', data.token);
           localStorage.setItem('role', data.role);
           localStorage.setItem('userRole', data.role);
           localStorage.setItem('username', data.username);
-          localStorage.setItem('adminPhone', '09384129843'); // برای سازگاری با داشبورد قدیمی
-          
+          localStorage.setItem('adminPhone', '09384129843');
           window.location.href = 'dashboard.html';
         } else {
           errorDiv.innerText = data.error || "نام کاربری یا پین نادرست است";
           errorDiv.style.display = 'block';
         }
       } catch (err) {
-        errorDiv.innerText = "خطا در ارتباط با سرور!";
+        errorDiv.innerText = "سرور بک‌اند در حال حاضر پاسخ نمی‌دهد (خطای Deploy در Render).";
         errorDiv.style.display = 'block';
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.innerText = "ورود به سیستم";
       }
     }
   </script>
