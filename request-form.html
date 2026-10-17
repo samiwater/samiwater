@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ثبت مشخصات مشتری | SamiWater</title>
+  <title>ثبت مشخصات و آدرس | SamiWater</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -38,7 +38,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .brand img {
       width: 44px;
@@ -49,8 +49,14 @@
     h2 {
       text-align: center;
       color: var(--gold-strong);
-      margin: 0 0 18px 0;
-      font-size: 21px;
+      margin: 0 0 8px 0;
+      font-size: 20px;
+    }
+    .sub-badge {
+      text-align: center;
+      font-size: 12px;
+      color: #b9d7cc;
+      margin-bottom: 14px;
     }
     label {
       display: block;
@@ -88,6 +94,28 @@
     @media (max-width: 480px) {
       .grid-2 { grid-template-columns: 1fr; }
     }
+    .quick-labels {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .q-chip {
+      background: #0b2d23;
+      border: 1px solid #3a6b57;
+      color: #dfeee8;
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .q-chip:hover, .q-chip.active {
+      border-color: var(--gold-strong);
+      color: var(--gold-strong);
+      background: #123e30;
+      font-weight: bold;
+    }
     .btn {
       width: 100%;
       margin-top: 22px;
@@ -123,7 +151,8 @@
     <div class="brand">
       <img src="/logo-samiwater.png" alt="SamiWater" />
     </div>
-    <h2>ثبت مشخصات و آدرس خدمات</h2>
+    <h2 id="formHeaderTitle">ثبت مشخصات و آدرس خدمات</h2>
+    <div id="formSubBadge" class="sub-badge">مشخصات و عنوان آدرس خود را وارد نمایید</div>
     
     <div class="grid-2">
       <div>
@@ -147,19 +176,20 @@
       <option value="مشاوره و سایر خدمات">مشاوره و سایر خدمات</option>
     </select>
 
-    <div class="grid-2">
-      <div>
-        <label>عنوان مکان (منزل / مغازه / دفتر)</label>
-        <input id="addressLabel" class="input" value="آدرس ۱ (منزل)" placeholder="مثلاً: منزل یا کافه" />
-      </div>
-      <div>
-        <label>توضیحات یا ساعت هماهنگی (اختیاری)</label>
-        <input id="notes" class="input" placeholder="مثلاً: عصرها تماس بگیرید" />
-      </div>
+    <label>عنوان آدرس * (انتخاب سریع یا تایپ دلخواه)</label>
+    <div class="quick-labels">
+      <span class="q-chip active" onclick="setAddrLabel('خونه', this)">🏠 خونه</span>
+      <span class="q-chip" onclick="setAddrLabel('محل کار', this)">🏢 محل کار</span>
+      <span class="q-chip" onclick="setAddrLabel('منزل پدر', this)">👴 منزل پدر</span>
+      <span class="q-chip" onclick="setAddrLabel('مغازه / دفتر', this)">🏪 مغازه / دفتر</span>
     </div>
+    <input id="addressLabel" class="input" value="خونه" placeholder="مثلاً: خونه، محل کار، منزل پدر..." />
 
     <label>آدرس دقیق *</label>
     <input id="address" class="input" placeholder="خیابان، کوچه، پلاک، واحد" />
+
+    <label>توضیحات تکمیلی (اختیاری)</label>
+    <input id="notes" class="input" placeholder="مثلاً: عصرها تماس بگیرید" />
 
     <button id="submitBtn" class="btn">ثبت نهایی و دریافت کد پیگیری</button>
     <div id="errBox" class="err-box"></div>
@@ -171,6 +201,7 @@
     const phone = params.get("phone") || "";
     const prefDate = params.get("pd") || "";
     const prefWindow = params.get("pw") || "";
+    const isNewAddr = params.get("newAddr") === "1";
 
     document.getElementById("phone").value = phone;
 
@@ -178,13 +209,45 @@
       document.getElementById("notes").value = `زمان هماهنگی: ${prefDate} ساعت ${prefWindow}`;
     }
 
+    function setAddrLabel(val, chipEl) {
+      document.getElementById("addressLabel").value = val;
+      document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
+      if (chipEl) chipEl.classList.add("active");
+    }
+
+    // اگر مشتری از قبل وجود داشته باشد و دکمه «+ آدرس جدید با همین شماره» را زده باشد
+    window.onload = async () => {
+      if (!phone) return;
+      try {
+        const res = await fetch(`${API}/api/customers`);
+        const data = await res.json();
+        const existing = (data.customers || []).find(c => c.phone === phone);
+
+        if (existing) {
+          document.getElementById("fullName").value = existing.fullName || "";
+          if (existing.secondaryPhones && existing.secondaryPhones[0]) {
+            document.getElementById("phone2").value = existing.secondaryPhones[0];
+          }
+          if (isNewAddr) {
+            document.getElementById("formHeaderTitle").textContent = "افزودن آدرس جدید به پرونده شما";
+            document.getElementById("formSubBadge").textContent = `${existing.fullName} عزیز، عنوان و نشانیِ مکان جدید را وارد کنید:`;
+            setAddrLabel("محل کار", document.querySelectorAll(".q-chip")[1]);
+            document.getElementById("address").value = "";
+            document.getElementById("address").focus();
+          }
+        }
+      } catch (e) {
+        console.log("Customer check skipped");
+      }
+    };
+
     document.getElementById("submitBtn").addEventListener("click", async () => {
       const fullName = document.getElementById("fullName").value.trim();
       const phone2 = document.getElementById("phone2").value.trim();
-      const addressLabel = document.getElementById("addressLabel").value.trim() || "آدرس ۱ (منزل)";
+      const addressLabel = document.getElementById("addressLabel").value.trim() || "خونه";
       const address = document.getElementById("address").value.trim();
       const issueType = document.getElementById("issueType").value;
-      const notes = document.getElementById("notes").value.trim();
+      const notesInput = document.getElementById("notes").value.trim();
       const errBox = document.getElementById("errBox");
       const btn = document.getElementById("submitBtn");
 
@@ -199,8 +262,10 @@
       btn.disabled = true;
       btn.textContent = "در حال ثبت درخواست...";
 
+      const finalNotes = [`عنوان مکان: ${addressLabel}`, notesInput].filter(Boolean).join(" | ");
+
       try {
-        // ۱. ثبت/بروزرسانی اطلاعات مشتری به همراه شماره دوم و عنوان آدرس
+        // ۱. ذخیره یا افزودن آدرس جدید با عنوان دلخواه مشتری در بانک اطلاعات
         await fetch(`${API}/api/customers`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -210,11 +275,11 @@
             address,
             addressLabel,
             secondaryPhones: phone2 ? [phone2] : [],
-            notes
+            notes: notesInput
           })
         });
 
-        // ۲. ثبت درخواست سرویس و دریافت کد فاکتور جلالی
+        // ۲. ثبت درخواست خدمات برای همین آدرس و دریافت کد فاکتور جلالی
         const res = await fetch(`${API}/api/requests`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -223,7 +288,7 @@
             fullName,
             address,
             issueType,
-            notes
+            notes: finalNotes
           })
         });
 
