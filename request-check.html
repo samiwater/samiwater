@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SamiWater | بررسی شماره</title>
+<title>SamiWater | ثبت درخواست خدمات</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
@@ -21,8 +21,8 @@ h1{font-size:20px;margin:6px 0 14px;font-weight:700;color:#fff}
 .note{font-size:13px;line-height:1.9;color:#dfeee8}
 .input{width:100%;background:#0b2d23;border:1px solid #2e5a48;border-radius:12px;color:#fff;font-size:18px;padding:14px 16px;outline:none;text-align:center;direction:ltr}
 .input::placeholder{color:#8fb5a6}
-.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:14px 16px;border-radius:14px;font-size:18px;font-weight:800;cursor:pointer}
-.btn:disabled{opacity:0.6;cursor:wait}
+.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:14px 16px;border-radius:14px;font-size:18px;font-weight:800;cursor:pointer;font-family:inherit}
+.btn:disabled{opacity:0.65;cursor:wait}
 .err{margin-top:10px;color:#ffc6c6;font-size:13px;display:none}
 .footer{margin-top:14px;font-size:12px;color:#b8d7cc}
 a{color:#9ad7ff;text-decoration:none}
@@ -33,8 +33,8 @@ a{color:#9ad7ff;text-decoration:none}
 .tw-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .tw-select{padding:10px 12px;border:1px solid #3a6b57;border-radius:10px;background:#08261e;color:#fff;font-family:inherit}
 .tw-slots{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.tw-slot{padding:8px 12px;border:1px solid #3a6b57;border-radius:10px;cursor:pointer;font-size:14px;background:#0a2a21}
-.tw-slot.disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
+.tw-slot{padding:8px 12px;border:1px solid #3a6b57;border-radius:10px;cursor:pointer;font-size:14px;background:#0a2a21;transition:0.2s}
+.tw-slot.disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;background:#1f2937;border-color:#374151;color:#9ca3af}
 .tw-slot.selected{border-color:#f2c94c;box-shadow:0 0 0 2px rgba(242,201,76,.18);color:#f2c94c;font-weight:bold}
 .small{font-size:11px;color:#9cc7b7;margin-top:6px}
 </style>
@@ -46,29 +46,28 @@ a{color:#9ad7ff;text-decoration:none}
       <div class="title">SamiWater</div>
     </div>
 
-    <h1>بررسی شماره موبایل</h1>
+    <h1>ثبت درخواست خدمات</h1>
     <p class="note">
-      با وارد کردن شماره، اگر قبلاً مشتری ما بوده‌اید، درخواست شما فوراً ثبت می‌شود.
-      <br>اگر مشتری جدید باشید، در مرحله بعد مشخصات و آدرس شما دریافت خواهد شد.
+      لطفاً شماره موبایل خود را وارد نمایید. در صورتی که قبلاً مشترک ما بوده‌اید، درخواست شما فوراً ثبت می‌گردد.
     </p>
 
     <input id="phone" class="input" inputmode="numeric" placeholder="مثلاً 09131234567" />
 
     <div id="time-pref" class="tw-box">
-      <div class="tw-title">ترجیح زمانی (اختیاری)</div>
-      <div class="tw-sub">اگر زمان خاصی مدنظر دارید انتخاب کنید؛ نهایی‌سازی پس از تماس انجام می‌شود.</div>
+      <div class="tw-title">ترجیح زمانی حضور تکنسین (اختیاری)</div>
+      <div class="tw-sub">بازه زمانی مدنظر خود را انتخاب کنید (بازه‌های خاکستری پر شده‌اند):</div>
       <div class="tw-row">
         <label>روز (شمسی):</label>
         <select class="tw-select" id="tw-date"></select>
       </div>
       <div class="tw-slots" id="tw-slots"></div>
-      <div class="small">بازه‌ها: ۰۹–۱۱، ۱۱–۱۳، ۱۳–۱۵، ۱۵–۱۷، ۱۷–۱۹، ۱۹–۲۱</div>
+      <div class="small">بازه‌های فعال: ۰۹–۱۱، ۱۱–۱۳، ۱۳–۱۵، ۱۵–۱۷، ۱۷–۱۹، ۱۹–۲۱</div>
     </div>
 
-    <button id="go" class="btn">ادامه و بررسی شماره</button>
+    <button id="go" class="btn">ثبت و ادامه</button>
     <div id="err" class="err"></div>
 
-    <div class="footer">مشکل در ثبت؟ با ما تماس بگیرید: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
+    <div class="footer">پشتیبانی و هماهنگی: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
   </div>
 
 <script>
@@ -78,7 +77,7 @@ const WINDOWS = ["09-11","11-13","13-15","15-17","17-19","19-21"];
 function getSourcePath(){
   const p = new URLSearchParams(location.search);
   const src = (p.get("src")||"").toLowerCase();
-  const map = {landing:"urgent", urgent:"urgent", web:"web_form"};
+  const map = {landing:"سرویس فوری", urgent:"سرویس فوری", web:"سرویس و خدمات"};
   return map[src] || p.get("src") || "سرویس و خدمات";
 }
 
@@ -89,7 +88,6 @@ function onlyDigits(s){
   return res.replace(/\D/g,'');
 }
 
-function toISO(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
 function addDays(base,days){const d=new Date(base);d.setDate(d.getDate()+days);return d}
 function persianLabel(date){
   try {
@@ -98,33 +96,55 @@ function persianLabel(date){
 }
 
 (function initTimeWidget(){
-  const selDate=document.getElementById("tw-date");
-  const slotsBox=document.getElementById("tw-slots");
-  let selectedWindow=null;
+  const selDate = document.getElementById("tw-date");
+  const slotsBox = document.getElementById("tw-slots");
+  let selectedWindow = null;
 
-  const today=new Date();
-  for(let i=0;i<=14;i++){
-    const d=addDays(today,i); const iso=toISO(d);
-    const op=document.createElement("option");
-    op.value=persianLabel(d); op.textContent=persianLabel(d);
+  const today = new Date();
+  for(let i=0; i<=14; i++){
+    const d = addDays(today, i);
+    const label = persianLabel(d);
+    const op = document.createElement("option");
+    op.value = label;
+    op.textContent = label;
     selDate.appendChild(op);
   }
 
-  function renderSlots(){
-    slotsBox.innerHTML="";
-    WINDOWS.forEach(w=>{
-      const div=document.createElement("div");
-      div.className="tw-slot";
-      div.textContent=w;
-      div.onclick=()=>{
-        selectedWindow=w;
-        [...slotsBox.querySelectorAll(".tw-slot")].forEach(el=>el.classList.remove("selected"));
-        div.classList.add("selected");
-      };
+  async function loadAndRenderSlots(){
+    selectedWindow = null;
+    slotsBox.innerHTML = "<span style='font-size:12px;color:#9cc7b7;'>در حال بارگذاری بازه‌ها...</span>";
+    let bookedSlots = [];
+
+    try {
+      const res = await fetch(`${API}/api/requests/booked-slots?date=${encodeURIComponent(selDate.value)}`, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        bookedSlots = data.booked || [];
+      }
+    } catch (e) {
+      bookedSlots = [];
+    }
+
+    slotsBox.innerHTML = "";
+    WINDOWS.forEach(w => {
+      const isBooked = bookedSlots.includes(w);
+      const div = document.createElement("div");
+      div.className = "tw-slot" + (isBooked ? " disabled" : "");
+      div.textContent = isBooked ? `${w} (تکمیل)` : w;
+
+      if (!isBooked) {
+        div.onclick = () => {
+          selectedWindow = w;
+          [...slotsBox.querySelectorAll(".tw-slot")].forEach(el => el.classList.remove("selected"));
+          div.classList.add("selected");
+        };
+      }
       slotsBox.appendChild(div);
     });
   }
-  renderSlots();
+
+  selDate.addEventListener("change", loadAndRenderSlots);
+  loadAndRenderSlots();
 
   window.__timePref__ = {
     get date(){ return selDate.value || ""; },
@@ -146,7 +166,7 @@ document.getElementById("go").addEventListener("click", async ()=>{
 
   const prefDate = window.__timePref__?.date || "";
   const prefWindow = window.__timePref__?.window || "";
-  const timeNote = prefWindow ? `زمان ترجیحی: ${prefDate} ساعت ${prefWindow}` : "";
+  const timeNote = prefWindow ? `زمان هماهنگی: ${prefDate} ساعت ${prefWindow}` : "";
 
   const goForm = () => {
     const q = new URLSearchParams({
@@ -159,17 +179,16 @@ document.getElementById("go").addEventListener("click", async ()=>{
   };
 
   goBtn.disabled = true;
-  goBtn.textContent = "در حال استعلام از بانک اطلاعات...";
+  goBtn.textContent = "در حال بررسی...";
 
   try {
-    // بررسی وجود مشتری در بانک اطلاعاتی
     const r = await fetch(`${API}/api/customers`, { cache: "no-store" });
     if (r.ok) {
       const data = await r.json();
       const existingCustomer = (data.customers || []).find(c => c.phone === phone);
 
-      // ۱. اگر مشتری از قبل در بانک اطلاعات بود -> ثبت فوری درخواست و صدور کد پیگیری
       if (existingCustomer) {
+        goBtn.textContent = "در حال ثبت درخواست...";
         const make = await fetch(`${API}/api/requests`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -191,13 +210,12 @@ document.getElementById("go").addEventListener("click", async ()=>{
         }
       }
     }
-    // ۲. اگر مشتری جدید بود -> هدایت به صفحه فرم مشخصات
     goForm();
   } catch (e) {
     goForm();
   } finally {
     goBtn.disabled = false;
-    goBtn.textContent = "ادامه و بررسی شماره";
+    goBtn.textContent = "ثبت و ادامه";
   }
 });
 </script>
