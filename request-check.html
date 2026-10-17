@@ -37,6 +37,19 @@ a{color:#9ad7ff;text-decoration:none}
 .tw-slot.disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;background:#1f2937;border-color:#374151;color:#9ca3af}
 .tw-slot.selected{border-color:#f2c94c;box-shadow:0 0 0 2px rgba(242,201,76,.18);color:#f2c94c;font-weight:bold}
 .small{font-size:11px;color:#9cc7b7;margin-top:6px}
+
+/* استایل نوتیفیکیشن / پاپ‌آپ تایید آدرس مشتری */
+.addr-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(5,20,15,0.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:999;padding:18px}
+.addr-modal{width:min(480px,100%);background:linear-gradient(180deg,#114232,#0a291f);border:1px solid var(--gold);border-radius:18px;padding:22px 18px;box-shadow:0 16px 40px rgba(0,0,0,0.6);text-align:center}
+.addr-modal h3{color:var(--gold-strong);margin:0 0 8px;font-size:18px}
+.addr-modal p{font-size:14px;color:#e2f1ec;margin:0 0 14px;line-height:1.8}
+.addr-choice-card{background:#082219;border:1px solid #2e5a48;border-radius:12px;padding:12px;margin-bottom:10px;text-align:right;transition:0.2s}
+.addr-choice-title{color:var(--gold-strong);font-weight:800;font-size:15px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.addr-choice-text{color:#cfe3dc;font-size:12px;line-height:1.6;margin-bottom:10px}
+.addr-confirm-btn{width:100%;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:11px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+.addr-new-btn{width:100%;margin-top:8px;background:rgba(242,201,76,0.1);color:var(--gold-strong);border:1px dashed var(--gold);padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.addr-new-btn:hover{background:rgba(242,201,76,0.2)}
+.addr-cancel-btn{margin-top:12px;background:none;border:none;color:#9cc7b7;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -48,7 +61,7 @@ a{color:#9ad7ff;text-decoration:none}
 
     <h1>ثبت درخواست خدمات</h1>
     <p class="note">
-      لطفاً شماره موبایل خود را وارد نمایید. در صورتی که قبلاً مشترک ما بوده‌اید، درخواست شما فوراً ثبت می‌گردد.
+      لطفاً شماره موبایل خود را وارد نمایید. در صورتی که قبلاً مشترک ما بوده‌اید، آدرس‌های ثبت‌شده شما جهت تایید نمایش داده می‌شود.
     </p>
 
     <input id="phone" class="input" inputmode="numeric" placeholder="مثلاً 09131234567" />
@@ -68,6 +81,17 @@ a{color:#9ad7ff;text-decoration:none}
     <div id="err" class="err"></div>
 
     <div class="footer">پشتیبانی و هماهنگی: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
+  </div>
+
+  <!-- پاپ‌آپ (نوتیفیکیشن) تایید آدرس قبلی یا افزودن آدرس جدید -->
+  <div id="addrConfirmModal" class="addr-modal-overlay">
+    <div class="addr-modal">
+      <h3 id="modalGreet">مشترک گرامی، خوش آمدید</h3>
+      <p id="modalQuestion">درخواست شما برای کدام آدرس ثبت شود؟</p>
+      <div id="modalAddressesList"></div>
+      <button id="addNewAddrBtn" class="addr-new-btn">➕ آدرس جدید با همین شماره</button>
+      <button class="addr-cancel-btn" onclick="closeAddrModal()">تغییر شماره موبایل یا ساعت</button>
+    </div>
   </div>
 
 <script>
@@ -152,6 +176,49 @@ function persianLabel(date){
   };
 })();
 
+function closeAddrModal(){
+  document.getElementById("addrConfirmModal").style.display = "none";
+}
+
+// ثبت نهایی درخواست برای آدرس تایید شده توسط مشتری
+async function submitForExistingAddress(customer, chosenAddressObj, timeNote, btnEl) {
+  const originalText = btnEl.textContent;
+  btnEl.disabled = true;
+  btnEl.textContent = "در حال ثبت درخواست...";
+
+  try {
+    const labelText = chosenAddressObj.label ? `(${chosenAddressObj.label}) ` : "";
+    const finalNotes = [labelText ? `عنوان مکان: ${chosenAddressObj.label}` : "", timeNote].filter(Boolean).join(" | ");
+
+    const make = await fetch(`${API}/api/requests`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customerId: customer._id,
+        phone: customer.phone,
+        fullName: customer.fullName,
+        address: chosenAddressObj.fullAddress,
+        issueType: getSourcePath(),
+        notes: finalNotes
+      })
+    });
+
+    const reqDoc = await make.json();
+    if (make.ok) {
+      const finalCode = reqDoc.request?.invoiceCode || reqDoc.invoiceCode || "ثبت شد";
+      location.href = `request-confirmed.html?code=${encodeURIComponent(finalCode)}`;
+    } else {
+      alert("خطا در ثبت درخواست. لطفاً مجدداً تلاش کنید.");
+      btnEl.disabled = false;
+      btnEl.textContent = originalText;
+    }
+  } catch (e) {
+    alert("خطا در ارتباط با سرور.");
+    btnEl.disabled = false;
+    btnEl.textContent = originalText;
+  }
+}
+
 document.getElementById("go").addEventListener("click", async ()=>{
   const phone = onlyDigits(document.getElementById("phone").value);
   const err = document.getElementById("err");
@@ -168,14 +235,15 @@ document.getElementById("go").addEventListener("click", async ()=>{
   const prefWindow = window.__timePref__?.window || "";
   const timeNote = prefWindow ? `زمان هماهنگی: ${prefDate} ساعت ${prefWindow}` : "";
 
-  const goForm = () => {
-    const q = new URLSearchParams({
+  const goForm = (isNewAddrForExisting = false) => {
+    const paramsObj = {
       phone,
       src: getSourcePath(),
       pd: prefDate,
       pw: prefWindow
-    }).toString();
-    location.href = `request-form.html?${q}`;
+    };
+    if (isNewAddrForExisting) paramsObj.newAddr = "1";
+    location.href = `request-form.html?${new URLSearchParams(paramsObj).toString()}`;
   };
 
   goBtn.disabled = true;
@@ -185,34 +253,66 @@ document.getElementById("go").addEventListener("click", async ()=>{
     const r = await fetch(`${API}/api/customers`, { cache: "no-store" });
     if (r.ok) {
       const data = await r.json();
-      const existingCustomer = (data.customers || []).find(c => c.phone === phone);
+      const existingCustomer = (data.customers || []).find(
+        c => c.phone === phone || (c.secondaryPhones || []).includes(phone)
+      );
 
       if (existingCustomer) {
-        goBtn.textContent = "در حال ثبت درخواست...";
-        const make = await fetch(`${API}/api/requests`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customerId: existingCustomer._id,
-            phone: existingCustomer.phone,
-            fullName: existingCustomer.fullName,
-            address: existingCustomer.addresses?.[0]?.fullAddress || existingCustomer.address || "",
-            issueType: getSourcePath(),
-            notes: timeNote
-          })
-        });
+        const addresses = (existingCustomer.addresses && existingCustomer.addresses.length > 0)
+          ? existingCustomer.addresses
+          : [{ label: "خونه (اصلی)", fullAddress: existingCustomer.address || "آدرس ثبت‌شده در سیستم" }];
 
-        const reqDoc = await make.json();
-        if (make.ok) {
-          const finalCode = reqDoc.request?.invoiceCode || reqDoc.invoiceCode || "ثبت شد";
-          location.href = `request-confirmed.html?code=${encodeURIComponent(finalCode)}`;
-          return;
+        document.getElementById("modalGreet").textContent = `${existingCustomer.fullName} عزیز، خوش آمدید!`;
+        const questionEl = document.getElementById("modalQuestion");
+        const listEl = document.getElementById("modalAddressesList");
+        listEl.innerHTML = "";
+
+        if (addresses.length === 1) {
+          const a = addresses[0];
+          const title = a.label || "خونه";
+          questionEl.innerHTML = `آیا درخواست خدمات شما برای آدرس <strong style="color:var(--gold-strong)">«${title}»</strong> ثبت شود؟`;
+          
+          const card = document.createElement("div");
+          card.className = "addr-choice-card";
+          card.innerHTML = `
+            <div class="addr-choice-title"><span>📍 ${title}</span></div>
+            <div class="addr-choice-text">${a.fullAddress}</div>
+            <button class="addr-confirm-btn">بله، ثبت درخواست برای «${title}» ✅</button>
+          `;
+          card.querySelector("button").onclick = function() {
+            submitForExistingAddress(existingCustomer, a, timeNote, this);
+          };
+          listEl.appendChild(card);
+        } else {
+          questionEl.textContent = "شما چند آدرس ثبت‌شده دارید؛ درخواست برای کدام عنوان ثبت شود؟";
+          addresses.forEach((a, idx) => {
+            const title = a.label || `آدرس ${idx + 1}`;
+            const card = document.createElement("div");
+            card.className = "addr-choice-card";
+            card.innerHTML = `
+              <div class="addr-choice-title"><span>📍 ${title}</span></div>
+              <div class="addr-choice-text">${a.fullAddress}</div>
+              <button class="addr-confirm-btn">ثبت درخواست برای «${title}» ✅</button>
+            `;
+            card.querySelector("button").onclick = function() {
+              submitForExistingAddress(existingCustomer, a, timeNote, this);
+            };
+            listEl.appendChild(card);
+          });
         }
+
+        document.getElementById("addNewAddrBtn").onclick = () => {
+          goForm(true);
+        };
+
+        document.getElementById("addrConfirmModal").style.display = "flex";
+        return;
       }
     }
-    goForm();
+    // اگر شماره جدید بود مستقیم به فرم ثبت مشخصات برود
+    goForm(false);
   } catch (e) {
-    goForm();
+    goForm(false);
   } finally {
     goBtn.disabled = false;
     goBtn.textContent = "ثبت و ادامه";
