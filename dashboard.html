@@ -10,28 +10,42 @@
         .header { background: #1e293b; color: #fff; padding: 18px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header h1 { font-size: 18px; color: #38bdf8; }
         
-        /* استایل جدید دکمه‌های منو بدون خطای 404 */
         .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; }
         .nav-btn { background: #334155; color: #cbd5e1; border: 1px solid #475569; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .nav-btn:hover, .nav-btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
         
         .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card h2 { font-size: 17px; margin-bottom: 12px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        .card { background: white; padding: 18px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card h2 { font-size: 16px; margin-bottom: 12px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* مدیریت نمایش تب‌ها در همان صفحه */
         .tab-section { display: none; }
         .tab-section.active { display: block; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: right; font-size: 14px; }
-        th { background: #f8fafc; color: #334155; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: right; font-size: 13px; vertical-align: middle; }
+        th { background: #f8fafc; color: #334155; white-space: nowrap; }
+        
+        /* استایل وضعیت‌های ۳ گانه */
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; white-space: nowrap; }
         .status-pending { background: #fef3c7; color: #d97706; }
+        .status-assigned { background: #e0f2fe; color: #0284c7; }
         .status-done { background: #dcfce7; color: #15803d; }
-        .status-open { background: #e0f2fe; color: #0369a1; }
-        .action-select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; }
-        .error-msg { color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 6px; display: none; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
+
+        .action-select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 5px; cursor: pointer; font-size: 12px; background: #fff; width: 100%; min-width: 110px; }
+        .client-link { color: #0284c7; font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .client-link:hover { color: #0369a1; }
+
+        .error-msg { color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 6px; display: none; margin-bottom: 15px; font-size: 13px; font-weight: bold; }
+
+        /* پاپ‌آپ (مودال) نمایش فوری اطلاعات مشتری */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-card { background: #fff; width: min(460px, 100%); border-radius: 12px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); position: relative; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px; }
+        .modal-header h3 { font-size: 16px; color: #0f172a; }
+        .close-btn { background: #ef4444; color: #fff; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; }
+        .info-row { margin-bottom: 10px; font-size: 13px; line-height: 1.7; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .info-row strong { color: #334155; display: inline-block; min-width: 95px; }
+        .timer-badge { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -51,7 +65,10 @@
 
 <!-- تب ۱: لیست درخواست‌ها -->
 <div id="requests-tab" class="card tab-section active">
-    <h2>📋 لیست درخواست‌ها و فاکتورها</h2>
+    <h2>
+        <span>📋 لیست درخواست‌ها و فاکتورها</span>
+        <span style="font-size:12px; color:#64748b; font-weight:normal;">(برای مشاهده پرونده هر مشتری، روی نام او کلیک کنید)</span>
+    </h2>
     <div style="overflow-x: auto;">
         <table>
             <thead>
@@ -59,13 +76,14 @@
                     <th>کد فاکتور</th>
                     <th>نام مشتری</th>
                     <th>شماره تماس</th>
-                    <th>نوع خدمت</th>
+                    <th>نوع خدمت و زمان</th>
                     <th>وضعیت</th>
-                    <th>عملیات</th>
+                    <th>تکنسین</th>
+                    <th>عملیات وضعیت</th>
                 </tr>
             </thead>
             <tbody id="requestsTableBody">
-                <tr><td colspan="6" style="text-align:center;">در حال دریافت اطلاعات از سرور...</td></tr>
+                <tr><td colspan="7" style="text-align:center;">در حال دریافت اطلاعات از سرور...</td></tr>
             </tbody>
         </table>
     </div>
@@ -73,27 +91,89 @@
 
 <!-- تب ۲: بانک اطلاعات مشتریان و تایمر سرویس دوره‌ای -->
 <div id="customers-tab" class="card tab-section">
-    <h2>👥 بانک اطلاعات مشتریان و کنترل تایمر سرویس (۱۸۰ روزه)</h2>
-    <p style="color: #475569; line-height: 1.8;">در این بخش لیست کامل مشتریان، سوابق تعویض فیلتر و تنظیمات تغییر زمان آلارم سرویس دوره‌ای (کمتر یا بیشتر از ۱۸۰ روز یا غیرفعال‌سازی) قرار می‌گیرد.</p>
+    <h2>👥 بانک اطلاعات مشتریان و تایمر سرویس دوره‌ای (۱۸۰ روزه)</h2>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>نام مشتری</th>
+                    <th>شماره تماس</th>
+                    <th>آدرس ثبت‌شده</th>
+                    <th>تایمر سرویس بعدی</th>
+                    <th>وضعیت یادآور</th>
+                </tr>
+            </thead>
+            <tbody id="customersTableBody">
+                <tr><td colspan="5" style="text-align:center;">در حال دریافت لیست مشتریان...</td></tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- تب ۳: بانک خدمات و قطعات (Catalog) -->
+<!-- تب ۳: بانک خدمات و قطعات -->
 <div id="services-tab" class="card tab-section">
     <h2>🛠️ بانک خدمات، فیلترها و قطعات (صدور فاکتور)</h2>
     <p style="color: #475569; line-height: 1.8;">در این بخش قیمت روز قطعات، فیلترها و دستمزدها برای صدور فاکتور دیجیتال و ارسال لینک پیامکی به مشتری مدیریت می‌شود.</p>
 </div>
 
-<!-- تب ۴: مدیریت کاربران، تکنسین‌ها و تیکت‌ها -->
+<!-- تب ۴: مدیریت کاربران و تکنسین‌ها -->
 <div id="users-tab" class="card tab-section">
-    <h2>👨‍🔧 مدیریت تکنسین‌ها، کاربران و تیکت‌های پشتیبانی</h2>
-    <p style="color: #475569; line-height: 1.8;">در این بخش تعریف تکنسین جدید، تخصیص درخواست‌ها و بررسی تیکت‌های مشتریان انجام می‌شود.</p>
+    <h2>👨‍🔧 مدیریت لیست تکنسین‌ها</h2>
+    <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <input id="newTechInput" placeholder="نام تکنسین جدید (مثلاً: مهندس کریمی)" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; flex: 1; min-width: 200px;" />
+        <button onclick="addTechnician()" style="background: #0284c7; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px;">+ افزودن تکنسین</button>
+    </div>
+    <div id="techListBox" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+</div>
+
+<!-- مودال نمایش فوری اطلاعات مشتری با کلیک روی نام -->
+<div id="customerModal" class="modal-overlay" onclick="if(event.target===this) closeCustomerModal()">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">👤 پرونده مشتری</h3>
+            <button class="close-btn" onclick="closeCustomerModal()">بستن ×</button>
+        </div>
+        <div id="modalBody"></div>
+    </div>
 </div>
 
 <script>
     const API_BASE = "https://samiwater-backend.onrender.com/api";
     const token = localStorage.getItem("token") || "";
 
-    // تابع جابجایی بین بخش‌های پنل بدون رفرش و بدون خطای 404
+    let allCustomers = [];
+    let allRequests = [];
+    let technicians = JSON.parse(localStorage.getItem("sami_techs") || '["تکنسین ۱ (مرکزی)", "تکنسین ۲ (فنی)", "سرویس‌کار ویژه"]');
+
+    function renderTechManageList() {
+        const box = document.getElementById("techListBox");
+        if (!box) return;
+        box.innerHTML = technicians.map((t, idx) => `
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:6px 12px; border-radius:6px; font-size:13px; display:flex; align-items:center; gap:8px;">
+                <span>👨‍🔧 ${t}</span>
+                <button onclick="removeTechnician(${idx})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold;">×</button>
+            </div>
+        `).join("");
+    }
+
+    function addTechnician() {
+        const inp = document.getElementById("newTechInput");
+        const name = inp.value.trim();
+        if (!name) return;
+        technicians.push(name);
+        localStorage.setItem("sami_techs", JSON.stringify(technicians));
+        inp.value = "";
+        renderTechManageList();
+        renderRequestsTable();
+    }
+
+    function removeTechnician(index) {
+        technicians.splice(index, 1);
+        localStorage.setItem("sami_techs", JSON.stringify(technicians));
+        renderTechManageList();
+        renderRequestsTable();
+    }
+
     function openTab(tabId, btnElement) {
         document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -108,6 +188,42 @@
         window.location.href = "login.html";
     }
 
+    // بارگذاری همزمان درخواست‌ها و بانک اطلاعات مشتریان
+    async function loadAllData() {
+        renderTechManageList();
+        await Promise.all([loadCustomers(), loadRequests()]);
+    }
+
+    async function loadCustomers() {
+        const tbody = document.getElementById("customersTableBody");
+        try {
+            const res = await fetch(`${API_BASE}/customers`);
+            const data = await res.json();
+            allCustomers = data.customers || [];
+
+            if (allCustomers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">هنوز مشتری در بانک اطلاعات ثبت نشده است.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = allCustomers.map(c => {
+                const addr = c.addresses?.[0]?.fullAddress || c.address || "ثبت نشده";
+                const interval = c.serviceIntervalDays || 180;
+                return `
+                    <tr>
+                        <td><span class="client-link" onclick="showCustomerModal('${c.phone}')">${c.fullName || 'نامشخص'}</span></td>
+                        <td style="direction:ltr; text-align:right;">${c.phone || '---'}</td>
+                        <td>${addr}</td>
+                        <td><span class="timer-badge">هر ${interval} روز</span></td>
+                        <td>فعال ✅</td>
+                    </tr>
+                `;
+            }).join("");
+        } catch (e) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">خطا در دریافت لیست مشتریان</td></tr>';
+        }
+    }
+
     async function loadRequests() {
         const errBox = document.getElementById("errBox");
         const tbody = document.getElementById("requestsTableBody");
@@ -120,43 +236,109 @@
             
             if (!res.ok) throw new Error(data.error || data.message || "خطا در دریافت اطلاعات از سرور");
 
-            tbody.innerHTML = "";
             errBox.style.display = "none";
-
-            if (!data.requests || data.requests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">هنوز درخواستی ثبت نشده است.</td></tr>';
-                return;
-            }
-
-            data.requests.forEach(req => {
-                const tr = document.createElement("tr");
-                const clientName = req.snapshot?.fullName || "نامشخص";
-                const clientPhone = req.snapshot?.phone || "نامشخص";
-                
-                let statusClass = "status-pending", statusText = "در انتظار";
-                if(req.status === "done" || req.status === "completed") { statusClass = "status-done"; statusText = "انجام شده"; }
-                if(req.status === "open") { statusClass = "status-open"; statusText = "فاکتور باز"; }
-
-                tr.innerHTML = `
-                    <td>${req.invoiceCode || '---'}</td>
-                    <td>${clientName}</td>
-                    <td>${clientPhone}</td>
-                    <td>${req.issueType || 'سرویس'}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td>
-                        <select class="action-select" onchange="updateStatus('${req._id}', this.value)">
-                            <option value="open" ${req.status === 'open' ? 'selected' : ''}>فاکتور باز</option>
-                            <option value="done" ${req.status === 'done' ? 'selected' : ''}>انجام شده</option>
-                            <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            allRequests = data.requests || [];
+            renderRequestsTable();
         } catch (e) {
             errBox.innerText = "پیام سرور: " + e.message;
             errBox.style.display = "block";
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444;">ارتباط با بانک درخواست‌ها برقرار نشد (نیاز به رفع باگ بک‌اند).</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444;">خطا در ارتباط با سرور</td></tr>';
+        }
+    }
+
+    function renderRequestsTable() {
+        const tbody = document.getElementById("requestsTableBody");
+        if (!allRequests || allRequests.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">هنوز درخواستی ثبت نشده است.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = "";
+        allRequests.forEach(req => {
+            const tr = document.createElement("tr");
+            const clientName = req.snapshot?.fullName || req.customer?.fullName || "نامشخص";
+            const clientPhone = req.snapshot?.phone || req.customer?.phone || "نامشخص";
+            const techName = req.technicianName || "";
+            
+            // وضعیت‌های ۳ گانه: در انتظار (pending) | تخصیص یافته (assigned) | انجام شده (done)
+            let statusClass = "status-pending", statusText = "در انتظار";
+            if (req.status === "assigned" || req.status === "open") {
+                statusClass = "status-assigned";
+                statusText = techName ? `تخصیص یافته (${techName})` : "تخصیص یافته";
+            } else if (req.status === "done" || req.status === "completed") {
+                statusClass = "status-done";
+                statusText = "انجام شده";
+            }
+
+            const techOptions = [
+                `<option value="">-- انتخاب تکنسین --</option>`,
+                ...technicians.map(t => `<option value="${t}" ${techName === t ? 'selected' : ''}>${t}</option>`)
+            ].join("");
+
+            tr.innerHTML = `
+                <td style="font-weight:bold; direction:ltr; text-align:right;">${req.invoiceCode || '---'}</td>
+                <td><span class="client-link" onclick="showCustomerModal('${clientPhone}', '${req._id}')">${clientName}</span></td>
+                <td style="direction:ltr; text-align:right;">${clientPhone}</td>
+                <td>
+                    <div>${req.issueType || 'سرویس'}</div>
+                    ${req.resultNote ? `<div style="font-size:11px; color:#64748b; margin-top:3px;">🕒 ${req.resultNote}</div>` : ''}
+                </td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <select class="action-select" onchange="assignTech('${req._id}', this.value)">
+                        ${techOptions}
+                    </select>
+                </td>
+                <td>
+                    <select class="action-select" onchange="updateStatus('${req._id}', this.value)">
+                        <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
+                        <option value="assigned" ${(req.status === 'assigned' || req.status === 'open') ? 'selected' : ''}>تخصیص یافته</option>
+                        <option value="done" ${(req.status === 'done' || req.status === 'completed') ? 'selected' : ''}>انجام شده</option>
+                    </select>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // نمایش فوری پرونده مشتری با کلیک روی نام او در جدول
+    function showCustomerModal(phone, reqId) {
+        const cust = allCustomers.find(c => c.phone === phone);
+        const req = allRequests.find(r => r._id === reqId) || allRequests.find(r => (r.snapshot?.phone || r.customer?.phone) === phone);
+
+        const fullName = cust?.fullName || req?.snapshot?.fullName || "نامشخص";
+        const address = cust?.addresses?.[0]?.fullAddress || cust?.address || req?.snapshot?.address || "آدرسی ثبت نشده است";
+        const notes = req?.resultNote || cust?.notes || "ندارد";
+        const totalReqs = allRequests.filter(r => (r.snapshot?.phone || r.customer?.phone) === phone).length;
+
+        document.getElementById("modalTitle").innerText = `👤 پرونده مشتری: ${fullName}`;
+        document.getElementById("modalBody").innerHTML = `
+            <div class="info-row"><strong>نام و نام‌خانوادگی:</strong> ${fullName}</div>
+            <div class="info-row"><strong>شماره موبایل:</strong> <a href="tel:${phone}" style="color:#0284c7; font-weight:bold; text-decoration:none;">${phone} (تماس مستقیم 📞)</a></div>
+            <div class="info-row"><strong>آدرس دقیق:</strong> ${address}</div>
+            <div class="info-row"><strong>توضیحات / زمان:</strong> ${notes}</div>
+            <div class="info-row"><strong>تعداد کل درخواست‌ها:</strong> ${totalReqs} نوبت</div>
+            <div class="info-row"><strong>تایمر سرویس دوره‌ای:</strong> <span class="timer-badge">۱۸۰ روزه (فعال)</span></div>
+        `;
+        document.getElementById("customerModal").style.display = "flex";
+    }
+
+    function closeCustomerModal() {
+        document.getElementById("customerModal").style.display = "none";
+    }
+
+    // وقتی تکنسین انتخاب می‌شود، خودکار وضعیت را به «تخصیص یافته» تغییر بده
+    async function assignTech(id, techName) {
+        const newStatus = techName ? "assigned" : "pending";
+        try {
+            await fetch(`${API_BASE}/requests/${id}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ technicianName: techName, status: newStatus })
+            });
+            loadRequests();
+        } catch (e) {
+            alert("خطا در ثبت تکنسین");
         }
     }
 
@@ -168,10 +350,13 @@
                 body: JSON.stringify({ status: newStatus })
             });
             loadRequests();
-        } catch (e) { alert("خطا در به‌روزرسانی وضعیت"); }
+        } catch (e) {
+            alert("خطا در به‌روزرسانی وضعیت");
+        }
     }
 
-    window.onload = loadRequests;
+    window.onload = loadAllData;
 </script>
 </body>
-</html>
+    </html>
+    
