@@ -16,7 +16,7 @@
         
         .logout-btn { background: #ef4444; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
         .card { background: white; padding: 18px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card h2 { font-size: 16px; margin-bottom: 12px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .card h2 { font-size: 16px; margin-bottom: 12px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         
         .tab-section { display: none; }
         .tab-section.active { display: block; }
@@ -25,7 +25,6 @@
         th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: right; font-size: 13px; vertical-align: middle; }
         th { background: #f8fafc; color: #334155; white-space: nowrap; }
         
-        /* استایل وضعیت‌های ۳ گانه */
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; white-space: nowrap; }
         .status-pending { background: #fef3c7; color: #d97706; }
         .status-assigned { background: #e0f2fe; color: #0284c7; }
@@ -35,17 +34,35 @@
         .client-link { color: #0284c7; font-weight: bold; cursor: pointer; text-decoration: underline; }
         .client-link:hover { color: #0369a1; }
 
+        /* استایل تب‌های آدرس در جدول و پاپ‌آپ */
+        .addr-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; }
+        .addr-tab-btn { background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .addr-tab-btn.active { background: #0284c7; color: #fff; border-color: #0369a1; }
+        .addr-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 7px 10px; border-radius: 6px; font-size: 12px; line-height: 1.6; color: #1e293b; }
+
+        .timer-badge { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .timer-off { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+
+        .edit-btn { background: #0284c7; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap; }
+        .edit-btn:hover { background: #0369a1; }
+
         .error-msg { color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 6px; display: none; margin-bottom: 15px; font-size: 13px; font-weight: bold; }
 
-        /* پاپ‌آپ (مودال) نمایش فوری اطلاعات مشتری */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal-card { background: #fff; width: min(460px, 100%); border-radius: 12px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); position: relative; }
+        /* مودال‌ها */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-card { background: #fff; width: min(560px, 100%); border-radius: 12px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); max-height: 92vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px; }
         .modal-header h3 { font-size: 16px; color: #0f172a; }
-        .close-btn { background: #ef4444; color: #fff; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; }
-        .info-row { margin-bottom: 10px; font-size: 13px; line-height: 1.7; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
-        .info-row strong { color: #334155; display: inline-block; min-width: 95px; }
-        .timer-badge { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .close-btn { background: #ef4444; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-weight: bold; }
+        
+        .info-row { margin-bottom: 8px; font-size: 13px; line-height: 1.7; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: #334155; margin-bottom: 5px; }
+        .form-control { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit; }
+        .save-btn { width: 100%; background: #16a34a; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .save-btn:hover { background: #15803d; }
+
+        .history-item { background: #fff; border: 1px solid #cbd5e1; border-right: 4px solid #0284c7; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
     </style>
 </head>
 <body>
@@ -67,7 +84,7 @@
 <div id="requests-tab" class="card tab-section active">
     <h2>
         <span>📋 لیست درخواست‌ها و فاکتورها</span>
-        <span style="font-size:12px; color:#64748b; font-weight:normal;">(برای مشاهده پرونده هر مشتری، روی نام او کلیک کنید)</span>
+        <span style="font-size:12px; color:#64748b; font-weight:normal;">(با کلیک روی نام مشتری، پرونده و سوابق هر آدرس او باز می‌شود)</span>
     </h2>
     <div style="overflow-x: auto;">
         <table>
@@ -76,7 +93,7 @@
                     <th>کد فاکتور</th>
                     <th>نام مشتری</th>
                     <th>شماره تماس</th>
-                    <th>نوع خدمت و زمان</th>
+                    <th>نوع خدمت و آدرس</th>
                     <th>وضعیت</th>
                     <th>تکنسین</th>
                     <th>عملیات وضعیت</th>
@@ -91,20 +108,24 @@
 
 <!-- تب ۲: بانک اطلاعات مشتریان و تایمر سرویس دوره‌ای -->
 <div id="customers-tab" class="card tab-section">
-    <h2>👥 بانک اطلاعات مشتریان و تایمر سرویس دوره‌ای (۱۸۰ روزه)</h2>
+    <h2>
+        <span>👥 بانک اطلاعات مشتریان و تایمر سرویس (چند آدرسه و چند شماره‌ای)</span>
+        <button class="edit-btn" style="background:#16a34a;" onclick="openNewCustomerModal()">+ افزودن مشتری جدید</button>
+    </h2>
     <div style="overflow-x: auto;">
         <table>
             <thead>
                 <tr>
                     <th>نام مشتری</th>
-                    <th>شماره تماس</th>
-                    <th>آدرس ثبت‌شده</th>
-                    <th>تایمر سرویس بعدی</th>
-                    <th>وضعیت یادآور</th>
+                    <th>شماره اصلی</th>
+                    <th>شماره دوم و سوم</th>
+                    <th>آدرس‌ها و سوابق هر دستگاه (تب‌بندی)</th>
+                    <th>تایمر و یادآور</th>
+                    <th>ویرایش</th>
                 </tr>
             </thead>
             <tbody id="customersTableBody">
-                <tr><td colspan="5" style="text-align:center;">در حال دریافت لیست مشتریان...</td></tr>
+                <tr><td colspan="6" style="text-align:center;">در حال دریافت لیست مشتریان...</td></tr>
             </tbody>
         </table>
     </div>
@@ -113,27 +134,89 @@
 <!-- تب ۳: بانک خدمات و قطعات -->
 <div id="services-tab" class="card tab-section">
     <h2>🛠️ بانک خدمات، فیلترها و قطعات (صدور فاکتور)</h2>
-    <p style="color: #475569; line-height: 1.8;">در این بخش قیمت روز قطعات، فیلترها و دستمزدها برای صدور فاکتور دیجیتال و ارسال لینک پیامکی به مشتری مدیریت می‌شود.</p>
+    <p style="color: #475569; line-height: 1.8;">در این بخش قیمت روز قطعات، فیلترها و دستمزدها برای صدور فاکتور دیجیتال مدیریت می‌شود.</p>
 </div>
 
 <!-- تب ۴: مدیریت کاربران و تکنسین‌ها -->
 <div id="users-tab" class="card tab-section">
     <h2>👨‍🔧 مدیریت لیست تکنسین‌ها</h2>
     <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <input id="newTechInput" placeholder="نام تکنسین جدید (مثلاً: مهندس کریمی)" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; flex: 1; min-width: 200px;" />
-        <button onclick="addTechnician()" style="background: #0284c7; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px;">+ افزودن تکنسین</button>
+        <input id="newTechInput" placeholder="نام تکنسین جدید (مثلاً: مهندس رضایی)" class="form-control" style="flex: 1; min-width: 200px;" />
+        <button onclick="addTechnician()" class="edit-btn">+ افزودن تکنسین</button>
     </div>
     <div id="techListBox" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
 </div>
 
-<!-- مودال نمایش فوری اطلاعات مشتری با کلیک روی نام -->
-<div id="customerModal" class="modal-overlay" onclick="if(event.target===this) closeCustomerModal()">
+<!-- مودال ۱: نمایش پرونده و سوابق مشتری بر اساس تب‌های آدرس (مخصوص کلیک روی نام در لیست درخواست‌ها) -->
+<div id="dossierModal" class="modal-overlay" onclick="if(event.target===this) closeDossierModal()">
     <div class="modal-card">
         <div class="modal-header">
-            <h3 id="modalTitle">👤 پرونده مشتری</h3>
-            <button class="close-btn" onclick="closeCustomerModal()">بستن ×</button>
+            <h3 id="dossierTitle">👤 پرونده و سوابق مشتری</h3>
+            <button class="close-btn" onclick="closeDossierModal()">بستن ×</button>
         </div>
-        <div id="modalBody"></div>
+        <div id="dossierBody"></div>
+    </div>
+</div>
+
+<!-- مودال ۲: ویرایش کامل اطلاعات مشتری (نام، شماره ۱، ۲، ۳، آدرس‌های ۱، ۲، ۳ و تایمر) -->
+<div id="editModal" class="modal-overlay" onclick="if(event.target===this) closeEditModal()">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="editModalTitle">✏️ ویرایش کامل اطلاعات مشتری</h3>
+            <button class="close-btn" onclick="closeEditModal()">بستن ×</button>
+        </div>
+        <div>
+            <input type="hidden" id="editCustomerId" />
+            
+            <div class="form-group">
+                <label>نام و نام‌خانوادگی *</label>
+                <input id="editFullName" class="form-control" placeholder="نام کامل مشتری" />
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:8px;">
+                <div class="form-group">
+                    <label>شماره موبایل اصلی *</label>
+                    <input id="editPhone1" class="form-control" style="direction:ltr; text-align:center;" placeholder="0913..." />
+                </div>
+                <div class="form-group">
+                    <label>شماره تماس دوم</label>
+                    <input id="editPhone2" class="form-control" style="direction:ltr; text-align:center;" placeholder="اختیاری" />
+                </div>
+                <div class="form-group">
+                    <label>شماره تماس سوم</label>
+                    <input id="editPhone3" class="form-control" style="direction:ltr; text-align:center;" placeholder="اختیاری" />
+                </div>
+            </div>
+
+            <div class="form-group" style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <label style="margin:0;">📍 آدرس‌ها / دستگاه‌های مشتری (منزل، مغازه و...)</label>
+                    <button type="button" onclick="addAddressFieldInModal()" style="background:#0284c7; color:#fff; border:none; padding:4px 10px; border-radius:5px; cursor:pointer; font-size:11px; font-weight:bold;">+ افزودن آدرس جدید</button>
+                </div>
+                <div id="editAddressesBox" style="display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group">
+                    <label>تایمر یادآوری سرویس (تعداد روز)</label>
+                    <input id="editInterval" type="number" class="form-control" value="180" />
+                </div>
+                <div class="form-group">
+                    <label>وضعیت یادآور خودکار</label>
+                    <select id="editTimerActive" class="form-control">
+                        <option value="true">فعال ✅</option>
+                        <option value="false">غیرفعال 🔕</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>یادداشت / توضیحات پرونده</label>
+                <textarea id="editNotes" class="form-control" rows="2" placeholder="توضیحات اختصاصی این مشتری..."></textarea>
+            </div>
+
+            <button class="save-btn" id="saveCustomerBtn" onclick="saveCustomerChanges()">ذخیره تغییرات در بانک اطلاعات ✅</button>
+        </div>
     </div>
 </div>
 
@@ -143,8 +226,24 @@
 
     let allCustomers = [];
     let allRequests = [];
+    // نگهداری تبِ آدرسِ انتخاب شده برای هر مشتری در جدول بانک اطلاعات
+    let selectedAddressIndexMap = {};
     let technicians = JSON.parse(localStorage.getItem("sami_techs") || '["تکنسین ۱ (مرکزی)", "تکنسین ۲ (فنی)", "سرویس‌کار ویژه"]');
 
+    function openTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        const target = document.getElementById(tabId);
+        if (target) target.classList.add('active');
+        if (btnElement) btnElement.classList.add('active');
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+    }
+
+    // مدیریت تکنسین‌ها
     function renderTechManageList() {
         const box = document.getElementById("techListBox");
         if (!box) return;
@@ -174,189 +273,113 @@
         renderRequestsTable();
     }
 
-    function openTab(tabId, btnElement) {
-        document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        
-        const target = document.getElementById(tabId);
-        if (target) target.classList.add('active');
-        if (btnElement) btnElement.classList.add('active');
-    }
-
-    function logout() {
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
-    }
-
-    // بارگذاری همزمان درخواست‌ها و بانک اطلاعات مشتریان
+    // بارگذاری کلی اطلاعات
     async function loadAllData() {
         renderTechManageList();
         await Promise.all([loadCustomers(), loadRequests()]);
+        renderCustomersTable();
+        renderRequestsTable();
     }
 
     async function loadCustomers() {
-        const tbody = document.getElementById("customersTableBody");
         try {
             const res = await fetch(`${API_BASE}/customers`);
             const data = await res.json();
             allCustomers = data.customers || [];
-
-            if (allCustomers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">هنوز مشتری در بانک اطلاعات ثبت نشده است.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = allCustomers.map(c => {
-                const addr = c.addresses?.[0]?.fullAddress || c.address || "ثبت نشده";
-                const interval = c.serviceIntervalDays || 180;
-                return `
-                    <tr>
-                        <td><span class="client-link" onclick="showCustomerModal('${c.phone}')">${c.fullName || 'نامشخص'}</span></td>
-                        <td style="direction:ltr; text-align:right;">${c.phone || '---'}</td>
-                        <td>${addr}</td>
-                        <td><span class="timer-badge">هر ${interval} روز</span></td>
-                        <td>فعال ✅</td>
-                    </tr>
-                `;
-            }).join("");
         } catch (e) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">خطا در دریافت لیست مشتریان</td></tr>';
+            console.error("Error loading customers:", e);
         }
     }
 
     async function loadRequests() {
         const errBox = document.getElementById("errBox");
-        const tbody = document.getElementById("requestsTableBody");
         try {
             const res = await fetch(`${API_BASE}/requests`, {
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
             const data = await res.json();
-            
-            if (!res.ok) throw new Error(data.error || data.message || "خطا در دریافت اطلاعات از سرور");
-
+            if (!res.ok) throw new Error(data.error || "خطا در دریافت اطلاعات");
             errBox.style.display = "none";
             allRequests = data.requests || [];
-            renderRequestsTable();
         } catch (e) {
             errBox.innerText = "پیام سرور: " + e.message;
             errBox.style.display = "block";
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444;">خطا در ارتباط با سرور</td></tr>';
         }
     }
 
-    function renderRequestsTable() {
-        const tbody = document.getElementById("requestsTableBody");
-        if (!allRequests || allRequests.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">هنوز درخواستی ثبت نشده است.</td></tr>';
+    // رندر جدول بانک اطلاعات با قابلیت تب‌بندی آدرس‌ها و مشاهده سوابق هر آدرس
+    function renderCustomersTable() {
+        const tbody = document.getElementById("customersTableBody");
+        if (!allCustomers || allCustomers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">هنوز مشتری در بانک اطلاعات ثبت نشده است.</td></tr>';
             return;
         }
 
-        tbody.innerHTML = "";
-        allRequests.forEach(req => {
-            const tr = document.createElement("tr");
-            const clientName = req.snapshot?.fullName || req.customer?.fullName || "نامشخص";
-            const clientPhone = req.snapshot?.phone || req.customer?.phone || "نامشخص";
-            const techName = req.technicianName || "";
-            
-            // وضعیت‌های ۳ گانه: در انتظار (pending) | تخصیص یافته (assigned) | انجام شده (done)
-            let statusClass = "status-pending", statusText = "در انتظار";
-            if (req.status === "assigned" || req.status === "open") {
-                statusClass = "status-assigned";
-                statusText = techName ? `تخصیص یافته (${techName})` : "تخصیص یافته";
-            } else if (req.status === "done" || req.status === "completed") {
-                statusClass = "status-done";
-                statusText = "انجام شده";
-            }
+        tbody.innerHTML = allCustomers.map(c => {
+            const secPhones = (c.secondaryPhones || []).filter(Boolean);
+            const secPhonesHtml = secPhones.length > 0
+                ? secPhones.map((p, i) => `<div>شماره ${i+2}: <b>${p}</b></div>`).join("")
+                : '<span style="color:#94a3b8;">ثبت نشده</span>';
 
-            const techOptions = [
-                `<option value="">-- انتخاب تکنسین --</option>`,
-                ...technicians.map(t => `<option value="${t}" ${techName === t ? 'selected' : ''}>${t}</option>`)
-            ].join("");
+            const addresses = (c.addresses && c.addresses.length > 0)
+                ? c.addresses
+                : [{ label: "آدرس ۱", fullAddress: c.address || "آدرسی ثبت نشده" }];
 
-            tr.innerHTML = `
-                <td style="font-weight:bold; direction:ltr; text-align:right;">${req.invoiceCode || '---'}</td>
-                <td><span class="client-link" onclick="showCustomerModal('${clientPhone}', '${req._id}')">${clientName}</span></td>
-                <td style="direction:ltr; text-align:right;">${clientPhone}</td>
-                <td>
-                    <div>${req.issueType || 'سرویس'}</div>
-                    ${req.resultNote ? `<div style="font-size:11px; color:#64748b; margin-top:3px;">🕒 ${req.resultNote}</div>` : ''}
-                </td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td>
-                    <select class="action-select" onchange="assignTech('${req._id}', this.value)">
-                        ${techOptions}
-                    </select>
-                </td>
-                <td>
-                    <select class="action-select" onchange="updateStatus('${req._id}', this.value)">
-                        <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
-                        <option value="assigned" ${(req.status === 'assigned' || req.status === 'open') ? 'selected' : ''}>تخصیص یافته</option>
-                        <option value="done" ${(req.status === 'done' || req.status === 'completed') ? 'selected' : ''}>انجام شده</option>
-                    </select>
-                </td>
+            const activeIdx = selectedAddressIndexMap[c._id] || 0;
+            const currentAddrObj = addresses[activeIdx] || addresses[0];
+
+            // شمارش سوابق سرویس برای همین آدرس انتخاب شده
+            const customerReqs = allRequests.filter(r => (r.snapshot?.phone || r.customer?.phone) === c.phone);
+            const addrReqs = customerReqs.filter(r => {
+                if (addresses.length === 1) return true;
+                return (r.snapshot?.address || "").trim() === (currentAddrObj.fullAddress || "").trim();
+            });
+
+            const tabsHtml = addresses.map((a, idx) => `
+                <button class="addr-tab-btn ${idx === activeIdx ? 'active' : ''}" onclick="switchTableAddressTab('${c._id}', ${idx})">
+                    📍 ${a.label || 'آدرس ' + (idx + 1)}
+                </button>
+            `).join("");
+
+            const interval = c.serviceIntervalDays || 180;
+            const isTimerOn = c.isActiveTimer !== false;
+
+            return `
+                <tr>
+                    <td style="font-weight:bold; color:#0f172a;">${c.fullName || 'نامشخص'}</td>
+                    <td style="direction:ltr; text-align:right; font-weight:bold;">
+                        <a href="tel:${c.phone}" style="color:#0284c7; text-decoration:none;">${c.phone || '---'}</a>
+                    </td>
+                    <td style="font-size:12px; line-height:1.6;">${secPhonesHtml}</td>
+                    <td style="min-width:230px;">
+                        <div class="addr-tabs">${tabsHtml}</div>
+                        <div class="addr-box">
+                            <div><strong>آدرس:</strong> ${currentAddrObj.fullAddress}</div>
+                            <div style="margin-top:4px; font-size:11px; color:#0369a1; display:flex; justify-content:space-between; align-items:center;">
+                                <span>📊 سابقه این آدرس: <b>${addrReqs.length} سرویس</b></span>
+                                <span class="client-link" style="font-size:11px;" onclick="openDossierModal('${c.phone}', ${activeIdx})">مشاهده ریز سوابق 🔍</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="${isTimerOn ? 'timer-badge' : 'timer-off'}">
+                            ${isTimerOn ? `هر ${interval} روز ✅` : 'یادآور غیرفعال 🔕'}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="edit-btn" onclick="openEditCustomerModal('${c._id}')">ویرایش کامل ✏️</button>
+                    </td>
+                </tr>
             `;
-            tbody.appendChild(tr);
-        });
+        }).join("");
     }
 
-    // نمایش فوری پرونده مشتری با کلیک روی نام او در جدول
-    function showCustomerModal(phone, reqId) {
-        const cust = allCustomers.find(c => c.phone === phone);
-        const req = allRequests.find(r => r._id === reqId) || allRequests.find(r => (r.snapshot?.phone || r.customer?.phone) === phone);
-
-        const fullName = cust?.fullName || req?.snapshot?.fullName || "نامشخص";
-        const address = cust?.addresses?.[0]?.fullAddress || cust?.address || req?.snapshot?.address || "آدرسی ثبت نشده است";
-        const notes = req?.resultNote || cust?.notes || "ندارد";
-        const totalReqs = allRequests.filter(r => (r.snapshot?.phone || r.customer?.phone) === phone).length;
-
-        document.getElementById("modalTitle").innerText = `👤 پرونده مشتری: ${fullName}`;
-        document.getElementById("modalBody").innerHTML = `
-            <div class="info-row"><strong>نام و نام‌خانوادگی:</strong> ${fullName}</div>
-            <div class="info-row"><strong>شماره موبایل:</strong> <a href="tel:${phone}" style="color:#0284c7; font-weight:bold; text-decoration:none;">${phone} (تماس مستقیم 📞)</a></div>
-            <div class="info-row"><strong>آدرس دقیق:</strong> ${address}</div>
-            <div class="info-row"><strong>توضیحات / زمان:</strong> ${notes}</div>
-            <div class="info-row"><strong>تعداد کل درخواست‌ها:</strong> ${totalReqs} نوبت</div>
-            <div class="info-row"><strong>تایمر سرویس دوره‌ای:</strong> <span class="timer-badge">۱۸۰ روزه (فعال)</span></div>
-        `;
-        document.getElementById("customerModal").style.display = "flex";
+    function switchTableAddressTab(customerId, addrIndex) {
+        selectedAddressIndexMap[customerId] = addrIndex;
+        renderCustomersTable();
     }
 
-    function closeCustomerModal() {
-        document.getElementById("customerModal").style.display = "none";
-    }
-
-    // وقتی تکنسین انتخاب می‌شود، خودکار وضعیت را به «تخصیص یافته» تغییر بده
-    async function assignTech(id, techName) {
-        const newStatus = techName ? "assigned" : "pending";
-        try {
-            await fetch(`${API_BASE}/requests/${id}/status`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify({ technicianName: techName, status: newStatus })
-            });
-            loadRequests();
-        } catch (e) {
-            alert("خطا در ثبت تکنسین");
-        }
-    }
-
-    async function updateStatus(id, newStatus) {
-        try {
-            await fetch(`${API_BASE}/requests/${id}/status`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify({ status: newStatus })
-            });
-            loadRequests();
-        } catch (e) {
-            alert("خطا در به‌روزرسانی وضعیت");
-        }
-    }
-
-    window.onload = loadAllData;
-</script>
-</body>
-    </html>
-    
+    // رندر جدول درخواست‌ها
+    function renderRequestsTable() {
+      
