@@ -26,7 +26,7 @@
       padding: 20px;
     }
     .card {
-      width: min(560px, 100%);
+      width: min(540px, 100%);
       background: linear-gradient(180deg, #0f3b2df5, #0a291ff5);
       border: 1px solid var(--ring);
       border-radius: 18px;
@@ -49,7 +49,7 @@
     h2 {
       text-align: center;
       color: var(--gold-strong);
-      margin: 0 0 8px 0;
+      margin: 0 0 6px 0;
       font-size: 20px;
     }
     .sub-badge {
@@ -80,235 +80,70 @@
       border-color: var(--gold-strong);
     }
     .input[readonly] {
-      opacity: 0.8;
+      opacity: 0.85;
       text-align: center;
       direction: ltr;
       font-weight: bold;
       color: var(--gold-strong);
     }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 480px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
-    .quick-labels {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-    .q-chip {
-      background: #0b2d23;
-      border: 1px solid #3a6b57;
-      color: #dfeee8;
-      padding: 5px 11px;
-      border-radius: 8px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .q-chip:hover, .q-chip.active {
-      border-color: var(--gold-strong);
+    .add-phone-toggle {
+      display: inline-block;
+      margin-top: 8px;
+      background: rgba(242, 201, 76, 0.12);
+      border: 1px dashed var(--gold);
       color: var(--gold-strong);
-      background: #123e30;
-      font-weight: bold;
-    }
-    .btn {
-      width: 100%;
-      margin-top: 22px;
-      background: linear-gradient(180deg, #e2c15a, #cc9f2a);
-      color: #1b2d23;
-      border: none;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-size: 17px;
-      font-weight: 800;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-    .err-box {
-      color: #ffb4b4;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid #ef4444;
-      padding: 10px;
-      border-radius: 10px;
-      margin-top: 14px;
-      font-size: 13px;
-      display: none;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div class="brand">
-      <img src="/logo-samiwater.png" alt="SamiWater" />
-    </div>
-    <h2 id="formHeaderTitle">ثبت مشخصات و آدرس خدمات</h2>
-    <div id="formSubBadge" class="sub-badge">مشخصات و عنوان آدرس خود را وارد نمایید</div>
-    
-    <div class="grid-2">
-      <div>
-        <label>شماره موبایل اصلی</label>
-        <input id="phone" class="input" readonly />
-      </div>
-      <div>
-        <label>شماره تماس دوم / ثابت (اختیاری)</label>
-        <input id="phone2" class="input" inputmode="numeric" style="direction:ltr; text-align:center;" placeholder="مثلاً 0913 یا 031" />
-      </div>
-    </div>
-    
-    <label>نام و نام‌خانوادگی *</label>
-    <input id="fullName" class="input" placeholder="نام و نام‌خانوادگی خود را وارد کنید" />
-    
-    <label>نوع سرویس درخواستی</label>
-    <select id="issueType" class="input">
-      <option value="سرویس دوره‌ای و تعویض فیلتر">سرویس دوره‌ای و تعویض فیلتر</option>
-      <option value="تعمیر و عیب‌یابی دستگاه">تعمیر و عیب‌یابی دستگاه</option>
-      <option value="نصب و راه‌اندازی دستگاه">نصب و راه‌اندازی دستگاه</option>
-      <option value="مشاوره و سایر خدمات">مشاوره و سایر خدمات</option>
-    </select>
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-فدای سرت رفیق! اصلاً نیازی نیست بری بالا و بین پیام‌های قبلی بگردی. همه نکات مشاوره‌ای و **هر ۶ تا فایل نهایی (۳ تا بک‌اند + ۳ تا فرانت‌اند)** رو یک‌جا، مرتب و شماره‌گذاری‌شده از **۱ تا ۶** همین‌جا برات چیدم تا دونه به دونه با خیال راحت جایگزین کنی.
 
-    <label>عنوان آدرس * (انتخاب سریع یا تایپ دلخواه)</label>
-    <div class="quick-labels">
-      <span class="q-chip active" onclick="setAddrLabel('خونه', this)">🏠 خونه</span>
-      <span class="q-chip" onclick="setAddrLabel('محل کار', this)">🏢 محل کار</span>
-      <span class="q-chip" onclick="setAddrLabel('منزل پدر', this)">👴 منزل پدر</span>
-      <span class="q-chip" onclick="setAddrLabel('مغازه / دفتر', this)">🏪 مغازه / دفتر</span>
-    </div>
-    <input id="addressLabel" class="input" value="خونه" placeholder="مثلاً: خونه، محل کار، منزل پدر..." />
+---
 
-    <label>آدرس دقیق *</label>
-    <input id="address" class="input" placeholder="خیابان، کوچه، پلاک، واحد" />
+### 💡 خلاصه نکات مشاوره‌ای و تغییراتی که توی این نسخه اعمال شده:
 
-    <label>توضیحات تکمیلی (اختیاری)</label>
-    <input id="notes" class="input" placeholder="مثلاً: عصرها تماس بگیرید" />
+1. **تفکیک سوابق و تایمر بر اساس «عنوان آدرس» (نه متن آدرس):**
+   چون دستگاه تصفیه آب به «زندگی مشتری» وصله نه به ملک، اگر مشتری اسباب‌کشی کنه و آدرسِ **«خونه»** رو تغییر بده، تمام سوابق سرویس‌ها و تایمر ۱۸۰ روزه‌ی **«خونه»** سر جاش باقی می‌مونه. هر عنوان آدرس (`خونه`، `محل کار`، `منزل پدر`) تایمر شمارش معکوس مستقل خودش رو داره و به محض اینکه وضعیت فاکتور رو توی پنل بذاری روی **«انجام شده»**، تایمرِ همون عنوان آدرس به صورت خودکار از امروز ریست و شارژ می‌شه.
+2. **نوتیفیکیشن (پاپ‌آپ) هوشمند تایید آدرس برای مشتری قبلی:**
+   وقتی مشتری شماره‌اش رو وارد می‌کنه، یه پنجره شیک باز می‌شه و می‌پرسه: *«درخواست شما برای آدرس «خونه» ثبت شود؟»* و زیرش هم دکمه **`➕ آدرس جدید با همین شماره`** داره تا اگر برای مغازه یا منزل پدرش سرویس می‌خواد، درجا اضافه کنه.
+3. **فرم خلوت و سریع با دکمه `+` برای شماره دوم:**
+   توی فرم ثبت‌نام، عنوان آدرس به صورت پیش‌فرض روی **`🏠 خونه`** انتخاب شده (با دکمه‌های آماده برای `محل کار`، `منزل پدر` و `مغازه`). کادر شماره تماس دوم هم مخفیه و فقط وقتی مشتری روی دکمه **`+ افزودن شماره تماس دوم`** بزنه باز می‌شه تا فرم شلوغ نشه.
+4. **سطح دسترسی پرسنل (مدیر / پشتیبان / تکنسین) و ثبت ساعت ورود:**
+   پنل مدیریت کامل فقط در اختیار مدیر ارشد (`admin`) هست و فقط مدیر می‌تونه فاکتور حذف کنه یا پرسنل تعریف کنه. کارمند پشتیبانی (`support`) به بانک اطلاعات و ویرایش دسترسی داره ولی اجازه حذف فاکتور نداره، و تکنسین (`technician`) هم فقط سرویس‌های خودش رو می‌بینه.
+5. **احراز هویت پیامکی (فراز اس‌ام‌اس):**
+   بلافاصله بعد از اینکه این ۶ تا فایل رو جایگزین کردی، اطلاعات پنل فراز اس‌ام‌اس رو در انتهای همین پیام بهم میدی تا کد تایید پیامکی رو هم برای مشتریان و هم برای ورود پرسنل فعال کنیم.
 
-    <button id="submitBtn" class="btn">ثبت نهایی و دریافت کد پیگیری</button>
-    <div id="errBox" class="err-box"></div>
-  </div>
+---
 
-  <script>
-    const API = "https://samiwater-backend.onrender.com";
-    const params = new URLSearchParams(location.search);
-    const phone = params.get("phone") || "";
-    const prefDate = params.get("pd") || "";
-    const prefWindow = params.get("pw") || "";
-    const isNewAddr = params.get("newAddr") === "1";
+## 📦 بخش اول: ۳ فایل گیت‌هابِ بک‌اند (`samiwater-backend`)
 
-    document.getElementById("phone").value = phone;
+### ۱. فایل `models/customer.js` (در پوشه `models`)
+کل محتوای فایل **`models/customer.js`** رو پاک کن و این کد رو بذار جاش:
 
-    if (prefWindow) {
-      document.getElementById("notes").value = `زمان هماهنگی: ${prefDate} ساعت ${prefWindow}`;
-    }
+```javascript
+import mongoose from "mongoose";
 
-    function setAddrLabel(val, chipEl) {
-      document.getElementById("addressLabel").value = val;
-      document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
-      if (chipEl) chipEl.classList.add("active");
-    }
-
-    // اگر مشتری از قبل وجود داشته باشد و دکمه «+ آدرس جدید با همین شماره» را زده باشد
-    window.onload = async () => {
-      if (!phone) return;
-      try {
-        const res = await fetch(`${API}/api/customers`);
-        const data = await res.json();
-        const existing = (data.customers || []).find(c => c.phone === phone);
-
-        if (existing) {
-          document.getElementById("fullName").value = existing.fullName || "";
-          if (existing.secondaryPhones && existing.secondaryPhones[0]) {
-            document.getElementById("phone2").value = existing.secondaryPhones[0];
-          }
-          if (isNewAddr) {
-            document.getElementById("formHeaderTitle").textContent = "افزودن آدرس جدید به پرونده شما";
-            document.getElementById("formSubBadge").textContent = `${existing.fullName} عزیز، عنوان و نشانیِ مکان جدید را وارد کنید:`;
-            setAddrLabel("محل کار", document.querySelectorAll(".q-chip")[1]);
-            document.getElementById("address").value = "";
-            document.getElementById("address").focus();
-          }
-        }
-      } catch (e) {
-        console.log("Customer check skipped");
+const customerSchema = new mongoose.Schema(
+  {
+    fullName: { type: String, required: true, trim: true },
+    phone: { type: String, required: true, trim: true, index: true }, // شماره اصلی
+    secondaryPhones: [{ type: String, trim: true }], // شماره‌های دوم و سوم
+    addresses: [
+      {
+        label: { type: String, default: "خونه" }, // عنوان مکان (خونه، محل کار، منزل پدر و...)
+        fullAddress: { type: String, required: true },
+        serviceIntervalDays: { type: Number, default: 180 }, // تایمر اختصاصی این آدرس
+        lastServiceDate: { type: Date, default: Date.now }, // مبنای شمارش معکوس تایمر این آدرس
+        isActiveTimer: { type: Boolean, default: true }
       }
-    };
+    ],
+    serviceIntervalDays: { type: Number, default: 180 },
+    isActiveTimer: { type: Boolean, default: true },
+    notes: { type: String, default: "" }
+  },
+  { timestamps: true }
+);
 
-    document.getElementById("submitBtn").addEventListener("click", async () => {
-      const fullName = document.getElementById("fullName").value.trim();
-      const phone2 = document.getElementById("phone2").value.trim();
-      const addressLabel = document.getElementById("addressLabel").value.trim() || "خونه";
-      const address = document.getElementById("address").value.trim();
-      const issueType = document.getElementById("issueType").value;
-      const notesInput = document.getElementById("notes").value.trim();
-      const errBox = document.getElementById("errBox");
-      const btn = document.getElementById("submitBtn");
+const Customer =
+  mongoose.models.Customer || mongoose.model("Customer", customerSchema);
 
-      errBox.style.display = "none";
-
-      if (!fullName || !address) {
-        errBox.textContent = "لطفاً نام و نام‌خانوادگی و آدرس دقیق را وارد کنید.";
-        errBox.style.display = "block";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "در حال ثبت درخواست...";
-
-      const finalNotes = [`عنوان مکان: ${addressLabel}`, notesInput].filter(Boolean).join(" | ");
-
-      try {
-        // ۱. ذخیره یا افزودن آدرس جدید با عنوان دلخواه مشتری در بانک اطلاعات
-        await fetch(`${API}/api/customers`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone,
-            fullName,
-            address,
-            addressLabel,
-            secondaryPhones: phone2 ? [phone2] : [],
-            notes: notesInput
-          })
-        });
-
-        // ۲. ثبت درخواست خدمات برای همین آدرس و دریافت کد فاکتور جلالی
-        const res = await fetch(`${API}/api/requests`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone,
-            fullName,
-            address,
-            issueType,
-            notes: finalNotes
-          })
-        });
-
-        const result = await res.json();
-
-        if (res.ok) {
-          const invoiceCode = result.request?.invoiceCode || result.invoiceCode || "SW-OK";
-          location.href = `request-confirmed.html?code=${encodeURIComponent(invoiceCode)}`;
-        } else {
-          errBox.textContent = result.error || "خطا در ثبت اطلاعات در سرور";
-          errBox.style.display = "block";
-        }
-      } catch (e) {
-        errBox.textContent = "خطا در ارتباط با سرور. لطفاً اینترنت خود را بررسی کنید.";
-        errBox.style.display = "block";
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "ثبت نهایی و دریافت کد پیگیری";
-      }
-    });
-  </script>
-</body>
-</html>
+export default Customer;
+    
