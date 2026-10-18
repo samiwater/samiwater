@@ -83,7 +83,7 @@ a{color:#9ad7ff;text-decoration:none}
     <div class="footer">پشتیبانی و هماهنگی: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
   </div>
 
-  <!-- پاپ‌آپ (نوتیفیکیشن) تایید آدرس قبلی یا افزودن آدرس جدید -->
+  <!-- پاپ‌آپ تایید آدرس قبلی یا افزودن آدرس جدید -->
   <div id="addrConfirmModal" class="addr-modal-overlay">
     <div class="addr-modal">
       <h3 id="modalGreet">مشترک گرامی، خوش آمدید</h3>
@@ -187,8 +187,8 @@ async function submitForExistingAddress(customer, chosenAddressObj, timeNote, bt
   btnEl.textContent = "در حال ثبت درخواست...";
 
   try {
-    const labelText = chosenAddressObj.label ? `(${chosenAddressObj.label}) ` : "";
-    const finalNotes = [labelText ? `عنوان مکان: ${chosenAddressObj.label}` : "", timeNote].filter(Boolean).join(" | ");
+    const cleanTitle = chosenAddressObj.label || "خونه";
+    const finalNotes = [`مکان: ${cleanTitle}`, timeNote].filter(Boolean).join(" | ");
 
     const make = await fetch(`${API}/api/requests`, {
       method: "POST",
@@ -198,6 +198,7 @@ async function submitForExistingAddress(customer, chosenAddressObj, timeNote, bt
         phone: customer.phone,
         fullName: customer.fullName,
         address: chosenAddressObj.fullAddress,
+        addressLabel: cleanTitle,
         issueType: getSourcePath(),
         notes: finalNotes
       })
@@ -260,7 +261,7 @@ document.getElementById("go").addEventListener("click", async ()=>{
       if (existingCustomer) {
         const addresses = (existingCustomer.addresses && existingCustomer.addresses.length > 0)
           ? existingCustomer.addresses
-          : [{ label: "خونه (اصلی)", fullAddress: existingCustomer.address || "آدرس ثبت‌شده در سیستم" }];
+          : [{ label: "خونه", fullAddress: existingCustomer.address || "آدرس ثبت‌شده در سیستم" }];
 
         document.getElementById("modalGreet").textContent = `${existingCustomer.fullName} عزیز، خوش آمدید!`;
         const questionEl = document.getElementById("modalQuestion");
@@ -309,7 +310,6 @@ document.getElementById("go").addEventListener("click", async ()=>{
         return;
       }
     }
-    // اگر شماره جدید بود مستقیم به فرم ثبت مشخصات برود
     goForm(false);
   } catch (e) {
     goForm(false);
