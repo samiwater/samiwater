@@ -8,7 +8,9 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
         body { background: #f1f5f9; color: #1e293b; padding: 15px; }
         .header { background: #1e293b; color: #fff; padding: 18px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-title-box { display: flex; align-items: center; gap: 10px; }
         .header h1 { font-size: 18px; color: #38bdf8; }
+        .role-pill { background: #0f172a; color: #facc15; border: 1px solid #facc15; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         
         .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; }
         .nav-btn { background: #334155; color: #cbd5e1; border: 1px solid #475569; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -34,23 +36,21 @@
         .client-link { color: #0284c7; font-weight: bold; cursor: pointer; text-decoration: underline; }
         .client-link:hover { color: #0369a1; }
 
-        /* استایل تب‌های آدرس در جدول و پاپ‌آپ */
         .addr-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; }
-        .addr-tab-btn { background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .addr-tab-btn { background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
         .addr-tab-btn.active { background: #0284c7; color: #fff; border-color: #0369a1; }
-        .addr-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 7px 10px; border-radius: 6px; font-size: 12px; line-height: 1.6; color: #1e293b; }
+        .addr-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 6px; font-size: 12px; line-height: 1.7; color: #1e293b; }
 
-        .timer-badge { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .timer-off { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .timer-badge { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .timer-due { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
 
         .edit-btn { background: #0284c7; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap; }
-        .edit-btn:hover { background: #0369a1; }
+        .del-btn { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
 
         .error-msg { color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 6px; display: none; margin-bottom: 15px; font-size: 13px; font-weight: bold; }
 
-        /* مودال‌ها */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal-card { background: #fff; width: min(560px, 100%); border-radius: 12px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); max-height: 92vh; overflow-y: auto; }
+        .modal-card { background: #fff; width: min(600px, 100%); border-radius: 12px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); max-height: 92vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px; }
         .modal-header h3 { font-size: 16px; color: #0f172a; }
         .close-btn { background: #ef4444; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-weight: bold; }
@@ -58,9 +58,8 @@
         .info-row { margin-bottom: 8px; font-size: 13px; line-height: 1.7; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; color: #334155; margin-bottom: 5px; }
-        .form-control { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit; }
+        .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit; }
         .save-btn { width: 100%; background: #16a34a; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .save-btn:hover { background: #15803d; }
 
         .history-item { background: #fff; border: 1px solid #cbd5e1; border-right: 4px solid #0284c7; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
     </style>
@@ -68,23 +67,25 @@
 <body>
 
 <div class="header">
-    <h1>پنل مدیریت سامی‌واتر</h1>
+    <div class="header-title-box">
+        <h1>پنل مدیریت سامی‌واتر</h1>
+        <span id="roleBadge" class="role-pill">مدیر ارشد</span>
+    </div>
     <nav class="nav-menu">
         <button class="nav-btn active" onclick="openTab('requests-tab', this)">📋 لیست درخواست‌ها</button>
-        <button class="nav-btn" onclick="openTab('customers-tab', this)">👥 بانک اطلاعات و تایمر</button>
+        <button id="navCustomersBtn" class="nav-btn" onclick="openTab('customers-tab', this)">👥 بانک اطلاعات و تایمر</button>
         <button class="nav-btn" onclick="openTab('services-tab', this)">🛠️ بانک خدمات و قطعات</button>
-        <button class="nav-btn" onclick="openTab('users-tab', this)">👨‍🔧 مدیریت کاربران و تکنسین</button>
+        <button id="navUsersBtn" class="nav-btn" onclick="openTab('users-tab', this)">👨‍🔧 مدیریت کاربران و تکنسین</button>
     </nav>
     <button class="logout-btn" onclick="logout()">خروج</button>
 </div>
 
 <div id="errBox" class="error-msg"></div>
 
-<!-- تب ۱: لیست درخواست‌ها -->
 <div id="requests-tab" class="card tab-section active">
     <h2>
         <span>📋 لیست درخواست‌ها و فاکتورها</span>
-        <span style="font-size:12px; color:#64748b; font-weight:normal;">(با کلیک روی نام مشتری، پرونده و سوابق هر آدرس او باز می‌شود)</span>
+        <span style="font-size:12px; color:#64748b; font-weight:normal;">(کلیک روی نام مشتری = مشاهده پرونده و تایمر هر عنوان آدرس)</span>
     </h2>
     <div style="overflow-x: auto;">
         <table>
@@ -93,10 +94,10 @@
                     <th>کد فاکتور</th>
                     <th>نام مشتری</th>
                     <th>شماره تماس</th>
-                    <th>نوع خدمت و آدرس</th>
+                    <th>عنوان مکان و خدمت</th>
                     <th>وضعیت</th>
                     <th>تکنسین</th>
-                    <th>عملیات وضعیت</th>
+                    <th>عملیات</th>
                 </tr>
             </thead>
             <tbody id="requestsTableBody">
@@ -106,10 +107,9 @@
     </div>
 </div>
 
-<!-- تب ۲: بانک اطلاعات مشتریان و تایمر سرویس دوره‌ای -->
 <div id="customers-tab" class="card tab-section">
     <h2>
-        <span>👥 بانک اطلاعات مشتریان و تایمر سرویس (چند آدرسه و چند شماره‌ای)</span>
+        <span>👥 بانک اطلاعات مشتریان و تایمر مجزای هر آدرس</span>
         <button class="edit-btn" style="background:#16a34a;" onclick="openNewCustomerModal()">+ افزودن مشتری جدید</button>
     </h2>
     <div style="overflow-x: auto;">
@@ -119,8 +119,8 @@
                     <th>نام مشتری</th>
                     <th>شماره اصلی</th>
                     <th>شماره دوم و سوم</th>
-                    <th>آدرس‌ها و سوابق هر دستگاه (تب‌بندی)</th>
-                    <th>تایمر و یادآور</th>
+                    <th>انتخاب عنوان آدرس (مشاهده تایمر و سابقه همان مکان)</th>
+                    <th>تایمر آدرس انتخابی</th>
                     <th>ویرایش</th>
                 </tr>
             </thead>
@@ -131,23 +131,43 @@
     </div>
 </div>
 
-<!-- تب ۳: بانک خدمات و قطعات -->
 <div id="services-tab" class="card tab-section">
     <h2>🛠️ بانک خدمات، فیلترها و قطعات (صدور فاکتور)</h2>
     <p style="color: #475569; line-height: 1.8;">در این بخش قیمت روز قطعات، فیلترها و دستمزدها برای صدور فاکتور دیجیتال مدیریت می‌شود.</p>
 </div>
 
-<!-- تب ۴: مدیریت کاربران و تکنسین‌ها -->
 <div id="users-tab" class="card tab-section">
-    <h2>👨‍🔧 مدیریت لیست تکنسین‌ها</h2>
-    <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <input id="newTechInput" placeholder="نام تکنسین جدید (مثلاً: مهندس رضایی)" class="form-control" style="flex: 1; min-width: 200px;" />
-        <button onclick="addTechnician()" class="edit-btn">+ افزودن تکنسین</button>
+    <h2>👨‍🔧 مدیریت پرسنل، تکنسین‌ها و سطوح دسترسی</h2>
+    <div style="margin-bottom: 18px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1;">
+        <div style="font-size:13px; font-weight:bold; margin-bottom:8px; color:#0f172a;">افزودن عضو جدید (تکنسین یا کارمند پشتیبانی):</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <input id="newTechInput" placeholder="نام و نام‌خانوادگی (مثلاً: مهندس رضایی)" class="form-control" style="flex: 1; min-width: 180px;" />
+            <input id="newTechPhone" placeholder="شماره موبایل" class="form-control" style="width: 180px; direction:ltr; text-align:center;" />
+            <select id="newTechRole" class="form-control" style="width: 170px;">
+                <option value="technician">نقش: تکنسین فنی 👨‍🔧</option>
+                <option value="support">نقش: کارمند پشتیبانی 🎧</option>
+            </select>
+            <button onclick="addStaffMember()" class="edit-btn">+ ثبت عضو</button>
+        </div>
     </div>
-    <div id="techListBox" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+    <div id="techListBox" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom:20px;"></div>
+
+    <h2>🕒 گزارش ورود و خروج کاربران سیستم</h2>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>نام کاربر</th>
+                    <th>نقش سازمانی</th>
+                    <th>زمان ورود</th>
+                    <th>وضعیت</th>
+                </tr>
+            </thead>
+            <tbody id="auditLogBody"></tbody>
+        </table>
+    </div>
 </div>
 
-<!-- مودال ۱: نمایش پرونده و سوابق مشتری بر اساس تب‌های آدرس (مخصوص کلیک روی نام در لیست درخواست‌ها) -->
 <div id="dossierModal" class="modal-overlay" onclick="if(event.target===this) closeDossierModal()">
     <div class="modal-card">
         <div class="modal-header">
@@ -158,7 +178,6 @@
     </div>
 </div>
 
-<!-- مودال ۲: ویرایش کامل اطلاعات مشتری (نام، شماره ۱، ۲، ۳، آدرس‌های ۱، ۲، ۳ و تایمر) -->
 <div id="editModal" class="modal-overlay" onclick="if(event.target===this) closeEditModal()">
     <div class="modal-card">
         <div class="modal-header">
@@ -188,30 +207,16 @@
                 </div>
             </div>
 
-            <div class="form-group" style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+            <div class="form-group" style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <label style="margin:0;">📍 آدرس‌ها / دستگاه‌های مشتری (منزل، مغازه و...)</label>
+                    <label style="margin:0;">📍 آدرس‌ها و تایمر اختصاصی هر عنوان (خونه، محل کار...)</label>
                     <button type="button" onclick="addAddressFieldInModal()" style="background:#0284c7; color:#fff; border:none; padding:4px 10px; border-radius:5px; cursor:pointer; font-size:11px; font-weight:bold;">+ افزودن آدرس جدید</button>
                 </div>
-                <div id="editAddressesBox" style="display:flex; flex-direction:column; gap:8px;"></div>
-            </div>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div class="form-group">
-                    <label>تایمر یادآوری سرویس (تعداد روز)</label>
-                    <input id="editInterval" type="number" class="form-control" value="180" />
-                </div>
-                <div class="form-group">
-                    <label>وضعیت یادآور خودکار</label>
-                    <select id="editTimerActive" class="form-control">
-                        <option value="true">فعال ✅</option>
-                        <option value="false">غیرفعال 🔕</option>
-                    </select>
-                </div>
+                <div id="editAddressesBox" style="display:flex; flex-direction:column; gap:10px;"></div>
             </div>
 
             <div class="form-group">
-                <label>یادداشت / توضیحات پرونده</label>
+                <label>یادداشت کلی پرونده</label>
                 <textarea id="editNotes" class="form-control" rows="2" placeholder="توضیحات اختصاصی این مشتری..."></textarea>
             </div>
 
@@ -223,12 +228,73 @@
 <script>
     const API_BASE = "https://samiwater-backend.onrender.com/api";
     const token = localStorage.getItem("token") || "";
+    const currentRole = localStorage.getItem("role") || "admin";
+    const currentUsername = localStorage.getItem("username") || "admin";
 
     let allCustomers = [];
     let allRequests = [];
-    // نگهداری تبِ آدرسِ انتخاب شده برای هر مشتری در جدول بانک اطلاعات
     let selectedAddressIndexMap = {};
-    let technicians = JSON.parse(localStorage.getItem("sami_techs") || '["تکنسین ۱ (مرکزی)", "تکنسین ۲ (فنی)", "سرویس‌کار ویژه"]');
+
+    let staffList = JSON.parse(localStorage.getItem("sami_staff_v2") || JSON.stringify([
+        { name: "تکنسین ۱ (مرکزی)", phone: "09130000001", role: "technician" },
+        { name: "تکنسین ۲ (فنی)", phone: "09130000002", role: "technician" },
+        { name: "کارمند پشتیبانی", phone: "09130000003", role: "support" }
+    ]));
+
+    function applyRolePermissions() {
+        const badge = document.getElementById("roleBadge");
+        if (currentRole === "admin") {
+            badge.textContent = `👑 مدیر ارشد (${currentUsername})`;
+        } else if (currentRole === "support") {
+            badge.textContent = `🎧 کارمند پشتیبانی (${currentUsername})`;
+            document.getElementById("navUsersBtn").style.display = "none";
+        } else if (currentRole === "technician") {
+            badge.textContent = `👨‍🔧 تکنسین (${currentUsername})`;
+            document.getElementById("navCustomersBtn").style.display = "none";
+            document.getElementById("navUsersBtn").style.display = "none";
+        }
+
+        let logs = JSON.parse(localStorage.getItem("sami_audit_logs") || "[]");
+        if (logs.length === 0 || logs[0].user !== currentUsername) {
+            logs.unshift({
+                user: currentUsername,
+                role: currentRole === "admin" ? "مدیر ارشد" : (currentRole === "support" ? "کارمند پشتیبانی" : "تکنسین"),
+                time: new Date().toLocaleString("fa-IR"),
+                status: "آنلاین در پنل 🟢"
+            });
+            localStorage.setItem("sami_audit_logs", JSON.stringify(logs.slice(0, 15)));
+        }
+        renderAuditLogs();
+    }
+
+    function renderAuditLogs() {
+        const tbody = document.getElementById("auditLogBody");
+        if (!tbody) return;
+        const logs = JSON.parse(localStorage.getItem("sami_audit_logs") || "[]");
+        tbody.innerHTML = logs.map(l => `
+            <tr>
+                <td style="font-weight:bold;">${l.user}</td>
+                <td>${l.role}</td>
+                <td style="direction:ltr; text-align:right;">${l.time}</td>
+                <td>${l.status}</td>
+            </tr>
+        `).join("");
+    }
+
+    function calcAddressTimer(addrObj) {
+        const interval = Number(addrObj?.serviceIntervalDays) || 180;
+        if (addrObj?.isActiveTimer === false) {
+            return { text: "یادآور غیرفعال 🔕", isDue: false, interval };
+        }
+        const lastDate = addrObj?.lastServiceDate ? new Date(addrObj.lastServiceDate) : new Date();
+        const diffDays = Math.floor((Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+        const remaining = interval - diffDays;
+
+        if (remaining <= 0) {
+            return { text: `موعد سرویس رسیده! (${Math.abs(remaining)} روز گذشته) 🔴`, isDue: true, interval };
+        }
+        return { text: `${remaining} روز مانده (از دوره ${interval} روزه) ✅`, isDue: false, interval };
+    }
 
     function openTab(tabId, btnElement) {
         document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
@@ -243,39 +309,41 @@
         window.location.href = "login.html";
     }
 
-    // مدیریت تکنسین‌ها
-    function renderTechManageList() {
+    function renderStaffManageList() {
         const box = document.getElementById("techListBox");
         if (!box) return;
-        box.innerHTML = technicians.map((t, idx) => `
-            <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:6px 12px; border-radius:6px; font-size:13px; display:flex; align-items:center; gap:8px;">
-                <span>👨‍🔧 ${t}</span>
-                <button onclick="removeTechnician(${idx})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold;">×</button>
+        box.innerHTML = staffList.map((s, idx) => `
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:12px; display:flex; align-items:center; gap:8px;">
+                <span>${s.role === 'support' ? '🎧' : '👨‍🔧'} <b>${s.name}</b> (${s.phone || 'بدون شماره'})</span>
+                <button onclick="removeStaffMember(${idx})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold;">×</button>
             </div>
         `).join("");
     }
 
-    function addTechnician() {
-        const inp = document.getElementById("newTechInput");
-        const name = inp.value.trim();
+    function addStaffMember() {
+        const nameInp = document.getElementById("newTechInput");
+        const phoneInp = document.getElementById("newTechPhone");
+        const roleSel = document.getElementById("newTechRole");
+        const name = nameInp.value.trim();
         if (!name) return;
-        technicians.push(name);
-        localStorage.setItem("sami_techs", JSON.stringify(technicians));
-        inp.value = "";
-        renderTechManageList();
+        staffList.push({ name, phone: phoneInp.value.trim(), role: roleSel.value });
+        localStorage.setItem("sami_staff_v2", JSON.stringify(staffList));
+        nameInp.value = "";
+        phoneInp.value = "";
+        renderStaffManageList();
         renderRequestsTable();
     }
 
-    function removeTechnician(index) {
-        technicians.splice(index, 1);
-        localStorage.setItem("sami_techs", JSON.stringify(technicians));
-        renderTechManageList();
+    function removeStaffMember(index) {
+        staffList.splice(index, 1);
+        localStorage.setItem("sami_staff_v2", JSON.stringify(staffList));
+        renderStaffManageList();
         renderRequestsTable();
     }
 
-    // بارگذاری کلی اطلاعات
     async function loadAllData() {
-        renderTechManageList();
+        applyRolePermissions();
+        renderStaffManageList();
         await Promise.all([loadCustomers(), loadRequests()]);
         renderCustomersTable();
         renderRequestsTable();
@@ -286,9 +354,7 @@
             const res = await fetch(`${API_BASE}/customers`);
             const data = await res.json();
             allCustomers = data.customers || [];
-        } catch (e) {
-            console.error("Error loading customers:", e);
-        }
+        } catch (e) {}
     }
 
     async function loadRequests() {
@@ -308,78 +374,9 @@
         }
     }
 
-    // رندر جدول بانک اطلاعات با قابلیت تب‌بندی آدرس‌ها و مشاهده سوابق هر آدرس
-    function renderCustomersTable() {
-        const tbody = document.getElementById("customersTableBody");
-        if (!allCustomers || allCustomers.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">هنوز مشتری در بانک اطلاعات ثبت نشده است.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = allCustomers.map(c => {
-            const secPhones = (c.secondaryPhones || []).filter(Boolean);
-            const secPhonesHtml = secPhones.length > 0
-                ? secPhones.map((p, i) => `<div>شماره ${i+2}: <b>${p}</b></div>`).join("")
-                : '<span style="color:#94a3b8;">ثبت نشده</span>';
-
-            const addresses = (c.addresses && c.addresses.length > 0)
-                ? c.addresses
-                : [{ label: "آدرس ۱", fullAddress: c.address || "آدرسی ثبت نشده" }];
-
-            const activeIdx = selectedAddressIndexMap[c._id] || 0;
-            const currentAddrObj = addresses[activeIdx] || addresses[0];
-
-            // شمارش سوابق سرویس برای همین آدرس انتخاب شده
-            const customerReqs = allRequests.filter(r => (r.snapshot?.phone || r.customer?.phone) === c.phone);
-            const addrReqs = customerReqs.filter(r => {
-                if (addresses.length === 1) return true;
-                return (r.snapshot?.address || "").trim() === (currentAddrObj.fullAddress || "").trim();
-            });
-
-            const tabsHtml = addresses.map((a, idx) => `
-                <button class="addr-tab-btn ${idx === activeIdx ? 'active' : ''}" onclick="switchTableAddressTab('${c._id}', ${idx})">
-                    📍 ${a.label || 'آدرس ' + (idx + 1)}
-                </button>
-            `).join("");
-
-            const interval = c.serviceIntervalDays || 180;
-            const isTimerOn = c.isActiveTimer !== false;
-
-            return `
-                <tr>
-                    <td style="font-weight:bold; color:#0f172a;">${c.fullName || 'نامشخص'}</td>
-                    <td style="direction:ltr; text-align:right; font-weight:bold;">
-                        <a href="tel:${c.phone}" style="color:#0284c7; text-decoration:none;">${c.phone || '---'}</a>
-                    </td>
-                    <td style="font-size:12px; line-height:1.6;">${secPhonesHtml}</td>
-                    <td style="min-width:230px;">
-                        <div class="addr-tabs">${tabsHtml}</div>
-                        <div class="addr-box">
-                            <div><strong>آدرس:</strong> ${currentAddrObj.fullAddress}</div>
-                            <div style="margin-top:4px; font-size:11px; color:#0369a1; display:flex; justify-content:space-between; align-items:center;">
-                                <span>📊 سابقه این آدرس: <b>${addrReqs.length} سرویس</b></span>
-                                <span class="client-link" style="font-size:11px;" onclick="openDossierModal('${c.phone}', ${activeIdx})">مشاهده ریز سوابق 🔍</span>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="${isTimerOn ? 'timer-badge' : 'timer-off'}">
-                            ${isTimerOn ? `هر ${interval} روز ✅` : 'یادآور غیرفعال 🔕'}
-                        </div>
-                    </td>
-                    <td>
-                        <button class="edit-btn" onclick="openEditCustomerModal('${c._id}')">ویرایش کامل ✏️</button>
-                    </td>
-                </tr>
-            `;
-        }).join("");
-    }
-
-    function switchTableAddressTab(customerId, addrIndex) {
-        selectedAddressIndexMap[customerId] = addrIndex;
-        renderCustomersTable();
-    }
-
-    // رندر جدول درخواست‌ها
-    function renderRequestsTable() {
-      
+    function isRequestMatchingTitle(req, addrObj, totalAddressesCount) {
+        if (totalAddressesCount <= 1) return true;
+        const targetTitle = (addrObj.label || "خونه").trim();
+        const reqTitle = (req.addressLabel || req.snapshot?.city || "").trim();
+        if (reqTitle && reqTitle !== "اصفهان") {
+            r
