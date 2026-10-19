@@ -22,7 +22,7 @@ label{display:block;margin:10px 0 4px;color:#dfeee8;font-size:13px;font-weight:6
 .btn{width:100%;margin-top:14px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:13px;border-radius:13px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit}
 .btn:disabled{opacity:.6}
 .btn-back{width:100%;margin-top:8px;background:none;color:#b8d7cc;border:1px solid #2e5a48;padding:9px;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit}
-.err{margin-top:10px;color:#ffc6c6;background:#ef444426;border:1px solid #ef4444;padding:8px;border-radius:9px;font-size:12px;display:none;text-align:center}
+.err{margin-top:10px;color:#ffc6c6;background:#ef444426;border:1px solid #ef4444;padding:9px;border-radius:9px;font-size:12px;display:none;text-align:center;line-height:1.7}
 .footer{margin-top:14px;font-size:12px;color:#b8d7cc;text-align:center}
 a{color:#9ad7ff;text-decoration:none}
 .tw-box{border:1px solid #2e5a48;border-radius:13px;padding:11px;margin-top:10px;background:#0b2d23}
@@ -48,7 +48,6 @@ a{color:#9ad7ff;text-decoration:none}
     <div class="title">SamiWater</div>
   </div>
 
-  <!-- مرحله ۱ -->
   <div id="step1Box">
     <h1>ثبت درخواست خدمات</h1>
     <p class="note">شماره موبایل خود را وارد نمایید. اگر قبلاً مشترک ما بوده‌اید، آدرس شما جهت تایید سریع نمایش داده می‌شود.</p>
@@ -67,7 +66,6 @@ a{color:#9ad7ff;text-decoration:none}
     <div id="err1" class="err"></div>
   </div>
 
-  <!-- مرحله ۲: فرم تکمیل مشخصات (درجا و بدون نیاز به لود صفحه دوم) -->
   <div id="step2Box" style="display:none;">
     <h2 id="formTitle" style="color:var(--gold-strong);">تکمیل مشخصات و آدرس</h2>
     <label>شماره موبایل اصلی</label>
@@ -112,12 +110,12 @@ a{color:#9ad7ff;text-decoration:none}
   <div class="footer">پشتیبانی: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
 </div>
 
-<!-- پاپ‌آپ تایید آدرس مشتری قبلی -->
 <div id="addrModal" class="modal-bg">
   <div class="modal-box">
     <h3 id="mGreet" style="color:var(--gold-strong);margin:0 0 8px;">خوش آمدید</h3>
     <p id="mQuest" style="font-size:13px;margin:0 0 12px;">درخواست برای کدام مکان ثبت شود؟</p>
     <div id="mList"></div>
+    <div id="mErr" class="err"></div>
     <button id="newAddrBtn" class="add-phone-toggle" style="width:100%;padding:10px;margin-top:6px;">➕ آدرس جدید با همین شماره</button>
     <button class="btn-back" onclick="document.getElementById('addrModal').style.display='none'">انصراف</button>
   </div>
@@ -126,42 +124,40 @@ a{color:#9ad7ff;text-decoration:none}
 <script>
 const API = "https://samiwater-backend.onrender.com";
 const WINDOWS = ["09-11","11-13","13-15","15-17","17-19","19-21"];
-let selectedWin = "";
-let cachedCusts = null;
+let selectedWin = "", cachedCusts = null;
 
-function cleanNum(s){
-  const p=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-  let r=String(s||""); p.forEach((d,i)=>{r=r.replace(new RegExp(d,'g'),i)});
-  return r.replace(/\D/g,'');
+function getSrcKey(){
+  const s = (new URLSearchParams(location.search).get("src")||"").toLowerCase();
+  if(s==="landing"||s==="urgent") return "landing_urgent";
+  if(s==="consult") return "web_consult";
+  return "web_service";
 }
 
-// ۱. ساخت فوری روزها و ساعت‌ها در صدم ثانیه اول!
-const selDate = document.getElementById("tw-date");
-const slotsBox = document.getElementById("tw-slots");
+function cleanNum(s){
+  return String(s||"").replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/\D/g,'');
+}
+
+const selDate = document.getElementById("tw-date"), slotsBox = document.getElementById("tw-slots");
 for(let i=0;i<=12;i++){
   const d = new Date(); d.setDate(d.getDate()+i);
   let lbl = d.toLocaleDateString("fa-IR");
   try{ lbl = new Intl.DateTimeFormat("fa-IR-u-ca-persian",{weekday:"long",day:"2-digit",month:"long"}).format(d); }catch(e){}
-  const op = document.createElement("option"); op.value = lbl; op.textContent = lbl;
-  selDate.appendChild(op);
+  const op = document.createElement("option"); op.value = lbl; op.textContent = lbl; selDate.appendChild(op);
 }
 
 function drawSlots(booked=[]){
   slotsBox.innerHTML = "";
   WINDOWS.forEach(w => {
-    const isB = booked.includes(w);
-    const d = document.createElement("div");
+    const isB = booked.includes(w), d = document.createElement("div");
     d.className = "tw-slot" + (isB?" disabled":"") + (!isB && selectedWin===w?" selected":"");
     d.textContent = isB ? w+" (پر)" : w;
-    if(!isB){
-      d.onclick = () => { selectedWin = (selectedWin===w) ? "" : w; drawSlots(booked); };
-    }
+    if(!isB) d.onclick = () => { selectedWin = (selectedWin===w) ? "" : w; drawSlots(booked); };
     slotsBox.appendChild(d);
   });
 }
 
 async function checkBooked(){
-  drawSlots([]); // نمایش فوری در ۰ ثانیه
+  drawSlots([]);
   try{
     const r = await fetch(`${API}/api/requests/booked-slots?date=${encodeURIComponent(selDate.value)}`);
     if(r.ok){ const d = await r.json(); drawSlots(d.booked||[]); }
@@ -170,7 +166,6 @@ async function checkBooked(){
 selDate.onchange = () => { selectedWin=""; checkBooked(); };
 checkBooked();
 
-// بیدار کردن سرور در پس‌زمینه
 fetch(`${API}/api/customers`).then(r=>r.json()).then(d=>{cachedCusts=d.customers||[]}).catch(()=>{});
 
 function showPhone2(){ document.getElementById("addPhoneWrap").style.display="none"; document.getElementById("phone2Box").style.display="block"; }
@@ -196,13 +191,11 @@ document.getElementById("go").onclick = async () => {
   if(!/^09\d{9}$/.test(phone)){ err1.textContent="شماره موبایل را ۱۱ رقمی با 09 وارد کنید."; err1.style.display="block"; return; }
 
   const tNote = selectedWin ? `زمان هماهنگی: ${selDate.value} ساعت ${selectedWin}` : "";
-  const goBtn = document.getElementById("go");
-  goBtn.disabled = true; goBtn.textContent = "در حال بررسی...";
+  const goBtn = document.getElementById("go"); goBtn.disabled = true; goBtn.textContent = "در حال بررسی...";
 
   try{
     if(!cachedCusts){
-      const ctrl = new AbortController();
-      setTimeout(()=>ctrl.abort(), 4500);
+      const ctrl = new AbortController(); setTimeout(()=>ctrl.abort(), 4500);
       const r = await fetch(`${API}/api/customers`, {signal:ctrl.signal});
       if(r.ok){ const d = await r.json(); cachedCusts = d.customers||[]; }
     }
@@ -210,7 +203,8 @@ document.getElementById("go").onclick = async () => {
     if(exist){
       const addrs = (exist.addresses && exist.addresses.length) ? exist.addresses : [{label:"خونه",fullAddress:exist.address||"آدرس ثبت‌شده"}];
       document.getElementById("mGreet").textContent = `${exist.fullName} عزیز، خوش آمدید`;
-      const mList = document.getElementById("mList"); mList.innerHTML = "";
+      const mList = document.getElementById("mList"), mErr = document.getElementById("mErr");
+      mList.innerHTML = ""; mErr.style.display = "none";
       addrs.forEach(a => {
         const title = a.label || "خونه";
         const box = document.createElement("div"); box.className = "addr-card";
@@ -218,12 +212,16 @@ document.getElementById("go").onclick = async () => {
           <div style="font-size:12px;color:#cfe3dc;margin:4px 0 8px;">${a.fullAddress}</div>
           <button class="btn" style="margin:0;padding:9px;font-size:13px;">بله، ثبت برای «${title}» ✅</button>`;
         box.querySelector("button").onclick = async function(){
-          this.disabled=true; this.textContent="در حال ثبت...";
+          this.disabled=true; this.textContent="در حال ثبت..."; mErr.style.display="none";
           const res = await fetch(`${API}/api/requests`,{
             method:"POST",headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({customerId:exist._id,phone:exist.phone,fullName:exist.fullName,address:a.fullAddress,addressLabel:title,issueType:"سرویس و خدمات",notes:[`مکان: ${title}`,tNote].filter(Boolean).join(" | ")})
+            body:JSON.stringify({customerId:exist._id,phone:exist.phone,fullName:exist.fullName,address:a.fullAddress,addressLabel:title,issueType:getSrcKey()==="landing_urgent"?"سرویس فوری":"سرویس و خدمات",sourcePath:getSrcKey(),notes:[`مکان: ${title}`,tNote].filter(Boolean).join(" | ")})
           });
           const doc = await res.json();
+          if(!res.ok){
+            mErr.textContent = doc.error || "خطا در ثبت درخواست"; mErr.style.display="block";
+            this.disabled=false; this.textContent=`بله، ثبت برای «${title}» ✅`; return;
+          }
           location.href = `request-confirmed.html?code=${encodeURIComponent(doc.request?.invoiceCode||"OK")}`;
         };
         mList.appendChild(box);
@@ -233,22 +231,15 @@ document.getElementById("go").onclick = async () => {
       return;
     }
     openStep2(phone, null, tNote);
-  }catch(e){
-    openStep2(phone, null, tNote);
-  }finally{
-    goBtn.disabled = false; goBtn.textContent = "ثبت و ادامه";
-  }
+  }catch(e){ openStep2(phone, null, tNote); }
+  finally{ goBtn.disabled = false; goBtn.textContent = "ثبت و ادامه"; }
 };
 
 document.getElementById("submitBtn").onclick = async () => {
-  const phone = document.getElementById("fPhone").value;
-  const phone2 = cleanNum(document.getElementById("fPhone2").value);
-  const fullName = document.getElementById("fName").value.trim();
-  const issueType = document.getElementById("fIssue").value;
-  const addressLabel = document.getElementById("fLabel").value.trim() || "خونه";
-  const address = document.getElementById("fAddr").value.trim();
-  const notes = document.getElementById("fNotes").value.trim();
-  const err2 = document.getElementById("err2"); err2.style.display="none";
+  const phone = document.getElementById("fPhone").value, phone2 = cleanNum(document.getElementById("fPhone2").value);
+  const fullName = document.getElementById("fName").value.trim(), issueType = document.getElementById("fIssue").value;
+  const addressLabel = document.getElementById("fLabel").value.trim() || "خونه", address = document.getElementById("fAddr").value.trim();
+  const notes = document.getElementById("fNotes").value.trim(), err2 = document.getElementById("err2"); err2.style.display="none";
 
   if(!fullName || !address){ err2.textContent="نام و آدرس دقیق الزامی است."; err2.style.display="block"; return; }
   const btn = document.getElementById("submitBtn"); btn.disabled=true; btn.textContent="در حال ثبت...";
@@ -260,9 +251,13 @@ document.getElementById("submitBtn").onclick = async () => {
     });
     const r = await fetch(`${API}/api/requests`,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({phone,fullName,address,addressLabel,issueType,notes:[`مکان: ${addressLabel}`,notes].filter(Boolean).join(" | ")})
+      body:JSON.stringify({phone,fullName,address,addressLabel,issueType,sourcePath:getSrcKey(),notes:[`مکان: ${addressLabel}`,notes].filter(Boolean).join(" | ")})
     });
     const d = await r.json();
+    if(!r.ok){
+      err2.textContent = d.error || "محدودیت ثبت درخواست"; err2.style.display="block";
+      btn.disabled=false; btn.textContent="ثبت نهایی و دریافت کد پیگیری"; return;
+    }
     location.href = `request-confirmed.html?code=${encodeURIComponent(d.request?.invoiceCode||"OK")}`;
   }catch(e){
     err2.textContent="خطا در ارتباط با سرور."; err2.style.display="block";
