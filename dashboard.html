@@ -119,14 +119,14 @@ th{background:#f8fafc;white-space:nowrap}
     <div id="mBod"></div>
   </div>
 </div>
-
-<script>
+<!-- PART 1 END -->
+    <script>
 const API="https://samiwater-backend.onrender.com/api",$=id=>document.getElementById(id),uName=localStorage.getItem("username")||"مدیر ارشد",uRole=localStorage.getItem("role")||"admin";
 let custs=JSON.parse(localStorage.getItem("sw_custs")||"[]"),reqs=JSON.parse(localStorage.getItem("sw_reqs")||"[]"),techs=JSON.parse(localStorage.getItem("sw_techs")||'["مهندس شهریاری","تکنسین ۲"]'),aMap={},reqDays=9999,archDays=0;
 const toEn=s=>String(s||"").replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d));
 const toJ=d=>{if(!d)return"---";try{return new Date(d).toLocaleDateString("fa-IR")}catch(e){return"---"}};
-const toTm=d=>{if(!d||uRole!=="admin")return"";try{return `<div style="font-size:10px;color:#0369a1">🕒 ساعت: ${new Date(d).toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"})}</div>`}catch(e){return""}};
-const normJ=s=>{const p=toEn(s).trim().replace(/-/g,"/").split("/");return p.length===3?`${p[0].padStart(4,'0')}/${p[1].padStart(2,'0')}/${p[2].padStart(2,'0')}`:""};
+const toTm=d=>{if(!d||uRole!=="admin")return"";try{return '<div style="font-size:10px;color:#0369a1">🕒 ساعت: '+new Date(d).toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"})+'</div>'}catch(e){return""}};
+const normJ=s=>{const p=toEn(s).trim().replace(/-/g,"/").split("/");return p.length===3?p[0].padStart(4,'0')+"/"+p[1].padStart(2,'0')+"/"+p[2].padStart(2,'0'):""};
 const cmpJ=d=>d?normJ(toJ(d)):"0000/00/00";
 
 function srcBdg(r){
@@ -143,7 +143,7 @@ function setReqF(d,b){reqDays=d;if(b){b.parentElement.querySelectorAll(".fb").fo
 function stBdg(r){
   if(r.status==="suspended"){
     let t="بدون زمان",due=false;
-    if(r.suspendUntil){const rem=Math.ceil((new Date(r.suspendUntil)-Date.now())/86400000);t=rem<=0?"🔔 موعد پیگیری!":`${rem} روز مانده`;due=rem<=0}
+    if(r.suspendUntil){const rem=Math.ceil((new Date(r.suspendUntil)-Date.now())/86400000);t=rem<=0?"🔔 موعد پیگیری!":rem+" روز مانده";due=rem<=0}
     return `<span class="bdg ${due?'st-al':'st-s'}">⏸️ معلق (${t})</span><div style="font-size:10px;color:#6b21a8">دلیل: ${r.suspendReason||'---'}</div>`;
   }
   return r.status==="assigned"||r.status==="open"?`<span class="bdg st-a">تخصیص یافته</span>`:`<span class="bdg st-p">در انتظار</span>`;
@@ -157,7 +157,7 @@ function drawReqs(){
     if(new Date(r.createdAt||Date.now()).getTime()<min)return false;
     const j=cmpJ(r.createdAt);if(f&&j<f)return false;if(t&&j>t)return false;
     return !q||`${r.snapshot?.fullName||''} ${r.snapshot?.phone||''} ${r.invoiceCode||''}`.toLowerCase().includes(q);
-  }).sort((a,b)=>new Date(a.createdAt||0)-new Date(b.createdAt||0)); // مرتب‌سازی از قدیم به جدید!
+  }).sort((a,b)=>new Date(a.createdAt||0)-new Date(b.createdAt||0));
 
   if(!act.length){$("reqB").innerHTML='<tr><td colspan="7" style="text-align:center;padding:12px">درخواست بازی در این بازه وجود ندارد ✅</td></tr>';return}
   $("reqB").innerHTML=act.map(r=>{
@@ -179,7 +179,10 @@ function drawRem(){
   });
   items.sort((x,y)=>x.rem-y.rem);
   $("remC").textContent=items.length;
-  $("remB").innerHTML=items.length?items.map(it=>`<tr><td><span class="lnk" onclick="doss('${it.c.phone}',${it.ix})">${it.c.fullName||'---'}</span></td><td style="direction:ltr;font-weight:bold"><a href="tel:${it.c.phone}">${it.c.phone} 📞</a></td><td><b>📍 ${it.a.label||'خونه'}:</b> ${it.a.fullAddress}</td><td><span class="bdg ${it.rem<=0?'st-al':'st-p'}">${it.rem<=0?`${Math.abs(it.rem)} روز از موعد گذشته 🔴`:`${it.rem} روز مانده به سرویس 🔔`}</span><div style="font-size:10px;color:#64748b">آخرین تکمیل: ${toJ(it.a.lastServiceDate)}</div></td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" style="background:#16a34a" onclick="remAct('${it.c._id}',${it.ix},'req')">➕ ثبت نوبت</button><button class="btn" style="background:#d97706" onclick="remAct('${it.c._id}',${it.ix},'ext')">⏳ +۱۵ روز</button><button class="btn" style="background:#64748b" onclick="remAct('${it.c._id}',${it.ix},'rst')">🔄 ریست تایمر</button></td></tr>`).join(""):'<tr><td colspan="5" style="text-align:center;padding:12px">هیچ موردی در بازه ۲۰ روز مانده به سرویس نیست ✅</td></tr>';
+  $("remB").innerHTML=items.length?items.map(it=>{
+    const txt = it.rem<=0 ? (Math.abs(it.rem)+" روز از موعد گذشته 🔴") : (it.rem+" روز مانده به سرویس 🔔");
+    return `<tr><td><span class="lnk" onclick="doss('${it.c.phone}',${it.ix})">${it.c.fullName||'---'}</span></td><td style="direction:ltr;font-weight:bold"><a href="tel:${it.c.phone}">${it.c.phone} 📞</a></td><td><b>📍 ${it.a.label||'خونه'}:</b> ${it.a.fullAddress}</td><td><span class="bdg ${it.rem<=0?'st-al':'st-p'}">${txt}</span><div style="font-size:10px;color:#64748b">آخرین تکمیل: ${toJ(it.a.lastServiceDate)}</div></td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" style="background:#16a34a" onclick="remAct('${it.c._id}',${it.ix},'req')">➕ ثبت نوبت</button><button class="btn" style="background:#d97706" onclick="remAct('${it.c._id}',${it.ix},'ext')">⏳ +۱۵ روز</button><button class="btn" style="background:#64748b" onclick="remAct('${it.c._id}',${it.ix},'rst')">🔄 ریست تایمر</button></td></tr>`;
+  }).join(""):'<tr><td colspan="5" style="text-align:center;padding:12px">هیچ موردی در بازه ۲۰ روز مانده به سرویس نیست ✅</td></tr>';
 }
 
 async function remAct(cId,ix,m){
@@ -187,11 +190,11 @@ async function remAct(cId,ix,m){
   const ad=c.addresses?.length?[...c.addresses]:[{label:"خونه",fullAddress:c.address||"---",serviceIntervalDays:180}];
   const a=ad[ix]||ad[0];
   if(m==='req'){
-    await fetch(`${API}/requests`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({customerId:c._id,phone:c.phone,fullName:c.fullName,address:a.fullAddress,addressLabel:a.label||"خونه",issueType:"سرویس دوره‌ای (یادآور)",sourcePath:"reminder_panel",isFromPanel:true})});
+    await fetch(API+"/requests",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({customerId:c._id,phone:c.phone,fullName:c.fullName,address:a.fullAddress,addressLabel:a.label||"خونه",issueType:"سرویس دوره‌ای (یادآور)",sourcePath:"reminder_panel",isFromPanel:true})});
     alert("فاکتور در تب خدمات جاری ثبت شد ✅");
   }else{
     a.lastServiceDate = m==='ext' ? new Date(new Date(a.lastServiceDate||Date.now()).getTime()+15*86400000) : new Date();
-    await fetch(`${API}/customers/${c._id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName:c.fullName,phone:c.phone,secondaryPhones:c.secondaryPhones,addresses:ad})});
+    await fetch(API+"/customers/"+c._id,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName:c.fullName,phone:c.phone,secondaryPhones:c.secondaryPhones,addresses:ad})});
   }
   sync();
 }
@@ -204,18 +207,18 @@ function newPhoneReq(){
 async function subPhoneReq(){
   const phone=$("pPh").value.trim(),fullName=$("pNm").value.trim(),addressLabel=$("pLb").value.trim()||"خونه",address=$("pAd").value.trim(),issueType=$("pIs").value.trim();
   if(!phone||!fullName)return alert("نام و شماره الزامی است");
-  await fetch(`${API}/requests`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone,fullName,address,addressLabel,issueType,sourcePath:"phone_panel",isFromPanel:true})});
+  await fetch(API+"/requests",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone,fullName,address,addressLabel,issueType,sourcePath:"phone_panel",isFromPanel:true})});
   $("cModal").style.display="none";sync();
 }
 
 function onSel(id,v,t){if(v==="suspended")susM(id);else upSt(id,{status:v,technicianName:t})}
 function susM(id){
-  const r=reqs.find(x=>x._id===id);$("mTit").textContent=`⏸️ تعلیق فاکتور ${r?.invoiceCode||''}`;
+  const r=reqs.find(x=>x._id===id);$("mTit").textContent="⏸️ تعلیق فاکتور "+(r?.invoiceCode||"");
   $("mBod").innerHTML=`<label style="font-size:11px;font-weight:bold">دلیل تعلیق *</label><input id="sR" class="inp" value="${r?.suspendReason||''}" placeholder="مثلاً: مسافرت مشتری..."><label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟ (اختیاری)</label><input id="sD" type="number" class="inp" placeholder="مثلاً: 7"><button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="if(!$('sR').value.trim())return alert('دلیل الزامی است');upSt('${id}',{status:'suspended',suspendReason:$('sR').value,suspendDays:$('sD').value});$('cModal').style.display='none'">ثبت تعلیق ⏸️</button>`;
   $("cModal").style.display="flex";
 }
 function delM(id,c){
-  $("mTit").textContent=`🗑️ حذف فاکتور ${c}`;
+  $("mTit").textContent="🗑️ حذف فاکتور "+c;
   $("mBod").innerHTML=`<label style="font-size:11px;font-weight:bold">دلیل حذف فاکتور *</label><input id="dR" class="inp" placeholder="مثلاً: مشتری خودش فیلتر عوض کرده..."><label style="display:flex;gap:6px;font-size:11px;background:#f0fdf4;padding:8px;border-radius:6px;margin:6px 0"><input type="checkbox" id="dT" checked><b>راه‌اندازی مجدد تایمر ۱۸۰ روزه برای دوره بعد</b></label><button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="if(!$('dR').value.trim())return alert('دلیل الزامی است');upSt('${id}',{status:'deleted',deleteReason:$('dR').value,deletedBy:uName,resetTimerOnDelete:$('dT').checked});$('cModal').style.display='none'">تایید و حذف 🗑️</button>`;
   $("cModal").style.display="flex";
 }
@@ -226,8 +229,8 @@ function drawDel(){
 }
 
 function rArch(l){
-  $("archI").textContent=`${l.length} مورد`;
-   $("archB").innerHTML=l.length?l.map(r=>{const ph=r.snapshot?.phone||"",dD=r.completedAt||r.updatedAt||r.createdAt;return `<tr><td style="direction:ltr;font-weight:bold">${r.invoiceCode||'---'}</td><td><span class="lnk" onclick="doss('${ph}',0)">${r.snapshot?.fullName||'---'}</span></td><td style="direction:ltr">${ph}</td><td>📍 ${r.addressLabel||'خونه'} - ${r.issueType||''}<br>${srcBdg(r)}</td><td>${r.technicianName||'---'}</td><td>📅 ${toJ(r.createdAt)}</td><td style="color:#15803d;font-weight:bold">✅ ${toJ(dD)}${toTm(dD)}</td><td><button class="btn" onclick="upSt('${r._id}',{status:'pending'})">بازگردانی ↩️</button></td></tr>`}).join(""):'<tr><td colspan="8" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>';
+  $("archI").textContent = l.length + " مورد";
+  $("archB").innerHTML=l.length?l.map(r=>{const ph=r.snapshot?.phone||"",dD=r.completedAt||r.updatedAt||r.createdAt;return `<tr><td style="direction:ltr;font-weight:bold">${r.invoiceCode||'---'}</td><td><span class="lnk" onclick="doss('${ph}',0)">${r.snapshot?.fullName||'---'}</span></td><td style="direction:ltr">${ph}</td><td>📍 ${r.addressLabel||'خونه'} - ${r.issueType||''}<br>${srcBdg(r)}</td><td>${r.technicianName||'---'}</td><td>📅 ${toJ(r.createdAt)}</td><td style="color:#15803d;font-weight:bold">✅ ${toJ(dD)}${toTm(dD)}</td><td><button class="btn" onclick="upSt('${r._id}',{status:'pending'})">بازگردانی ↩️</button></td></tr>`}).join(""):'<tr><td colspan="8" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>';
 }
 function loadArch(d,b){archDays=d;if(b){b.parentElement.querySelectorAll(".fb").forEach(x=>x.classList.remove("active"));b.classList.add("active")}const m=Date.now()-d*86400000;rArch(reqs.filter(r=>(r.status==="done"||r.status==="completed")&&new Date(r.completedAt||r.updatedAt||r.createdAt||Date.now()).getTime()>=m))}
 function searchR(){
@@ -235,7 +238,7 @@ function searchR(){
   rArch(reqs.filter(r=>{if(r.status!=="done"&&r.status!=="completed")return false;const j=cmpJ(r.completedAt||r.updatedAt||r.createdAt);if(f&&j<f)return false;if(t&&j>t)return false;return !q||`${r.snapshot?.fullName||''} ${r.snapshot?.phone||''} ${r.invoiceCode||''}`.toLowerCase().includes(q)}));
 }
 
-function cTim(a){const v=Number(a?.serviceIntervalDays)||180;if(a?.isActiveTimer===false)return"غیرفعال";const rem=v-Math.floor((Date.now()-new Date(a?.lastServiceDate||Date.now()).getTime())/86400000);return rem<=0?`موعد سرویس! (${Math.abs(rem)} روز گذشته) 🔴`:`${rem} روز مانده ✅`}
+function cTim(a){const v=Number(a?.serviceIntervalDays)||180;if(a?.isActiveTimer===false)return"غیرفعال";const rem=v-Math.floor((Date.now()-new Date(a?.lastServiceDate||Date.now()).getTime())/86400000);return rem<=0?"موعد سرویس! ("+Math.abs(rem)+" روز گذشته) 🔴":rem+" روز مانده ✅"}
 
 function drawCusts(){
   if(!custs.length){$("custB").innerHTML='<tr><td colspan="6" style="text-align:center;padding:10px">خالی است.</td></tr>';return}
@@ -250,7 +253,7 @@ function drawCusts(){
 function doss(ph,ix=0){
   const c=custs.find(x=>x.phone===ph),cR=reqs.filter(r=>(r.snapshot?.phone||r.customer?.phone)===ph),ad=c?.addresses?.length?c.addresses:[{label:"خونه",fullAddress:cR[0]?.snapshot?.address||"---",serviceIntervalDays:180}],cu=ad[ix]||ad[0];
   const sub=cR.filter(r=>ad.length===1||(r.addressLabel||'خونه')===(cu.label||'خونه'));
-  $("mTit").textContent=`👤 پرونده: ${c?.fullName||cR[0]?.snapshot?.fullName||ph}`;
+  $("mTit").textContent="👤 پرونده: "+(c?.fullName||cR[0]?.snapshot?.fullName||ph);
   $("mBod").innerHTML=`<div style="font-size:12px;margin-bottom:6px"><b>شماره ۱:</b> <a href="tel:${ph}">${ph}</a> | <b>شماره ۲ و ۳:</b> ${(c?.secondaryPhones||[]).join(" , ")||"ندارد"}</div><div style="margin-bottom:5px">${ad.map((a,i)=>`<button class="at ${i===ix?'active':''}" onclick="doss('${ph}',${i})">📍 ${a.label||'خونه'}</button>`).join("")}</div><div style="background:#f8fafc;padding:7px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:8px;font-size:11px"><b>نشانی «${cu.label||'خونه'}»:</b> ${cu.fullAddress}<div style="color:#15803d;font-weight:bold;margin-top:3px">⏱️ تایمر: ${cTim(cu)} (مبنا: ${toJ(cu.lastServiceDate)})</div></div><div style="max-height:160px;overflow-y:auto;margin-bottom:8px">${sub.map(r=>`<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>${r.invoiceCode}:</b>${r.issueType} ${srcBdg(r)}<div>📅 درخواست: <b>${toJ(r.createdAt)}</b> | ✅ تکمیل: <b style="color:#15803d">${toJ(r.completedAt)}</b>${toTm(r.completedAt)}</div></div>`).join("")||'سابقه‌ای نیست.'}</div>${c?`<button class="btn" style="width:100%;padding:8px" onclick="editC('${c._id}')">✏️ ویرایش مشتری</button>`:''}`;
   $("cModal").style.display="flex";
 }
@@ -264,14 +267,14 @@ function editC(id){
 }
 async function saveC(id){
   const ad=[];document.querySelectorAll(".er").forEach(r=>{const l=r.querySelector(".al").value.trim()||"خونه",t=r.querySelector(".atx").value.trim(),v=Number(r.querySelector(".av").value)||180,d=r.dataset.last?new Date(r.dataset.last):new Date();if(t)ad.push({label:l,fullAddress:t,serviceIntervalDays:v,lastServiceDate:d,isActiveTimer:true})});
-  await fetch(id?`${API}/customers/${id}`:`${API}/customers`,{method:id?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName:$("eN").value.trim(),phone:$("eP1").value.trim(),secondaryPhones:[$("eP2").value.trim(),$("eP3").value.trim()].filter(Boolean),addresses:ad,address:ad[0]?.fullAddress||"",addressLabel:ad[0]?.label||"خونه"})});
+  await fetch(id?API+"/customers/"+id:API+"/customers",{method:id?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName:$("eN").value.trim(),phone:$("eP1").value.trim(),secondaryPhones:[$("eP2").value.trim(),$("eP3").value.trim()].filter(Boolean),addresses:ad,address:ad[0]?.fullAddress||"",addressLabel:ad[0]?.label||"خونه"})});
   $("cModal").style.display="none";sync();
 }
-async function upSt(id,b){await fetch(`${API}/requests/${id}/status`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});await sync();if(archDays)loadArch(archDays);else if($("sF").value||$("sT").value\vert{}\vert{}$("sQ").value)searchR()}
+async function upSt(id,b){await fetch(API+"/requests/"+id+"/status",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});await sync();if(archDays)loadArch(archDays);else if($("sF").value||$("sT").value\vert{}\vert{}$("sQ").value)searchR()}
 function drawAll(){$("tTags").innerHTML=techs.map((t,i)=>`<span style="background:#e2e8f0;padding:3px 8px;border-radius:5px;font-size:11px">👨‍🔧 ${t} <b style="color:red;cursor:pointer" onclick="techs.splice(${i},1);localStorage.setItem('sw_techs',JSON.stringify(techs));drawAll()">×</b></span>`).join("");drawReqs();drawRem();drawDel();drawCusts();if(archDays)loadArch(archDays)}
-async function sync(){drawAll();$("syncP").textContent="⏳ دریافت...";try{const [r1,r2]=await Promise.all([fetch(`${API}/requests`),fetch(`${API}/customers`)]);if(r1.ok){reqs=(await r1.json()).requests||[];localStorage.setItem("sw_reqs",JSON.stringify(reqs))}if(r2.ok){custs=(await r2.json()).customers||[];localStorage.setItem("sw_custs",JSON.stringify(custs))}drawAll();$("syncP").textContent="🟢 آنلاین"}catch(e){$("syncP").textContent="⚠️ آفلاین"}}
+async function sync(){drawAll();$("syncP").textContent="⏳ دریافت...";try{const [r1,r2]=await Promise.all([fetch(API+"/requests"),fetch(API+"/customers")]);if(r1.ok){reqs=(await r1.json()).requests||[];localStorage.setItem("sw_reqs",JSON.stringify(reqs))}if(r2.ok){custs=(await r2.json()).customers||[];localStorage.setItem("sw_custs",JSON.stringify(custs))}drawAll();$("syncP").textContent="🟢 آنلاین"}catch(e){$("syncP").textContent="⚠️ آفلاین"}}
 sync();
 </script>
 </body>
 </html>
-<!-- END -->
+<!-- PART 2 END -->
