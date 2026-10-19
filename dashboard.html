@@ -1,352 +1,330 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت سامی‌واتر</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
-        body { background: #f1f5f9; color: #1e293b; padding: 12px; }
-        
-        /* هدر و چیدمان آجری/پیانویی منظم دکمه‌ها */
-        .header { background: #1e293b; color: #fff; padding: 16px; border-radius: 14px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(15,23,42,0.18); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
-        .header h1 { font-size: 17px; color: #38bdf8; }
-        .header-badges { display: flex; align-items: center; gap: 6px; }
-        .role-pill { background: #0f172a; color: #facc15; border: 1px solid #facc15; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .sync-pill { background: #0f172a; color: #94a3b8; padding: 3px 8px; border-radius: 20px; font-size: 10px; }
-
-        /* شبکه پیانویی / آجری ۲ ستونه در موبایل و ۳ ستونه در دسکتاپ */
-        .nav-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
-        @media (min-width: 768px) { .nav-grid { grid-template-columns: repeat(3, 1fr); } }
-        
-        .nav-btn { background: #334155; color: #e2e8f0; border: 1px solid #475569; padding: 11px 8px; border-radius: 9px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.15s; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; }
-        .nav-btn:hover, .nav-btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56,189,248,0.25); }
-        .logout-brick { background: #dc2626; color: #fff; border: 1px solid #ef4444; }
-        .logout-brick:hover { background: #b91c1c; }
-
-        .card { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08); margin-bottom: 16px; }
-        .card h2 { font-size: 15px; margin-bottom: 12px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        
-        .tab-section { display: none; }
-        .tab-section.active { display: block; }
-
-        /* فیلترهای پیانویی بایگانی */
-        .filter-piano { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
-        @media (min-width: 600px) { .filter-piano { grid-template-columns: repeat(4, 1fr); } }
-        .filter-btn { background: #f8fafc; color: #334155; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; transition: 0.15s; }
-        .filter-btn.active { background: #0f172a; color: #38bdf8; border-color: #0284c7; }
-        .custom-range-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: none; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-        th, td { border: 1px solid #cbd5e1; padding: 9px; text-align: right; font-size: 12px; vertical-align: middle; }
-        th { background: #f8fafc; color: #334155; white-space: nowrap; }
-        
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; white-space: nowrap; }
-        .status-pending { background: #fef3c7; color: #d97706; }
-        .status-assigned { background: #e0f2fe; color: #0284c7; }
-        .status-done { background: #dcfce7; color: #15803d; }
-
-        .action-select { padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 12px; background: #fff; width: 100%; min-width: 115px; }
-        .client-link { color: #0284c7; font-weight: bold; cursor: pointer; text-decoration: underline; }
-
-        .addr-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; }
-        .addr-tab-btn { background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; padding: 4px 9px; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
-        .addr-tab-btn.active { background: #0284c7; color: #fff; border-color: #0369a1; }
-        .addr-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 6px; font-size: 12px; line-height: 1.7; }
-
-        .timer-badge { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
-        .timer-due { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
-
-        .edit-btn { background: #0284c7; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap; }
-        .del-btn { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
-
-        .error-msg { color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 6px; display: none; margin-bottom: 12px; font-size: 12px; font-weight: bold; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.72); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 14px; }
-        .modal-card { background: #fff; width: min(600px, 100%); border-radius: 12px; padding: 18px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); max-height: 92vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px; }
-        .modal-header h3 { font-size: 15px; color: #0f172a; }
-        .close-btn { background: #ef4444; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-weight: bold; }
-        
-        .info-row { margin-bottom: 8px; font-size: 12px; line-height: 1.7; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; color: #334155; margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: inherit; }
-        .save-btn { width: 100%; background: #16a34a; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 8px; }
-
-        .history-item { background: #fff; border: 1px solid #cbd5e1; border-right: 4px solid #0284c7; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت سامی‌واتر</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
+body{background:#f1f5f9;color:#1e293b;padding:12px}
+.header{background:#1e293b;color:#fff;padding:15px;border-radius:12px;margin-bottom:15px}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.header h1{font-size:16px;color:#38bdf8}
+.pill{background:#0f172a;color:#facc15;border:1px solid #facc15;padding:3px 8px;border-radius:15px;font-size:11px;font-weight:bold}
+.nav-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:700px){.nav-grid{grid-template-columns:repeat(3,1fr)}}
+.nav-btn{background:#334155;color:#e2e8f0;border:1px solid #475569;padding:10px 6px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;text-align:center}
+.nav-btn.active{background:#0284c7;color:#fff;border-color:#38bdf8}
+.logout-btn{background:#dc2626;color:#fff;border-color:#ef4444}
+.card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 2px 6px #0001;margin-bottom:15px;display:none}
+.card.active{display:block}
+.card h2{font-size:14px;margin-bottom:10px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+table{width:100%;border-collapse:collapse;margin-top:6px}
+th,td{border:1px solid #cbd5e1;padding:8px;text-align:right;font-size:12px}
+th{background:#f8fafc;white-space:nowrap}
+.badge{padding:3px 7px;border-radius:4px;font-size:11px;font-weight:bold;display:inline-block}
+.st-pending{background:#fef3c7;color:#d97706}
+.st-assigned{background:#e0f2fe;color:#0284c7}
+.st-done{background:#dcfce7;color:#15803d}
+.sel{padding:5px;border:1px solid #cbd5e1;border-radius:5px;font-size:11px;width:100%;min-width:105px}
+.link{color:#0284c7;font-weight:bold;cursor:pointer;text-decoration:underline}
+.filter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
+@media(min-width:600px){.filter-grid{grid-template-columns:repeat(4,1fr)}}
+.f-btn{background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:7px;font-size:12px;font-weight:bold;cursor:pointer}
+.f-btn.active{background:#0f172a;color:#38bdf8;border-color:#0284c7}
+.addr-tab{background:#e2e8f0;border:1px solid #cbd5e1;padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;margin-left:4px;font-weight:bold}
+.addr-tab.active{background:#0284c7;color:#fff}
+.btn-sm{background:#0284c7;color:#fff;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold}
+.modal-bg{position:fixed;inset:0;background:#0f172ab3;display:none;justify-content:center;align-items:center;z-index:999;padding:12px}
+.modal-card{background:#fff;width:min(540px,100%);border-radius:10px;padding:16px;max-height:90vh;overflow-y:auto}
+.inp{width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;margin-bottom:8px}
+</style>
 </head>
 <body>
 
 <div class="header">
-    <div class="header-top">
-        <h1>پنل مدیریت سامی‌واتر</h1>
-        <div class="header-badges">
-            <span id="syncStatus" class="sync-pill">⚡ آماده</span>
-            <span id="roleBadge" class="role-pill">مدیر ارشد</span>
-        </div>
+  <div class="header-top">
+    <h1>پنل مدیریت سامی‌واتر</h1>
+    <div style="display:flex;gap:6px;">
+      <span id="syncPill" class="pill" style="color:#38bdf8;border-color:#38bdf8;">⚡ آماده</span>
+      <span id="rolePill" class="pill">👑 مدیر ارشد</span>
     </div>
-    <!-- چیدمان پیانویی / آجری ۶ دکمه اصلی -->
-    <nav class="nav-grid">
-        <button class="nav-btn active" onclick="openTab('requests-tab', this)">📋 خدمات جاری <span id="activeCountBadge" style="background:#0f172a; color:#38bdf8; padding:1px 6px; border-radius:10px; font-size:10px;">0</span></button>
-        <button class="nav-btn" onclick="openTab('archive-tab', this)">🗂️ بایگانی خدمات</button>
-        <button id="navCustomersBtn" class="nav-btn" onclick="openTab('customers-tab', this)">👥 بانک اطلاعات و تایمر</button>
-        <button class="nav-btn" onclick="openTab('services-tab', this)">🛠️ بانک خدمات و قطعات</button>
-        <button id="navUsersBtn" class="nav-btn" onclick="openTab('users-tab', this)">👨‍🔧 مدیریت پرسنل</button>
-        <button class="nav-btn logout-brick" onclick="logout()">🚪 خروج از پنل</button>
-    </nav>
+  </div>
+  <nav class="nav-grid">
+    <button class="nav-btn active" onclick="showTab('tab-req',this)">📋 خدمات جاری (<span id="actCnt">0</span>)</button>
+    <button class="nav-btn" onclick="showTab('tab-arch',this)">🗂️ بایگانی خدمات</button>
+    <button class="nav-btn" onclick="showTab('tab-cust',this)">👥 بانک اطلاعات و تایمر</button>
+    <button class="nav-btn" onclick="showTab('tab-srv',this)">🛠️ بانک خدمات و قطعات</button>
+    <button class="nav-btn" onclick="showTab('tab-usr',this)">👨‍🔧 مدیریت پرسنل</button>
+    <button class="nav-btn logout-btn" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج از پنل</button>
+  </nav>
 </div>
 
-<div id="errBox" class="error-msg"></div>
-
-<!-- تب ۱: فقط خدمات جاری (در انتظار و تخصیص یافته) -->
-<div id="requests-tab" class="card tab-section active">
-    <h2>
-        <span>📋 لیست خدمات جاری (در حال پیگیری)</span>
-        <span style="font-size:11px; color:#64748b; font-weight:normal;">(خدمات «انجام شده» خودکار به تب بایگانی منتقل می‌شوند)</span>
-    </h2>
-    <div style="overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>کد فاکتور</th>
-                    <th>نام مشتری</th>
-                    <th>شماره تماس</th>
-                    <th>عنوان مکان و خدمت</th>
-                    <th>وضعیت</th>
-                    <th>تکنسین</th>
-                    <th>عملیات</th>
-                </tr>
-            </thead>
-            <tbody id="requestsTableBody">
-                <tr><td colspan="7" style="text-align:center;">در حال بارگذاری فوری...</td></tr>
-            </tbody>
-        </table>
-    </div>
+<!-- تب ۱: خدمات جاری -->
+<div id="tab-req" class="card active">
+  <h2><span>📋 لیست خدمات جاری (در انتظار و تخصیص یافته)</span><button class="btn-sm" onclick="syncServer()">🔄 بروزرسانی</button></h2>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>مکان و خدمت</th><th>وضعیت</th><th>تکنسین</th><th>عملیات</th></tr></thead>
+      <tbody id="reqBody"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- تب ۲: بایگانی خدمات انجام شده (مجهز به فیلتر زمانی برای جلوگیری از سنگین شدن) -->
-<div id="archive-tab" class="card tab-section">
-    <h2>
-        <span>🗂️ بایگانی خدمات تکمیل‌شده</span>
-        <span id="archiveCountInfo" style="font-size:12px; color:#15803d;">فیلتر زمانی را انتخاب کنید</span>
-    </h2>
-
-    <div class="filter-piano">
-        <button class="filter-btn" onclick="filterArchive('today', this)">📅 امروز</button>
-        <button class="filter-btn" onclick="filterArchive('week', this)">📆 این هفته (۷ روز)</button>
-        <button class="filter-btn" onclick="filterArchive('month', this)">🗓️ ماه جاری (۳۰ روز)</button>
-        <button class="filter-btn" onclick="filterArchive('custom', this)">🔍 بازه تاریخ / جستجو</button>
-    </div>
-
-    <div id="customRangeBox" class="custom-range-box">
-        <span>از تاریخ:</span>
-        <input type="date" id="archFromDate" class="form-control" style="width:145px;" />
-        <span>تا تاریخ:</span>
-        <input type="date" id="archToDate" class="form-control" style="width:145px;" />
-        <input type="text" id="archSearchInp" class="form-control" style="flex:1; min-width:150px;" placeholder="یا جستجوی نام / شماره / کد فاکتور..." />
-        <button class="edit-btn" onclick="applyCustomArchiveFilter()">اعمال فیلتر 🔍</button>
-    </div>
-
-    <div style="overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>کد فاکتور</th>
-                    <th>نام مشتری</th>
-                    <th>شماره تماس</th>
-                    <th>عنوان مکان و خدمت</th>
-                    <th>تکنسین</th>
-                    <th>تاریخ ثبت</th>
-                    <th>عملیات</th>
-                </tr>
-            </thead>
-            <tbody id="archiveTableBody">
-                <tr><td colspan="7" style="text-align:center; color:#64748b; padding:18px;">برای جلوگیری از سنگین شدن صفحه، لطفاً یکی از دکمه‌های بالا (امروز، این هفته، ماه جاری یا بازه تاریخ) را انتخاب کنید.</td></tr>
-            </tbody>
-        </table>
-    </div>
+<!-- تب ۲: بایگانی با فیلتر زمانی -->
+<div id="tab-arch" class="card">
+  <h2><span>🗂️ بایگانی خدمات انجام‌شده</span><span id="archInfo" style="font-size:11px;color:#15803d;">بازه زمانی را انتخاب کنید</span></h2>
+  <div class="filter-grid">
+    <button class="f-btn" onclick="loadArch(1,this)">📅 امروز</button>
+    <button class="f-btn" onclick="loadArch(7,this)">📆 این هفته</button>
+    <button class="f-btn" onclick="loadArch(30,this)">🗓️ ماه جاری</button>
+    <button class="f-btn" onclick="loadArch(9999,this)">📂 همه بایگانی</button>
+  </div>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>مکان و خدمت</th><th>تکنسین</th><th>تاریخ</th><th>عملیات</th></tr></thead>
+      <tbody id="archBody"><tr><td colspan="7" style="text-align:center;color:#64748b;padding:14px;">برای جلوگیری از سنگین شدن، یکی از فیلترهای بالا (امروز، هفته، ماه) را لمس کنید.</td></tr></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- تب ۳: بانک اطلاعات مشتریان و تایمر مجزای هر عنوان آدرس -->
-<div id="customers-tab" class="card tab-section">
-    <h2>
-        <span>👥 بانک اطلاعات مشتریان و تایمر مجزای هر آدرس</span>
-        <button class="edit-btn" style="background:#16a34a;" onclick="openNewCustomerModal()">+ افزودن مشتری جدید</button>
-    </h2>
-    <div style="overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>نام مشتری</th>
-                    <th>شماره اصلی</th>
-                    <th>شماره دوم و سوم</th>
-                    <th>انتخاب عنوان آدرس (مشاهده تایمر و سابقه همان مکان)</th>
-                    <th>تایمر آدرس انتخابی</th>
-                    <th>ویرایش</th>
-                </tr>
-            </thead>
-            <tbody id="customersTableBody">
-                <tr><td colspan="6" style="text-align:center;">در حال بارگذاری...</td></tr>
-            </tbody>
-        </table>
-    </div>
+<!-- تب ۳: بانک اطلاعات و تایمر -->
+<div id="tab-cust" class="card">
+  <h2><span>👥 بانک اطلاعات مشتریان و تایمر هر آدرس</span><button class="btn-sm" style="background:#16a34a" onclick="openEditModal(null)">+ مشتری جدید</button></h2>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها و سوابق</th><th>تایمر آدرس</th><th>ویرایش</th></tr></thead>
+      <tbody id="custBody"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- تب ۴: بانک خدمات و قطعات -->
-<div id="services-tab" class="card tab-section">
-    <h2>🛠️ بانک خدمات، فیلترها و قطعات (صدور فاکتور)</h2>
-    <p style="color: #475569; line-height: 1.8; font-size:13px;">در این بخش قیمت روز قطعات، فیلترها و دستمزدها برای صدور فاکتور دیجیتال مدیریت می‌شود.</p>
+<!-- تب ۴: خدمات -->
+<div id="tab-srv" class="card"><h2>🛠️ بانک خدمات و قطعات</h2><p style="font-size:12px;">بخش مدیریت قطعات و تعرفه‌ها.</p></div>
+
+<!-- تب ۵: پرسنل -->
+<div id="tab-usr" class="card">
+  <h2>👨‍🔧 مدیریت تکنسین‌ها</h2>
+  <div style="display:flex;gap:6px;margin-bottom:12px;">
+    <input id="tNameInp" class="inp" style="margin:0;" placeholder="نام تکنسین جدید..." />
+    <button class="btn-sm" onclick="addTech()">+ افزودن</button>
+  </div>
+  <div id="techTags" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
 </div>
 
-<!-- تب ۵: مدیریت پرسنل -->
-<div id="users-tab" class="card tab-section">
-    <h2>👨‍🔧 مدیریت پرسنل، تکنسین‌ها و سطوح دسترسی</h2>
-    <div style="margin-bottom: 18px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1;">
-        <div style="font-size:13px; font-weight:bold; margin-bottom:8px; color:#0f172a;">افزودن عضو جدید (تکنسین یا کارمند پشتیبانی):</div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <input id="newTechInput" placeholder="نام و نام‌خانوادگی (مثلاً: مهندس رضایی)" class="form-control" style="flex: 1; min-width: 180px;" />
-            <input id="newTechPhone" placeholder="شماره موبایل" class="form-control" style="width: 160px; direction:ltr; text-align:center;" />
-            <select id="newTechRole" class="form-control" style="width: 165px;">
-                <option value="technician">نقش: تکنسین فنی 👨‍🔧</option>
-                <option value="support">نقش: کارمند پشتیبانی 🎧</option>
-            </select>
-            <button onclick="addStaffMember()" class="edit-btn">+ ثبت عضو</button>
-        </div>
+<!-- پاپ‌آپ پرونده و ویرایش مشتری -->
+<div id="cModal" class="modal-bg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #cbd5e1;padding-bottom:6px;">
+      <strong id="mTitle">پرونده مشتری</strong>
+      <button class="btn-sm" style="background:#ef4444" onclick="document.getElementById('cModal').style.display='none'">بستن ×</button>
     </div>
-    <div id="techListBox" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom:20px;"></div>
-
-    <h2>🕒 گزارش ورود و خروج کاربران سیستم</h2>
-    <div style="overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>نام کاربر</th>
-                    <th>نقش سازمانی</th>
-                    <th>زمان ورود</th>
-                    <th>وضعیت</th>
-                </tr>
-            </thead>
-            <tbody id="auditLogBody"></tbody>
-        </table>
-    </div>
-</div>
-
-<!-- مودال پرونده مشتری -->
-<div id="dossierModal" class="modal-overlay" onclick="if(event.target===this) closeDossierModal()">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h3 id="dossierTitle">👤 پرونده و سوابق مشتری</h3>
-            <button class="close-btn" onclick="closeDossierModal()">بستن ×</button>
-        </div>
-        <div id="dossierBody"></div>
-    </div>
-</div>
-
-<!-- مودال ویرایش کامل مشتری -->
-<div id="editModal" class="modal-overlay" onclick="if(event.target===this) closeEditModal()">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h3 id="editModalTitle">✏️ ویرایش کامل اطلاعات مشتری</h3>
-            <button class="close-btn" onclick="closeEditModal()">بستن ×</button>
-        </div>
-        <div>
-            <input type="hidden" id="editCustomerId" />
-            <div class="form-group">
-                <label>نام و نام‌خانوادگی *</label>
-                <input id="editFullName" class="form-control" placeholder="نام کامل مشتری" />
-            </div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap:8px;">
-                <div class="form-group">
-                    <label>شماره موبایل اصلی *</label>
-                    <input id="editPhone1" class="form-control" style="direction:ltr; text-align:center;" />
-                </div>
-                <div class="form-group">
-                    <label>شماره تماس دوم</label>
-                    <input id="editPhone2" class="form-control" style="direction:ltr; text-align:center;" />
-                </div>
-                <div class="form-group">
-                    <label>شماره تماس سوم</label>
-                    <input id="editPhone3" class="form-control" style="direction:ltr; text-align:center;" />
-                </div>
-            </div>
-            <div class="form-group" style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <label style="margin:0;">📍 آدرس‌ها و تایمر اختصاصی هر عنوان</label>
-                    <button type="button" onclick="addAddressFieldInModal()" style="background:#0284c7; color:#fff; border:none; padding:4px 10px; border-radius:5px; cursor:pointer; font-size:11px; font-weight:bold;">+ افزودن آدرس جدید</button>
-                </div>
-                <div id="editAddressesBox" style="display:flex; flex-direction:column; gap:10px;"></div>
-            </div>
-            <div class="form-group">
-                <label>یادداشت کلی پرونده</label>
-                <textarea id="editNotes" class="form-control" rows="2"></textarea>
-            </div>
-            <button class="save-btn" id="saveCustomerBtn" onclick="saveCustomerChanges()">ذخیره تغییرات در بانک اطلاعات ✅</button>
-        </div>
-    </div>
+    <div id="mBody"></div>
+  </div>
 </div>
 
 <script>
-    const API_BASE = "https://samiwater-backend.onrender.com/api";
-    const token = localStorage.getItem("token") || "";
-    const currentRole = localStorage.getItem("role") || "admin";
-    const currentUsername = localStorage.getItem("username") || "admin";
+const API = "https://samiwater-backend.onrender.com/api";
+let custs = JSON.parse(localStorage.getItem("sw_custs")||"[]");
+let reqs = JSON.parse(localStorage.getItem("sw_reqs")||"[]");
+let techs = JSON.parse(localStorage.getItem("sw_techs")||'["تکنسین ۱","تکنسین ۲"]');
+let addrTabMap = {};
 
-    // بارگذاری فوری از کش مرورگر در صدم ثانیه اول (قبل از بیدار شدن سرور)
-    let allCustomers = JSON.parse(localStorage.getItem("sami_cache_customers") || "[]");
-    let allRequests = JSON.parse(localStorage.getItem("sami_cache_requests") || "[]");
-    let selectedAddressIndexMap = {};
-    let currentArchiveFilterMode = null;
+document.getElementById("syncPill").textContent = "🟢 فعال";
 
-    let staffList = JSON.parse(localStorage.getItem("sami_staff_v2") || JSON.stringify([
-        { name: "تکنسین ۱ (مرکزی)", phone: "09130000001", role: "technician" },
-        { name: "تکنسین ۲ (فنی)", phone: "09130000002", role: "technician" },
-        { name: "کارمند پشتیبانی", phone: "09130000003", role: "support" }
-    ]));
+function showTab(id,btn){
+  document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+}
 
-    function applyRolePermissions() {
-        const badge = document.getElementById("roleBadge");
-        if (currentRole === "admin") {
-            badge.textContent = `👑 مدیر ارشد`;
-        } else if (currentRole === "support") {
-            badge.textContent = `🎧 پشتیبانی`;
-            document.getElementById("navUsersBtn").style.display = "none";
-        } else if (currentRole === "technician") {
-            badge.textContent = `👨‍🔧 تکنسین`;
-            document.getElementById("navCustomersBtn").style.display = "none";
-            document.getElementById("navUsersBtn").style.display = "none";
-        }
+function drawTechs(){
+  document.getElementById("techTags").innerHTML = techs.map((t,i)=>`<span style="background:#e2e8f0;padding:4px 9px;border-radius:6px;font-size:12px;">👨‍🔧 ${t} <b style="color:red;cursor:pointer;" onclick="techs.splice(${i},1);localStorage.setItem('sw_techs',JSON.stringify(techs));drawAll()">×</b></span>`).join("");
+}
+function addTech(){
+  const v = document.getElementById("tNameInp").value.trim();
+  if(v){ techs.push(v); localStorage.setItem("sw_techs",JSON.stringify(techs)); document.getElementById("tNameInp").value=""; drawAll(); }
+}
 
-        let logs = JSON.parse(localStorage.getItem("sami_audit_logs") || "[]");
-        if (logs.length === 0 || logs[0].user !== currentUsername) {
-            logs.unshift({
-                user: currentUsername,
-                role: currentRole === "admin" ? "مدیر ارشد" : (currentRole === "support" ? "کارمند پشتیبانی" : "تکنسین"),
-                time: new Date().toLocaleString("fa-IR"),
-                status: "آنلاین 🟢"
-            });
-            localStorage.setItem("sami_audit_logs", JSON.stringify(logs.slice(0, 15)));
-        }
-        renderAuditLogs();
-    }
+function drawReqs(){
+  const tb = document.getElementById("reqBody");
+  const active = reqs.filter(r => r.status !== "done" && r.status !== "completed");
+  document.getElementById("actCnt").textContent = active.length;
+  if(!active.length){ tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:12px;">هیچ درخواست باز و بلاتکلیفی وجود ندارد ✅</td></tr>'; return; }
 
-    function renderAuditLogs() {
-        const tbody = document.getElementById("auditLogBody");
-        if (!tbody) return;
-        const logs = JSON.parse(localStorage.getItem("sami_audit_logs") || "[]");
-        tbody.innerHTML = logs.map(l => `
-            <tr>
-                <td style="font-weight:bold;">${l.user}</td>
-                <td>${l.role}</td>
-                <td style="direction:ltr; text-align:right;">${l.time}</td>
-                <td>${l.status}</td>
-            </tr>
-        `).join("");
-    }
+  tb.innerHTML = active.map(r => {
+    const name = r.snapshot?.fullName || r.customer?.fullName || "نامشخص";
+    const phone = r.snapshot?.phone || r.customer?.phone || "";
+    const title = r.addressLabel || (r.snapshot?.city!=="اصفهان"?r.snapshot?.city:"خونه") || "خونه";
+    const isAsg = r.status==="assigned" || r.status==="open";
+    const tOpts = [`<option value="">-- تکنسین --</option>`,...techs.map(t=>`<option value="${t}" ${r.technicianName===t?'selected':''}>${t}</option>`)].join("");
+    return `<tr>
+      <td style="font-weight:bold;direction:ltr">${r.invoiceCode||'---'}</td>
+      <td><span class="link" onclick="showDossier('${phone}',0)">${name}</span></td>
+      <td style="direction:ltr">${phone}</td>
+      <td><b>📍 ${title}:</b> ${r.issueType||'سرویس'}<div style="font-size:11px;color:#475569">${r.snapshot?.address||''}</div><div style="font-size:10px;color:#64748b">${r.resultNote||''}</div></td>
+      <td><span class="badge ${isAsg?'st-assigned':'st-pending'}">${isAsg?'تخصیص یافته':'در انتظار'}</span></td>
+      <td><select class="sel" onchange="setStatus('${r._id}','assigned',this.value)">${tOpts}</select></td>
+      <td><select class="sel" onchange="setStatus('${r._id}',this.value,'${r.technicianName||''}')">
+        <option value="pending" ${!isAsg?'selected':''}>در انتظار</option>
+        <option value="assigned" ${isAsg?'selected':''}>تخصیص یافته</option>
+        <option value="done">✅ انجام شد (بایگانی)</option>
+      </select></td>
+    </tr>`;
+  }).join("");
+}
 
-    function calcAddressTimer(addrObj) {
-        const interval = Number(addrObj?.serviceIntervalDays) || 180;
-        if (addrObj?.isActiveTimer === false) {
-            return { text: 
+function loadArch(days,btn){
+  if(btn){ document.querySelectorAll(".f-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); }
+  const minT = Date.now() - (days * 86400000);
+  const list = reqs.filter(r => (r.status==="done"||r.status==="completed") && (new Date(r.createdAt||Date.now()).getTime() >= minT));
+  document.getElementById("archInfo").textContent = `${list.length} مورد یافت شد`;
+  const tb = document.getElementById("archBody");
+  if(!list.length){ tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:12px;">در این بازه موردی یافت نشد.</td></tr>'; return; }
+  tb.innerHTML = list.map(r => {
+    const phone = r.snapshot?.phone || "";
+    const title = r.addressLabel || "خونه";
+    return `<tr>
+      <td style="direction:ltr;font-weight:bold">${r.invoiceCode||'---'}</td>
+      <td><span class="link" onclick="showDossier('${phone}',0)">${r.snapshot?.fullName||'---'}</span></td>
+      <td style="direction:ltr">${phone}</td>
+      <td>📍 ${title} - ${r.issueType||'سرویس'}</td>
+      <td>${r.technicianName||'---'}</td>
+      <td>${r.createdAt?new Date(r.createdAt).toLocaleDateString('fa-IR'):'---'}</td>
+      <td><button class="btn-sm" onclick="setStatus('${r._id}','pending','')">بازگردانی ↩️</button></td>
+    </tr>`;
+  }).join("");
+}
+
+function calcTimer(a){
+  const intv = Number(a?.serviceIntervalDays)||180;
+  if(a?.isActiveTimer===false) return "غیرفعال 🔕";
+  const last = a?.lastServiceDate ? new Date(a.lastServiceDate).getTime() : Date.now();
+  const rem = intv - Math.floor((Date.now()-last)/86400000);
+  return rem<=0 ? `موعد سرویس! (${Math.abs(rem)} روز گذشته) 🔴` : `${rem} روز مانده (از ${intv}) ✅`;
+}
+
+function drawCusts(){
+  const tb = document.getElementById("custBody");
+  if(!custs.length){ tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:12px;">بانک اطلاعات خالی است.</td></tr>'; return; }
+  tb.innerHTML = custs.map(c => {
+    const addrs = (c.addresses && c.addresses.length) ? c.addresses : [{label:"خونه",fullAddress:c.address||"---",serviceIntervalDays:180}];
+    const idx = addrTabMap[c._id] || 0;
+    const cur = addrs[idx] || addrs[0];
+    const tabs = addrs.map((a,i)=>`<button class="addr-tab ${i===idx?'active':''}" onclick="addrTabMap['${c._id}']=${i};drawCusts()">📍 ${a.label||'خونه'}</button>`).join("");
+    const cnt = reqs.filter(r => (r.snapshot?.phone===c.phone) && (addrs.length===1 || (r.addressLabel||'خونه')===(cur.label||'خونه'))).length;
+    return `<tr>
+      <td style="font-weight:bold">${c.fullName||'---'}</td>
+      <td style="direction:ltr;font-weight:bold">${c.phone||'---'}</td>
+      <td style="direction:ltr;font-size:11px">${(c.secondaryPhones||[]).join(" , ")||"---"}</td>
+      <td><div style="margin-bottom:5px">${tabs}</div><div style="background:#f8fafc;padding:6px;border-radius:5px;border:1px solid #e2e8f0"><b>${cur.label||'خونه'}:</b> ${cur.fullAddress} <span class="link" style="float:left" onclick="showDossier('${c.phone}',${idx})">سوابق (${cnt}) 🔍</span></div></td>
+      <td><span class="badge st-done">⏱️ ${cur.label||'خونه'}: ${calcTimer(cur)}</span></td>
+      <td><button class="btn-sm" onclick="openEditModal('${c._id}')">ویرایش ✏️</button></td>
+    </tr>`;
+  }).join("");
+}
+
+function showDossier(phone, idx=0){
+  const c = custs.find(x=>x.phone===phone);
+  const cReqs = reqs.filter(r=>(r.snapshot?.phone||r.customer?.phone)===phone);
+  const addrs = (c?.addresses?.length) ? c.addresses : [{label:"خونه",fullAddress:cReqs[0]?.snapshot?.address||"---",serviceIntervalDays:180}];
+  const cur = addrs[idx]||addrs[0];
+  const tabs = addrs.map((a,i)=>`<button class="addr-tab ${i===idx?'active':''}" onclick="showDossier('${phone}',${i})">📍 ${a.label||'خونه'}</button>`).join("");
+  const subReqs = cReqs.filter(r => addrs.length===1 || (r.addressLabel||'خونه')===(cur.label||'خونه'));
+
+  document.getElementById("mTitle").textContent = `👤 پرونده: ${c?.fullName||cReqs[0]?.snapshot?.fullName||phone}`;
+  document.getElementById("mBody").innerHTML = `
+    <div style="margin-bottom:8px;font-size:12px;"><b>شماره اصلی:</b> <a href="tel:${phone}">${phone}</a> | <b>شماره ۲ و ۳:</b> ${(c?.secondaryPhones||[]).join(" , ")||"ندارد"}</div>
+    <div style="margin-bottom:6px;">${tabs}</div>
+    <div style="background:#f8fafc;padding:8px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:10px;font-size:12px;">
+      <div><b>نشانی «${cur.label||'خونه'}»:</b> ${cur.fullAddress}</div>
+      <div style="color:#15803d;font-weight:bold;margin-top:4px;">⏱️ تایمر این مکان: ${calcTimer(cur)}</div>
+    </div>
+    <div style="font-weight:bold;font-size:12px;margin-bottom:5px;">سوابق خدمات «${cur.label||'خونه'}» (${subReqs.length} نوبت):</div>
+    <div style="max-height:160px;overflow-y:auto;margin-bottom:10px;">
+      ${subReqs.map(r=>`<div style="border:1px solid #cbd5e1;padding:6px;border-radius:5px;margin-bottom:4px;font-size:11px;"><b>${r.invoiceCode}:</b>${r.issueType} (${r.status==='done'?'انجام شده':'جاری'}) - ${r.technicianName||'بدون تکنسین'}</div>`).join("") || '<div style="font-size:11px;color:#64748b;">سابقه‌ای ثبت نشده.</div>'}
+    </div>
+    ${c?`<button class="btn-sm" style="width:100%;padding:9px;" onclick="openEditModal('${c._id}')">✏️ ویرایش کامل مشخصات، آدرس‌ها و تایمر</button>`:''}
+  `;
+  document.getElementById("cModal").style.display="flex";
+}
+
+function openEditModal(id){
+  const c = custs.find(x=>x._id===id) || {fullName:"",phone:"",secondaryPhones:[],addresses:[{label:"خونه",fullAddress:"",serviceIntervalDays:180}]};
+  const addrs = c.addresses?.length ? c.addresses : [{label:"خونه",fullAddress:"",serviceIntervalDays:180}];
+  document.getElementById("mTitle").textContent = id ? "✏️ ویرایش مشتری" : "➕ مشتری جدید";
+  document.getElementById("mBody").innerHTML = `
+    <label style="font-size:11px;font-weight:bold">نام و نام‌خانوادگی</label><input id="eName" class="inp" value="${c.fullName||''}" />
+    <label style="font-size:11px;font-weight:bold">شماره اصلی</label><input id="eP1" class="inp" style="direction:ltr" value="${c.phone||''}" />
+    <div style="display:flex;gap:6px;">
+      <div style="flex:1"><label style="font-size:11px;font-weight:bold">شماره دوم</label><input id="eP2" class="inp" style="direction:ltr" value="${c.secondaryPhones?.[0]||''}" /></div>
+      <div style="flex:1"><label style="font-size:11px;font-weight:bold">شماره سوم</label><input id="eP3" class="inp" style="direction:ltr" value="${c.secondaryPhones?.[1]||''}" /></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin:6px 0;"><b style="font-size:12px;">آدرس‌ها و تایمر هر عنوان:</b><button class="btn-sm" onclick="addAddrRow()">+ آدرس جدید</button></div>
+    <div id="eAddrBox">${addrs.map(a=>addrRowHtml(a.label,a.fullAddress,a.serviceIntervalDays)).join("")}</div>
+    <button class="btn-sm" style="width:100%;background:#16a34a;padding:10px;margin-top:8px;" onclick="saveCust('${id||''}')">ذخیره تغییرات ✅</button>
+  `;
+  document.getElementById("cModal").style.display="flex";
+}
+
+function addrRowHtml(lbl="محل کار",txt="",intv=180){
+  return `<div class="e-addr-row" style="background:#f8fafc;border:1px solid #cbd5e1;padding:6px;border-radius:6px;margin-bottom:6px;">
+    <div style="display:flex;gap:5px;margin-bottom:4px;">
+      <input class="inp a-lbl" style="margin:0;width:110px;font-weight:bold" value="${lbl}" placeholder="عنوان (خونه)" />
+      <input type="number" class="inp a-intv" style="margin:0;width:80px" value="${intv||180}" title="تایمر (روز)" />
+      <button class="btn-sm" style="background:#ef4444" onclick="this.closest('.e-addr-row').remove()">حذف</button>
+    </div>
+    <input class="inp a-txt" style="margin:0" value="${txt}" placeholder="متن کامل آدرس..." />
+  </div>`;
+}
+function addAddrRow(){ document.getElementById("eAddrBox").insertAdjacentHTML("beforeend", addrRowHtml()); }
+
+async function saveCust(id){
+  const fullName = document.getElementById("eName").value.trim();
+  const phone = document.getElementById("eP1").value.trim();
+  const secondaryPhones = [document.getElementById("eP2").value.trim(), document.getElementById("eP3").value.trim()].filter(Boolean);
+  const addresses = [];
+  document.querySelectorAll(".e-addr-row").forEach(r=>{
+    const label = r.querySelector(".a-lbl").value.trim()||"خونه";
+    const fullAddress = r.querySelector(".a-txt").value.trim();
+    const serviceIntervalDays = Number(r.querySelector(".a-intv").value)||180;
+    if(fullAddress) addresses.push({label,fullAddress,serviceIntervalDays,isActiveTimer:true});
+  });
+  await fetch(id?`${API}/customers/${id}`:`${API}/customers`,{
+    method:id?"PUT":"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({fullName,phone,secondaryPhones,addresses,address:addresses[0]?.fullAddress||"",addressLabel:addresses[0]?.label||"خونه"})
+  });
+  document.getElementById("cModal").style.display="none";
+  syncServer();
+}
+
+async function setStatus(id,status,technicianName){
+  await fetch(`${API}/requests/${id}/status`,{
+    method:"PUT",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({status,technicianName})
+  });
+  syncServer();
+}
+
+function drawAll(){ drawTechs(); drawReqs(); drawCusts(); }
+
+async function syncServer(){
+  drawAll();
+  const pill = document.getElementById("syncPill"); pill.textContent = "⏳ دریافت...";
+  try{
+    const [r1, r2] = await Promise.all([fetch(`${API}/requests`), fetch(`${API}/customers`)]);
+    if(r1.ok){ const d1 = await r1.json(); reqs = d1.requests||[]; localStorage.setItem("sw_reqs",JSON.stringify(reqs)); }
+    if(r2.ok){ const d2 = await r2.json(); custs = d2.customers||[]; localStorage.setItem("sw_custs",JSON.stringify(custs)); }
+    drawAll();
+    pill.textContent = "🟢 آنلاین";
+  }catch(e){
+    pill.textContent = "⚠️ آفلاین";
+  }
+}
+
+syncServer();
+</script>
+</body>
+</html>
+<!-- END -->
