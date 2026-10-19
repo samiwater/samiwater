@@ -4,420 +4,273 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>SamiWater | ثبت درخواست خدمات</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --green:#0f3b2d; --panel:#0f3b2db3; --gold:#d9b24c; --gold-strong:#f2c94c; --ring:#3e6b57;
-}
+:root{--green:#0f3b2d;--gold:#d9b24c;--gold-strong:#f2c94c;--ring:#3e6b57}
 *{box-sizing:border-box}
-html,body{min-height:100%}
-body{margin:0;background:var(--green);font-family:"Vazirmatn",Tahoma,system-ui;color:#fff;display:flex;align-items:center;justify-content:center;padding:18px}
-.card{width:min(580px,100%);background:linear-gradient(180deg,#0f3b2df5,#0a291ff5);border:1px solid var(--ring);border-radius:18px;padding:24px 20px;position:relative;box-shadow:0 12px 30px #00000066}
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.brand img{width:42px;height:42px;border-radius:9px;border:1px solid var(--gold);object-fit:cover;background:#124432}
-.brand .title{font-size:23px;font-weight:800;letter-spacing:.5px;color:var(--gold)}
-h1,h2{font-size:19px;margin:4px 0 10px;font-weight:800;color:#fff}
-.note{font-size:13px;line-height:1.85;color:#dfeee8;margin-bottom:12px}
-label{display:block;margin:11px 0 5px;color:#dfeee8;font-size:13px;font-weight:600}
-.input{width:100%;background:#08241b;border:1px solid #2e5a48;border-radius:12px;color:#fff;font-size:16px;padding:12px 14px;outline:none;font-family:inherit}
-.input:focus{border-color:var(--gold-strong)}
-.input.phone-inp{font-size:18px;text-align:center;direction:ltr;font-weight:bold}
+body{margin:0;min-height:100vh;background:var(--green);font-family:"Vazirmatn",Tahoma,sans-serif;color:#fff;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{width:min(560px,100%);background:linear-gradient(180deg,#0f3b2df5,#0a291ff5);border:1px solid var(--ring);border-radius:18px;padding:22px 18px;box-shadow:0 12px 30px #0008}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.brand img{width:40px;height:40px;border-radius:9px;border:1px solid var(--gold);background:#124432}
+.brand .title{font-size:22px;font-weight:800;color:var(--gold)}
+h1,h2{font-size:18px;margin:4px 0 8px;color:#fff}
+.note{font-size:13px;line-height:1.8;color:#dfeee8;margin-bottom:10px}
+label{display:block;margin:10px 0 4px;color:#dfeee8;font-size:13px;font-weight:600}
+.input{width:100%;background:#08241b;border:1px solid #2e5a48;border-radius:11px;color:#fff;font-size:15px;padding:11px 12px;outline:none;font-family:inherit}
+.phone-inp{font-size:18px;text-align:center;direction:ltr;font-weight:bold}
 .input[readonly]{opacity:.85;color:var(--gold-strong)}
-.input::placeholder{color:#8fb5a6;font-weight:normal;font-size:14px}
-
-.btn{width:100%;margin-top:16px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:14px 16px;border-radius:14px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:0.15s}
-.btn:disabled{opacity:0.65;cursor:wait}
-.btn-back{width:100%;margin-top:8px;background:transparent;color:#b8d7cc;border:1px solid #2e5a48;padding:10px;border-radius:12px;font-size:13px;cursor:pointer;font-family:inherit}
-.err{margin-top:10px;color:#ffc6c6;background:rgba(239,68,68,0.15);border:1px solid #ef4444;padding:9px;border-radius:10px;font-size:13px;display:none;text-align:center}
+.btn{width:100%;margin-top:14px;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:13px;border-radius:13px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit}
+.btn:disabled{opacity:.6}
+.btn-back{width:100%;margin-top:8px;background:none;color:#b8d7cc;border:1px solid #2e5a48;padding:9px;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit}
+.err{margin-top:10px;color:#ffc6c6;background:#ef444426;border:1px solid #ef4444;padding:8px;border-radius:9px;font-size:12px;display:none;text-align:center}
 .footer{margin-top:14px;font-size:12px;color:#b8d7cc;text-align:center}
 a{color:#9ad7ff;text-decoration:none}
-
-/* باکس انتخاب زمان (رندر فوری ۰ ثانیه) */
-.tw-box{border:1px solid #2e5a48;border-radius:14px;padding:12px;margin-top:12px;background:#0b2d23}
-.tw-title{font-weight:700;margin-bottom:4px;font-size:14px;color:#fff}
-.tw-sub{font-size:12px;color:#b9d7cc;margin-bottom:10px}
-.tw-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.tw-select{padding:9px 12px;border:1px solid #3a6b57;border-radius:10px;background:#08261e;color:#fff;font-family:inherit;flex:1}
-.tw-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.tw-slot{padding:9px 6px;border:1px solid #3a6b57;border-radius:10px;cursor:pointer;font-size:13px;background:#0a2a21;text-align:center;transition:0.15s;user-select:none}
-.tw-slot.disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;background:#1f2937;border-color:#374151;color:#9ca3af}
-.tw-slot.selected{border-color:#f2c94c;box-shadow:0 0 0 2px rgba(242,201,76,.22);color:#f2c94c;font-weight:bold;background:#123e30}
-
-/* دکمه + شماره دوم و چیپ‌های عنوان آدرس */
-.add-phone-toggle{display:inline-block;margin-top:8px;background:rgba(242,201,76,0.12);border:1px dashed var(--gold);color:var(--gold-strong);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-.quick-labels{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.q-chip{background:#0b2d23;border:1px solid #3a6b57;color:#dfeee8;padding:6px 11px;border-radius:8px;font-size:12px;cursor:pointer;transition:0.15s}
-.q-chip.active{border-color:var(--gold-strong);color:var(--gold-strong);background:#123e30;font-weight:bold}
-
-/* پاپ‌آپ تایید آدرس مشتری قبلی */
-.addr-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(5,20,15,0.84);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:999;padding:16px}
-.addr-modal{width:min(480px,100%);background:linear-gradient(180deg,#114232,#0a291f);border:1px solid var(--gold);border-radius:18px;padding:22px 18px;box-shadow:0 16px 40px rgba(0,0,0,0.65);text-align:center;max-height:90vh;overflow-y:auto}
-.addr-modal h3{color:var(--gold-strong);margin:0 0 8px;font-size:18px}
-.addr-modal p{font-size:13px;color:#e2f1ec;margin:0 0 14px;line-height:1.8}
-.addr-choice-card{background:#082219;border:1px solid #2e5a48;border-radius:12px;padding:12px;margin-bottom:10px;text-align:right}
-.addr-choice-title{color:var(--gold-strong);font-weight:800;font-size:15px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
-.addr-choice-text{color:#cfe3dc;font-size:12px;line-height:1.6;margin-bottom:10px}
-.addr-confirm-btn{width:100%;background:linear-gradient(180deg,#e2c15a,#cc9f2a);color:#1b2d23;border:none;padding:11px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
-.addr-new-btn{width:100%;margin-top:6px;background:rgba(242,201,76,0.1);color:var(--gold-strong);border:1px dashed var(--gold);padding:11px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
-.addr-cancel-btn{margin-top:12px;background:none;border:none;color:#9cc7b7;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline}
+.tw-box{border:1px solid #2e5a48;border-radius:13px;padding:11px;margin-top:10px;background:#0b2d23}
+.tw-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.tw-select{padding:8px 10px;border:1px solid #3a6b57;border-radius:9px;background:#08261e;color:#fff;font-family:inherit;flex:1}
+.tw-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+.tw-slot{padding:8px 4px;border:1px solid #3a6b57;border-radius:9px;cursor:pointer;font-size:13px;background:#0a2a21;text-align:center}
+.tw-slot.disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;background:#1f2937}
+.tw-slot.selected{border-color:var(--gold-strong);color:var(--gold-strong);font-weight:bold;background:#123e30}
+.add-phone-toggle{margin-top:6px;background:#f2c94c1f;border:1px dashed var(--gold);color:var(--gold-strong);padding:5px 10px;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit}
+.quick-labels{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.q-chip{background:#0b2d23;border:1px solid #3a6b57;color:#dfeee8;padding:5px 10px;border-radius:7px;font-size:12px;cursor:pointer}
+.q-chip.active{border-color:var(--gold-strong);color:var(--gold-strong);font-weight:bold;background:#123e30}
+.modal-bg{position:fixed;inset:0;background:#05140fd9;display:none;align-items:center;justify-content:center;z-index:999;padding:15px}
+.modal-box{width:min(460px,100%);background:#0d3326;border:1px solid var(--gold);border-radius:16px;padding:18px;text-align:center}
+.addr-card{background:#082219;border:1px solid #2e5a48;border-radius:11px;padding:10px;margin-bottom:8px;text-align:right}
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="brand">
-      <img src="/logo-samiwater.png" alt="SamiWater" />
-      <div class="title">SamiWater</div>
-    </div>
-
-    <!-- مرحله ۱: ورود شماره و انتخاب ساعت -->
-    <div id="step1Box">
-      <h1>ثبت درخواست خدمات</h1>
-      <p class="note">
-        لطفاً شماره موبایل خود را وارد نمایید. در صورتی که قبلاً مشترک ما بوده‌اید، آدرس‌های شما جهت تایید سریع نمایش داده می‌شود.
-      </p>
-
-      <input id="phone" class="input phone-inp" inputmode="numeric" placeholder="مثلاً 09131234567" />
-
-      <div id="time-pref" class="tw-box">
-        <div class="tw-title">ترجیح زمانی حضور تکنسین (اختیاری)</div>
-        <div class="tw-sub">بازه زمانی مدنظر خود را انتخاب کنید:</div>
-        <div class="tw-row">
-          <label style="margin:0;">روز (شمسی):</label>
-          <select class="tw-select" id="tw-date"></select>
-        </div>
-        <div class="tw-slots" id="tw-slots"></div>
-      </div>
-
-      <button id="go" class="btn">ثبت و ادامه</button>
-      <div id="err1" class="err"></div>
-    </div>
-
-    <!-- مرحله ۲: فرم درجا برای مشتری جدید یا آدرس جدید (بدون رفرش صفحه و بدون صفحه سبز خالی!) -->
-    <div id="step2FormBox" style="display:none;">
-      <h2 id="formHeaderTitle" style="color:var(--gold-strong);">تکمیل مشخصات و آدرس</h2>
-      <p id="formSubBadge" class="note" style="margin-bottom:10px;">مشخصات خود را جهت اعزام تکنسین وارد نمایید:</p>
-
-      <label>شماره موبایل اصلی</label>
-      <input id="formPhone" class="input phone-inp" readonly />
-
-      <div id="addPhoneBtnWrap">
-        <button type="button" class="add-phone-toggle" onclick="showSecondPhone()">+ افزودن شماره تماس دوم (اختیاری)</button>
-      </div>
-      <div id="secondPhoneBox" style="display:none; margin-top:6px;">
-        <label>شماره تماس دوم / ثابت</label>
-        <input id="formPhone2" class="input phone-inp" inputmode="numeric" placeholder="مثلاً 0913 یا 0313" />
-      </div>
-
-      <label>نام و نام‌خانوادگی *</label>
-      <input id="formFullName" class="input" placeholder="نام و نام‌خانوادگی خود را وارد کنید" />
-
-      <label>نوع سرویس درخواستی</label>
-      <select id="formIssueType" class="input">
-        <option value="سرویس دوره‌ای و تعویض فیلتر">سرویس دوره‌ای و تعویض فیلتر</option>
-        <option value="تعمیر و عیب‌یابی دستگاه">تعمیر و عیب‌یابی دستگاه</option>
-        <option value="نصب و راه‌اندازی دستگاه">نصب و راه‌اندازی دستگاه</option>
-        <option value="مشاوره و سایر خدمات">مشاوره و سایر خدمات</option>
-      </select>
-
-      <label>عنوان آدرس (پیش‌فرض: خونه)</label>
-      <div class="quick-labels">
-        <span class="q-chip active" onclick="setAddrLabel('خونه', this)">🏠 خونه</span>
-        <span class="q-chip" onclick="setAddrLabel('محل کار', this)">🏢 محل کار</span>
-        <span class="q-chip" onclick="setAddrLabel('منزل پدر', this)">👴 منزل پدر</span>
-        <span class="q-chip" onclick="setAddrLabel('مغازه / دفتر', this)">🏪 مغازه / دفتر</span>
-      </div>
-      <input id="formAddressLabel" class="input" value="خونه" placeholder="عنوان دلخواه (مثلاً: خونه، محل کار...)" />
-
-      <label>آدرس دقیق *</label>
-      <input id="formAddress" class="input" placeholder="خیابان، کوچه، پلاک، واحد" />
-
-      <label>توضیحات تکمیلی (اختیاری)</label>
-      <input id="formNotes" class="input" placeholder="مثلاً: قبل از حرکت تماس بگیرید" />
-
-      <button id="finalSubmitBtn" class="btn">ثبت نهایی و دریافت کد پیگیری</button>
-      <button type="button" class="btn-back" onclick="backToStep1()">↩️ بازگشت به تغییر شماره یا ساعت</button>
-      <div id="err2" class="err"></div>
-    </div>
-
-    <div class="footer">پشتیبانی و هماهنگی: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
+<div class="card">
+  <div class="brand">
+    <img src="/logo-samiwater.png" alt="SamiWater" />
+    <div class="title">SamiWater</div>
   </div>
 
-  <!-- پاپ‌آپ تایید آدرس قبلی یا افزودن آدرس جدید -->
-  <div id="addrConfirmModal" class="addr-modal-overlay">
-    <div class="addr-modal">
-      <h3 id="modalGreet">مشترک گرامی، خوش آمدید</h3>
-      <p id="modalQuestion">درخواست شما برای کدام آدرس ثبت شود؟</p>
-      <div id="modalAddressesList"></div>
-      <button id="addNewAddrBtn" class="addr-new-btn">➕ آدرس جدید با همین شماره</button>
-      <button class="addr-cancel-btn" onclick="closeAddrModal()">تغییر شماره موبایل یا ساعت</button>
+  <!-- مرحله ۱ -->
+  <div id="step1Box">
+    <h1>ثبت درخواست خدمات</h1>
+    <p class="note">شماره موبایل خود را وارد نمایید. اگر قبلاً مشترک ما بوده‌اید، آدرس شما جهت تایید سریع نمایش داده می‌شود.</p>
+    <input id="phone" class="input phone-inp" inputmode="numeric" placeholder="مثلاً 09131234567" />
+
+    <div class="tw-box">
+      <div style="font-weight:700;font-size:13px;">ترجیح زمانی حضور تکنسین (اختیاری)</div>
+      <div class="tw-row">
+        <span style="font-size:12px;">روز (شمسی):</span>
+        <select class="tw-select" id="tw-date"></select>
+      </div>
+      <div class="tw-slots" id="tw-slots"></div>
     </div>
+
+    <button id="go" class="btn">ثبت و ادامه</button>
+    <div id="err1" class="err"></div>
   </div>
+
+  <!-- مرحله ۲: فرم تکمیل مشخصات (درجا و بدون نیاز به لود صفحه دوم) -->
+  <div id="step2Box" style="display:none;">
+    <h2 id="formTitle" style="color:var(--gold-strong);">تکمیل مشخصات و آدرس</h2>
+    <label>شماره موبایل اصلی</label>
+    <input id="fPhone" class="input phone-inp" readonly />
+
+    <div id="addPhoneWrap"><button type="button" class="add-phone-toggle" onclick="showPhone2()">+ افزودن شماره تماس دوم (اختیاری)</button></div>
+    <div id="phone2Box" style="display:none;">
+      <label>شماره تماس دوم</label>
+      <input id="fPhone2" class="input phone-inp" inputmode="numeric" placeholder="0913..." />
+    </div>
+
+    <label>نام و نام‌خانوادگی *</label>
+    <input id="fName" class="input" placeholder="نام و نام‌خانوادگی" />
+
+    <label>نوع سرویس</label>
+    <select id="fIssue" class="input">
+      <option value="سرویس دوره‌ای و تعویض فیلتر">سرویس دوره‌ای و تعویض فیلتر</option>
+      <option value="تعمیر و عیب‌یابی دستگاه">تعمیر و عیب‌یابی دستگاه</option>
+      <option value="نصب و راه‌اندازی دستگاه">نصب و راه‌اندازی دستگاه</option>
+    </select>
+
+    <label>عنوان آدرس (پیش‌فرض: خونه)</label>
+    <div class="quick-labels">
+      <span class="q-chip active" onclick="pickLabel('خونه',this)">🏠 خونه</span>
+      <span class="q-chip" onclick="pickLabel('محل کار',this)">🏢 محل کار</span>
+      <span class="q-chip" onclick="pickLabel('منزل پدر',this)">👴 منزل پدر</span>
+      <span class="q-chip" onclick="pickLabel('مغازه',this)">🏪 مغازه</span>
+    </div>
+    <input id="fLabel" class="input" value="خونه" />
+
+    <label>آدرس دقیق *</label>
+    <input id="fAddr" class="input" placeholder="خیابان، کوچه، پلاک، واحد" />
+
+    <label>توضیحات (اختیاری)</label>
+    <input id="fNotes" class="input" placeholder="توضیحات..." />
+
+    <button id="submitBtn" class="btn">ثبت نهایی و دریافت کد پیگیری</button>
+    <button type="button" class="btn-back" onclick="backStep1()">↩️ بازگشت</button>
+    <div id="err2" class="err"></div>
+  </div>
+
+  <div class="footer">پشتیبانی: <a href="tel:09130051733">09130051733</a> • <a href="tel:09130051745">09130051745</a></div>
+</div>
+
+<!-- پاپ‌آپ تایید آدرس مشتری قبلی -->
+<div id="addrModal" class="modal-bg">
+  <div class="modal-box">
+    <h3 id="mGreet" style="color:var(--gold-strong);margin:0 0 8px;">خوش آمدید</h3>
+    <p id="mQuest" style="font-size:13px;margin:0 0 12px;">درخواست برای کدام مکان ثبت شود؟</p>
+    <div id="mList"></div>
+    <button id="newAddrBtn" class="add-phone-toggle" style="width:100%;padding:10px;margin-top:6px;">➕ آدرس جدید با همین شماره</button>
+    <button class="btn-back" onclick="document.getElementById('addrModal').style.display='none'">انصراف</button>
+  </div>
+</div>
 
 <script>
 const API = "https://samiwater-backend.onrender.com";
 const WINDOWS = ["09-11","11-13","13-15","15-17","17-19","19-21"];
-let cachedCustomersList = null;
+let selectedWin = "";
+let cachedCusts = null;
 
-// بیدار کردن پیش‌دستانه سرور و کش کردن لیست در پس‌زمینه به محض باز شدن صفحه!
-(async function preWarmServer(){
-  try {
-    const r = await fetch(`${API}/api/customers`, { cache: "no-store" });
-    if (r.ok) {
-      const d = await r.json();
-      cachedCustomersList = d.customers || [];
+function cleanNum(s){
+  const p=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  let r=String(s||""); p.forEach((d,i)=>{r=r.replace(new RegExp(d,'g'),i)});
+  return r.replace(/\D/g,'');
+}
+
+// ۱. ساخت فوری روزها و ساعت‌ها در صدم ثانیه اول!
+const selDate = document.getElementById("tw-date");
+const slotsBox = document.getElementById("tw-slots");
+for(let i=0;i<=12;i++){
+  const d = new Date(); d.setDate(d.getDate()+i);
+  let lbl = d.toLocaleDateString("fa-IR");
+  try{ lbl = new Intl.DateTimeFormat("fa-IR-u-ca-persian",{weekday:"long",day:"2-digit",month:"long"}).format(d); }catch(e){}
+  const op = document.createElement("option"); op.value = lbl; op.textContent = lbl;
+  selDate.appendChild(op);
+}
+
+function drawSlots(booked=[]){
+  slotsBox.innerHTML = "";
+  WINDOWS.forEach(w => {
+    const isB = booked.includes(w);
+    const d = document.createElement("div");
+    d.className = "tw-slot" + (isB?" disabled":"") + (!isB && selectedWin===w?" selected":"");
+    d.textContent = isB ? w+" (پر)" : w;
+    if(!isB){
+      d.onclick = () => { selectedWin = (selectedWin===w) ? "" : w; drawSlots(booked); };
     }
-  } catch (e) {}
-})();
-
-function getSourcePath(){
-  const p = new URLSearchParams(location.search);
-  const src = (p.get("src")||"").toLowerCase();
-  const map = {landing:"سرویس فوری", urgent:"سرویس فوری", web:"سرویس و خدمات"};
-  return map[src] || p.get("src") || "سرویس و خدمات";
-}
-
-function onlyDigits(s){
-  const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-  let res = String(s || "");
-  persianDigits.forEach((pd, i) => { res = res.replace(new RegExp(pd, 'g'), i); });
-  return res.replace(/\D/g,'');
-}
-
-function addDays(base,days){const d=new Date(base);d.setDate(d.getDate()+days);return d}
-function persianLabel(date){
-  try {
-    return new Intl.DateTimeFormat("fa-IR-u-ca-persian",{weekday:"long",day:"2-digit",month:"long"}).format(date);
-  } catch { return date.toLocaleDateString("fa-IR"); }
-}
-
-// ===== ویجت زمان با رندر فوری ۰ ثانیه‌ای!
-(function initTimeWidget(){
-  const selDate = document.getElementById("tw-date");
-  const slotsBox = document.getElementById("tw-slots");
-  let selectedWindow = null;
-
-  const today = new Date();
-  for(let i=0; i<=14; i++){
-    const d = addDays(today, i);
-    const label = persianLabel(d);
-    const op = document.createElement("option");
-    op.value = label;
-    op.textContent = label;
-    selDate.appendChild(op);
-  }
-
-  function paintSlots(bookedSlots = []){
-    slotsBox.innerHTML = "";
-    WINDOWS.forEach(w => {
-      const isBooked = bookedSlots.includes(w);
-      const div = document.createElement("div");
-      if (isBooked && selectedWindow === w) selectedWindow = null;
-      const isSelected = (!isBooked && selectedWindow === w);
-      div.className = "tw-slot" + (isBooked ? " disabled" : "") + (isSelected ? " selected" : "");
-      div.textContent = isBooked ? `${w} (تکمیل)` : w;
-
-      if (!isBooked) {
-        div.onclick = () => {
-          selectedWindow = (selectedWindow === w) ? null : w;
-          paintSlots(bookedSlots);
-        };
-      }
-      slotsBox.appendChild(div);
-    });
-  }
-
-  async function loadAndRenderSlots(){
-    // ۱. اول در ۰ ثانیه همه بازه‌ها را نشان بده تا مشتری معطل نشود!
-    paintSlots([]);
-
-    // ۲. در پس‌زمینه بازه‌های پر شده را بگیر و خاکستری کن
-    try {
-      const res = await fetch(`${API}/api/requests/booked-slots?date=${encodeURIComponent(selDate.value)}`, { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        paintSlots(data.booked || []);
-      }
-    } catch (e) {}
-  }
-
-  selDate.addEventListener("change", () => {
-    selectedWindow = null;
-    loadAndRenderSlots();
+    slotsBox.appendChild(d);
   });
-  loadAndRenderSlots();
-
-  window.__timePref__ = {
-    get date(){ return selDate.value || ""; },
-    get window(){ return selectedWindow || ""; }
-  };
-})();
-
-function closeAddrModal(){
-  document.getElementById("addrConfirmModal").style.display = "none";
 }
 
-function showSecondPhone() {
-  document.getElementById("addPhoneBtnWrap").style.display = "none";
-  document.getElementById("secondPhoneBox").style.display = "block";
-  document.getElementById("formPhone2").focus();
+async function checkBooked(){
+  drawSlots([]); // نمایش فوری در ۰ ثانیه
+  try{
+    const r = await fetch(`${API}/api/requests/booked-slots?date=${encodeURIComponent(selDate.value)}`);
+    if(r.ok){ const d = await r.json(); drawSlots(d.booked||[]); }
+  }catch(e){}
 }
+selDate.onchange = () => { selectedWin=""; checkBooked(); };
+checkBooked();
 
-function setAddrLabel(val, chipEl) {
-  document.getElementById("formAddressLabel").value = val;
-  document.querySelectorAll(".q-chip").forEach(c => c.classList.remove("active"));
-  if (chipEl) chipEl.classList.add("active");
-}
+// بیدار کردن سرور در پس‌زمینه
+fetch(`${API}/api/customers`).then(r=>r.json()).then(d=>{cachedCusts=d.customers||[]}).catch(()=>{});
 
-function backToStep1() {
-  document.getElementById("step2FormBox").style.display = "none";
-  document.getElementById("step1Box").style.display = "block";
-}
+function showPhone2(){ document.getElementById("addPhoneWrap").style.display="none"; document.getElementById("phone2Box").style.display="block"; }
+function pickLabel(v,el){ document.getElementById("fLabel").value=v; document.querySelectorAll(".q-chip").forEach(c=>c.classList.remove("active")); el.classList.add("active"); }
+function backStep1(){ document.getElementById("step2Box").style.display="none"; document.getElementById("step1Box").style.display="block"; }
 
-// باز کردن فوری فرم مرحله ۲ در همین صفحه (بدون رفرش و بدون صفحه سبز خالی)
-function openInlineForm(phone, existingCustomer = null, isNewAddr = false, timeNote = "") {
-  closeAddrModal();
-  document.getElementById("step1Box").style.display = "none";
-  document.getElementById("step2FormBox").style.display = "block";
-
-  document.getElementById("formPhone").value = phone;
-  document.getElementById("formNotes").value = timeNote;
-
-  if (existingCustomer) {
-    document.getElementById("formFullName").value = existingCustomer.fullName || "";
-    if (existingCustomer.secondaryPhones && existingCustomer.secondaryPhones[0]) {
-      showSecondPhone();
-      document.getElementById("formPhone2").value = existingCustomer.secondaryPhones[0];
-    }
-    if (isNewAddr) {
-      document.getElementById("formHeaderTitle").textContent = "افزودن آدرس جدید به پرونده شما";
-      document.getElementById("formSubBadge").textContent = `${existingCustomer.fullName} عزیز، عنوان و نشانی مکان جدید را وارد کنید:`;
-      setAddrLabel("محل کار", document.querySelectorAll(".q-chip")[1]);
-      document.getElementById("formAddress").value = "";
-      document.getElementById("formAddress").focus();
-    }
-  } else {
-    document.getElementById("formHeaderTitle").textContent = "ثبت مشخصات و آدرس خدمات";
-    document.getElementById("formSubBadge").textContent = "مشخصات خود را جهت اعزام تکنسین وارد نمایید:";
-    document.getElementById("formFullName").value = "";
-    document.getElementById("formAddress").value = "";
-    setAddrLabel("خونه", document.querySelectorAll(".q-chip")[0]);
-    document.getElementById("formFullName").focus();
+function openStep2(phone, cust, tNote){
+  document.getElementById("addrModal").style.display="none";
+  document.getElementById("step1Box").style.display="none";
+  document.getElementById("step2Box").style.display="block";
+  document.getElementById("fPhone").value = phone;
+  document.getElementById("fNotes").value = tNote;
+  if(cust){
+    document.getElementById("formTitle").textContent = "افزودن آدرس جدید";
+    document.getElementById("fName").value = cust.fullName || "";
+    document.getElementById("fLabel").value = "محل کار";
   }
 }
 
-async function submitForExistingAddress(customer, chosenAddressObj, timeNote, btnEl) {
-  const originalText = btnEl.textContent;
-  btnEl.disabled = true;
-  btnEl.textContent = "در حال ثبت درخواست...";
+document.getElementById("go").onclick = async () => {
+  const phone = cleanNum(document.getElementById("phone").value);
+  const err1 = document.getElementById("err1"); err1.style.display="none";
+  if(!/^09\d{9}$/.test(phone)){ err1.textContent="شماره موبایل را ۱۱ رقمی با 09 وارد کنید."; err1.style.display="block"; return; }
 
-  try {
-    const cleanTitle = (chosenAddressObj.label || "خونه").trim();
-    const finalNotes = [`مکان: ${cleanTitle}`, timeNote].filter(Boolean).join(" | ");
-
-    const make = await fetch(`${API}/api/requests`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customerId: customer._id,
-        phone: customer.phone,
-        fullName: customer.fullName,
-        address: chosenAddressObj.fullAddress,
-        addressLabel: cleanTitle,
-        issueType: getSourcePath(),
-        notes: finalNotes
-      })
-    });
-
-    const reqDoc = await make.json();
-    if (make.ok) {
-      const finalCode = reqDoc.request?.invoiceCode || reqDoc.invoiceCode || "ثبت شد";
-      location.href = `request-confirmed.html?code=${encodeURIComponent(finalCode)}`;
-    } else {
-      alert("خطا در ثبت درخواست. لطفاً مجدداً تلاش کنید.");
-      btnEl.disabled = false;
-      btnEl.textContent = originalText;
-    }
-  } catch (e) {
-    alert("خطا در ارتباط با سرور.");
-    btnEl.disabled = false;
-    btnEl.textContent = originalText;
-  }
-}
-
-document.getElementById("go").addEventListener("click", async ()=>{
-  const phone = onlyDigits(document.getElementById("phone").value);
-  const err = document.getElementById("err1");
+  const tNote = selectedWin ? `زمان هماهنگی: ${selDate.value} ساعت ${selectedWin}` : "";
   const goBtn = document.getElementById("go");
-  err.style.display = "none";
+  goBtn.disabled = true; goBtn.textContent = "در حال بررسی...";
 
-  if(!/^09\d{9}$/.test(phone)){
-    err.textContent = "لطفاً شماره موبایل را به صورت ۱۱ رقمی و با 09 وارد کنید.";
-    err.style.display = "block";
-    return;
-  }
-
-  const prefDate = window.__timePref__?.date || "";
-  const prefWindow = window.__timePref__?.window || "";
-  const timeNote = prefWindow ? `زمان هماهنگی: ${prefDate} ساعت ${prefWindow}` : "";
-
-  goBtn.disabled = true;
-  goBtn.textContent = "در حال بررسی...";
-
-  try {
-    let customers = cachedCustomersList;
-    if (!customers) {
-      const r = await fetch(`${API}/api/customers`, { cache: "no-store" });
-      if (r.ok) {
-        const data = await r.json();
-        customers = data.customers || [];
-        cachedCustomersList = customers;
-      }
+  try{
+    if(!cachedCusts){
+      const ctrl = new AbortController();
+      setTimeout(()=>ctrl.abort(), 4500);
+      const r = await fetch(`${API}/api/customers`, {signal:ctrl.signal});
+      if(r.ok){ const d = await r.json(); cachedCusts = d.customers||[]; }
     }
-
-    const existingCustomer = (customers || []).find(
-      c => c.phone === phone || (c.secondaryPhones || []).includes(phone)
-    );
-
-    if (existingCustomer) {
-      const addresses = (existingCustomer.addresses && existingCustomer.addresses.length > 0)
-        ? existingCustomer.addresses
-        : [{ label: "خونه", fullAddress: existingCustomer.address || "آدرس ثبت‌شده در سیستم" }];
-
-      document.getElementById("modalGreet").textContent = `${existingCustomer.fullName} عزیز، خوش آمدید!`;
-      const questionEl = document.getElementById("modalQuestion");
-      const listEl = document.getElementById("modalAddressesList");
-      listEl.innerHTML = "";
-
-      if (addresses.length === 1) {
-        const a = addresses[0];
+    const exist = (cachedCusts||[]).find(c => c.phone===phone || (c.secondaryPhones||[]).includes(phone));
+    if(exist){
+      const addrs = (exist.addresses && exist.addresses.length) ? exist.addresses : [{label:"خونه",fullAddress:exist.address||"آدرس ثبت‌شده"}];
+      document.getElementById("mGreet").textContent = `${exist.fullName} عزیز، خوش آمدید`;
+      const mList = document.getElementById("mList"); mList.innerHTML = "";
+      addrs.forEach(a => {
         const title = a.label || "خونه";
-        questionEl.innerHTML = `آیا درخواست خدمات شما برای آدرس <strong style="color:var(--gold-strong)">«${title}»</strong> ثبت شود؟`;
-        
-        const card = document.createElement("div");
-        card.className = "addr-choice-card";
-        card.innerHTML = `
-          <div class="addr-choice-title"><span>📍 ${title}</span></div>
-          <div class="addr-choice-text">${a.fullAddress}</div>
-          <button class="addr-confirm-btn">بله، ثبت درخواست برای «${title}» ✅</button>
-        `;
-        card.querySelector("button").onclick = function() {
-          submitForExistingAddress(existingCustomer, a, timeNote, this);
+        const box = document.createElement("div"); box.className = "addr-card";
+        box.innerHTML = `<div style="color:var(--gold-strong);font-weight:bold;font-size:14px;">📍 ${title}</div>
+          <div style="font-size:12px;color:#cfe3dc;margin:4px 0 8px;">${a.fullAddress}</div>
+          <button class="btn" style="margin:0;padding:9px;font-size:13px;">بله، ثبت برای «${title}» ✅</button>`;
+        box.querySelector("button").onclick = async function(){
+          this.disabled=true; this.textContent="در حال ثبت...";
+          const res = await fetch(`${API}/api/requests`,{
+            method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({customerId:exist._id,phone:exist.phone,fullName:exist.fullName,address:a.fullAddress,addressLabel:title,issueType:"سرویس و خدمات",notes:[`مکان: ${title}`,tNote].filter(Boolean).join(" | ")})
+          });
+          const doc = await res.json();
+          location.href = `request-confirmed.html?code=${encodeURIComponent(doc.request?.invoiceCode||"OK")}`;
         };
-        listEl.appendChild(card);
-      } else {
-        questionEl.textContent = "درخواست خدمات شما برای کدام مکان ثبت شود؟";
-        addresses.forEach((a, idx) => {
-          const title = a.label || `آدرس ${idx + 1}`;
-          const card = document.createElement("div");
-          card.className = "addr-choice-card";
-          card.innerHTML = `
-            <div class="addr-choice-title"><span>📍 ${title}</span></div>
-            <div class="addr-choice-text">${a.fullAddress}</div>
-            <button class="addr-confirm-btn">ثبت درخواست برای «${title}» ✅</button>
-          `;
-          card.querySelector("button").onclick = function() {
-            submitForExistingAddress(existingCustomer, a, timeNote, this);
-          };
-          listEl.appendChild(card);
-       
+        mList.appendChild(box);
+      });
+      document.getElementById("newAddrBtn").onclick = () => openStep2(phone, exist, tNote);
+      document.getElementById("addrModal").style.display = "flex";
+      return;
+    }
+    openStep2(phone, null, tNote);
+  }catch(e){
+    openStep2(phone, null, tNote);
+  }finally{
+    goBtn.disabled = false; goBtn.textContent = "ثبت و ادامه";
+  }
+};
+
+document.getElementById("submitBtn").onclick = async () => {
+  const phone = document.getElementById("fPhone").value;
+  const phone2 = cleanNum(document.getElementById("fPhone2").value);
+  const fullName = document.getElementById("fName").value.trim();
+  const issueType = document.getElementById("fIssue").value;
+  const addressLabel = document.getElementById("fLabel").value.trim() || "خونه";
+  const address = document.getElementById("fAddr").value.trim();
+  const notes = document.getElementById("fNotes").value.trim();
+  const err2 = document.getElementById("err2"); err2.style.display="none";
+
+  if(!fullName || !address){ err2.textContent="نام و آدرس دقیق الزامی است."; err2.style.display="block"; return; }
+  const btn = document.getElementById("submitBtn"); btn.disabled=true; btn.textContent="در حال ثبت...";
+
+  try{
+    await fetch(`${API}/api/customers`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({phone,fullName,address,addressLabel,secondaryPhones:phone2?[phone2]:[],notes})
+    });
+    const r = await fetch(`${API}/api/requests`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({phone,fullName,address,addressLabel,issueType,notes:[`مکان: ${addressLabel}`,notes].filter(Boolean).join(" | ")})
+    });
+    const d = await r.json();
+    location.href = `request-confirmed.html?code=${encodeURIComponent(d.request?.invoiceCode||"OK")}`;
+  }catch(e){
+    err2.textContent="خطا در ارتباط با سرور."; err2.style.display="block";
+    btn.disabled=false; btn.textContent="ثبت نهایی و دریافت کد پیگیری";
+  }
+};
+</script>
+</body>
+</html>
+<!-- END -->
+        
