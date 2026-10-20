@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SamiWater | پنل تکنسین</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0f3b2d;--dark:#09261d;--gold:#d9b24c;--gold-lt:#f5e6b8;--bg:#e8efec;--card:#ffffff;--txt:#1e293b}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Vazirmatn",Tahoma,sans-serif}
+body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
+.top{background:linear-gradient(180deg,var(--green),var(--dark));color:#fff;padding:16px 14px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 4px 12px #0003}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--gold);font-size:16px}
+.badge-top{background:#154c3a;border:1px solid var(--gold);color:var(--gold-lt);padding:5px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
+.wrap{max-width:520px;margin:0 auto;padding:12px}
+.box{background:var(--card);border:1.5px solid #cbd5e1;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 3px 8px #0000000d}
+.box-gold{border-color:var(--gold);background:#fffdf7}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center}
+.lbl{font-size:11px;color:#64748b;margin-bottom:4px;font-weight:600}
+.val{font-size:13px;font-weight:800;color:var(--green)}
+.row-btw{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cir-btn{display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1.5px solid var(--green);color:var(--green);padding:8px 12px;border-radius:30px;font-size:12px;font-weight:800;text-decoration:none;cursor:pointer;white-space:nowrap}
+.cir-gold{background:#fefce8;border-color:#ca8a04;color:#854d0e}
+.btn-main{width:100%;background:linear-gradient(180deg,var(--green),var(--dark));color:var(--gold-lt);border:1.5px solid var(--gold);padding:14px;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;box-shadow:0 4px 10px #0f3b2d40}
+.btn-ret{width:100%;background:#fff1f2;color:#be123c;border:1px solid #fda4af;padding:10px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:2px solid var(--gold);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px;z-index:90}
+.bn-it{color:#cbd5e1;text-align:center;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bn-it.active{color:var(--gold)}
+.inp{width:100%;padding:10px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;margin-bottom:8px;font-family:inherit}
+.m-bg{position:fixed;inset:0;background:#09261dd9;display:none;justify-content:center;align-items:center;z-index:200;padding:14px}
+.m-bx{background:#fff;width:min(440px,100%);border-radius:16px;padding:16px;border:2px solid var(--gold)}
+.req-item{cursor:pointer;transition:.15s;border-right:5px solid var(--green)}
+.req-item:active{transform:scale(.98)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">💧 سامی‌واتر | پنل تکنسین</div>
+  <div id="topAct" class="badge-top" onclick="backToList()">📋 سفارش‌ها</div>
+</div>
+
+<div class="wrap">
+  <div id="loginBox" class="box" style="display:none;margin-top:20px;text-align:center">
+    <h3 style="color:var(--green);margin-bottom:10px">🔐 ورود تکنسین</h3>
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px">نام خود و کد دسترسی را وارد نمایید</p>
+    <input id="tNameInp" class="inp" placeholder="نام تکنسین (مثلاً: مهندس شهریاری)">
+    <input id="tPinInp" type="password" inputmode="numeric" class="inp" style="text-align:center;direction:ltr" placeholder="کد ورود (پیش‌فرض: 1234)">
+    <button class="btn-main" onclick="doLogin()">ورود به کارتابل ✅</button>
+  </div>
+
+  <div id="listView" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <b id="tGreet" style="color:var(--green);font-size:14px"></b>
+      <button class="cir-btn" style="padding:4px 10px" onclick="loadData()">🔄 بروزرسانی</button>
+    </div>
+    <div id="ordersList"></div>
+  </div>
+
+  <div id="detailView" style="display:none">
+    <div class="box box-gold">
+      <div class="grid3">
+        <div><div class="lbl">شماره فاکتور</div><div id="dCode" class="val" style="direction:ltr">---</div></div>
+        <div><div class="lbl">نوع خدمت</div><div id="dType" class="val" style="color:#b45309">---</div></div>
+        <div><div class="lbl">تاریخ و ساعت</div><div id="dDate" class="val" style="font-size:11px">---</div><div id="dTime" style="font-size:11px;color:#475569;font-weight:700;margin-top:2px"></div></div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="row-btw">
+        <div style="text-align:right">
+          <div id="dCust" style="font-size:15px;font-weight:800;color:var(--green)">---</div>
+          <div id="dPhoneTxt" style="font-size:13px;color:#475569;direction:ltr;margin-top:3px;font-weight:700">---</div>
+        </div>
+        <a id="dCallBtn" href="#" class="cir-btn">📞 تماس با مشتری</a>
+      </div>
+      <div id="dTempPhoneBox" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #cbd5e1" class="row-btw">
+        <div style="font-size:12px;color:#854d0e;font-weight:700">📌 هماهنگی این نوبت: <span id="dTempPhoneTxt" style="direction:ltr"></span></div>
+        <a id="dTempCallBtn" href="#" class="cir-btn cir-gold">📞 تماس هماهنگی</a>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="row-btw">
+        <div style="flex:1">
+          <div id="dAddrLbl" style="font-size:12px;font-weight:800;color:#b45309;margin-bottom:3px">📍 آدرس</div>
+          <div id="dAddr" style="font-size:13px;line-height:1.7;color:var(--txt);font-weight:600">---</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <a id="dMapBtn" href="#" target="_blank" class="cir-btn">🗺️ مسیریابی</a>
+          <button class="cir-btn cir-gold" style="font-size:10px;padding:5px 8px" onclick="saveMyGps()">📍 ثبت لوکیشن</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="lbl">شرح خدمات</div>
+      <div id="dDesc" style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:10px">---</div>
+      <div class="lbl">سوابق فیلترها و توضیحات اپراتور</div>
+      <div id="dNotes" style="font-size:12px;line-height:1.8;color:#0f3b2d;background:#f0fdf4;border:1px solid #bbf7d0;padding:10px;border-radius:10px;font-weight:600">---</div>
+    </div>
+
+    <button class="btn-main" onclick="openDoneModal()">📝 ثبت گزارش و تکمیل فاکتور</button>
+    <button class="btn-ret" onclick="openRetModal()">↩️ عدم هماهنگی / برگشت به اپراتور</button>
+  </div>
+
+  <div id="statsView" class="box" style="display:none"></div>
+</div>
+<!-- PART 1 END -->
+            <div id="tModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="m-bx">
+    <h4 id="tmTit" style="color:var(--green);margin-bottom:10px">ثبت</h4>
+    <div id="tmBod"></div>
+  </div>
+</div>
+
+<div class="bnav">
+  <div class="bn-it active" id="navReq" onclick="backToList()"><span>📋</span><span>درخواست‌ها</span></div>
+  <div class="bn-it" id="navSt" onclick="showStats()"><span>📊</span><span>کارکرد من</span></div>
+  <a class="bn-it" href="sms:09130051733"><span>💬</span><span>پیام به اپراتور</span></a>
+  <a class="bn-it" href="tel:09130051733"><span>📞</span><span>تماس با اپراتور</span></a>
+</div>
+
+<script>
+const API = "https://samiwater-backend.onrender.com/api";
+const $ = id => document.getElementById(id);
+let myName = localStorage.getItem("sw_tech_name") || "";
+let allReqs = [], curReq = null;
+
+function toJ(d) { if (!d) return "---"; try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; } }
+function toTm(d) { if (!d) return ""; try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
+
+function init() {
+  if (!myName) {
+    $("loginBox").style.display = "block";
+    $("listView").style.display = "none";
+    $("detailView").style.display = "none";
+  } else {
+    $("loginBox").style.display = "none";
+    $("tGreet").textContent = "👨‍🔧 کارتابل: " + myName;
+    loadData();
+  }
+}
+
+function doLogin() {
+  const n = $("tNameInp").value.trim(), p = $("tPinInp").value.trim();
+  if (!n) return alert("لطفاً نام خود را وارد کنید");
+  if (p !== "1234" && p !== "0913") return alert("کد ورود اشتباه است");
+  myName = n;
+  localStorage.setItem("sw_tech_name", n);
+  init();
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(API + "/requests");
+    if (r.ok) allReqs = (await r.json()).requests || [];
+    backToList();
+  } catch (e) { alert("خطا در دریافت اطلاعات از سرور"); }
+}
+
+function backToList() {
+  if (!myName) return;
+  $("statsView").style.display = "none";
+  $("detailView").style.display = "none";
+  $("listView").style.display = "block";
+  $("topAct").textContent = "🚪 خروج (" + myName + ")";
+  $("topAct").onclick = () => { if (confirm("خروج از حساب تکنسین؟")) { localStorage.removeItem("sw_tech_name"); myName = ""; init(); } };
+
+  const mine = allReqs.filter(r => (r.status === "assigned" || r.status === "open") && (r.technicianName || "").trim() === myName)
+    .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+
+  if (!mine.length) {
+    $("ordersList").innerHTML = '<div class="box" style="text-align:center;padding:24px;color:#64748b">در حال حاضر سفارشی در کارتابل شما نیست ✅</div>';
+    return;
+  }
+
+  $("ordersList").innerHTML = mine.map(r => '<div class="box req-item" onclick="openOrder(\'' + r._id + '\')">' +
+    '<div class="row-btw" style="margin-bottom:6px">' +
+    '<span style="font-weight:800;color:var(--green);font-size:14px">👤 ' + (r.snapshot?.fullName || "مشتری") + ' (📍 ' + (r.addressLabel || "خونه") + ')</span>' +
+    '<span style="background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:800;direction:ltr">' + (r.invoiceCode || "---") + '</span></div>' +
+    '<div style="font-size:12px;color:#475569;margin-bottom:6px">' + (r.snapshot?.address || "---") + '</div>' +
+    '<div class="row-btw" style="font-size:11px;color:#0f3b2d;font-weight:700;border-top:1px solid #f1f5f9;padding-top:6px">' +
+    '<span>🛠️ ' + (r.issueType || "سرویس") + '</span><span>📅 ' + toJ(r.createdAt) + ' | جزئیات ⬅️</span></div></div>'
+  ).join("");
+}
+
+function openOrder(id) {
+  curReq = allReqs.find(x => x._id === id);
+  if (!curReq) return;
+  $("listView").style.display = "none";
+  $("statsView").style.display = "none";
+  $("detailView").style.display = "block";
+  $("topAct").textContent = "🔙 بازگشت به لیست";
+  $("topAct").onclick = backToList;
+
+  $("dCode").textContent = curReq.invoiceCode || "---";
+  $("dType").textContent = curReq.issueType || "خدمات";
+  $("dDate").textContent = "تاریخ: " + toJ(curReq.createdAt);
+  $("dTime").textContent = "ساعت: " + toTm(curReq.createdAt);
+
+  const ph = curReq.snapshot?.phone || "";
+  $("dCust").textContent = curReq.snapshot?.fullName || "نامشخص";
+  $("dPhoneTxt").textContent = ph + (curReq.snapshot?.altPhone ? " | " + curReq.snapshot.altPhone : "");
+  $("dCallBtn").href = "tel:" + ph;
+
+  if (curReq.tempPhone) {
+    $("dTempPhoneBox").style.display = "flex";
+    $("dTempPhoneTxt").textContent = curReq.tempPhone;
+    $("dTempCallBtn").href = "tel:" + curReq.tempPhone.replace(/\D/g, "");
+  } else {
+    $("dTempPhoneBox").style.display = "none";
+  }
+
+  $("dAddrLbl").textContent = "📍 نشانی («" + (curReq.addressLabel || "خونه") + "»)";
+  $("dAddr").textContent = curReq.snapshot?.address || "---";
+
+  const loc = curReq.locationUrl || "";
+  $("dMapBtn").href = loc ? (loc.startsWith("http") ? loc : "https://maps.google.com/?q=" + loc) : "https://maps.google.com/?q=" + encodeURIComponent("اصفهان " + (curReq.snapshot?.address || ""));
+  $("dDesc").textContent = curReq.issueType || "سرویس و خدمات";
+  $("dNotes").textContent = curReq.techNote || curReq.resultNote || "توضیح خاصی توسط اپراتور درج نشده است.";
+}
+
+function saveMyGps() {
+  if (!navigator.geolocation) return alert("مرورگر شما از GPS پشتیبانی نمی‌کند");
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const coords = pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
+    await fetch(API + "/requests/" + curReq._id + "/location", {
+      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locationUrl: coords })
+    });
+    curReq.locationUrl = coords;
+    $("dMapBtn").href = "https://maps.google.com/?q=" + coords;
+    alert("لوکیشن دقیق این آدرس با موفقیت در پرونده مشتری ذخیره شد 📍✅");
+  }, () => alert("لطفاً مکان‌یاب (GPS) گوشی خود را روشن کنید."));
+}
+
+function openDoneModal() {
+  $("tmTit").textContent = "✅ ثبت گزارش کار و تکمیل فاکتور " + (curReq?.invoiceCode || "");
+  $("tmBod").innerHTML = '<label style="font-size:12px;font-weight:700">فیلترها / قطعات تعویض‌شده و توضیحات فاکتور *</label>' +
+    '<input id="wRep" class="inp" placeholder="مثلاً: تعویض سه‌گانه پایین و ممبران + تست سختی">' +
+    '<button class="btn-main" onclick="subDone()">تایید و بستن نهایی فاکتور ✅</button>';
+  $("tModal").style.display = "flex";
+}
+
+async function subDone() {
+  const rep = $("wRep").value.trim();
+  if (!rep) return alert("لطفاً قطعات تعویضی یا گزارش کار را بنویسید");
+  await fetch(API + "/requests/" + curReq._id + "/status", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "done", technicianName: myName, workReport: rep })
+  });
+  $("tModal").style.display = "none";
+  alert("فاکتور با موفقیت تکمیل شد و تایمر مشتری شارژ گردید ✅");
+  loadData();
+}
+
+function openRetModal() {
+  $("tmTit").textContent = "↩️ علت عدم هماهنگی / برگشت به اپراتور";
+  $("tmBod").innerHTML = '<input id="rReas" class="inp" placeholder="مثلاً: مشتری پاسخ نداد / گفت هفته آینده...">' +
+    '<button class="btn-ret" style="padding:12px" onclick="subRet()">ارسال به کارتابل اپراتور ↩️</button>';
+  $("tModal").style.display = "flex";
+}
+
+async function subRet() {
+  const r = $("rReas").value.trim(); if (!r) return alert("ذکر علت الزامی است");
+  await fetch(API + "/requests/" + curReq._id + "/status", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "pending", returnNote: "(" + myName + ") " + r })
+  });
+  $("tModal").style.display = "none"; loadData();
+}
+
+function showStats() {
+  if (!myName) return;
+  $("listView").style.display = "none"; $("detailView").style.display = "none"; $("statsView").style.display = "block";
+  const done = allReqs.filter(r => (r.status === "done" || r.status === "completed") && r.technicianName === myName);
+  const unset = done.filter(r => !r.isSettled).length;
+  $("statsView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">📊 آمار کارکرد: ' + myName + '</h4>' +
+    '<p style="font-size:13px;margin-bottom:6px">✅ کل سرویس‌های انجام‌شده: <b>' + done.length + '</b></p>' +
+    '<p style="font-size:13px;color:#b45309">💰 فاکتورهای در انتظار تسویه با شرکت: <b>' + unset + ' مورد</b></p>';
+}
+
+init();
+</script>
+</body>
+</html>
+<!-- END -->
