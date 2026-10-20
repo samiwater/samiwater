@@ -120,7 +120,7 @@ th{background:#f8fafc;white-space:nowrap}
   </div>
 </div>
 <!-- PART 1 END -->
-<script>
+  <script>
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
 const uName = localStorage.getItem("username") || "مدیر ارشد";
@@ -131,9 +131,7 @@ let reqs = JSON.parse(localStorage.getItem("sw_reqs") || "[]");
 let techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری","تکنسین ۲"]');
 let aMap = {}, reqDays = 9999, archDays = 0;
 
-function toEn(s) {
-  return String(s || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
-}
+function toEn(s) { return String(s || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)); }
 function toJ(d) {
   if (!d) return "---";
   try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; }
@@ -153,41 +151,30 @@ function cmpJ(d) { return d ? normJ(toJ(d)) : "0000/00/00"; }
 
 function srcBdg(r) {
   if (uRole === "technician") return "";
-  const s = r.sourcePath || "";
   const map = {
     landing_urgent: ["🚨 فوری (لندینگ)", "#fee2e2", "#b91c1c"],
     phone_panel: ["📞 ثبت تلفنی", "#e0f2fe", "#0369a1"],
     reminder_panel: ["🔔 یادآور دوره‌ای", "#fef3c7", "#b45309"]
   };
-  const m = map[s] || ["🛠️ فرم سایت", "#f1f5f9", "#475569"];
+  const m = map[r.sourcePath || ""] || ["🛠️ فرم سایت", "#f1f5f9", "#475569"];
   return '<span class="bdg" style="background:' + m[1] + ';color:' + m[2] + ';margin-top:2px">' + m[0] + '</span>';
 }
 
 function tab(id, b) {
   document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
   document.querySelectorAll(".nb").forEach(x => x.classList.remove("active"));
-  $(id).classList.add("active");
-  b.classList.add("active");
+  $(id).classList.add("active"); b.classList.add("active");
 }
 
 function addT() {
   const v = $("tInp").value.trim();
-  if (v) {
-    techs.push(v);
-    localStorage.setItem("sw_techs", JSON.stringify(techs));
-    $("tInp").value = "";
-    drawAll();
-  }
+  if (v) { techs.push(v); localStorage.setItem("sw_techs", JSON.stringify(techs)); $("tInp").value = ""; drawAll(); }
 }
 
 function setReqF(d, b) {
   reqDays = d;
-  if (b) {
-    b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active"));
-    b.classList.add("active");
-  }
-  $("rF").value = ""; $("rT").value = "";
-  drawReqs();
+  if (b) { b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active")); b.classList.add("active"); }
+  $("rF").value = ""; $("rT").value = ""; drawReqs();
 }
 
 function stBdg(r) {
@@ -195,8 +182,7 @@ function stBdg(r) {
     let t = "بدون زمان", due = false;
     if (r.suspendUntil) {
       const rem = Math.ceil((new Date(r.suspendUntil) - Date.now()) / 86400000);
-      t = rem <= 0 ? "🔔 موعد پیگیری!" : rem + " روز مانده";
-      due = rem <= 0;
+      t = rem <= 0 ? "🔔 موعد پیگیری!" : rem + " روز مانده"; due = rem <= 0;
     }
     return '<span class="bdg ' + (due ? "st-al" : "st-s") + '">⏸️ معلق (' + t + ')</span>' +
       '<div style="font-size:10px;color:#6b21a8">دلیل: ' + (r.suspendReason || "---") + '</div>';
@@ -252,8 +238,12 @@ function drawRem() {
     const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180, lastServiceDate: c.createdAt }];
     ad.forEach((a, ix) => {
       if (a.isActiveTimer === false) return;
+      const lbl = (a.label || "خونه").trim();
+      const hasOpen = reqs.some(r => ["pending", "assigned", "open", "suspended"].includes(r.status) && (r.snapshot?.phone || r.customer?.phone) === c.phone && (ad.length === 1 || (r.addressLabel || "خونه").trim() === lbl));
+      if (hasOpen) return;
       const v = Number(a.serviceIntervalDays) || 180;
-      const rem = v - Math.floor((Date.now() - new Date(a.lastServiceDate || Date.now()).getTime()) / 86400000);
+      const lastT = Math.min(Date.now(), new Date(a.lastServiceDate || Date.now()).getTime());
+      const rem = v - Math.floor((Date.now() - lastT) / 86400000);
       if (rem <= 20) items.push({ c, a, ix, rem });
     });
   });
@@ -273,30 +263,84 @@ function drawRem() {
       '<td><b>📍 ' + (it.a.label || "خونه") + ':</b> ' + it.a.fullAddress + '</td>' +
       '<td><span class="bdg ' + (it.rem <= 0 ? "st-al" : "st-p") + '">' + txt + '</span><div style="font-size:10px;color:#64748b">تکمیل: ' + toJ(it.a.lastServiceDate) + '</div></td>' +
       '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
-      '<button class="btn" style="background:#16a34a" onclick="remAct(\'' + it.c._id + '\',' + it.ix + ',\'req\')">➕ ثبت نوبت</button>' +
-      '<button class="btn" style="background:#d97706" onclick="remAct(\'' + it.c._id + '\',' + it.ix + ',\'ext\')">⏳ +۱۵ روز</button>' +
-      '<button class="btn" style="background:#64748b" onclick="remAct(\'' + it.c._id + '\',' + it.ix + ',\'rst\')">🔄 ریست تایمر</button></td></tr>';
+      '<button class="btn" style="background:#16a34a" onclick="remNewReq(\'' + it.c._id + '\',' + it.ix + ')">➕ ثبت نوبت</button>' +
+      '<button class="btn" style="background:#7e22ce" onclick="remSusM(\'' + it.c._id + '\',' + it.ix + ')">⏸️ تعلیق به جاری</button>' +
+      '<button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
   }).join("");
 }
-
-async function remAct(cId, ix, m) {
-  const c = custs.find(x => x._id === cId); if (!c) return;
-  const ad = c.addresses?.length ? [...c.addresses] : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180 }];
+// PART 2 END
+    async function createRemReq(cId, ix) {
+  const c = custs.find(x => x._id === cId); if (!c) return null;
+  const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---" }];
   const a = ad[ix] || ad[0];
-  if (m === "req") {
-    await fetch(API + "/requests", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: a.label || "خونه", issueType: "سرویس دوره‌ای (یادآور)", sourcePath: "reminder_panel", isFromPanel: true })
-    });
-    alert("فاکتور در تب خدمات جاری ثبت شد ✅");
-  } else {
-    a.lastServiceDate = m === "ext" ? new Date(new Date(a.lastServiceDate || Date.now()).getTime() + 15 * 86400000) : new Date();
-    await fetch(API + "/customers/" + c._id, {
+  const r = await fetch(API + "/requests", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: a.label || "خونه", issueType: "سرویس دوره‌ای (یادآور)", sourcePath: "reminder_panel", isFromPanel: true })
+  });
+  const d = await r.json();
+  return d.request || null;
+}
+
+async function remNewReq(cId, ix) {
+  await createRemReq(cId, ix);
+  alert("نوبت در تب «خدمات جاری» ثبت شد ✅");
+  sync();
+}
+
+function remSusM(cId, ix) {
+  const c = custs.find(x => x._id === cId);
+  $("mTit").textContent = "⏸️ انتقال به خدمات جاری با تعلیق (" + (c?.fullName || "") + ")";
+  $("mBod").innerHTML = '<p style="font-size:11px;color:#475569;margin-bottom:6px">فاکتور با برچسب تعلیقی وارد «خدمات جاری» می‌شود.</p>' +
+    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟ * (عدد دلخواه)</label>' +
+    '<input id="rmSD" type="number" class="inp" placeholder="مثلاً: 5 یا 15">' +
+    '<label style="font-size:11px;font-weight:bold">دلیل تعلیق * (اجباری)</label>' +
+    '<input id="rmSR" class="inp" placeholder="مثلاً: مشتری گفت هفته آینده تماس بگیریم...">' +
+    '<button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="subRemSus(\'' + cId + '\',' + ix + ')">ثبت و انتقال به خدمات جاری ⏸️</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function subRemSus(cId, ix) {
+  const days = $("rmSD").value.trim(), reason = $("rmSR").value.trim();
+  if (!days || !reason) return alert("لطفاً تعداد روز و دلیل تعلیق را وارد کنید.");
+  const req = await createRemReq(cId, ix);
+  if (req) {
+    await fetch(API + "/requests/" + req._id + "/status", {
       method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: ad })
+      body: JSON.stringify({ status: "suspended", suspendReason: reason, suspendDays: days })
     });
   }
-  sync();
+  $("cModal").style.display = "none"; sync();
+}
+
+function remDelM(cId, ix) {
+  const c = custs.find(x => x._id === cId);
+  $("mTit").textContent = "🗑️ حذف نوبت این دوره و ریست تایمر (" + (c?.fullName || "") + ")";
+  $("mBod").innerHTML = '<p style="font-size:11px;color:#dc2626;margin-bottom:6px">با تایید این گزینه، این دوره در «فاکتورهای حذفی» ثبت شده و تایمر مشتری برای دوره بعد از امروز ریست می‌شود.</p>' +
+    '<label style="font-size:11px;font-weight:bold">دلیل حذف دوره و ریست تایمر * (اجباری)</label>' +
+    '<input id="rmDR" class="inp" placeholder="مثلاً: مشتری خودش فیلترها را تعویض کرده است...">' +
+    '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="subRemDel(\'' + cId + '\',' + ix + ')">ثبت در حذفیات و ریست تایمر 🗑️</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function subRemDel(cId, ix) {
+  const reason = $("rmDR").value.trim();
+  if (!reason) return alert("وارد کردن دلیل حذف و ریست تایمر الزامی است.");
+  const req = await createRemReq(cId, ix);
+  if (req) {
+    await fetch(API + "/requests/" + req._id + "/status", {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "deleted", deleteReason: reason, deletedBy: uName, resetTimerOnDelete: true })
+    });
+  }
+  const c = custs.find(x => x._id === cId);
+  if (c && c.addresses?.length) {
+    c.addresses[ix || 0].lastServiceDate = new Date();
+    await fetch(API + "/customers/" + c._id, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: c.addresses })
+    });
+  }
+  $("cModal").style.display = "none"; sync();
 }
 
 function newPhoneReq() {
@@ -328,8 +372,8 @@ function susM(id) {
   $("mTit").textContent = "⏸️ تعلیق فاکتور " + (r?.invoiceCode || "");
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل تعلیق *</label>' +
     '<input id="sR" class="inp" value="' + (r?.suspendReason || "") + '" placeholder="مثلاً: مسافرت مشتری...">' +
-    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟ (اختیاری)</label>' +
-    '<input id="sD" type="number" class="inp" placeholder="مثلاً: 7">' +
+    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟ (عدد دلخواه)</label>' +
+    '<input id="sD" type="number" class="inp" placeholder="مثلاً: 5">' +
     '<button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="subSus(\'' + id + '\')">ثبت تعلیق ⏸️</button>';
   $("cModal").style.display = "flex";
 }
@@ -344,7 +388,7 @@ function delM(id, c) {
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل حذف فاکتور *</label>' +
     '<input id="dR" class="inp" placeholder="مثلاً: مشتری خودش فیلتر عوض کرده...">' +
     '<label style="display:flex;gap:6px;font-size:11px;background:#f0fdf4;padding:8px;border-radius:6px;margin:6px 0">' +
-    '<input type="checkbox" id="dT" checked><b>راه‌اندازی مجدد تایمر ۱۸۰ روزه برای دوره بعد</b></label>' +
+    '<input type="checkbox" id="dT" checked><b>راه‌اندازی مجدد تایمر برای دوره بعد</b></label>' +
     '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="subDel(\'' + id + '\')">تایید و حذف 🗑️</button>';
   $("cModal").style.display = "flex";
 }
@@ -361,7 +405,7 @@ function drawDel() {
   $("delB").innerHTML = l.map(r => '<tr>' +
     '<td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td>' +
     '<td><span class="lnk" onclick="doss(\'' + (r.snapshot?.phone || "") + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td>' +
-    '<td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '</td>' +
+    '<td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '<br>' + srcBdg(r) + '</td>' +
     '<td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td>' +
     '<td>' + (r.deletedBy || "مدیر") + '</td>' +
     '<td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td>' +
@@ -409,7 +453,8 @@ function searchR() {
 function cTim(a) {
   const v = Number(a?.serviceIntervalDays) || 180;
   if (a?.isActiveTimer === false) return "غیرفعال";
-  const rem = v - Math.floor((Date.now() - new Date(a?.lastServiceDate || Date.now()).getTime()) / 86400000);
+  const lastT = Math.min(Date.now(), new Date(a?.lastServiceDate || Date.now()).getTime());
+  const rem = v - Math.floor((Date.now() - lastT) / 86400000);
   return rem <= 0 ? "موعد سرویس! (" + Math.abs(rem) + " روز گذشته) 🔴" : rem + " روز مانده ✅";
 }
 
@@ -445,7 +490,7 @@ function doss(ph, ix = 0) {
 }
 
 function aRow(l = "محل کار", t = "", v = 180, d = "") {
-  return '<div class="er" data-last="' + (d || "") + '" style="background:#f8fafc;border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:5px">' +
+  return '<div class="er" data-orig-v="' + (v || 180) + '" data-last="' + (d || "") + '" style="background:#f8fafc;border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:5px">' +
     '<div style="display:flex;gap:4px;margin-bottom:4px"><input class="inp al" style="margin:0;width:95px;font-weight:bold" value="' + l + '">' +
     '<input type="number" class="inp av" style="margin:0;width:70px" value="' + (v || 180) + '">' +
     '<button class="btn" style="background:#ef4444" onclick="this.closest(\'.er\').remove()">حذف</button></div>' +
@@ -471,7 +516,9 @@ async function saveC(id) {
   const ad = [];
   document.querySelectorAll(".er").forEach(r => {
     const l = r.querySelector(".al").value.trim() || "خونه", t = r.querySelector(".atx").value.trim();
-    const v = Number(r.querySelector(".av").value) || 180, d = r.dataset.last ? new Date(r.dataset.last) : new Date();
+    const v = Number(r.querySelector(".av").value) || 180, origV = Number(r.dataset.origV) || 180;
+    let d = r.dataset.last ? new Date(r.dataset.last) : new Date();
+    if (d.getTime() > Date.now() || v !== origV) d = new Date();
     if (t) ad.push({ label: l, fullAddress: t, serviceIntervalDays: v, lastServiceDate: d, isActiveTimer: true });
   });
   await fetch(id ? API + "/customers/" + id : API + "/customers", {
