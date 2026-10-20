@@ -9,7 +9,8 @@
 body{background:#f1f5f9;color:#1e293b;padding:10px}
 .hdr{background:#1e293b;color:#fff;padding:14px;border-radius:12px;margin-bottom:12px}
 .hdr-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
-.hdr h1{font-size:15px;color:#38bdf8}
+.hdr h1{font-size:15px;color:#38bdf8;display:flex;align-items:center;gap:8px}
+.hdr-logo{width:30px;height:30px;border-radius:7px;border:1.5px solid #facc15;background:#0f3b2d}
 .pill{background:#0f172a;color:#facc15;border:1px solid #facc15;padding:3px 8px;border-radius:14px;font-size:11px;font-weight:bold}
 .nav{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 @media(min-width:700px){.nav{grid-template-columns:repeat(4,1fr)}}
@@ -42,8 +43,8 @@ th{background:#f8fafc;white-space:nowrap}
 <body>
 <div class="hdr">
   <div class="hdr-t">
-    <h1>پنل مدیریت سامی‌واتر</h1>
-    <div style="display:flex;gap:5px"><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
+    <h1><img src="/logo-samiwater.png" class="hdr-logo" onerror="this.style.display='none'"> پنل مدیریت سامی‌واتر</h1>
+    <div style="display:flex;gap:5px"><a href="tech.html" target="_blank" class="pill" style="color:#4ade80;border-color:#4ade80;text-decoration:none">📱 پنل تکنسین</a><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
   </div>
   <nav class="nav">
     <button class="nb active" onclick="tab('t-req',this)">📋 خدمات جاری (<span id="actC">0</span>)</button>
@@ -79,7 +80,7 @@ th{background:#f8fafc;white-space:nowrap}
   <div style="display:flex;gap:6px;margin-bottom:8px"><input id="tInp" class="inp" style="margin:0;max-width:220px" placeholder="نام تکنسین جدید..."><button class="btn" onclick="addT()">+ افزودن تکنسین</button></div>
   <div id="tTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
   <div id="tStats" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;margin-bottom:10px;font-size:11px"></div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>مکان و خدمت</th><th>تکنسین مسئول</th><th>عملیات تکنسین / پشتیبانی</th></tr></thead><tbody id="techB"></tbody></table></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>مکان، خدمت و یادداشت تکنسین</th><th>تکنسین مسئول</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
 </div>
 
 <div id="t-rem" class="card">
@@ -101,7 +102,7 @@ th{background:#f8fafc;white-space:nowrap}
     <input id="sQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور...">
     <button class="btn" onclick="searchR()">🔍 جستجو</button>
   </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>خدمت و منبع</th><th>تکنسین و تسویه</th><th>تاریخ درخواست</th><th>تاریخ تکمیل (مبنا)</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">یکی از دکمه‌ها یا بازه تاریخ شمسی را انتخاب کنید.</td></tr></tbody></table></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>خدمت و گزارش تکنسین</th><th>تکنسین و تسویه</th><th>تاریخ درخواست</th><th>تاریخ تکمیل (مبنا)</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">یکی از دکمه‌ها یا بازه تاریخ شمسی را انتخاب کنید.</td></tr></tbody></table></div>
 </div>
 
 <div id="t-del" class="card">
@@ -128,6 +129,7 @@ const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
 const uName = localStorage.getItem("username") || "مدیر ارشد";
 const uRole = localStorage.getItem("role") || "admin";
+const SRV_TYPES = ["سرویس دوره‌ای (تعویض فیلتر)", "تعمیرات و عیب‌یابی", "خرید دستگاه", "نصب و راه‌اندازی", "متفرقه (شرح در توضیحات)"];
 
 let custs = JSON.parse(localStorage.getItem("sw_custs") || "[]");
 let reqs = JSON.parse(localStorage.getItem("sw_reqs") || "[]");
@@ -209,14 +211,14 @@ function drawReqs() {
 
   $("reqB").innerHTML = act.map(r => {
     const nm = r.snapshot?.fullName || "نامشخص", ph = r.snapshot?.phone || "", tit = r.addressLabel || "خونه";
-    const tO = ['<option value="">-- انتخاب و ارسال به تکنسین --</option>'].concat(techs.map(x => '<option value="' + x + '">' + x + '</option>')).join("");
+    const tO = ['<option value="">-- انتخاب و ارجاع به تکنسین --</option>'].concat(techs.map(x => '<option value="' + x + '">' + x + '</option>')).join("");
     return '<tr>' +
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
       '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + nm + '</span></td>' +
       '<td style="direction:ltr">' + ph + '</td>' +
       '<td><b>📍 ' + tit + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + srcBdg(r) + '</td>' +
       '<td>' + stBdg(r) + '</td>' +
-      '<td><select class="sel" onchange="if(this.value)upSt(\'' + r._id + '\',{status:\'assigned\',technicianName:this.value})">' + tO + '</select></td>' +
+      '<td><select class="sel" onchange="if(this.value)assignM(\'' + r._id + '\',this.value);this.value=\'\'">' + tO + '</select></td>' +
       '<td><select class="sel" onchange="onSel(\'' + r._id + '\',this.value,\'\')">' +
       '<option value="pending" ' + (r.status === "pending" ? "selected" : "") + '>در انتظار</option>' +
       '<option value="suspended" ' + (r.status === "suspended" ? "selected" : "") + '>⏸️ تعلیقی</option>' +
@@ -225,7 +227,32 @@ function drawReqs() {
   }).join("");
 }
 
-function drawTechs() {
+function assignM(id, tName) {
+  const r = reqs.find(x => x._id === id); if (!r) return;
+  const ph = r.snapshot?.phone || "", lbl = (r.addressLabel || "خونه").trim();
+  const prev = reqs.filter(x => x._id !== id && (x.status === "done" || x.status === "completed") && (x.snapshot?.phone === ph) && ((x.addressLabel || "خونه").trim() === lbl))
+    .slice(0, 3).map(x => toJ(x.completedAt || x.createdAt) + ": " + (x.workReport || x.issueType || "سرویس")).join(" // ");
+  const defNote = r.techNote || [r.resultNote, prev ? "سوابق: " + prev : ""].filter(Boolean).join(" // ");
+  const typeOpts = SRV_TYPES.map(s => '<option value="' + s + '" ' + (r.issueType === s ? "selected" : "") + '>' + s + '</option>').join("");
+
+  $("mTit").textContent = "📤 ارجاع فاکتور " + (r.invoiceCode || "") + " به «" + tName + "»";
+  $("mBod").innerHTML = '<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:7px;border-radius:6px;font-size:11px;margin-bottom:8px;color:#15803d"><b>👤 مشتری:</b> ' + (r.snapshot?.fullName || "") + ' (📍 ' + lbl + ')<br><b>🔎 آخرین سوابق این آدرس:</b> ' + (prev || "سابقه تکمیل‌شده‌ای ثبت نشده است") + '</div>' +
+    '<label style="font-size:11px;font-weight:bold">۱. نوع خدمت (نمایش در کارت تکنسین)</label>' +
+    '<select id="asTp" class="inp">' + typeOpts + '</select>' +
+    '<label style="font-size:11px;font-weight:bold">۲. شماره هماهنگی موقت این نوبت (اختیاری - مثلاً همسر یا نگهبان)</label>' +
+    '<input id="asPh" class="inp" style="direction:ltr" value="' + (r.tempPhone || "") + '" placeholder="مثلاً: 0913... (بدون نیاز به نوشتن در آدرس)">' +
+    '<label style="font-size:11px;font-weight:bold">۳. خلاصه سوابق فیلترها و توضیحات اپراتور برای تکنسین *</label>' +
+    '<input id="asNt" class="inp" value="' + defNote + '" placeholder="مثلاً: سه‌گانه مهر ۴۰۴ // هماهنگی قبل از ساعت ۳ // فاکتور رسمی">' +
+    '<button class="btn" style="width:100%;background:#0284c7;padding:10px;margin-top:4px" onclick="subAssign(\'' + id + '\',\'' + tName + '\')">تایید و ارسال به کارتابل «' + tName + '» 📤</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function subAssign(id, tName) {
+  await upSt(id, { status: "assigned", technicianName: tName, issueType: $("asTp").value, tempPhone: $("asPh").value.trim(), techNote: $("asNt").value.trim() });
+  $("cModal").style.display = "none";
+}
+// PART 2 END
+    function drawTechs() {
   const assignedAll = reqs.filter(r => r.status === "assigned" || r.status === "open");
   $("techC").textContent = assignedAll.length;
 
@@ -262,19 +289,22 @@ function drawTechs() {
 
   $("techB").innerHTML = inHand.map(r => {
     const ph = r.snapshot?.phone || "";
+    const tmpB = r.tempPhone ? '<div style="font-size:10px;color:#b45309;font-weight:bold">📞 هماهنگی موقت: ' + r.tempPhone + '</div>' : "";
+    const ntB = r.techNote ? '<div style="font-size:10px;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 5px;border-radius:4px;color:#15803d;margin-top:3px">📋 یادداشت تکنسین: ' + r.techNote + '</div>' : "";
     return '<tr>' +
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
       '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td>' +
-      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a></td>' +
-      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + srcBdg(r) + '</td>' +
+      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a>' + tmpB + '</td>' +
+      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + ntB + '</td>' +
       '<td><span class="bdg st-a">👨‍🔧 ' + (r.technicianName || "---") + '</span></td>' +
       '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
+      '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ ویرایش ارجاع</button>' +
       '<button class="btn" style="background:#16a34a" onclick="upSt(\'' + r._id + '\',{status:\'done\',technicianName:\'' + (r.technicianName || "") + '\'})">✅ انجام شد</button>' +
-      '<button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری (عدم هماهنگی)</button></td></tr>';
+      '<button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری</button></td></tr>';
   }).join("");
 }
-// PART 2 END
-    async function settleT(tName, cnt) {
+
+async function settleT(tName, cnt) {
   if (!cnt) return alert("فاکتور تسویه‌نشده‌ای برای " + tName + " وجود ندارد.");
   if (!confirm("آیا تسویه حساب " + cnt + " فاکتور برای «" + tName + "» ثبت و شمارنده صفر شود؟")) return;
   await fetch(API + "/requests/settle-tech", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ technicianName: tName }) });
@@ -314,7 +344,7 @@ function drawRem() {
           autoLock[c._id + "_" + ix] = true;
           fetch(API + "/requests", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: lbl, issueType: "سرویس دوره‌ای (موعد ۳ روزه)", sourcePath: "reminder_auto3", isFromPanel: true, preventDupOpen: true })
+            body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: lbl, issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_auto3", isFromPanel: true, preventDupOpen: true })
           }).then(() => sync());
         }
         return;
@@ -344,8 +374,8 @@ function drawRem() {
       '<button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
   }).join("");
 }
-
-function remTimeM(cId, ix, oldRem) {
+// PART 3 END
+    function remTimeM(cId, ix, oldRem) {
   const c = custs.find(x => x._id === cId);
   $("mTit").textContent = "⏳ تنظیم زمان جدید در صف یادآور (" + (c?.fullName || "") + ")";
   $("mBod").innerHTML = '<p style="font-size:11px;color:#475569;margin-bottom:6px">مشتری در همین تب «یادآور سرویس» باقی می‌ماند و ۳ روز مانده به موعد، خودکار وارد «خدمات جاری» می‌شود.</p>' +
@@ -363,9 +393,7 @@ async function subRemTime(cId, ix, oldRem) {
   const c = custs.find(x => x._id === cId); if (!c) return;
   const ad = c.addresses?.length ? [...c.addresses] : [{ label: "خونه", fullAddress: c.address || "---" }];
   const a = ad[ix] || ad[0];
-  a.serviceIntervalDays = d;
-  a.lastServiceDate = new Date();
-  a.inReminderQueue = true;
+  a.serviceIntervalDays = d; a.lastServiceDate = new Date(); a.inReminderQueue = true;
   a.reminderNote = r + " (" + toJ(new Date()) + ")";
   a.auditText = "🕵️ تغییر تایمر از " + oldRem + " به " + d + " روز توسط " + uName + " (" + toJ(new Date()) + ") | دلیل: " + r;
   await fetch(API + "/requests/customer-update/" + c._id, {
@@ -381,7 +409,7 @@ async function createRemReq(cId, ix) {
   const a = ad[ix] || ad[0];
   const r = await fetch(API + "/requests", {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: a.label || "خونه", issueType: "سرویس دوره‌ای (یادآور)", sourcePath: "reminder_panel", isFromPanel: true, preventDupOpen: true })
+    body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: a.label || "خونه", issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_panel", isFromPanel: true, preventDupOpen: true })
   });
   return (await r.json()).request || null;
 }
@@ -390,8 +418,8 @@ async function remToCurr(cId, ix) {
   await createRemReq(cId, ix);
   alert("فاکتور به تب «خدمات جاری» منتقل شد ✅"); sync();
 }
-// PART 3 END
-    function remDelM(cId, ix) {
+
+function remDelM(cId, ix) {
   const c = custs.find(x => x._id === cId);
   $("mTit").textContent = "🗑️ حذف نوبت این دوره و ریست تایمر (" + (c?.fullName || "") + ")";
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل حذف دوره و ریست تایمر * (اجباری)</label>' +
@@ -423,12 +451,15 @@ async function subRemDel(cId, ix) {
 }
 
 function newPhoneReq() {
+  const typeOpts = SRV_TYPES.map(s => '<option value="' + s + '">' + s + '</option>').join("");
   $("mTit").textContent = "📞 ثبت فاکتور تلفنی (پشتیبانی)";
-  $("mBod").innerHTML = '<input id="pPh" class="inp" style="direction:ltr" placeholder="شماره موبایل مشتری (0913...)">' +
+  $("mBod").innerHTML = '<input id="pPh" class="inp" style="direction:ltr" placeholder="شماره موبایل اصلی مشتری (0913...)">' +
     '<input id="pNm" class="inp" placeholder="نام و نام‌خانوادگی">' +
     '<input id="pLb" class="inp" value="خونه" placeholder="عنوان مکان (خونه / محل کار)">' +
     '<input id="pAd" class="inp" placeholder="آدرس کامل">' +
-    '<input id="pIs" class="inp" value="سرویس دوره‌ای و تعویض فیلتر" placeholder="نوع خدمت">' +
+    '<select id="pIs" class="inp">' + typeOpts + '</select>' +
+    '<input id="pTmp" class="inp" style="direction:ltr" placeholder="شماره هماهنگی موقت این نوبت (اختیاری)">' +
+    '<input id="pNt" class="inp" placeholder="خلاصه سوابق فیلترها / توضیحات برای تکنسین (اختیاری)">' +
     '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="subPhoneReq()">ثبت فوری در خدمات جاری ✅</button>';
   $("cModal").style.display = "flex";
 }
@@ -437,7 +468,7 @@ async function subPhoneReq() {
   if (!phone || !fullName) return alert("نام و شماره الزامی است");
   await fetch(API + "/requests", {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, fullName, address: $("pAd").value.trim(), addressLabel: $("pLb").value.trim() || "خونه", issueType: $("pIs").value.trim(), sourcePath: "phone_panel", isFromPanel: true })
+    body: JSON.stringify({ phone, fullName, address: $("pAd").value.trim(), addressLabel: $("pLb").value.trim() || "خونه", issueType: $("pIs").value, tempPhone: $("pTmp").value.trim(), techNote: $("pNt").value.trim(), sourcePath: "phone_panel", isFromPanel: true })
   });
   $("cModal").style.display = "none"; sync();
 }
@@ -458,8 +489,8 @@ function delM(id, c) {
     '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="if(!$(\'dR\').value.trim())return alert(\'دلیل الزامی است\');upSt(\'' + id + '\',{status:\'deleted\',deleteReason:$(\'dR\').value,deletedBy:uName,resetTimerOnDelete:$(\'dT\').checked});$(\'cModal\').style.display=\'none\'">تایید و حذف 🗑️</button>';
   $("cModal").style.display = "flex";
 }
-
-function drawDel() {
+// PART 4 END
+    function drawDel() {
   const l = reqs.filter(r => r.status === "deleted"); $("delC").textContent = l.length;
   $("delB").innerHTML = l.length ? l.map(r => '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + (r.snapshot?.phone || "") + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '<br>' + srcBdg(r) + '</td><td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td><td>' + (r.deletedBy || "مدیر") + '</td><td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">خالی است.</td></tr>';
 }
@@ -469,7 +500,8 @@ function rArch(l) {
   $("archB").innerHTML = l.length ? l.map(r => {
     const ph = r.snapshot?.phone || "", dD = r.completedAt || r.updatedAt || r.createdAt;
     const stB = r.isSettled ? '<div class="bdg st-d">💰 تسویه‌شده</div>' : '<div class="bdg st-p">⏳ تسویه‌نشده</div>';
-    return '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td style="direction:ltr">' + ph + '</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '<br>' + srcBdg(r) + '</td><td>' + (r.technicianName || "---") + '<br>' + stB + '</td><td>📅 ' + toJ(r.createdAt) + '</td><td style="color:#15803d;font-weight:bold">✅ ' + toJ(dD) + toTm(dD) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>';
+    const wRep = r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold;margin-top:2px">🔧 گزارش تکنسین: ' + r.workReport + '</div>' : "";
+    return '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td style="direction:ltr">' + ph + '</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + wRep + '<br>' + srcBdg(r) + '</td><td>' + (r.technicianName || "---") + '<br>' + stB + '</td><td>📅 ' + toJ(r.createdAt) + '</td><td style="color:#15803d;font-weight:bold">✅ ' + toJ(dD) + toTm(dD) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>';
   }).join("") : '<tr><td colspan="8" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>';
 }
 function loadArch(d, b) {
@@ -486,8 +518,8 @@ function searchR() {
     return !q || ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase().includes(q);
   }));
 }
-// PART 4 END
-    function cTim(a) {
+
+function cTim(a) {
   if (a?.isActiveTimer === false) return "غیرفعال";
   const rem = getRemDays(a);
   return rem <= 0 ? "موعد سرویس! (" + Math.abs(rem) + " روز گذشته) 🔴" : rem + " روز مانده ✅";
@@ -539,7 +571,7 @@ function doss(ph, ix = 0) {
   $("mBod").innerHTML = '<div style="font-size:12px;margin-bottom:6px"><b>شماره ۱:</b> <a href="tel:' + ph + '">' + ph + '</a> | <b>شماره ۲ و ۳:</b> ' + ((c?.secondaryPhones || []).join(" , ") || "ندارد") + '</div>' +
     '<div style="margin-bottom:5px">' + ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="doss(\'' + ph + '\',' + i + ')">📍 ' + (a.label || "خونه") + '</button>').join("") + '</div>' +
     '<div style="background:#f8fafc;padding:7px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:8px;font-size:11px"><b>نشانی «' + (cu.label || "خونه") + '»:</b> ' + cu.fullAddress + '<div style="color:#15803d;font-weight:bold;margin-top:3px">⏱️ تایمر: ' + cTim(cu) + '</div></div>' +
-    '<div style="max-height:160px;overflow-y:auto;margin-bottom:8px">' + (sub.map(r => '<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>' + r.invoiceCode + ':</b> ' + r.issueType + ' ' + srcBdg(r) + '<div>📅 درخواست: <b>' + toJ(r.createdAt) + '</b> | ✅ تکمیل: <b style="color:#15803d">' + toJ(r.completedAt) + '</b> ' + toTm(r.completedAt) + '</div></div>').join("") || "سابقه‌ای نیست.") + '</div>' +
+    '<div style="max-height:160px;overflow-y:auto;margin-bottom:8px">' + (sub.map(r => '<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>' + r.invoiceCode + ':</b> ' + r.issueType + ' ' + srcBdg(r) + (r.workReport ? '<div style="color:#15803d;font-weight:bold">🔧 گزارش تکنسین: ' + r.workReport + '</div>' : '') + '<div>📅 درخواست: <b>' + toJ(r.createdAt) + '</b> | ✅ تکمیل: <b style="color:#15803d">' + toJ(r.completedAt) + '</b> ' + toTm(r.completedAt) + '</div></div>').join("") || "سابقه‌ای نیست.") + '</div>' +
     (c ? '<button class="btn" style="width:100%;padding:8px" onclick="editC(\'' + c._id + '\')">✏️ ویرایش مشتری</button>' : "");
   $("cModal").style.display = "flex";
 }
