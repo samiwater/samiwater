@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت سامی‌واتر</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
+body{background:#f1f5f9;color:#1e293b;padding:10px}
+.hdr{background:#1e293b;color:#fff;padding:14px;border-radius:12px;margin-bottom:12px}
+.hdr-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.hdr h1{font-size:15px;color:#38bdf8}
+.pill{background:#0f172a;color:#facc15;border:1px solid #facc15;padding:3px 8px;border-radius:14px;font-size:11px;font-weight:bold}
+.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+@media(min-width:700px){.nav{grid-template-columns:repeat(4,1fr)}}
+.nb{background:#334155;color:#e2e8f0;border:1px solid #475569;padding:9px 5px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer;text-align:center}
+.nb.active{background:#0284c7;color:#fff;border-color:#38bdf8}
+.card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px #0001;margin-bottom:12px;display:none}
+.card.active{display:block}
+.card h2{font-size:13px;margin-bottom:8px;border-bottom:2px solid #e2e8f0;padding-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+table{width:100%;border-collapse:collapse;margin-top:4px}
+th,td{border:1px solid #cbd5e1;padding:7px;text-align:right;font-size:11px;vertical-align:middle}
+th{background:#f8fafc;white-space:nowrap}
+.bdg{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;display:inline-block}
+.st-p{background:#fef3c7;color:#d97706}.st-a{background:#e0f2fe;color:#0284c7}.st-s{background:#f3e8ff;color:#7e22ce}.st-al{background:#fee2e2;color:#dc2626}.st-d{background:#dcfce7;color:#15803d}
+.sel{padding:4px;border:1px solid #cbd5e1;border-radius:5px;font-size:11px;width:100%;min-width:95px}
+.lnk{color:#0284c7;font-weight:bold;cursor:pointer;text-decoration:underline}
+.fg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
+@media(min-width:600px){.fg{grid-template-columns:repeat(4,1fr)}}
+.fb{background:#f8fafc;border:1px solid #cbd5e1;padding:7px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer}
+.fb.active{background:#0f172a;color:#38bdf8;border-color:#0284c7}
+.sb{background:#f8fafc;border:1px solid #cbd5e1;border-radius:7px;padding:7px;margin-bottom:8px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;font-size:11px}
+.at{background:#e2e8f0;border:1px solid #cbd5e1;padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;margin-left:3px;font-weight:bold}
+.at.active{background:#0284c7;color:#fff}
+.btn{background:#0284c7;color:#fff;border:none;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold}
+.b-del{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:4px 7px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:bold;margin-top:3px;width:100%}
+.m-bg{position:fixed;inset:0;background:#0f172ab3;display:none;justify-content:center;align-items:center;z-index:999;padding:10px}
+.m-bx{background:#fff;width:min(500px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
+.inp{width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;margin-bottom:6px;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-t">
+    <h1>پنل مدیریت سامی‌واتر</h1>
+    <div style="display:flex;gap:5px"><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
+  </div>
+  <nav class="nav">
+    <button class="nb active" onclick="tab('t-req',this)">📋 خدمات جاری (<span id="actC">0</span>)</button>
+    <button class="nb" onclick="tab('t-rem',this)">🔔 یادآور سرویس (<span id="remC">0</span>)</button>
+    <button class="nb" onclick="tab('t-arch',this)">🗂️ بایگانی خدمات</button>
+    <button class="nb" onclick="tab('t-del',this)">🗑️ فاکتورهای حذفی (<span id="delC">0</span>)</button>
+    <button class="nb" onclick="tab('t-cust',this)">👥 بانک اطلاعات و تایمر</button>
+    <button class="nb" onclick="tab('t-srv',this)">🏷️ تعرفه کالا و دستمزد</button>
+    <button class="nb" onclick="tab('t-usr',this)">👨‍🔧 مدیریت پرسنل</button>
+    <button class="nb" style="background:#dc2626;color:#fff" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
+  </nav>
+</div>
+
+<div id="t-req" class="card active">
+  <h2><span>📋 خدمات جاری (مرتب‌شده از قدیم به جدید)</span><div style="display:flex;gap:5px"><button class="btn" style="background:#16a34a" onclick="newPhoneReq()">📞 + ثبت تلفنی</button><button class="btn" onclick="sync()">🔄 بروزرسانی</button></div></h2>
+  <div class="fg">
+    <button class="fb active" onclick="setReqF(9999,this)">📂 همه جاری‌ها</button>
+    <button class="fb" onclick="setReqF(1,this)">📅 امروز</button>
+    <button class="fb" onclick="setReqF(7,this)">📆 این هفته</button>
+    <button class="fb" onclick="setReqF(30,this)">🗓️ ماه جاری</button>
+  </div>
+  <div class="sb">
+    <b>از:</b><input id="rF" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01">
+    <b>تا:</b><input id="rT" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30">
+    <input id="rQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="جستجو...">
+    <button class="btn" onclick="drawReqs()">🔍 فیلتر</button>
+  </div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره</th><th>مکان، خدمت و منبع</th><th>وضعیت / تعلیق</th><th>تکنسین</th><th>عملیات</th></tr></thead><tbody id="reqB"></tbody></table></div>
+</div>
+
+<div id="t-rem" class="card">
+  <h2><span>🔔 یادآور موعد سرویس (۲۰ روز مانده یا گذشته از تایمر)</span></h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>شماره تماس</th><th>عنوان و نشانی مکان</th><th>وضعیت تایمر (از آخرین تکمیل)</th><th>عملیات پیگیری و نوبت‌دهی</th></tr></thead><tbody id="remB"></tbody></table></div>
+</div>
+
+<div id="t-arch" class="card">
+  <h2><span>🗂️ بایگانی خدمات تکمیل‌شده</span><span id="archI" style="font-size:11px;color:#15803d">بازه را انتخاب کنید</span></h2>
+  <div class="fg">
+    <button class="fb" onclick="loadArch(1,this)">📅 امروز</button>
+    <button class="fb" onclick="loadArch(7,this)">📆 این هفته</button>
+    <button class="fb" onclick="loadArch(30,this)">🗓️ ماه جاری</button>
+    <button class="fb" onclick="loadArch(9999,this)">📂 همه بایگانی</button>
+  </div>
+  <div class="sb">
+    <b>از:</b><input id="sF" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01">
+    <b>تا:</b><input id="sT" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30">
+    <input id="sQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور...">
+    <button class="btn" onclick="searchR()">🔍 جستجو</button>
+  </div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>خدمت و منبع</th><th>تکنسین</th><th>تاریخ درخواست</th><th>تاریخ تکمیل (مبنا)</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">یکی از دکمه‌ها یا بازه تاریخ شمسی را انتخاب کنید.</td></tr></tbody></table></div>
+</div>
+
+<div id="t-del" class="card">
+  <h2>🗑️ فاکتورهای حذف‌شده (گزارش مدیریتی)</h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>خدمت</th><th>دلیل حذف</th><th>حذف توسط</th><th>تاریخ ثبت و حذف</th><th>عملیات</th></tr></thead><tbody id="delB"></tbody></table></div>
+</div>
+
+<div id="t-cust" class="card">
+  <h2><span>👥 بانک اطلاعات و تایمر هر آدرس</span><button class="btn" style="background:#16a34a" onclick="editC('')">+ مشتری جدید</button></h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها و سوابق</th><th>تایمر آدرس</th><th>ویرایش</th></tr></thead><tbody id="custB"></tbody></table></div>
+</div>
+
+<div id="t-srv" class="card"><h2>🏷️ تعرفه کالا و دستمزد (فیلترها، قطعات و اجرت‌ها)</h2><p style="font-size:12px">مدیریت لیست قیمت قطعات و اجرت خدمات جهت صدور فاکتور.</p></div>
+<div id="t-usr" class="card">
+  <h2>👨‍🔧 مدیریت تکنسین‌ها</h2>
+  <div style="display:flex;gap:6px;margin-bottom:10px"><input id="tInp" class="inp" style="margin:0" placeholder="نام تکنسین..."><button class="btn" onclick="addT()">+ افزودن</button></div>
+  <div id="tTags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+</div>
+
+<div id="cModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="m-bx">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid #cbd5e1;padding-bottom:5px"><strong id="mTit">پنجره</strong><button class="btn" style="background:#ef4444" onclick="$('cModal').style.display='none'">بستن ×</button></div>
+    <div id="mBod"></div>
+  </div>
+</div>
+<!-- PART 1 END -->
+<script>
+const API = "https://samiwater-backend.onrender.com/api";
+const $ = id => document.getElementById(id);
+const uName = localStorage.getItem("username") || "مدیر ارشد";
+const uRole = localStorage.getItem("role") || "admin";
+
+let custs = JSON.parse(localStorage.getItem("sw_custs") || "[]");
+let reqs = JSON.parse(localStorage.getItem("sw_reqs") || "[]");
+let techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری","تکنسین ۲"]');
+let aMap = {}, reqDays = 9999, archDays = 0;
+
+function toEn(s) {
+  return String(s || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+}
+function toJ(d) {
+  if (!d) return "---";
+  try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; }
+}
+function toTm(d) {
+  if (!d || uRole !== "admin") return "";
+  try {
+    const t = new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
+    return '<div style="font-size:10px;color:#0369a1">🕒 ساعت: ' + t + '</div>';
+  } catch (e) { return ""; }
+}
+function normJ(s) {
+  const p = toEn(s).trim().replace(/-/g, "/").split("/");
+  return p.length === 3 ? p[0].padStart(4, "0") + "/" + p[1].padStart(2, "0") + "/" + p[2].padStart(2, "0") : "";
+}
+function cmpJ(d) { return d ? normJ(toJ(d)) : "0000/00/00"; }
+
+function srcBdg(r) {
+  if (uRole === "technician") return "";
+  const s = r.sourcePath || "";
+  const map = {
+    landing_urgent: ["🚨 فوری (لندینگ)", "#fee2e2", "#b91c1c"],
+    phone_panel: ["📞 ثبت تلفنی", "#e0f2fe", "#0369a1"],
+    reminder_panel: ["🔔 یادآور دوره‌ای", "#fef3c7", "#b45309"]
+  };
+  const m = map[s] || ["🛠️ فرم سایت", "#f1f5f9", "#475569"];
+  return '<span class="bdg" style="background:' + m[1] + ';color:' + m[2] + ';margin-top:2px">' + m[0] + '</span>';
+}
+
+function tab(id, b) {
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".nb").forEach(x => x.classList.remove("active"));
+  $(id).classList.add("active");
+  b.classList.add("active");
+}
+
+function addT() {
+  const v = $("tInp").value.trim();
+  if (v) {
+    techs.push(v);
+    localStorage.setItem("sw_techs", JSON.stringify(techs));
+    $("tInp").value = "";
+    drawAll();
+  }
+}
+
+function setReqF(d, b) {
+  reqDays = d;
+  if (b) {
+    b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+  }
+  $("rF").value = ""; $("rT").value = "";
+  drawReqs();
+}
+
+function stBdg(r) {
+  if (r.status === "suspended") {
+    let t = "بدون زمان", due = false;
+    if (r.suspendUntil) {
+      const rem = Math.ceil((new Date(r.suspendUntil) - Date.now()) / 86400000);
+      t = rem <= 0 ? "🔔 موعد پیگیری!" : rem + " روز مانده";
+      due = rem <= 0;
+    }
+    return '<span class="bdg ' + (due ? "st-al" : "st-s") + '">⏸️ معلق (' + t + ')</span>' +
+      '<div style="font-size:10px;color:#6b21a8">دلیل: ' + (r.suspendReason || "---") + '</div>';
+  }
+  if (r.status === "assigned" || r.status === "open") return '<span class="bdg st-a">تخصیص یافته</span>';
+  return '<span class="bdg st-p">در انتظار</span>';
+}
+
+function drawReqs() {
+  const min = Date.now() - reqDays * 86400000;
+  const f = normJ($("rF").value), t = normJ($("rT").value), q = $("rQ").value.trim().toLowerCase();
+  const allAct = reqs.filter(r => !["done", "completed", "deleted"].includes(r.status));
+  $("actC").textContent = allAct.length;
+
+  const act = allAct.filter(r => {
+    if (new Date(r.createdAt || Date.now()).getTime() < min) return false;
+    const j = cmpJ(r.createdAt);
+    if (f && j < f) return false;
+    if (t && j > t) return false;
+    const txt = ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase();
+    return !q || txt.includes(q);
+  }).sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+
+  if (!act.length) {
+    $("reqB").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:12px">درخواست بازی در این بازه وجود ندارد ✅</td></tr>';
+    return;
+  }
+
+  $("reqB").innerHTML = act.map(r => {
+    const nm = r.snapshot?.fullName || "نامشخص", ph = r.snapshot?.phone || "", tit = r.addressLabel || "خونه";
+    const tO = ['<option value="">-- تکنسین --</option>'].concat(
+      techs.map(x => '<option value="' + x + '" ' + (r.technicianName === x ? "selected" : "") + '>' + x + '</option>')
+    ).join("");
+    return '<tr>' +
+      '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
+      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + nm + '</span></td>' +
+      '<td style="direction:ltr">' + ph + '</td>' +
+      '<td><b>📍 ' + tit + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + srcBdg(r) + '</td>' +
+      '<td>' + stBdg(r) + '</td>' +
+      '<td><select class="sel" onchange="upSt(\'' + r._id + '\',{status:\'assigned\',technicianName:this.value})">' + tO + '</select></td>' +
+      '<td><select class="sel" onchange="onSel(\'' + r._id + '\',this.value,\'' + (r.technicianName || "") + '\')">' +
+      '<option value="pending" ' + (r.status === "pending" ? "selected" : "") + '>در انتظار</option>' +
+      '<option value="assigned" ' + (r.status === "assigned" || r.status === "open" ? "selected" : "") + '>تخصیص یافته</option>' +
+      '<option value="suspended" ' + (r.status === "suspended" ? "selected" : "") + '>⏸️ تعلیقی</option>' +
+      '<option value="done">✅ انجام شد</option></select>' +
+      '<button class="b-del" onclick="delM(\'' + r._id + '\',\'' + (r.invoiceCode || "") + '\')">🗑️ حذف با دلیل</button></td></tr>';
+  }).join("");
+}
+
+function drawRem() {
+  const items = [];
+  custs.forEach(c => {
+    const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180, lastServiceDate: c.createdAt }];
+    ad.forEach((a, ix) => {
+      if (a.isActiveTimer === false) return;
+      const v = Number(a.serviceIntervalDays) || 180;
+      const rem = v - Math.floor((Date.now() - new Date(a.lastServiceDate || Date.now()).getTime()) / 86400000);
+      if (rem <= 20) items.push({ c, a, ix, rem });
+    });
+  });
+  items.sort((x, y) => x.rem - y.rem);
+  $("remC").textContent = items.length;
+
+  if (!items.length) {
+    $("remB").innerHTML = '<tr><td colspan="5" style="text-align:center;padding:12px">هیچ موردی در بازه ۲۰ روز مانده به سرویس نیست ✅</td></tr>';
+    return;
+  }
+
+  $("remB").innerHTML = items.map(it => {
+    const txt = it.rem <= 0 ? (Math.abs(it.rem) + " روز گذشته 🔴") : (it.rem + " روز مانده 🔔");
+    return '<tr>' +
+      '<td><span class="lnk" onclick="doss(\'' + it.c.phone + '\',' + it.ix + ')">' + (it.c.fullName || "---") + '</span></td>' +
+      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + it.c.phone + '">' + it.c.phone + ' 📞</a></td>' +
+      '<td><b>📍 ' + (it.a.label || "خونه") + ':</b> ' + it.a.fullAddress + '</td>' +
+      '<td><span class="bdg ' + (it.rem <= 0 ? "st-al" : "st-p") + '">' + txt + '</span><div style="font-size:10px;color:#64748b">تکمیل: ' + toJ(it.a.lastServiceDate) + '</div></td>' +
+      '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
+      '<button class="btn" style="background:#16a34a" onclick="remAct(\'' + it.c._id + '\',' + it.ix + ',\'req\')">➕ ثبت نوبت</button>' +
+      '<button class="btn" style="background:#d97706" onclick="remAct(\'' + it.c._id + '\',' + it.ix + ',\'ext\')">⏳ +۱۵ روز</button>' +
+      '<button class="btn" style="background:#64748b" onclick="remAct(\'' + it.c._id + '\',' + it.ix + ',\'rst\')">🔄 ریست تایمر</button></td></tr>';
+  }).join("");
+}
+
+async function remAct(cId, ix, m) {
+  const c = custs.find(x => x._id === cId); if (!c) return;
+  const ad = c.addresses?.length ? [...c.addresses] : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180 }];
+  const a = ad[ix] || ad[0];
+  if (m === "req") {
+    await fetch(API + "/requests", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: a.label || "خونه", issueType: "سرویس دوره‌ای (یادآور)", sourcePath: "reminder_panel", isFromPanel: true })
+    });
+    alert("فاکتور در تب خدمات جاری ثبت شد ✅");
+  } else {
+    a.lastServiceDate = m === "ext" ? new Date(new Date(a.lastServiceDate || Date.now()).getTime() + 15 * 86400000) : new Date();
+    await fetch(API + "/customers/" + c._id, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: ad })
+    });
+  }
+  sync();
+}
+
+function newPhoneReq() {
+  $("mTit").textContent = "📞 ثبت فاکتور تلفنی (پشتیبانی)";
+  $("mBod").innerHTML = '<input id="pPh" class="inp" style="direction:ltr" placeholder="شماره موبایل مشتری (0913...)">' +
+    '<input id="pNm" class="inp" placeholder="نام و نام‌خانوادگی">' +
+    '<input id="pLb" class="inp" value="خونه" placeholder="عنوان مکان (خونه / محل کار)">' +
+    '<input id="pAd" class="inp" placeholder="آدرس کامل">' +
+    '<input id="pIs" class="inp" value="سرویس دوره‌ای و تعویض فیلتر" placeholder="نوع خدمت">' +
+    '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="subPhoneReq()">ثبت فوری در خدمات جاری ✅</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function subPhoneReq() {
+  const phone = $("pPh").value.trim(), fullName = $("pNm").value.trim();
+  const addressLabel = $("pLb").value.trim() || "خونه", address = $("pAd").value.trim(), issueType = $("pIs").value.trim();
+  if (!phone || !fullName) return alert("نام و شماره الزامی است");
+  await fetch(API + "/requests", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone, fullName, address, addressLabel, issueType, sourcePath: "phone_panel", isFromPanel: true })
+  });
+  $("cModal").style.display = "none"; sync();
+}
+
+function onSel(id, v, t) { if (v === "suspended") susM(id); else upSt(id, { status: v, technicianName: t }); }
+
+function susM(id) {
+  const r = reqs.find(x => x._id === id);
+  $("mTit").textContent = "⏸️ تعلیق فاکتور " + (r?.invoiceCode || "");
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل تعلیق *</label>' +
+    '<input id="sR" class="inp" value="' + (r?.suspendReason || "") + '" placeholder="مثلاً: مسافرت مشتری...">' +
+    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟ (اختیاری)</label>' +
+    '<input id="sD" type="number" class="inp" placeholder="مثلاً: 7">' +
+    '<button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="subSus(\'' + id + '\')">ثبت تعلیق ⏸️</button>';
+  $("cModal").style.display = "flex";
+}
+function subSus(id) {
+  if (!$("sR").value.trim()) return alert("دلیل الزامی است");
+  upSt(id, { status: "suspended", suspendReason: $("sR").value, suspendDays: $("sD").value });
+  $("cModal").style.display = "none";
+}
+
+function delM(id, c) {
+  $("mTit").textContent = "🗑️ حذف فاکتور " + c;
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل حذف فاکتور *</label>' +
+    '<input id="dR" class="inp" placeholder="مثلاً: مشتری خودش فیلتر عوض کرده...">' +
+    '<label style="display:flex;gap:6px;font-size:11px;background:#f0fdf4;padding:8px;border-radius:6px;margin:6px 0">' +
+    '<input type="checkbox" id="dT" checked><b>راه‌اندازی مجدد تایمر ۱۸۰ روزه برای دوره بعد</b></label>' +
+    '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="subDel(\'' + id + '\')">تایید و حذف 🗑️</button>';
+  $("cModal").style.display = "flex";
+}
+function subDel(id) {
+  if (!$("dR").value.trim()) return alert("دلیل الزامی است");
+  upSt(id, { status: "deleted", deleteReason: $("dR").value, deletedBy: uName, resetTimerOnDelete: $("dT").checked });
+  $("cModal").style.display = "none";
+}
+
+function drawDel() {
+  const l = reqs.filter(r => r.status === "deleted");
+  $("delC").textContent = l.length;
+  if (!l.length) { $("delB").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:10px">خالی است.</td></tr>'; return; }
+  $("delB").innerHTML = l.map(r => '<tr>' +
+    '<td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td>' +
+    '<td><span class="lnk" onclick="doss(\'' + (r.snapshot?.phone || "") + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td>' +
+    '<td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '</td>' +
+    '<td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td>' +
+    '<td>' + (r.deletedBy || "مدیر") + '</td>' +
+    '<td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td>' +
+    '<td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>'
+  ).join("");
+}
+
+function rArch(l) {
+  $("archI").textContent = l.length + " مورد";
+  if (!l.length) { $("archB").innerHTML = '<tr><td colspan="8" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>'; return; }
+  $("archB").innerHTML = l.map(r => {
+    const ph = r.snapshot?.phone || "", dD = r.completedAt || r.updatedAt || r.createdAt;
+    return '<tr>' +
+      '<td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td>' +
+      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td>' +
+      '<td style="direction:ltr">' + ph + '</td>' +
+      '<td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '<br>' + srcBdg(r) + '</td>' +
+      '<td>' + (r.technicianName || "---") + '</td>' +
+      '<td>📅 ' + toJ(r.createdAt) + '</td>' +
+      '<td style="color:#15803d;font-weight:bold">✅ ' + toJ(dD) + toTm(dD) + '</td>' +
+      '<td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>';
+  }).join("");
+}
+
+function loadArch(d, b) {
+  archDays = d;
+  if (b) { b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active")); b.classList.add("active"); }
+  const m = Date.now() - d * 86400000;
+  rArch(reqs.filter(r => (r.status === "done" || r.status === "completed") && new Date(r.completedAt || r.updatedAt || r.createdAt || Date.now()).getTime() >= m));
+}
+
+function searchR() {
+  archDays = 0;
+  const f = normJ($("sF").value), t = normJ($("sT").value), q = $("sQ").value.trim().toLowerCase();
+  rArch(reqs.filter(r => {
+    if (r.status !== "done" && r.status !== "completed") return false;
+    const j = cmpJ(r.completedAt || r.updatedAt || r.createdAt);
+    if (f && j < f) return false;
+    if (t && j > t) return false;
+    const txt = ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase();
+    return !q || txt.includes(q);
+  }));
+}
+
+function cTim(a) {
+  const v = Number(a?.serviceIntervalDays) || 180;
+  if (a?.isActiveTimer === false) return "غیرفعال";
+  const rem = v - Math.floor((Date.now() - new Date(a?.lastServiceDate || Date.now()).getTime()) / 86400000);
+  return rem <= 0 ? "موعد سرویس! (" + Math.abs(rem) + " روز گذشته) 🔴" : rem + " روز مانده ✅";
+}
+
+function drawCusts() {
+  if (!custs.length) { $("custB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:10px">خالی است.</td></tr>'; return; }
+  $("custB").innerHTML = custs.map(c => {
+    const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180 }];
+    const ix = aMap[c._id] || 0, cu = ad[ix] || ad[0];
+    const tbs = ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="aMap[\'' + c._id + '\']=' + i + ';drawCusts()">📍 ' + (a.label || "خونه") + '</button>').join("");
+    const cnt = reqs.filter(r => r.status !== "deleted" && r.snapshot?.phone === c.phone && (ad.length === 1 || (r.addressLabel || "خونه") === (cu.label || "خونه"))).length;
+    return '<tr>' +
+      '<td style="font-weight:bold">' + (c.fullName || "---") + '</td>' +
+      '<td style="direction:ltr;font-weight:bold">' + (c.phone || "---") + '</td>' +
+      '<td style="direction:ltr;font-size:10px">' + ((c.secondaryPhones || []).join(" , ") || "---") + '</td>' +
+      '<td><div style="margin-bottom:4px">' + tbs + '</div><div style="background:#f8fafc;padding:5px;border-radius:5px;border:1px solid #e2e8f0"><b>' + (cu.label || "خونه") + ':</b> ' + cu.fullAddress + ' <span class="lnk" style="float:left" onclick="doss(\'' + c.phone + '\',' + ix + ')">سوابق (' + cnt + ') 🔍</span></div></td>' +
+      '<td><span class="bdg st-d">⏱️ ' + cTim(cu) + '</span><div style="font-size:10px;color:#64748b">تکمیل: ' + toJ(cu.lastServiceDate) + '</div></td>' +
+      '<td><button class="btn" onclick="editC(\'' + c._id + '\')">ویرایش ✏️</button></td></tr>';
+  }).join("");
+}
+
+function doss(ph, ix = 0) {
+  const c = custs.find(x => x.phone === ph), cR = reqs.filter(r => (r.snapshot?.phone || r.customer?.phone) === ph);
+  const ad = c?.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: cR[0]?.snapshot?.address || "---", serviceIntervalDays: 180 }];
+  const cu = ad[ix] || ad[0];
+  const sub = cR.filter(r => ad.length === 1 || (r.addressLabel || "خونه") === (cu.label || "خونه"));
+  $("mTit").textContent = "👤 پرونده: " + (c?.fullName || cR[0]?.snapshot?.fullName || ph);
+  $("mBod").innerHTML = '<div style="font-size:12px;margin-bottom:6px"><b>شماره ۱:</b> <a href="tel:' + ph + '">' + ph + '</a> | <b>شماره ۲ و ۳:</b> ' + ((c?.secondaryPhones || []).join(" , ") || "ندارد") + '</div>' +
+    '<div style="margin-bottom:5px">' + ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="doss(\'' + ph + '\',' + i + ')">📍 ' + (a.label || "خونه") + '</button>').join("") + '</div>' +
+    '<div style="background:#f8fafc;padding:7px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:8px;font-size:11px"><b>نشانی «' + (cu.label || "خونه") + '»:</b> ' + cu.fullAddress + '<div style="color:#15803d;font-weight:bold;margin-top:3px">⏱️ تایمر: ' + cTim(cu) + ' (مبنا: ' + toJ(cu.lastServiceDate) + ')</div></div>' +
+    '<div style="max-height:160px;overflow-y:auto;margin-bottom:8px">' + (sub.map(r => '<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>' + r.invoiceCode + ':</b> ' + r.issueType + ' ' + srcBdg(r) + '<div>📅 درخواست: <b>' + toJ(r.createdAt) + '</b> | ✅ تکمیل: <b style="color:#15803d">' + toJ(r.completedAt) + '</b> ' + toTm(r.completedAt) + '</div></div>').join("") || "سابقه‌ای نیست.") + '</div>' +
+    (c ? '<button class="btn" style="width:100%;padding:8px" onclick="editC(\'' + c._id + '\')">✏️ ویرایش مشتری</button>' : "");
+  $("cModal").style.display = "flex";
+}
+
+function aRow(l = "محل کار", t = "", v = 180, d = "") {
+  return '<div class="er" data-last="' + (d || "") + '" style="background:#f8fafc;border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:5px">' +
+    '<div style="display:flex;gap:4px;margin-bottom:4px"><input class="inp al" style="margin:0;width:95px;font-weight:bold" value="' + l + '">' +
+    '<input type="number" class="inp av" style="margin:0;width:70px" value="' + (v || 180) + '">' +
+    '<button class="btn" style="background:#ef4444" onclick="this.closest(\'.er\').remove()">حذف</button></div>' +
+    '<input class="inp atx" style="margin:0" value="' + t + '" placeholder="متن آدرس..."></div>';
+}
+
+function editC(id) {
+  const c = custs.find(x => x._id === id) || { fullName: "", phone: "", secondaryPhones: [], addresses: [{ label: "خونه", fullAddress: "", serviceIntervalDays: 180 }] };
+  $("mTit").textContent = id ? "✏️ ویرایش مشتری" : "➕ مشتری جدید";
+  const adList = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: "", serviceIntervalDays: 180 }];
+  $("mBod").innerHTML = '<input id="eN" class="inp" placeholder="نام مشتری" value="' + (c.fullName || "") + '">' +
+    '<input id="eP1" class="inp" style="direction:ltr" placeholder="شماره اصلی" value="' + (c.phone || "") + '">' +
+    '<div style="display:flex;gap:5px"><input id="eP2" class="inp" style="direction:ltr" placeholder="شماره ۲" value="' + (c.secondaryPhones?.[0] || "") + '">' +
+    '<input id="eP3" class="inp" style="direction:ltr" placeholder="شماره ۳" value="' + (c.secondaryPhones?.[1] || "") + '"></div>' +
+    '<div style="display:flex;justify-content:space-between;margin:4px 0"><b style="font-size:11px">آدرس‌ها و تایمر (روز):</b>' +
+    '<button class="btn" onclick="$(\'eAB\').insertAdjacentHTML(\'beforeend\',aRow())">+ آدرس</button></div>' +
+    '<div id="eAB">' + adList.map(a => aRow(a.label, a.fullAddress, a.serviceIntervalDays, a.lastServiceDate)).join("") + '</div>' +
+    '<button class="btn" style="width:100%;background:#16a34a;padding:9px;margin-top:6px" onclick="saveC(\'' + id + '\')">ذخیره ✅</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function saveC(id) {
+  const ad = [];
+  document.querySelectorAll(".er").forEach(r => {
+    const l = r.querySelector(".al").value.trim() || "خونه", t = r.querySelector(".atx").value.trim();
+    const v = Number(r.querySelector(".av").value) || 180, d = r.dataset.last ? new Date(r.dataset.last) : new Date();
+    if (t) ad.push({ label: l, fullAddress: t, serviceIntervalDays: v, lastServiceDate: d, isActiveTimer: true });
+  });
+  await fetch(id ? API + "/customers/" + id : API + "/customers", {
+    method: id ? "PUT" : "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad, address: ad[0]?.fullAddress || "", addressLabel: ad[0]?.label || "خونه" })
+  });
+  $("cModal").style.display = "none"; sync();
+}
+
+async function upSt(id, b) {
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) });
+  await sync();
+  if (archDays) loadArch(archDays);
+  else if ($("sF").value || $("sT").value || $("sQ").value) searchR();
+}
+
+function drawAll() {
+  $("tTags").innerHTML = techs.map((t, i) => '<span style="background:#e2e8f0;padding:3px 8px;border-radius:5px;font-size:11px">👨‍🔧 ' + t + ' <b style="color:red;cursor:pointer" onclick="techs.splice(' + i + ',1);localStorage.setItem(\'sw_techs\',JSON.stringify(techs));drawAll()">×</b></span>').join("");
+  drawReqs(); drawRem(); drawDel(); drawCusts();
+  if (archDays) loadArch(archDays);
+}
+
+async function sync() {
+  drawAll();
+  $("syncP").textContent = "⏳ دریافت...";
+  try {
+    const [r1, r2] = await Promise.all([fetch(API + "/requests"), fetch(API + "/customers")]);
+    if (r1.ok) { reqs = (await r1.json()).requests || []; localStorage.setItem("sw_reqs", JSON.stringify(reqs)); }
+    if (r2.ok) { custs = (await r2.json()).customers || []; localStorage.setItem("sw_custs", JSON.stringify(custs)); }
+    drawAll();
+    $("syncP").textContent = "🟢 آنلاین";
+  } catch (e) {
+    $("syncP").textContent = "⚠️ آفلاین";
+  }
+}
+
+sync();
+</script>
+</body>
+</html>
+<!-- END -->
