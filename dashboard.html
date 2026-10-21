@@ -403,8 +403,9 @@ function drawTechs() {
   }).join("");
 }
 // PART 3 END
-      
-      function applyRoleLocks() {
+      let curBranch = "اصفهان (مرکزی)";
+
+function applyRoleLocks() {
   if (!localStorage.getItem("token")) { location.href = "login.html"; return; }
   const roleMap = { admin: "👑 مدیر ارشد", support: "🎧 پشتیبانی خدمات", warehouse: "📦 مسئول انبار" };
   $("rPill").textContent = (roleMap[uRole] || uRole) + " (" + uName + ")";
@@ -412,60 +413,134 @@ function drawTechs() {
   if (uRole === "support") {
     document.querySelectorAll(".nb").forEach(b => {
       const txt = b.textContent || "";
-      if (txt.includes("تعرفه") || txt.includes("حذفی")) b.style.display = "none";
+      if (txt.includes("تعرفه") || txt.includes("حذفی") || txt.includes("انبار مرکزی")) b.style.display = "none";
     });
   } else if (uRole === "warehouse") {
     document.querySelectorAll(".nb").forEach(b => {
       const txt = b.textContent || "";
-      if (!txt.includes("تکنسین") && !txt.includes("تعرفه") && !txt.includes("خروج")) b.style.display = "none";
+      if (!txt.includes("انبار مرکزی") && !txt.includes("تکنسین") && !txt.includes("خروج")) b.style.display = "none";
     });
-    const techBtn = document.querySelector("button[onclick*='t-usr']");
-    if (techBtn) tab("t-usr", techBtn);
+    const whBtn = document.querySelector("button[onclick*='t-wh']");
+    if (whBtn) { tab("t-wh", whBtn); drawWh(); }
   }
 }
 setTimeout(applyRoleLocks, 50);
+
+function drawWh() {
+  const branches = settings.branches?.length ? settings.branches : ["اصفهان (مرکزی)"];
+  if (!branches.includes(curBranch)) curBranch = branches[0];
+  const goods = (settings.catalog || []).filter(c => c.isGoods);
+  const cStock = settings.centralStock?.[curBranch] || {};
+
+  $("whTopBtns").innerHTML = '<button class="btn" style="background:#16a34a" onclick="openWhOpM(\'in_central\',\'\')">➕ ورود خرید جدید به انبار مرکزی</button>' +
+    '<button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'\')">📤 حواله کالا به تکنسین</button>' +
+    '<button class="btn" style="background:#d97706" onclick="openWhOpM(\'from_tech\',\'\')">📥 برگشت کالا از تکنسین</button>' +
+    (uRole === "admin" ? '<button class="btn" style="background:#0f172a" onclick="addBranchM()">🏙️ + افزودن شهر / شعبه</button>' : '');
+
+  $("whBranchBar").innerHTML = '<div><b>🏙️ شعبه / انبار شهر فعال: </b>' +
+    branches.map(b => '<button class="fb ' + (b === curBranch ? "active" : "") + '" style="margin-left:4px" onclick="curBranch=\'' + b + '\';drawWh()">📍 ' + b + '</button>').join("") +
+    '</div><span style="color:#15803d;font-weight:bold">🔒 تخصیص کالا به تکنسین فقط با کسر از موجودی انبار مرکزی امکان‌پذیر است.</span>';
+
+  $("whB").innerHTML = goods.map(g => {
+    const centralCnt = Number(cStock[g.title]) || 0;
+    let techSum = 0; const techDet = [];
+    techs.forEach(t => {
+      const tc = Number(settings.techMeta?.[t]?.stock?.[g.title]) || 0;
+      if (tc > 0) { techSum += tc; techDet.push(t + ": " + tc); }
+    });
+    const stBdg = centralCnt > 3 ? '<span class="bdg st-d" style="font-size:12px">' + centralCnt + ' عدد موجود</span>' : (centralCnt > 0 ? '<span class="bdg st-p" style="font-size:12px">⚠️ ' + centralCnt + ' عدد (رو به اتمام)</span>' : '<span class="bdg st-al" style="font-size:12px">🚫 ۰ (ناموجود در انبار مرکزی)</span>');
+    return '<tr><td><span class="bdg st-a">' + (g.category || "کالا") + '</span></td>' +
+      '<td style="font-weight:bold">' + g.title + '</td>' +
+      '<td>' + stBdg + '</td>' +
+      '<td><b>' + techSum + ' عدد</b>' + (techDet.length ? '<div style="font-size:10px;color:#64748b">' + techDet.join(" | ") + '</div>' : '') + '</td>' +
+      '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
+      '<button class="btn" style="background:#16a34a" onclick="openWhOpM(\'in_central\',\'' + g.title + '\')">➕ شارژ مرکزی</button>' +
+      '<button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'' + g.title + '\')">📤 حواله به تکنسین</button></td></tr>';
+  }).join("");
+
+  const logs = settings.warehouseLogs || [];
+  $("whLogB").innerHTML = logs.length ? logs.map(l => '<tr><td>' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td>' + (l.branch || "اصفهان") + '</td><td><b>' + l.type + '</b></td><td>' + l.item + '</td><td style="direction:ltr;font-weight:bold">' + l.qty + ' عدد</td><td>' + l.target + '</td><td>' + (l.note || "---") + ' (' + (l.by || "") + ')</td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">هنوز گردش کالایی ثبت نشده است.</td></tr>';
+}
+
+async function addBranchM() {
+  const b = prompt("نام شهر یا شعبه جدید را وارد کنید (مثلاً: شیراز یا تهران):");
+  if (!b || !b.trim()) return;
+  const brs = settings.branches?.length ? [...settings.branches] : ["اصفهان (مرکزی)"];
+  if (!brs.includes(b.trim())) brs.push(b.trim());
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ branches: brs }) });
+  curBranch = b.trim(); await sync(); drawWh();
+}
+
+function openWhOpM(opType, defItem, defTech = "") {
+  const goods = (settings.catalog || []).filter(c => c.isGoods);
+  const cStock = settings.centralStock?.[curBranch] || {};
+  const titles = { in_central: "➕ ورود خرید جدید به انبار مرکزی (" + curBranch + ")", to_tech: "📤 حواله کالا از انبار مرکزی به تکنسین", from_tech: "📥 برگشت کالا از تکنسین به انبار مرکزی" };
+  $("mTit").textContent = titles[opType];
+  const needTech = opType !== "in_central";
+
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">۱. انتخاب کالا *</label>' +
+    '<select id="woItm" class="inp">' + goods.map(g => '<option value="' + g.title + '" ' + (g.title === defItem ? "selected" : "") + '>' + g.title + ' (موجودی مرکزی: ' + (Number(cStock[g.title]) || 0) + ' عدد)</option>').join("") + '</select>' +
+    (needTech ? '<label style="font-size:11px;font-weight:bold">۲. انتخاب تکنسین *</label><select id="woTch" class="inp">' + techs.map(t => '<option value="' + t + '" ' + (t === defTech ? "selected" : "") + '>' + t + '</option>').join("") + '</select>' : '') +
+    '<label style="font-size:11px;font-weight:bold">تعداد کالا *</label><input id="woQty" type="number" min="1" class="inp" style="direction:ltr" value="1">' +
+    '<label style="font-size:11px;font-weight:bold">شماره فاکتور خرید / توضیحات حواله</label><input id="woNt" class="inp" placeholder="مثلاً: فاکتور خرید شرکت پارتاک / تحویل صبح">' +
+    '<button class="btn" style="width:100%;background:#16a34a;padding:10px;margin-top:4px" onclick="subWhOp(\'' + opType + '\')">ثبت قطعی در انبار و کاردکس ✅</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function subWhOp(opType) {
+  const itemTitle = $("woItm").value, qty = Number($("woQty").value) || 0, note = $("woNt").value.trim();
+  const techName = $("woTch") ? $("woTch").value : "";
+  const r = await fetch(API + "/requests/warehouse-op", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ opType, branch: curBranch, itemTitle, qty, techName, note, byUser: uName })
+  });
+  const d = await r.json();
+  if (!r.ok) return alert(d.error || "خطا در عملیات انبار");
+  settings = d.settings || settings;
+  $("cModal").style.display = "none"; drawAll(); drawWh();
+  alert("عملیات انبار با موفقیت در کاردکس ثبت شد ✅");
+}
 
 function openStockM(tName) {
   if (uRole === "support") return alert("⛔ این بخش فقط مخصوص مدیریت و انباردار است.");
   if (!settings.techMeta) settings.techMeta = {};
   const idxCode = "Sam" + (techs.indexOf(tName) + 1) + "2";
-  if (!settings.techMeta[tName]) settings.techMeta[tName] = { userCode: idxCode, pin: "1234", phone: "", locked: false, stock: {}, logs: [] };
+  if (!settings.techMeta[tName]) settings.techMeta[tName] = { userCode: idxCode, pin: "1234", phone: "", cardNumber: "", locked: false, stock: {}, logs: [] };
   const m = settings.techMeta[tName];
   const goods = (settings.catalog || []).filter(c => c.isGoods);
 
-  $("mTit").textContent = "📦 انبار، کد سازمانی و قفل امنیتی: " + tName;
+  $("mTit").textContent = "📦 پروفایل، کد سازمانی و موجودی انبار: " + tName;
   $("mBod").innerHTML = '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px">' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">' +
-    '<div><label style="font-size:10px;font-weight:bold">🆔 کد ورود (User):</label><input id="tkCd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold;color:#0f3b2d" value="' + (m.userCode || idxCode) + '" placeholder="Sam12"></div>' +
+    '<div><label style="font-size:10px;font-weight:bold">🆔 کد ورود (User):</label><input id="tkCd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold;color:#0f3b2d" value="' + (m.userCode || idxCode) + '"></div>' +
     '<div><label style="font-size:10px;font-weight:bold">🔑 رمز ۴ رقمی:</label><input id="tkPin" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.pin || "1234") + '"></div>' +
-    '<div><label style="font-size:10px;font-weight:bold">📱 موبایل:</label><input id="tkPh" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="0913..." value="' + (m.phone || "") + '"></div></div>' +
+    '<div><label style="font-size:10px;font-weight:bold">📱 موبایل:</label><input id="tkPh" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.phone || "") + '"></div></div>' +
+    '<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:bold">💳 شماره کارت بانکی تکنسین (جهت درج خودکار در فاکتور رسمی مشتری):</label><input id="tkCrd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" placeholder="6037-9975-XXXX-XXXX" value="' + (m.cardNumber || "") + '"></div>' +
     '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن ورود این تکنسین (جهت انبارگردانی یا مسدودسازی)</label></div>' +
     (uRole === "admin" ? '<div style="margin-bottom:8px"><button class="btn" style="background:#334155;width:100%" onclick="openStaffAccM()">👥 مدیریت کد ورود پشتیبانی (Sup1) و انباردار (St1)</button></div>' : '') +
-    '<b style="font-size:11px;display:block;margin-bottom:6px">📦 موجودی کالاهای همراه تکنسین (موجودی ۰ در پنل تکنسین قفل می‌شود):</b>' +
-    '<div style="max-height:210px;overflow-y:auto;margin-bottom:8px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:11px">📦 موجودی فعلی همراه تکنسین (تغییر فقط با حواله از انبار مرکزی):</b><button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'\',\'' + tName + '\')">📤 + حواله از انبار مرکزی</button></div>' +
+    '<div style="max-height:190px;overflow-y:auto;margin-bottom:8px;background:#f8fafc;padding:6px;border-radius:6px;border:1px solid #e2e8f0">' +
     goods.map(g => {
       const cnt = Number(m.stock?.[g.title]) || 0;
-      return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:4px 0;font-size:11px">' +
-        '<span>' + g.title + (cnt <= 0 ? ' <b style="color:#dc2626">(۰ ناموجود 🚫)</b>' : '') + '</span>' +
-        '<input type="number" min="0" class="inp st-inp" data-title="' + g.title + '" style="width:70px;margin:0;direction:ltr;text-align:center;' + (cnt <= 0 ? "border-color:#ef4444;background:#fef2f2" : "") + '" value="' + cnt + '"></div>';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:5px 0;font-size:11px">' +
+        '<span>' + g.title + '</span>' +
+        '<span class="bdg ' + (cnt > 0 ? "st-d" : "st-al") + '" style="direction:ltr">' + cnt + ' عدد</span></div>';
     }).join("") +
-    '</div><button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره موجودی انبار و کد ورود تکنسین ✅</button>';
+    '</div><button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره پروفایل و تنظیمات امنیتی تکنسین ✅</button>';
   $("cModal").style.display = "flex";
 }
 
 async function saveStockM(tName) {
-  const m = settings.techMeta[tName] || { userCode: "Sam12", pin: "1234", phone: "", locked: false, stock: {}, logs: [] };
+  const m = settings.techMeta[tName] || { userCode: "Sam12", pin: "1234", phone: "", cardNumber: "", locked: false, stock: {}, logs: [] };
   m.userCode = $("tkCd").value.trim() || "Sam12";
   m.phone = $("tkPh").value.trim();
   m.pin = $("tkPin").value.trim() || "1234";
+  m.cardNumber = $("tkCrd").value.trim();
   m.locked = $("tkLck").checked;
-  const newStock = {};
-  document.querySelectorAll(".st-inp").forEach(el => { newStock[el.dataset.title] = Math.max(0, Number(el.value) || 0); });
-  m.stock = newStock;
   settings.techMeta[tName] = m;
   await fetch(API + "/requests/settings", {
     method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ techMeta: settings.techMeta, logEntry: { techName: tName, title: "مدیریت حساب و انبار", text: "موجودی انبار و کد دسترسی شما (" + m.userCode + ") توسط مدیریت بروزرسانی گردید." } })
+    body: JSON.stringify({ techMeta: settings.techMeta, logEntry: { techName: tName, title: "بروزرسانی پروفایل", text: "اطلاعات کاربری و امنیتی شما توسط مدیریت بروزرسانی شد." } })
   });
   $("cModal").style.display = "none"; sync();
 }
@@ -479,9 +554,9 @@ function openStaffAccM() {
   $("mBod").innerHTML = list.map((s, i) => '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px;font-size:11px">' +
     '<b>' + (s.role === "support" ? "🎧 نیروی پشتیبانی" : "📦 مسئول انبار") + ':</b>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:5px">' +
-    '<input class="inp sf-u" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + s.username + '" placeholder="کد کاربری">' +
-    '<input class="inp sf-p" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center" value="' + s.pin + '" placeholder="رمز ۴ رقمی">' +
-    '<input class="inp sf-n" data-i="' + i + '" style="margin:0" value="' + s.fullName + '" placeholder="نام شخص"></div>' +
+    '<input class="inp sf-u" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + s.username + '">' +
+    '<input class="inp sf-p" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center" value="' + s.pin + '">' +
+    '<input class="inp sf-n" data-i="' + i + '" style="margin:0" value="' + s.fullName + '"></div>' +
     '<label style="display:flex;gap:5px;margin-top:5px;color:#dc2626"><input type="checkbox" class="sf-l" data-i="' + i + '" ' + (s.locked ? "checked" : "") + '> 🔒 قفل کردن حساب</label></div>'
   ).join("") + '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStaffAccM()">ذخیره حساب‌های پرسنل ✅</button>';
 }
@@ -492,8 +567,7 @@ async function saveStaffAccM() {
     username: document.querySelector('.sf-u[data-i="' + i + '"]').value.trim() || (i === 0 ? "Sup1" : "St1"),
     pin: document.querySelector('.sf-p[data-i="' + i + '"]').value.trim() || "1234",
     fullName: document.querySelector('.sf-n[data-i="' + i + '"]').value.trim() || (i === 0 ? "پشتیبانی" : "انباردار"),
-    role: roles[i],
-    locked: document.querySelector('.sf-l[data-i="' + i + '"]').checked
+    role: roles[i], locked: document.querySelector('.sf-l[data-i="' + i + '"]').checked
   }));
   await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffAccounts: updated }) });
   $("cModal").style.display = "none"; sync();
@@ -510,15 +584,12 @@ async function settleT(tName, cnt, unpCnt) {
 
 function retReqM(id, tName) {
   $("mTit").textContent = "↩️ برگشت خدمت از تکنسین به خدمات جاری";
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">علت عدم هماهنگی با مشتری * (اجباری)</label>' +
-    '<input id="rtN" class="inp" placeholder="مثلاً: مشتری پاسخ نداد...">' +
-    '<button class="btn" style="width:100%;background:#d97706;padding:9px" onclick="subRetReq(\'' + id + '\',\'' + tName + '\')">ارسال به خدمات جاری ↩️</button>';
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">علت عدم هماهنگی با مشتری * (اجباری)</label><input id="rtN" class="inp"><button class="btn" style="width:100%;background:#d97706;padding:9px" onclick="subRetReq(\'' + id + '\',\'' + tName + '\')">ارسال به خدمات جاری ↩️</button>';
   $("cModal").style.display = "flex";
 }
 function subRetReq(id, tName) {
   const v = $("rtN").value.trim(); if (!v) return alert("ذکر علت الزامی است");
-  upSt(id, { status: "pending", returnNote: "(" + tName + ") " + v });
-  $("cModal").style.display = "none";
+  upSt(id, { status: "pending", returnNote: "(" + tName + ") " + v }); $("cModal").style.display = "none";
 }
 
 function getRemDays(a) {
@@ -535,43 +606,26 @@ function drawRem() {
       if (a.isActiveTimer === false) return;
       const lbl = (a.label || "خونه").trim(), rem = getRemDays(a);
       const openReq = reqs.find(r => ["pending", "assigned", "open", "suspended"].includes(r.status) && (r.snapshot?.phone || r.customer?.phone) === c.phone && (ad.length === 1 || (r.addressLabel || "خونه").trim() === lbl));
-
       if (rem <= 3) {
         if (!openReq && !autoLock[c._id + "_" + ix]) {
           autoLock[c._id + "_" + ix] = true;
-          fetch(API + "/requests", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: lbl, issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_auto3", isFromPanel: true, preventDupOpen: true })
-          }).then(() => sync());
+          fetch(API + "/requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: lbl, issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_auto3", isFromPanel: true, preventDupOpen: true }) }).then(() => sync());
         }
         return;
       }
       if (rem <= 20 || a.inReminderQueue) items.push({ c, a, ix, rem, openReq });
     });
   });
-  items.sort((x, y) => x.rem - y.rem);
-  $("remC").textContent = items.length;
-
-  if (!items.length) {
-    $("remB").innerHTML = '<tr><td colspan="5" style="text-align:center;padding:12px">موردی در صف یادآور نیست ✅</td></tr>';
-    return;
-  }
-
+  items.sort((x, y) => x.rem - y.rem); $("remC").textContent = items.length;
+  if (!items.length) { $("remB").innerHTML = '<tr><td colspan="5" style="text-align:center;padding:12px">موردی در صف یادآور نیست ✅</td></tr>'; return; }
   $("remB").innerHTML = items.map(it => {
     const noteB = it.a.reminderNote ? '<div style="font-size:10px;color:#7e22ce;font-weight:bold;margin-top:3px">📌 هماهنگی: ' + it.a.reminderNote + '</div>' : "";
     const openB = it.openReq ? '<div class="bdg st-a" style="margin-top:2px">📋 دارای خدمت باز (' + it.openReq.invoiceCode + ')</div>' : "";
-    return '<tr>' +
-      '<td><span class="lnk" onclick="doss(\'' + it.c.phone + '\',' + it.ix + ')">' + (it.c.fullName || "---") + '</span></td>' +
-      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + it.c.phone + '">' + it.c.phone + ' 📞</a></td>' +
-      '<td><b>📍 ' + (it.a.label || "خونه") + ':</b> ' + it.a.fullAddress + openB + '</td>' +
-      '<td><span class="bdg st-p">' + it.rem + ' روز مانده به سرویس 🔔</span>' + noteB + '<div style="font-size:10px;color:#64748b">تکمیل قبلی: ' + toJ(it.a.lastServiceDate) + '</div></td>' +
-      '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
-      '<button class="btn" style="background:#7e22ce" onclick="remTimeM(\'' + it.c._id + '\',' + it.ix + ',' + it.rem + ')">⏳ تغییر زمان</button>' +
-      '<button class="btn" style="background:#16a34a" onclick="remToCurr(\'' + it.c._id + '\',' + it.ix + ')">➕ ارسال به جاری</button>' +
-      '<button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
+    return '<tr><td><span class="lnk" onclick="doss(\'' + it.c.phone + '\',' + it.ix + ')">' + (it.c.fullName || "---") + '</span></td><td style="direction:ltr;font-weight:bold"><a href="tel:' + it.c.phone + '">' + it.c.phone + ' 📞</a></td><td><b>📍 ' + (it.a.label || "خونه") + ':</b> ' + it.a.fullAddress + openB + '</td><td><span class="bdg st-p">' + it.rem + ' روز مانده به سرویس 🔔</span>' + noteB + '<div style="font-size:10px;color:#64748b">تکمیل قبلی: ' + toJ(it.a.lastServiceDate) + '</div></td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" style="background:#7e22ce" onclick="remTimeM(\'' + it.c._id + '\',' + it.ix + ',' + it.rem + ')">⏳ تغییر زمان</button><button class="btn" style="background:#16a34a" onclick="remToCurr(\'' + it.c._id + '\',' + it.ix + ')">➕ ارسال به جاری</button><button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
   }).join("");
 }
 // PART 4 END
+      
     
     function remTimeM(cId, ix, oldRem) {
   const c = custs.find(x => x._id === cId);
