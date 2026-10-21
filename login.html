@@ -3,28 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>پنل مدیریت | SamiWater</title>
+  <title>پرتال رسمی همکاران و مدیریت | SamiWater</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    body { background: #0c1a30; color: #fff; font-family: Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .card { max-width: 400px; width: 90%; background: #13223c; border: 1px solid #1e335a; border-radius: 18px; padding: 28px; box-shadow: 0 8px 30px rgba(0,0,0,.4); text-align: center; }
-    h2 { color: #3498db; margin-bottom: 25px; font-size: 24px; }
-    label { display: block; text-align: right; margin: 14px 0 6px; color: #a5b8d4; font-size: 14px; }
-    input { width: 100%; height: 50px; border-radius: 12px; border: 1px solid #1e335a; background: #0f1b2e; color: #fff; padding: 0 14px; font-size: 16px; box-sizing: border-box; text-align: center; }
-    .btn { width: 100%; height: 52px; border-radius: 12px; background: #3498db; border: none; color: #fff; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.3s; }
-    .btn:hover { background: #2980b9; }
-    .btn:disabled { background: #475569; cursor: wait; }
-    .error-text { color: #ff6b6b; margin-top: 15px; font-size: 14px; display: none; font-weight: bold; line-height: 1.6; }
+    * { box-sizing: border-box; font-family: "Vazirmatn", Tahoma, sans-serif; }
+    body { background: radial-gradient(circle at top, #134e3a, #071f17); color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 14px; }
+    .card { max-width: 410px; width: 100%; background: rgba(15, 59, 45, 0.92); border: 2px solid #d9b24c; border-radius: 22px; padding: 28px 24px; box-shadow: 0 14px 40px rgba(0,0,0,.55); text-align: center; }
+    .logo { width: 68px; height: 68px; border-radius: 16px; border: 2px solid #d9b24c; margin-bottom: 10px; background: #09261d; }
+    h2 { color: #f5e6b8; margin: 0 0 6px; font-size: 20px; font-weight: 800; }
+    .sub { color: #cbd5e1; font-size: 12px; margin-bottom: 20px; }
+    .roles-pill { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+    .r-tag { background: #09261d; border: 1px solid #d9b24c88; color: #f5e6b8; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    label { display: block; text-align: right; margin: 12px 0 6px; color: #f5e6b8; font-size: 13px; font-weight: 600; }
+    input { width: 100%; height: 50px; border-radius: 12px; border: 1.5px solid #2dd4bf55; background: #071f17; color: #fff; padding: 0 14px; font-size: 15px; text-align: center; direction: ltr; }
+    input:focus { outline: none; border-color: #d9b24c; }
+    .btn { width: 100%; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #d9b24c, #b48a28); border: none; color: #071f17; font-size: 16px; font-weight: 800; margin-top: 22px; cursor: pointer; transition: 0.2s; }
+    .btn:disabled { background: #475569; color: #cbd5e1; cursor: wait; }
+    .error-text { background: #7f1d1d; border: 1px solid #f87171; color: #fecaca; margin-top: 15px; padding: 10px; border-radius: 10px; font-size: 12px; display: none; font-weight: 600; line-height: 1.6; }
+    .back-link { display: inline-block; margin-top: 18px; color: #94a3b8; font-size: 12px; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>پنل مدیریت سامی‌وآتر</h2>
-    <label>نام کاربری</label>
-    <input id="adminUser" placeholder="نام کاربری" autocomplete="off" />
-    <label>پین کد ورود</label>
-    <input id="adminPin" type="password" placeholder="پین کد" autocomplete="off" />
-    <button class="btn" id="loginBtn" onclick="checkAdminLogin()">ورود به سیستم</button>
+    <img src="/logo-samiwater.png" class="logo" onerror="this.style.display='none'">
+    <h2>پرتال رسمی همکاران سامی‌واتر</h2>
+    <div class="sub">ویژه مدیریت، پشتیبانی، انبار و تکنسین‌های مجاز</div>
+    <div class="roles-pill">
+      <span class="r-tag">👑 مدیریت</span>
+      <span class="r-tag">🎧 پشتیبانی</span>
+      <span class="r-tag">📦 انبار</span>
+      <span class="r-tag">👨‍🔧 تکنسین</span>
+    </div>
+
+    <label>کد سازمانی (Username)</label>
+    <input id="adminUser" placeholder="مثلاً: Sam12 یا Sup1" autocomplete="off" />
+
+    <label>پین کد امنیتی (PIN)</label>
+    <input id="adminPin" type="password" inputmode="numeric" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkAdminLogin()" />
+
+    <button class="btn" id="loginBtn" onclick="checkAdminLogin()">🔐 احراز هویت و ورود</button>
     <div class="error-text" id="error"></div>
+    <a href="index.html" class="back-link">🏠 بازگشت به صفحه اصلی سایت سامی‌واتر</a>
   </div>
 
   <script>
@@ -37,53 +56,59 @@
       const loginBtn = document.getElementById('loginBtn');
 
       errorDiv.style.display = 'none';
-
       if (!username || !pin) {
-        errorDiv.innerText = "لطفاً نام کاربری و پین کد را وارد کنید";
+        errorDiv.innerText = "لطفاً کد سازمانی و پین کد را وارد کنید";
         errorDiv.style.display = 'block';
         return;
       }
 
       loginBtn.disabled = true;
-      loginBtn.innerText = "در حال بررسی...";
+      loginBtn.innerText = "در حال احراز هویت...";
 
-      // ۱. شاه‌کلید مستقیم مدیر ارشد (حتی در صورت خاموش بودن سرور بک‌اند)
+      // ۱. شاه‌کلید مستقیم مدیر ارشد
       if (username.toLowerCase() === 'admin' && pin === '1234') {
         localStorage.setItem('token', 'admin-master-token');
         localStorage.setItem('role', 'admin');
         localStorage.setItem('userRole', 'admin');
-        localStorage.setItem('username', 'admin');
+        localStorage.setItem('username', 'مدیر ارشد');
         localStorage.setItem('adminPhone', '09384129843');
         window.location.href = 'dashboard.html';
         return;
       }
 
-      // ۲. بررسی از طریق سرور بک‌اند برای سایر کاربران
+      // ۲. بررسی کدهای سازمانی (تکنسین Sam12، پشتیبانی Sup1، انبار St1)
       try {
-        const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+        const res = await fetch(`${BACKEND_URL}/api/requests/staff-login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, pin })
         });
-        const data = await response.json();
+        const data = await res.json();
 
-        if (data.ok) {
+        if (res.ok && data.ok) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('role', data.role);
           localStorage.setItem('userRole', data.role);
           localStorage.setItem('username', data.username);
-          localStorage.setItem('adminPhone', '09384129843');
-          window.location.href = 'dashboard.html';
+          localStorage.setItem('sw_user_code', data.code || username);
+
+          if (data.role === 'technician') {
+            localStorage.setItem('sw_tech_name', data.username);
+            window.location.href = 'tech.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+          return;
         } else {
-          errorDiv.innerText = data.error || "نام کاربری یا پین نادرست است";
+          errorDiv.innerText = data.error || "کد سازمانی یا پین کد نادرست است";
           errorDiv.style.display = 'block';
         }
       } catch (err) {
-        errorDiv.innerText = "سرور بک‌اند در حال حاضر پاسخ نمی‌دهد (خطای Deploy در Render).";
+        errorDiv.innerText = "خطا در ارتباط با سرور احراز هویت. چند لحظه دیگر تلاش کنید.";
         errorDiv.style.display = 'block';
       } finally {
         loginBtn.disabled = false;
-        loginBtn.innerText = "ورود به سیستم";
+        loginBtn.innerText = "🔐 احراز هویت و ورود";
       }
     }
   </script>
