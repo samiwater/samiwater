@@ -13,7 +13,7 @@ body{background:#f1f5f9;color:#1e293b;padding:10px}
 .hdr-logo{width:30px;height:30px;border-radius:7px;border:1.5px solid #facc15;background:#0f3b2d}
 .pill{background:#0f172a;color:#facc15;border:1px solid #facc15;padding:3px 8px;border-radius:14px;font-size:11px;font-weight:bold}
 .nav{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-@media(min-width:700px){.nav{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:700px){.nav{grid-template-columns:repeat(5,1fr)}}
 .nb{background:#334155;color:#e2e8f0;border:1px solid #475569;padding:9px 5px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer;text-align:center}
 .nb.active{background:#0284c7;color:#fff;border-color:#38bdf8}
 .card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px #0001;margin-bottom:12px;display:none}
@@ -36,19 +36,28 @@ th{background:#f8fafc;white-space:nowrap}
 .btn{background:#0284c7;color:#fff;border:none;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold}
 .b-del{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:4px 7px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:bold;margin-top:3px;width:100%}
 .m-bg{position:fixed;inset:0;background:#0f172ab3;display:none;justify-content:center;align-items:center;z-index:999;padding:10px}
-.m-bx{background:#fff;width:min(520px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
+.m-bx{background:#fff;width:min(540px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
 .inp{width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;margin-bottom:6px;font-family:inherit}
+@media(min-width:1024px){
+  body{padding:18px 26px}
+  .hdr{padding:18px 22px}.hdr h1{font-size:19px}
+  .nb{font-size:13px;padding:11px 8px}
+  .card{padding:18px}.card h2{font-size:15px}
+  th,td{font-size:13px;padding:10px}
+  .btn,.fb,.sel{font-size:12px;padding:7px 12px}
+}
 </style>
 </head>
 <body>
 <div class="hdr">
   <div class="hdr-t">
-    <h1><img src="/logo-samiwater.png" class="hdr-logo" onerror="this.style.display='none'"> پنل مدیریت سامی‌واتر</h1>
-    <div style="display:flex;gap:5px"><a href="tech.html" target="_blank" class="pill" style="color:#4ade80;border-color:#4ade80;text-decoration:none">📱 پنل تکنسین</a><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
+    <h1><img src="/logo-samiwater.png" class="hdr-logo" onerror="this.style.display='none'"> پنل جامع مدیریت سامی‌واتر</h1>
+    <div style="display:flex;gap:5px;flex-wrap:wrap"><a href="tech.html" target="_blank" class="pill" style="color:#4ade80;border-color:#4ade80;text-decoration:none">📱 پنل تکنسین</a><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
   </div>
   <nav class="nav">
     <button class="nb active" onclick="tab('t-req',this)">📋 خدمات جاری (<span id="actC">0</span>)</button>
     <button class="nb" onclick="tab('t-usr',this)">👨‍🔧 تکنسین‌ها و تسویه (<span id="techC">0</span>)</button>
+    <button class="nb" onclick="tab('t-wh',this);drawWh()">🏭 انبار مرکزی و حواله</button>
     <button class="nb" onclick="tab('t-rem',this)">🔔 یادآور سرویس (<span id="remC">0</span>)</button>
     <button class="nb" onclick="tab('t-arch',this)">🗂️ بایگانی خدمات</button>
     <button class="nb" onclick="tab('t-del',this)">🗑️ فاکتورهای حذفی (<span id="delC">0</span>)</button>
@@ -81,6 +90,14 @@ th{background:#f8fafc;white-space:nowrap}
   <div id="tTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
   <div id="tStats" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;margin-bottom:10px;font-size:11px"></div>
   <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>خدمت، اقلام و هشدار پیش‌نویس</th><th>مبلغ و وضعیت پرداخت</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
+</div>
+
+<div id="t-wh" class="card">
+  <h2><span>🏭 مدیریت انبار مرکزی، شعبه‌ها و زنجیره تامین کالا</span><div id="whTopBtns" style="display:flex;gap:5px;flex-wrap:wrap"></div></h2>
+  <div id="whBranchBar" class="sb" style="justify-content:space-between"></div>
+  <div style="overflow-x:auto;margin-bottom:14px"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا</th><th>موجودی انبار مرکزی (شعبه فعلی)</th><th>جمع موجودی دست تکنسین‌ها</th><th>عملیات سریع زنجیره تامین</th></tr></thead><tbody id="whB"></tbody></table></div>
+  <h2><span>📜 کاردکس و تاریخچه گردش کالا (ورود به انبار مرکزی و حواله تکنسین‌ها)</span></h2>
+  <div style="overflow-x:auto;max-height:260px"><table><thead><tr><th>تاریخ و ساعت</th><th>شعبه</th><th>نوع عملیات</th><th>عنوان کالا</th><th>تعداد</th><th>مقصد / تکنسین</th><th>توضیحات و ثبت‌کننده</th></tr></thead><tbody id="whLogB"></tbody></table></div>
 </div>
 
 <div id="t-rem" class="card">
@@ -132,6 +149,7 @@ th{background:#f8fafc;white-space:nowrap}
   </div>
 </div>
 <!-- PART 1 END -->
+  
     <script>
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
