@@ -26,7 +26,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 .lbl{font-size:11px;color:#64748b;margin-bottom:3px;font-weight:600}
 .val{font-size:13px;font-weight:800;color:var(--green)}
 .row-btw{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.cir-btn{display:flex;align-items:center;gap:5px;background:#f0fdf4;border:1.5px solid var(--green);color:var(--green);padding:7px 11px;border-radius:30px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;white-space:nowrap}
+.cir-btn{display:flex;align-items:center;gap:5px;background:#f0fdf4;border:1.5px solid var(--green);color:var(--green);padding:7px 10px;border-radius:30px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;white-space:nowrap}
 .cir-gold{background:#fefce8;border-color:#ca8a04;color:#854d0e}
 .btn-main{width:100%;background:linear-gradient(180deg,var(--green),var(--dark));color:var(--gold-lt);border:1.5px solid var(--gold);padding:13px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px}
 .btn-draft{width:100%;background:#0284c7;color:#fff;border:none;padding:13px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px}
@@ -43,6 +43,11 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 .drw{width:270px;background:linear-gradient(180deg,var(--green),var(--dark));height:100%;padding:18px 14px;color:#fff;border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:8px}
 .drw-it{padding:12px 10px;border-bottom:1px solid #ffffff22;font-size:13px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--gold-lt)}
 .req-item{cursor:pointer;border-right:5px solid var(--green)}
+.req-item.unread{background:linear-gradient(135deg,#fefce8,#fef08a)!important;border:2px solid #ca8a04!important;border-right:6px solid #dc2626!important;box-shadow:0 4px 14px #ca8a0440!important}
+.req-item.pending-sus{background:#e2e8f0!important;border-color:#94a3b8!important;border-right:6px solid #64748b!important;opacity:.75}
+.bdg-new{background:#dc2626;color:#fff;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:800;display:inline-block;margin-bottom:3px}
+.bdg-seen{background:#e2e8f0;color:#475569;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:3px}
+.bdg-sus{background:#475569;color:#fff;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:800;display:inline-block;margin-bottom:3px}
 .bdg-unpaid{background:#e11d48;color:#fff;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:800}
 .bdg-paid{background:#15803d;color:#fff;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:800}
 .prof-bar{background:linear-gradient(135deg,#15803d,#166534);color:#fff;border-radius:14px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
@@ -52,6 +57,9 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 .acc-bod.open{display:block}
 .cat-card{background:linear-gradient(135deg,var(--green),#144938);color:#fff;border:1.5px solid var(--gold);border-radius:12px;padding:11px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .q-btn{width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold-lt);font-size:16px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.q-btn.disabled{opacity:.35;border-color:#94a3b8;color:#94a3b8;cursor:not-allowed}
+.m-bg{position:fixed;inset:0;background:#09261dd9;display:none;justify-content:center;align-items:center;z-index:250;padding:12px}
+.m-bx{background:#fff;width:min(440px,100%);border-radius:16px;padding:15px;border:2px solid var(--gold);max-height:90vh;overflow-y:auto}
 </style>
 </head>
 <body>
@@ -117,9 +125,11 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 
   <div id="detailView" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <b style="color:var(--green);font-size:13px">📄 جزئیات سفارش</b>
+      <b style="color:var(--green);font-size:13px">📄 جزئیات خدمت</b>
       <button class="cir-btn" style="padding:4px 10px" onclick="showView('listView')">🔙 بازگشت به لیست</button>
     </div>
+
+    <div id="susStatusBanner" class="box" style="display:none"></div>
 
     <div class="box box-gold">
       <div class="grid3">
@@ -135,14 +145,20 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
           <div id="dCust" style="font-size:14px;font-weight:800;color:var(--green)">---</div>
           <div id="dPhoneTxt" style="font-size:12px;color:#475569;direction:ltr;margin-top:2px;font-weight:700">---</div>
         </div>
-        <div style="display:flex;gap:6px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
           <span id="dPayBadge" style="display:none"></span>
-          <a id="dCallBtn" href="#" class="cir-btn">📞 تماس با مشتری</a>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <a id="dCallBtn" href="#" class="cir-btn">📞 تماس</a>
+            <button class="cir-btn cir-gold" onclick="sendMissedSms(false)">💬 پیامک عدم پاسخ</button>
+          </div>
         </div>
       </div>
       <div id="dTempPhoneBox" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1" class="row-btw">
         <div style="font-size:11px;color:#854d0e;font-weight:700">📌 هماهنگی این نوبت: <span id="dTempPhoneTxt" style="direction:ltr"></span></div>
-        <a id="dTempCallBtn" href="#" class="cir-btn cir-gold">📞 تماس هماهنگی</a>
+        <div style="display:flex;gap:4px">
+          <a id="dTempCallBtn" href="#" class="cir-btn cir-gold">📞 تماس</a>
+          <button class="cir-btn cir-gold" onclick="sendMissedSms(true)">💬 پیامک</button>
+        </div>
       </div>
     </div>
 
@@ -168,7 +184,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 
     <div id="actBtns">
       <button class="btn-main" onclick="openBuilder()">📝 ثبت و ویرایش فاکتور</button>
-      <button class="btn-ret" onclick="retOrder()">↩️ عدم هماهنگی / برگشت به اپراتور</button>
+      <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق / عدم هماهنگی (۷ روز به بالا)</button>
     </div>
 
     <div id="invBuilder" style="display:none">
@@ -251,8 +267,36 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 
   <div id="subView" style="display:none"></div>
 </div>
+
+<div id="susModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="m-bx">
+    <h4 style="color:var(--green);margin-bottom:6px;font-size:14px">⏸️ ثبت درخواست تعلیق خدمت</h4>
+    <p style="font-size:11px;color:#b45309;background:#fefce8;border:1px solid #fde047;padding:7px;border-radius:8px;margin-bottom:8px;line-height:1.6">
+      ⚠️ <b>قانون شرکت:</b> هماهنگی‌های <b>زیر ۷ روز</b> نیازی به تعلیق ندارند و باید در کارتابل خودتان انجام شوند. تعلیق فقط برای <b>۷ روز به بالا (یا سر برج)</b> و عدم پاسخگویی است.
+    </p>
+    <label style="font-size:11px;font-weight:800">۱. علت درخواست تعلیق را انتخاب کنید *</label>
+    <select id="susReasSel" class="inp" onchange="onSusReasChange()">
+      <option value="عدم پاسخگویی مشتری (تلفن خاموش / بی‌پاسخ)">📞 عدم پاسخگویی مشتری (تلفن خاموش / بی‌پاسخ)</option>
+      <option value="درخواست مشتری برای موکول شدن به آینده">🗓️ درخواست مشتری برای موکول شدن (۷ روز به بالا)</option>
+      <option value="عدم حضور مشتری در محل / مسافرت">✈️ عدم حضور مشتری در محل / مسافرت (۷ روز به بالا)</option>
+      <option value="عدم آمادگی مالی / موکول شدن به سر برج">💰 عدم آمادگی مالی / موکول شدن به سر برج</option>
+      <option value="انصراف مشتری (خودش سرویس کرده / نیاز ندارد)">❌ انصراف مشتری (خودش سرویس کرده / نیاز ندارد)</option>
+      <option value="سایر موارد">📝 سایر موارد (در توضیحات بنویسید)</option>
+    </select>
+    <div id="susDaysBox">
+      <label style="font-size:11px;font-weight:800">۲. چند روز دیگر پیگیری شود؟ (حداقل ۷ روز) *</label>
+      <input id="susDaysInp" type="number" min="7" inputmode="numeric" class="inp" style="direction:ltr" placeholder="مثلاً: 7 یا 15 یا 30" value="7">
+    </div>
+    <label style="font-size:11px;font-weight:800">۳. تاریخ موردنظر مشتری (مثلاً سر برج) یا توضیح تکمیلی:</label>
+    <input id="susNoteInp" class="inp" placeholder="مثلاً: مشتری گفت اول ماه آینده تماس بگیریم...">
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <button class="btn-main" style="margin:0;flex:2" onclick="submitSusReq()">ارسال جهت بررسی پشتیبانی 📤</button>
+      <button class="btn-ret" style="margin:0;flex:1" onclick="$('susModal').style.display='none'">انصراف</button>
+    </div>
+  </div>
+</div>
 <!-- PART 2 END -->
-          <div class="bnav">
+  <div class="bnav">
   <div class="bn-it active" onclick="switchMainTab('assigned')"><span>📋</span><span>درخواست‌ها</span></div>
   <div class="bn-it" onclick="switchMainTab('done')"><span>✅</span><span>تکمیل‌شده‌ها</span></div>
   <div class="bn-it" onclick="showLedger()"><span>💳</span><span>لیست حساب</span></div>
@@ -335,10 +379,7 @@ function getMyActiveCycleDone() {
 function calcHeader() {
   const cyc = getMyActiveCycleDone();
   let bill = 0, prof = 0;
-  cyc.forEach(r => {
-    const eff = getEffAmounts(r);
-    bill += eff.payable; prof += eff.prof;
-  });
+  cyc.forEach(r => { const eff = getEffAmounts(r); bill += eff.payable; prof += eff.prof; });
   $("hBill").textContent = (bill > 0 ? "-" : "") + fmt(bill);
   $("hProfit").textContent = "+" + fmt(prof);
 }
@@ -366,45 +407,73 @@ function showView(v) {
 
 function renderList() {
   const asgList = allReqs.filter(r => (r.technicianName || "").trim() === myName && !r.isSettled && (r.status === "assigned" || r.status === "open"))
-    .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+    .sort((a, b) => {
+      const aSus = a.techSuspendReq?.active ? 1 : 0, bSus = b.techSuspendReq?.active ? 1 : 0;
+      if (aSus !== bSus) return aSus - bSus;
+      return (a.seenByTechAt ? 1 : 0) - (b.seenByTechAt ? 1 : 0) || new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+    });
   const doneAll = getMyActiveCycleDone().sort((a, b) => new Date(b.completedAt || b.createdAt || 0) - new Date(a.completedAt || a.createdAt || 0));
   const unpList = doneAll.filter(r => !r.paymentMethod || r.paymentMethod === "unpaid");
   const pdList = doneAll.filter(r => r.paymentMethod && r.paymentMethod !== "unpaid");
 
-  $("cntAsg").textContent = asgList.length;
+  const unreadCnt = asgList.filter(r => !r.seenByTechAt && !r.techSuspendReq?.active).length;
+  $("cntAsg").textContent = asgList.length + (unreadCnt ? " | 🆕" + unreadCnt : "");
   $("cntDn").textContent = doneAll.length;
   $("cntUnp").textContent = unpList.length;
   $("cntPd").textContent = pdList.length;
 
   const list = mainTab === "assigned" ? asgList : (doneSub === "unpaid" ? unpList : pdList);
   if (!list.length) {
-    const msg = mainTab === "assigned" ? "هیچ سفارش جدیدی در نوبت انجام شما نیست ✅" : (doneSub === "unpaid" ? "فاکتور پرداخت‌نشده‌ای وجود ندارد ✅" : "هنوز فاکتور پرداخت‌شده‌ای در این دوره ثبت نشده است.");
+    const msg = mainTab === "assigned" ? "هیچ خدمت جدیدی در نوبت انجام شما نیست ✅" : (doneSub === "unpaid" ? "فاکتور پرداخت‌نشده‌ای وجود ندارد ✅" : "هنوز فاکتور پرداخت‌شده‌ای در این دوره ثبت نشده است.");
     $("ordersList").innerHTML = '<div class="box" style="text-align:center;padding:24px;color:#64748b">' + msg + '</div>';
     return;
   }
 
   $("ordersList").innerHTML = list.map(r => {
     const isDone = r.status === "done" || r.status === "completed";
+    const isSusReq = !isDone && r.techSuspendReq?.active;
+    const isUnread = !isDone && !isSusReq && !r.seenByTechAt;
     const eff = getEffAmounts(r);
     const payMap = { pos: "پرداخت پوز ✅", cash: "پرداخت نقدی ✅", check: "پرداخت چک ✅", mixed: "پرداخت ترکیبی ✅" };
-    const stTxt = !isDone ? "تایید کارشناس" : (payMap[r.paymentMethod] || "🔴 پرداخت نشده (" + fmt(eff.payable) + ")");
-    const stCol = !isDone ? "#b45309" : ((!r.paymentMethod || r.paymentMethod === "unpaid") ? "#e11d48" : "#15803d");
-    return '<div class="box req-item" onclick="openOrder(\'' + r._id + '\')">' +
+    const stTxt = !isDone ? (isSusReq ? "⏳ در دست بررسی اپراتور" : "تایید کارشناس") : (payMap[r.paymentMethod] || "🔴 پرداخت نشده (" + fmt(eff.payable) + ")");
+    const stCol = !isDone ? (isSusReq ? "#475569" : "#b45309") : ((!r.paymentMethod || r.paymentMethod === "unpaid") ? "#e11d48" : "#15803d");
+    let topBdg = "";
+    if (!isDone) {
+      if (isSusReq) topBdg = '<span class="bdg-sus">⏸️ درخواست تعلیق ارسال شده</span>';
+      else if (isUnread) topBdg = '<span class="bdg-new">🆕 جدید (باز نشده)</span>';
+      else topBdg = '<span class="bdg-seen">👁️ دیده شده</span>';
+    }
+    return '<div class="box req-item ' + (isUnread ? "unread" : "") + ' ' + (isSusReq ? "pending-sus" : "") + '" onclick="openOrder(\'' + r._id + '\')">' +
       '<div class="grid3" style="align-items:center;text-align:right">' +
-      '<div><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.snapshot?.fullName || "مشتری") + '</div><div style="font-size:11px;color:#64748b">' + (r.issueType || "خدمات") + '</div></div>' +
+      '<div>' + topBdg + '<div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.snapshot?.fullName || "مشتری") + '</div><div style="font-size:11px;color:#64748b">' + (r.issueType || "خدمات") + '</div></div>' +
       '<div style="text-align:center"><div class="lbl">وضعیت</div><div style="font-size:11px;font-weight:800;color:' + stCol + '">' + stTxt + '</div></div>' +
-      '<div style="text-align:left;direction:ltr"><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.invoiceCode || "---") + '</div><div style="font-size:10px;color:#64748b">' + toJ(r.createdAt) + '</div></div>' +
+      '<div style="text-align:left;direction:ltr"><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.invoiceCode || "---") + '</div><div style="font-size:10px;color:#64748b">' + toJ(r.assignedAt || r.createdAt) + '</div></div>' +
       '</div></div>';
   }).join("");
 }
 // PART 3 END
-function openOrder(id) {
+  function openOrder(id) {
   curReq = allReqs.find(x => x._id === id); if (!curReq) return;
+  if (!curReq.seenByTechAt && (curReq.status === "assigned" || curReq.status === "open")) {
+    curReq.seenByTechAt = new Date().toISOString();
+    fetch(API + "/requests/" + curReq._id + "/seen", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) }).catch(() => {});
+  }
   showView("detailView");
   $("dCode").textContent = curReq.invoiceCode || "---";
   $("dType").textContent = curReq.issueType || "خدمات";
-  $("dDate").textContent = "تاریخ: " + toJ(curReq.createdAt);
-  $("dTime").textContent = "ساعت: " + toTm(curReq.createdAt);
+  $("dDate").textContent = "تاریخ: " + toJ(curReq.assignedAt || curReq.createdAt);
+  $("dTime").textContent = "ساعت: " + toTm(curReq.assignedAt || curReq.createdAt);
+
+  const sr = curReq.techSuspendReq;
+  if (sr?.active) {
+    $("susStatusBanner").style.display = "block";
+    $("susStatusBanner").style.background = "#f1f5f9"; $("susStatusBanner").style.borderColor = "#64748b";
+    $("susStatusBanner").innerHTML = '<div style="font-size:12px;font-weight:800;color:#334155">⏳ درخواست تعلیق شما در انتظار تایید پشتیبانی است</div><div style="font-size:11px;color:#475569;margin-top:4px">علت: ' + (sr.reason || "") + (sr.days ? " (" + sr.days + " روز)" : "") + (sr.note ? " - " + sr.note : "") + '</div>';
+  } else if (sr?.rejectedNote) {
+    $("susStatusBanner").style.display = "block";
+    $("susStatusBanner").style.background = "#fef2f2"; $("susStatusBanner").style.borderColor = "#ef4444";
+    $("susStatusBanner").innerHTML = '<div style="font-size:12px;font-weight:800;color:#be123c">❌ درخواست تعلیق توسط پشتیبانی رد شد (الزام به انجام):</div><div style="font-size:11px;color:#991b1b;margin-top:4px">' + sr.rejectedNote + '</div>';
+  } else $("susStatusBanner").style.display = "none";
 
   const ph = curReq.snapshot?.phone || "";
   $("dCust").textContent = curReq.snapshot?.fullName || "نامشخص";
@@ -432,148 +501,167 @@ function openOrder(id) {
   }
 }
 
+function sendMissedSms(useTemp) {
+  if (!curReq) return;
+  const rawPh = useTemp ? (curReq.tempPhone || "") : (curReq.snapshot?.phone || "");
+  const ph = rawPh.replace(/\D/g, "");
+  if (!ph) return alert("شماره تماس معتبر یافت نشد");
+  fetch(API + "/requests/" + curReq._id + "/seen", {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ missedCallSms: true })
+  }).catch(() => {});
+  const cName = curReq.snapshot?.fullName || "مشتری گرامی";
+  const msg = "درود " + cName + " عزیز\n" + myName + "، تکنسین شرکت گوارانوش (سامی‌واتر) هستم،\nجهت ارائه خدمات تماس گرفته شد و پاسخگو نبودید\nلطفا در اسرع وقت با این شماره تماس بگیرید.\nسپاس🌹";
+  location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg);
+}
+
+function openSusModal() {
+  $("susReasSel").selectedIndex = 0;
+  $("susDaysInp").value = "7";
+  $("susNoteInp").value = "";
+  onSusReasChange();
+  $("susModal").style.display = "flex";
+}
+
+function onSusReasChange() {
+  const v = $("susReasSel").value;
+  const noDays = v.includes("عدم پاسخگویی") || v.includes("انصراف");
+  $("susDaysBox").style.display = noDays ? "none" : "block";
+}
+
+async function submitSusReq() {
+  const reason = $("susReasSel").value;
+  const needDays = $("susDaysBox").style.display !== "none";
+  const days = needDays ? (Number($("susDaysInp").value) || 0) : 0;
+  const note = $("susNoteInp").value.trim();
+
+  if (needDays && days < 7) {
+    return alert("⚠️ طبق قانون شرکت، تعلیق زیر ۷ روز مجاز نیست!\nهماهنگی‌های زیر ۷ روز باید در کارتابل خودتان باقی بماند و انجام شود. لطفاً برای تعلیق، عددی از ۷ روز به بالا وارد کنید.");
+  }
+  if (reason === "سایر موارد" && !note) return alert("لطفاً توضیح علت تعلیق را در کادر سوم بنویسید.");
+
+  const reqObj = { active: true, reason, days, note, requestedAt: new Date().toISOString() };
+  const r = await fetch(API + "/requests/" + curReq._id + "/status", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ techSuspendReq: reqObj })
+  });
+  if (r.ok) {
+    $("susModal").style.display = "none";
+    alert("⏳ درخواست تعلیق ثبت شد و خدمت در وضعیت «در دست بررسی اپراتور» قرار گرفت.");
+    loadData();
+  }
+}
+
+function getStockFor(title) { return Math.max(0, Number(settings.techMeta?.[myName]?.stock?.[title]) || 0); }
+
+async function refreshStockInBuilder() {
+  try {
+    const r = await fetch(API + "/requests/settings");
+    if (r.ok) { settings = (await r.json()).settings || settings; openBuilder(); alert("موجودی انبار شما بروزرسانی شد ✅"); }
+  } catch (e) { alert("خطا در بروزرسانی موجودی"); }
+}
+
 function openBuilder() {
   $("actBtns").style.display = "none"; $("invSummary").style.display = "none"; $("invBuilder").style.display = "block";
   if (!Object.keys(qtys).length) (curReq.invoiceItems || curReq.draftItems || []).forEach(it => { qtys[it.id] = it.qty; });
   const cats = settings.categories?.length ? settings.categories : ["فیلترها", "حوضینگ ها و مخزن", "پمپ و ترانس", "شیرها", "کلیدها", "زانو و اتصالات", "فیلتر یخچال", "نیمه صنعتی", "تصفیه آب", "متفرقه", "سرویس های انجام شده"];
   const catItems = settings.catalog || [];
+  const refreshBtn = '<div style="display:flex;justify-content:space-between;align-items:center;background:#f0fdf4;border:1px solid #bbf7d0;padding:7px 10px;border-radius:10px;margin-bottom:10px;font-size:11px;color:#0f3b2d"><span>📦 انتخاب کالاها محدود به موجودی انبار شماست</span><button class="cir-btn" style="padding:3px 8px;font-size:10px" onclick="refreshStockInBuilder()">🔄 بروزرسانی انبار</button></div>';
 
-  $("accContainer").innerHTML = cats.map((catName, idx) => {
+  $("accContainer").innerHTML = refreshBtn + cats.map((catName, idx) => {
     const isWage = catName === "سرویس های انجام شده";
     const sub = catItems.filter(x => (x.category || "متفرقه") === catName);
-    const bodyHtml = sub.length ? sub.map(c => '<div class="cat-card">' +
-      '<div style="flex:1"><div style="font-size:12px;font-weight:800;color:#fff">' + c.title + '</div>' +
-      '<div style="font-size:11px;color:var(--gold-lt);margin-top:3px">' + fmt(c.price) + (c.wage ? " + اجرت: " + fmt(c.wage) : "") + '</div></div>' +
-      '<div style="display:flex;align-items:center;gap:10px;direction:ltr">' +
-      '<button class="q-btn" onclick="chQty(\'' + c.id + '\',-1)">−</button>' +
-      '<b id="q_' + c.id + '" style="font-size:14px;color:var(--gold);min-width:18px;text-align:center">' + (qtys[c.id] || 0) + '</b>' +
-      '<button class="q-btn" onclick="chQty(\'' + c.id + '\',1)">+</button></div></div>'
-    ).join("") : '<div style="font-size:11px;color:#64748b;padding:8px">آیتمی تعریف نشده است.</div>';
-
-    return '<div class="acc-hdr ' + (isWage ? "wages" : "") + '" onclick="$(\'ac_bod_' + idx + '\').classList.toggle(\'open\')">' +
-      '<span>' + (isWage ? "🛠️ " : "📦 ") + catName + '</span><span style="font-size:11px;color:#64748b">⌄</span></div>' +
-      '<div id="ac_bod_' + idx + '" class="acc-bod">' + bodyHtml + '</div>';
+    const bodyHtml = sub.length ? sub.map(c => {
+      const av = c.isGoods ? getStockFor(c.title) : 999;
+      if (c.isGoods && (qtys[c.id] || 0) > av) qtys[c.id] = av;
+      const curQ = qtys[c.id] || 0;
+      const stBadge = c.isGoods ? (av > 0 ? '<span style="color:#4ade80;font-size:10px;display:block">📦 موجودی انبار شما: ' + av + ' عدد</span>' : '<span style="color:#fda4af;font-size:10px;font-weight:800;display:block">🚫 موجودی انبار شما صفر است (ناموجود)</span>') : '<span style="color:#cbd5e1;font-size:10px;display:block">🛠️ خدمت / دستمزد</span>';
+      return '<div class="cat-card" style="' + (c.isGoods && av <= 0 ? "opacity:.65" : "") + '"><div style="flex:1"><div style="font-size:12px;font-weight:800;color:#fff">' + c.title + '</div><div style="font-size:11px;color:var(--gold-lt);margin-top:2px">' + fmt(c.price) + (c.wage ? " + اجرت: " + fmt(c.wage) : "") + '</div>' + stBadge + '</div><div style="display:flex;align-items:center;gap:10px;direction:ltr"><button class="q-btn" onclick="chQty(\'' + c.id + '\',-1)">−</button><b id="q_' + c.id + '" style="font-size:14px;color:var(--gold);min-width:18px;text-align:center">' + curQ + '</b><button id="pl_' + c.id + '" class="q-btn ' + (c.isGoods && curQ >= av ? "disabled" : "") + '" onclick="chQty(\'' + c.id + '\',1)">+</button></div></div>';
+    }).join("") : '<div style="font-size:11px;color:#64748b;padding:8px">آیتمی تعریف نشده است.</div>';
+    return '<div class="acc-hdr ' + (isWage ? "wages" : "") + '" onclick="$(\'ac_bod_' + idx + '\').classList.toggle(\'open\')"><span>' + (isWage ? "🛠️ " : "📦 ") + catName + '</span><span style="font-size:11px;color:#64748b">⌄</span></div><div id="ac_bod_' + idx + '" class="acc-bod">' + bodyHtml + '</div>';
   }).join("");
   $("wNoteInp").value = curReq.workReport || "";
 }
 
-function chQty(id, d) { qtys[id] = Math.max(0, (qtys[id] || 0) + d); if ($("q_" + id)) $("q_" + id).textContent = qtys[id]; }
+function chQty(id, d) {
+  const c = (settings.catalog || []).find(x => x.id === id); if (!c) return;
+  const cur = qtys[id] || 0;
+  if (d > 0 && c.isGoods) {
+    const av = getStockFor(c.title);
+    if (av <= 0) return alert("🚫 موجودی کالای «" + c.title + "» در انبار شما صفر است!");
+    if (cur + d > av) return alert("⚠️ سقف موجودی «" + c.title + "» در انبار شما " + av + " عدد است.");
+  }
+  qtys[id] = Math.max(0, cur + d);
+  if ($("q_" + id)) $("q_" + id).textContent = qtys[id];
+  if (c.isGoods && $("pl_" + id)) $("pl_" + id).classList.toggle("disabled", qtys[id] >= getStockFor(c.title));
+}
 
 async function openDraftPreview() {
   const cat = settings.catalog || [], items = [];
-  cat.forEach(c => {
-    if (qtys[c.id] > 0) items.push({ id: c.id, title: c.title, category: c.category, isGoods: c.isGoods, price: c.price, wage: c.wage || 0, commPct: c.commPct || 0, qty: qtys[c.id] });
-  });
+  for (const c of cat) {
+    if (qtys[c.id] > 0) {
+      if (c.isGoods && qtys[c.id] > getStockFor(c.title)) return alert("🚫 موجودی انبار شما برای «" + c.title + "» کافی نیست.");
+      items.push({ id: c.id, title: c.title, category: c.category, isGoods: c.isGoods, price: c.price, wage: c.wage || 0, commPct: c.commPct || 0, qty: qtys[c.id] });
+    }
+  }
   const tFee = Number(curReq.travelFee) > 0 ? Number(curReq.travelFee) : (Number(settings.fixedTravelFee) || 139000);
   const disc = Number(curReq.discountAmount || 0);
   let tot = tFee, prof = tFee;
-  items.forEach(it => {
-    tot += (it.price * it.qty) + (it.wage * it.qty);
-    prof += Math.round((it.price * it.qty * (it.commPct || 0)) / 100) + (it.wage * it.qty);
-  });
+  items.forEach(it => { tot += (it.price * it.qty) + (it.wage * it.qty); prof += Math.round((it.price * it.qty * (it.commPct || 0)) / 100) + (it.wage * it.qty); });
   const payable = Math.max(0, tot - disc);
   const summary = items.map(i => i.title + " (" + i.qty + ")").join(" ، ") || $("wNoteInp").value.trim() || "ایاب و ذهاب و بازدید";
   draftCalc = { items, tFee, disc, tot, payable, prof, summary };
-
-  fetch(API + "/requests/" + curReq._id + "/draft", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ draftItems: items, draftPayable: payable, draftSummary: summary })
-  }).catch(() => {});
-
-  $("invBuilder").style.display = "none"; $("invSummary").style.display = "block";
-  renderInvoiceSummary(true);
+  fetch(API + "/requests/" + curReq._id + "/draft", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ draftItems: items, draftPayable: payable, draftSummary: summary }) }).catch(() => {});
+  $("invBuilder").style.display = "none"; $("invSummary").style.display = "block"; renderInvoiceSummary(true);
 }
 
 function renderInvoiceSummary(isDraft) {
   const eff = getEffAmounts(curReq);
   const data = isDraft ? draftCalc : { items: curReq.invoiceItems || [], tFee: eff.tFee, disc: eff.disc, tot: eff.tot, payable: eff.payable, prof: eff.prof };
-  const pMethod = curReq.paymentMethod || "unpaid";
-  const isPaid = !isDraft && pMethod !== "unpaid";
+  const pMethod = curReq.paymentMethod || "unpaid", isPaid = !isDraft && pMethod !== "unpaid";
 
   $("draftBanner").style.display = isDraft ? "block" : "none";
   $("draftActions").style.display = isDraft ? "block" : "none";
   $("editItemsBtn").style.display = isDraft ? "inline-flex" : "none";
 
   let recBox = $("paidReceiptBox");
-  if (!recBox) {
-    recBox = document.createElement("div");
-    recBox.id = "paidReceiptBox";
-    $("payBox").parentNode.insertBefore(recBox, $("payBox"));
-  }
+  if (!recBox) { recBox = document.createElement("div"); recBox.id = "paidReceiptBox"; $("payBox").parentNode.insertBefore(recBox, $("payBox")); }
 
-  if (isDraft) {
-    $("payBox").style.display = "none";
-    recBox.style.display = "none";
-  } else if (isPaid) {
-    $("payBox").style.display = "none";
-    recBox.style.display = "block";
+  if (isDraft) { $("payBox").style.display = "none"; recBox.style.display = "none"; }
+  else if (isPaid) {
+    $("payBox").style.display = "none"; recBox.style.display = "block";
     const pLabels = { pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝", mixed: "پرداخت ترکیبی 🔀" };
-    $("dPayBadge").style.display = "inline-block";
-    $("dPayBadge").className = "bdg-paid";
-    $("dPayBadge").textContent = pLabels[pMethod] || "پرداخت شده";
-
-    const pb = curReq.paymentBreakdown || {};
-    const det = [];
+    $("dPayBadge").style.display = "inline-block"; $("dPayBadge").className = "bdg-paid"; $("dPayBadge").textContent = pLabels[pMethod] || "پرداخت شده";
+    const pb = curReq.paymentBreakdown || {}, det = [];
     if (pb.pos > 0) det.push("💳 دستگاه پوز: <b>" + fmt(pb.pos) + "</b>");
     if (pb.cash > 0) det.push("💵 نقدی: <b>" + fmt(pb.cash) + "</b>");
     if (pb.check > 0) det.push("📝 چک: <b>" + fmt(pb.check) + "</b> (بانک " + (pb.checkBank || "---") + " - ش: " + (pb.checkNumber || "---") + ")");
     if (!det.length) det.push((pLabels[pMethod] || "پرداخت") + ": <b>" + fmt(data.payable) + "</b>");
-
-    recBox.innerHTML = '<div class="box" style="background:#f0fdf4;border:2px solid #15803d;color:#15803d;text-align:center">' +
-      '<div style="font-size:13px;font-weight:800;margin-bottom:6px">✅ حساب این فاکتور تسویه و بسته شده است</div>' +
-      '<div style="font-size:12px;color:#0f3b2d;line-height:1.8">' + det.join("<br>") + '</div></div>';
+    recBox.innerHTML = '<div class="box" style="background:#f0fdf4;border:2px solid #15803d;color:#15803d;text-align:center"><div style="font-size:13px;font-weight:800;margin-bottom:6px">✅ حساب این فاکتور تسویه و بسته شده است</div><div style="font-size:12px;color:#0f3b2d;line-height:1.8">' + det.join("<br>") + '</div></div>';
   } else {
-    recBox.style.display = "none";
-    $("payBox").style.display = "block";
-    $("dPayBadge").style.display = "inline-block";
-    $("dPayBadge").className = "bdg-unpaid";
-    $("dPayBadge").textContent = "پرداخت نشده";
-    ["pos", "cash", "check"].forEach(k => {
-      $("inp_" + k).value = "";
-      $("sec_" + k).classList.remove("open");
-      $("pm_" + k).classList.remove("sel");
-    });
-    $("inp_chk_num").value = ""; $("inp_chk_bnk").value = "";
-    calcRemPay();
+    recBox.style.display = "none"; $("payBox").style.display = "block";
+    $("dPayBadge").style.display = "inline-block"; $("dPayBadge").className = "bdg-unpaid"; $("dPayBadge").textContent = "پرداخت نشده";
+    ["pos", "cash", "check"].forEach(k => { $("inp_" + k).value = ""; $("sec_" + k).classList.remove("open"); $("pm_" + k).classList.remove("sel"); });
+    $("inp_chk_num").value = ""; $("inp_chk_bnk").value = ""; calcRemPay();
   }
 
   $("sProf").textContent = fmt(data.prof);
-  const rows = [];
-  data.items.forEach(it => {
-    rows.push('<div class="box" style="margin-bottom:8px;padding:10px"><div style="font-size:12px;font-weight:800;color:var(--green);border-bottom:1px solid #e2e8f0;padding-bottom:5px;margin-bottom:6px">' + it.title + '</div>' +
-      '<div class="grid3"><div><div class="lbl">تعداد</div><div class="val">' + it.qty + '</div></div><div><div class="lbl">قیمت واحد</div><div class="val">' + fmt(it.price) + '</div></div><div><div class="lbl">جمع</div><div class="val">' + fmt(it.price * it.qty) + '</div></div></div></div>');
-  });
-  $("sItemsBox").innerHTML = rows.join("") || '<div style="font-size:11px;color:#64748b;text-align:center;padding:6px">قطعه مصرفی انتخاب نشده (فقط ایاب و ذهاب ثابت)</div>';
+  $("sItemsBox").innerHTML = data.items.map(it => '<div class="box" style="margin-bottom:8px;padding:10px"><div style="font-size:12px;font-weight:800;color:var(--green);border-bottom:1px solid #e2e8f0;padding-bottom:5px;margin-bottom:6px">' + it.title + '</div><div class="grid3"><div><div class="lbl">تعداد</div><div class="val">' + it.qty + '</div></div><div><div class="lbl">قیمت واحد</div><div class="val">' + fmt(it.price) + '</div></div><div><div class="lbl">جمع</div><div class="val">' + fmt(it.price * it.qty) + '</div></div></div></div>').join("") || '<div style="font-size:11px;color:#64748b;text-align:center;padding:6px">قطعه مصرفی انتخاب نشده (فقط ایاب و ذهاب ثابت)</div>';
   $("sTravel").textContent = fmt(data.tFee); $("sDisc").textContent = fmt(data.disc);
   $("sTot").textContent = fmt(data.tot); $("sPayable").textContent = fmt(data.payable);
 }
 
 function togPaySec(k) {
-  const sec = $("sec_" + k), btn = $("pm_" + k);
-  const isOpen = sec.classList.toggle("open");
+  const sec = $("sec_" + k), btn = $("pm_" + k), isOpen = sec.classList.toggle("open");
   btn.classList.toggle("sel", isOpen);
   if (!isOpen) { $("inp_" + k).value = ""; calcRemPay(); }
   else if (getRemPayVal() > 0 && !Number($("inp_" + k).value)) fillRem(k);
 }
-
-function getRemPayVal() {
-  const eff = getEffAmounts(curReq);
-  const p = Number($("inp_pos").value) || 0, c = Number($("inp_cash").value) || 0, k = Number($("inp_check").value) || 0;
-  return eff.payable - (p + c + k);
-}
-
-function fillRem(k) {
-  $("inp_" + k).value = "";
-  const rem = getRemPayVal();
-  if (rem > 0) $("inp_" + k).value = rem;
-  calcRemPay();
-}
-
+function getRemPayVal() { const eff = getEffAmounts(curReq); return eff.payable - ((Number($("inp_pos").value) || 0) + (Number($("inp_cash").value) || 0) + (Number($("inp_check").value) || 0)); }
+function fillRem(k) { $("inp_" + k).value = ""; const rem = getRemPayVal(); if (rem > 0) $("inp_" + k).value = rem; calcRemPay(); }
 function calcRemPay() {
   const rem = getRemPayVal();
   $("remVal").textContent = (rem === 0 ? "۰ تومان (تکمیل ✅)" : fmt(rem));
-  $("remBar").style.background = rem === 0 ? "#dcfce7" : "#fee2e2";
-  $("remBar").style.color = rem === 0 ? "#15803d" : "#be123c";
+  $("remBar").style.background = rem === 0 ? "#dcfce7" : "#fee2e2"; $("remBar").style.color = rem === 0 ? "#15803d" : "#be123c";
 }
 
 async function finalizeInvoice() {
@@ -583,23 +671,19 @@ async function finalizeInvoice() {
     method: "PUT", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status: "done", technicianName: myName, invoiceItems: draftCalc.items, travelFee: draftCalc.tFee, workReport: draftCalc.summary, paymentMethod: "unpaid", deductStock: true })
   });
-  if (r.ok) {
-    curReq = (await r.json()).request; qtys = {};
-    const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
-    calcHeader(); openOrder(curReq._id);
-    alert("✅ فاکتور به بخش «تکمیل‌شده‌ها» منتقل شد. اکنون مبالغ پرداختی مشتری را وارد کنید.");
-  }
+  const d = await r.json();
+  if (!r.ok) return alert(d.error || "خطا در ثبت فاکتور");
+  curReq = d.request; qtys = {}; await loadData(); openOrder(curReq._id);
+  alert("✅ فاکتور نهایی ثبت شد. اکنون روش پرداخت را ثبت کنید.");
 }
 
 async function submitPayment() {
   const eff = getEffAmounts(curReq);
   const pos = Number($("inp_pos").value) || 0, cash = Number($("inp_cash").value) || 0, check = Number($("inp_check").value) || 0;
   const rem = eff.payable - (pos + cash + check);
-  if (rem !== 0) return alert("⚠️ تا زمانی که کل مبلغ قابل پرداخت (" + fmt(eff.payable) + ") تعیین تکلیف و مانده صفر نشود، امکان بستن حساب وجود ندارد!\nمانده فعلی: " + fmt(rem));
-
+  if (rem !== 0) return alert("⚠️ تا زمانی که کل مبلغ قابل پرداخت (" + fmt(eff.payable) + ") تعیین تکلیف نشود، امکان بستن حساب وجود ندارد!\nمانده: " + fmt(rem));
   const checkNumber = $("inp_chk_num").value.trim(), checkBank = $("inp_chk_bnk").value.trim();
-  if (check > 0 && (!checkNumber || !checkBank)) return alert("⚠️ برای پرداخت چک، وارد کردن «شماره چک» و «نام بانک» الزامی است!");
-
+  if (check > 0 && (!checkNumber || !checkBank)) return alert("⚠️ شماره چک و نام بانک الزامی است!");
   const methods = [pos > 0 ? "pos" : null, cash > 0 ? "cash" : null, check > 0 ? "check" : null].filter(Boolean);
   const pMethod = methods.length > 1 ? "mixed" : (methods[0] || "cash");
 
@@ -610,8 +694,7 @@ async function submitPayment() {
   if (r.ok) {
     curReq = (await r.json()).request;
     const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
-    calcHeader();
-    alert("✅ اطلاعات پرداخت با موفقیت ثبت و قفل شد.");
+    calcHeader(); alert("✅ اطلاعات پرداخت با موفقیت ثبت و قفل شد.");
     switchMainTab("done"); switchDoneSub("paid");
   }
 }
@@ -622,17 +705,14 @@ function showLedger() {
     .sort((a, b) => new Date(a.paidAt || a.completedAt || 0) - new Date(b.paidAt || b.completedAt || 0));
   let run = 0; const cards = [];
   paid.forEach(r => {
-    const eff = getEffAmounts(r), pb = r.paymentBreakdown || {};
-    const parts = [];
+    const eff = getEffAmounts(r), pb = r.paymentBreakdown || {}, parts = [];
     if (pb.pos > 0) parts.push({ t: "پرداخت پوز 💳", a: pb.pos });
     if (pb.cash > 0) parts.push({ t: "پرداخت نقدی 💵", a: pb.cash });
     if (pb.check > 0) parts.push({ t: "پرداخت چک 📝 (" + (pb.checkBank || "") + " - چک " + (pb.checkNumber || "") + ")", a: pb.check });
     if (!parts.length) parts.push({ t: ({ pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝" }[r.paymentMethod] || "پرداخت"), a: eff.payable });
     parts.forEach(pt => {
       run += pt.a;
-      cards.push('<div class="box" style="border-right:5px solid #be123c"><div class="row-btw">' +
-        '<div><div style="font-size:13px;font-weight:800;color:#b45309">' + pt.t + '</div><div style="font-size:11px;color:#475569;margin-top:3px">👤 ' + (r.snapshot?.fullName || "") + ' | فاکتور ' + (r.invoiceCode || "") + '</div></div>' +
-        '<div style="text-align:left;direction:ltr"><div style="font-size:13px;font-weight:800;color:#be123c">مبلغ: -' + fmt(pt.a) + '</div><div style="font-size:11px;color:#64748b;margin-top:3px">موجودی: -' + fmt(run) + '</div></div></div></div>');
+      cards.push('<div class="box" style="border-right:5px solid #be123c"><div class="row-btw"><div><div style="font-size:13px;font-weight:800;color:#b45309">' + pt.t + '</div><div style="font-size:11px;color:#475569;margin-top:3px">👤 ' + (r.snapshot?.fullName || "") + ' | فاکتور ' + (r.invoiceCode || "") + '</div></div><div style="text-align:left;direction:ltr"><div style="font-size:13px;font-weight:800;color:#be123c">مبلغ: -' + fmt(pt.a) + '</div><div style="font-size:11px;color:#64748b;margin-top:3px">موجودی: -' + fmt(run) + '</div></div></div></div>');
     });
   });
   $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">💳 لیست تراکنش‌های دوره جاری</h4>' + (cards.reverse().join("") || '<div class="box" style="text-align:center">تراکنشی در این دوره ثبت نشده است.</div>');
@@ -642,14 +722,14 @@ function showStock() {
   showView("subView");
   const st = settings.techMeta?.[myName]?.stock || {}, keys = Object.keys(st);
   $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">📦 موجودی کالا (انبار همراه شما)</h4>' +
-    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span class="bdg-paid" style="direction:ltr">' + st[k] + ' عدد</span></div>').join("") : '<div class="box" style="text-align:center">موجودی کالایی برای شما ثبت نشده است.</div>');
+    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span class="' + ((Number(st[k]) || 0) > 0 ? "bdg-paid" : "bdg-unpaid") + '" style="direction:ltr">' + (Number(st[k]) || 0) + ' عدد</span></div>').join("") : '<div class="box" style="text-align:center">موجودی کالایی برای شما ثبت نشده است.</div>');
 }
 
 function showLogs() {
   showView("subView");
   const logs = settings.techMeta?.[myName]?.logs || [];
   $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">🔔 پیام‌ها و گزارش سیستمی</h4>' +
-    (logs.length ? logs.map(l => '<div class="box"><div class="row-btw" style="margin-bottom:5px"><b style="color:#b45309;font-size:12px">' + l.title + '</b><span style="font-size:11px;color:#64748b">' + toJ(l.date) + '</span></div><div style="font-size:12px;color:#475569;line-height:1.7">' + l.text + '</div></div>').join("") : '<div class="box" style="text-align:center">پیامی ثبت نشده است.</div>');
+    (logs.length ? logs.map(l => '<div class="box"><div class="row-btw" style="margin-bottom:5px"><b style="color:#b45309;font-size:12px">' + l.title + '</b><span style="font-size:11px;color:#64748b">' + toJ(l.date) + ' ' + toTm(l.date) + '</span></div><div style="font-size:12px;color:#475569;line-height:1.7">' + l.text + '</div></div>').join("") : '<div class="box" style="text-align:center">پیامی ثبت نشده است.</div>');
 }
 
 function saveMyGps() {
@@ -659,17 +739,5 @@ function saveMyGps() {
     await fetch(API + "/requests/" + curReq._id + "/location", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locationUrl: coords }) });
     curReq.locationUrl = coords; $("dMapBtn").href = "https://maps.google.com/?q=" + coords; alert("لوکیشن ذخیره شد 📍✅");
   }, () => alert("GPS گوشی را روشن کنید."));
-}
-
-async function retOrder() {
-  const r = prompt("علت عدم هماهنگی با مشتری را وارد کنید:");
-  if (!r || !r.trim()) return;
-  await fetch(API + "/requests/" + curReq._id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "pending", returnNote: "(" + myName + ") " + r.trim() }) });
-  loadData();
-}
-
-init();
-</script>
-</body>
-</html>
-<!-- END -->
+  }
+  
