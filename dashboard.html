@@ -386,55 +386,175 @@ function drawTechs() {
 }
 // PART 3 END
       
-      function openStockM(tName) {
+      function applyRoleLocks() {
+  if (!localStorage.getItem("token")) { location.href = "login.html"; return; }
+  const roleMap = { admin: "👑 مدیر ارشد", support: "🎧 پشتیبانی خدمات", warehouse: "📦 مسئول انبار" };
+  $("rPill").textContent = (roleMap[uRole] || uRole) + " (" + uName + ")";
+
+  if (uRole === "support") {
+    document.querySelectorAll(".nb").forEach(b => {
+      const txt = b.textContent || "";
+      if (txt.includes("تعرفه") || txt.includes("حذفی")) b.style.display = "none";
+    });
+  } else if (uRole === "warehouse") {
+    document.querySelectorAll(".nb").forEach(b => {
+      const txt = b.textContent || "";
+      if (!txt.includes("تکنسین") && !txt.includes("تعرفه") && !txt.includes("خروج")) b.style.display = "none";
+    });
+    const techBtn = document.querySelector("button[onclick*='t-usr']");
+    if (techBtn) tab("t-usr", techBtn);
+  }
+}
+setTimeout(applyRoleLocks, 50);
+
+function openStockM(tName) {
+  if (uRole === "support") return alert("⛔ این بخش فقط مخصوص مدیریت و انباردار است.");
   if (!settings.techMeta) settings.techMeta = {};
-  if (!settings.techMeta[tName]) settings.techMeta[tName] = { pin: "1234", locked: false, stock: {}, logs: [] };
+  const idxCode = "Sam" + (techs.indexOf(tName) + 1) + "2";
+  if (!settings.techMeta[tName]) settings.techMeta[tName] = { userCode: idxCode, pin: "1234", phone: "", locked: false, stock: {}, logs: [] };
   const m = settings.techMeta[tName];
   const goods = (settings.catalog || []).filter(c => c.isGoods);
 
-  $("mTit").textContent = "📦 انبار، رمز و قفل انبارگردانی: " + tName;
+  $("mTit").textContent = "📦 انبار، کد سازمانی و قفل امنیتی: " + tName;
   $("mBod").innerHTML = '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px">' +
-    '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><b style="font-size:11px">🔑 رمز ورود تکنسین:</b><input id="tkPin" class="inp" style="width:100px;margin:0;direction:ltr;text-align:center" value="' + (m.pin || "1234") + '"></div>' +
-    '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن پنل تکنسین جهت شمارش و انبارگردانی</label></div>' +
-    '<b style="font-size:11px;display:block;margin-bottom:6px">موجودی کالاهای همراه تکنسین (تعداد فعلی):</b>' +
-    '<div style="max-height:220px;overflow-y:auto;margin-bottom:8px">' +
-    goods.map((g, i) => '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:4px 0;font-size:11px"><span>' + g.title + '</span><input type="number" class="inp st-inp" data-title="' + g.title + '" style="width:70px;margin:0;direction:ltr;text-align:center" value="' + (m.stock?.[g.title] || 0) + '"></div>').join("") +
-    '</div><button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره موجودی انبار و تنظیمات امنیتی ✅</button>';
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">' +
+    '<div><label style="font-size:10px;font-weight:bold">🆔 کد ورود (User):</label><input id="tkCd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold;color:#0f3b2d" value="' + (m.userCode || idxCode) + '" placeholder="Sam12"></div>' +
+    '<div><label style="font-size:10px;font-weight:bold">🔑 رمز ۴ رقمی:</label><input id="tkPin" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.pin || "1234") + '"></div>' +
+    '<div><label style="font-size:10px;font-weight:bold">📱 موبایل:</label><input id="tkPh" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="0913..." value="' + (m.phone || "") + '"></div></div>' +
+    '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن ورود این تکنسین (جهت انبارگردانی یا مسدودسازی)</label></div>' +
+    (uRole === "admin" ? '<div style="margin-bottom:8px"><button class="btn" style="background:#334155;width:100%" onclick="openStaffAccM()">👥 مدیریت کد ورود پشتیبانی (Sup1) و انباردار (St1)</button></div>' : '') +
+    '<b style="font-size:11px;display:block;margin-bottom:6px">📦 موجودی کالاهای همراه تکنسین (موجودی ۰ در پنل تکنسین قفل می‌شود):</b>' +
+    '<div style="max-height:210px;overflow-y:auto;margin-bottom:8px">' +
+    goods.map(g => {
+      const cnt = Number(m.stock?.[g.title]) || 0;
+      return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:4px 0;font-size:11px">' +
+        '<span>' + g.title + (cnt <= 0 ? ' <b style="color:#dc2626">(۰ ناموجود 🚫)</b>' : '') + '</span>' +
+        '<input type="number" min="0" class="inp st-inp" data-title="' + g.title + '" style="width:70px;margin:0;direction:ltr;text-align:center;' + (cnt <= 0 ? "border-color:#ef4444;background:#fef2f2" : "") + '" value="' + cnt + '"></div>';
+    }).join("") +
+    '</div><button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره موجودی انبار و کد ورود تکنسین ✅</button>';
   $("cModal").style.display = "flex";
 }
 
 async function saveStockM(tName) {
-  const m = settings.techMeta[tName] || { pin: "1234", locked: false, stock: {}, logs: [] };
+  const m = settings.techMeta[tName] || { userCode: "Sam12", pin: "1234", phone: "", locked: false, stock: {}, logs: [] };
+  m.userCode = $("tkCd").value.trim() || "Sam12";
+  m.phone = $("tkPh").value.trim();
   m.pin = $("tkPin").value.trim() || "1234";
   m.locked = $("tkLck").checked;
   const newStock = {};
-  document.querySelectorAll(".st-inp").forEach(el => { newStock[el.dataset.title] = Number(el.value) || 0; });
+  document.querySelectorAll(".st-inp").forEach(el => { newStock[el.dataset.title] = Math.max(0, Number(el.value) || 0); });
   m.stock = newStock;
   settings.techMeta[tName] = m;
   await fetch(API + "/requests/settings", {
     method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ techMeta: settings.techMeta, logEntry: { techName: tName, title: "مدیریت انبار", text: "موجودی انبار و تنظیمات دسترسی شما توسط مدیریت بروزرسانی گردید." } })
+    body: JSON.stringify({ techMeta: settings.techMeta, logEntry: { techName: tName, title: "مدیریت حساب و انبار", text: "موجودی انبار و کد دسترسی شما (" + m.userCode + ") توسط مدیریت بروزرسانی گردید." } })
   });
   $("cModal").style.display = "none"; sync();
 }
 
+function openStaffAccM() {
+  const list = settings.staffAccounts || [
+    { username: "Sup1", pin: "1234", role: "support", fullName: "پشتیبانی سامی‌واتر", locked: false },
+    { username: "St1", pin: "1234", role: "warehouse", fullName: "مسئول انبار", locked: false }
+  ];
+  $("mTit").textContent = "👥 مدیریت حساب‌های پشتیبانی و انباردار";
+  $("mBod").innerHTML = list.map((s, i) => '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px;font-size:11px">' +
+    '<b>' + (s.role === "support" ? "🎧 نیروی پشتیبانی" : "📦 مسئول انبار") + ':</b>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:5px">' +
+    '<input class="inp sf-u" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + s.username + '" placeholder="کد کاربری">' +
+    '<input class="inp sf-p" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center" value="' + s.pin + '" placeholder="رمز ۴ رقمی">' +
+    '<input class="inp sf-n" data-i="' + i + '" style="margin:0" value="' + s.fullName + '" placeholder="نام شخص"></div>' +
+    '<label style="display:flex;gap:5px;margin-top:5px;color:#dc2626"><input type="checkbox" class="sf-l" data-i="' + i + '" ' + (s.locked ? "checked" : "") + '> 🔒 قفل کردن حساب</label></div>'
+  ).join("") + '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStaffAccM()">ذخیره حساب‌های پرسنل ✅</button>';
+}
+
+async function saveStaffAccM() {
+  const roles = ["support", "warehouse"];
+  const updated = [0, 1].map(i => ({
+    username: document.querySelector('.sf-u[data-i="' + i + '"]').value.trim() || (i === 0 ? "Sup1" : "St1"),
+    pin: document.querySelector('.sf-p[data-i="' + i + '"]').value.trim() || "1234",
+    fullName: document.querySelector('.sf-n[data-i="' + i + '"]').value.trim() || (i === 0 ? "پشتیبانی" : "انباردار"),
+    role: roles[i],
+    locked: document.querySelector('.sf-l[data-i="' + i + '"]').checked
+  }));
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffAccounts: updated }) });
+  $("cModal").style.display = "none"; sync();
+}
+
 async function settleT(tName, cnt, unpCnt) {
-  if (!cnt) return alert("فاکتور تسویه‌نشده‌ای برای " + tName + " وجود ندارد.");
-  if (unpCnt > 0 && !confirm("⚠️ توجه: تعداد " + unpCnt + " فاکتور هنوز در وضعیت «پرداخت نشده» است! آیا مطمئن هستید که می‌خواهید کل دوره را تسویه و پنل تکنسین را پاکسازی کنید؟")) return;
-  if (!confirm("آیا تسویه حساب دوره برای «" + tName + "» ثبت شود و کارتابل او برای دوره جدید صفر گردد؟")) return;
+  if (uRole !== "admin") return alert("⛔ ثبت تسویه حساب مالی فقط در اختیار مدیر ارشد است.");
+  if (!cnt) return alert("خدمت تسویه‌نشده‌ای برای " + tName + " وجود ندارد.");
+  if (unpCnt > 0 && !confirm("⚠️ توجه: تعداد " + unpCnt + " خدمت هنوز در وضعیت «پرداخت نشده» است! آیا مطمئن هستید؟")) return;
+  if (!confirm("آیا تسویه حساب دوره برای «" + tName + "» ثبت شود؟")) return;
   await fetch(API + "/requests/settle-tech", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ technicianName: tName }) });
   sync();
 }
 
 function retReqM(id, tName) {
-  $("mTit").textContent = "↩️ برگشت فاکتور از تکنسین به خدمات جاری";
+  $("mTit").textContent = "↩️ برگشت خدمت از تکنسین به خدمات جاری";
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">علت عدم هماهنگی با مشتری * (اجباری)</label>' +
-    '<input id="rtN" class="inp" placeholder="مثلاً: مشتری پاسخ نداد / گفت سر ماه تماس بگیریم...">' +
-    '<button class="btn" style="width:100%;background:#d97706;padding:9px" onclick="subRetReq(\'' + id + '\',\'' + tName + '\')">ارسال به خدمات جاری جهت پیگیری پشتیبانی ↩️</button>';
+    '<input id="rtN" class="inp" placeholder="مثلاً: مشتری پاسخ نداد...">' +
+    '<button class="btn" style="width:100%;background:#d97706;padding:9px" onclick="subRetReq(\'' + id + '\',\'' + tName + '\')">ارسال به خدمات جاری ↩️</button>';
   $("cModal").style.display = "flex";
 }
+function subRetReq(id, tName) {
+  const v = $("rtN").value.trim(); if (!v) return alert("ذکر علت الزامی است");
+  upSt(id, { status: "pending", returnNote: "(" + tName + ") " + v });
+  $("cModal").style.display = "none";
+}
 
+function getRemDays(a) {
+  const v = Number(a?.serviceIntervalDays) || 180;
+  const lastT = Math.min(Date.now(), new Date(a?.lastServiceDate || Date.now()).getTime());
+  return v - Math.floor((Date.now() - lastT) / 86400000);
+}
+
+function drawRem() {
+  const items = [];
+  custs.forEach(c => {
+    const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180, lastServiceDate: c.createdAt }];
+    ad.forEach((a, ix) => {
+      if (a.isActiveTimer === false) return;
+      const lbl = (a.label || "خونه").trim(), rem = getRemDays(a);
+      const openReq = reqs.find(r => ["pending", "assigned", "open", "suspended"].includes(r.status) && (r.snapshot?.phone || r.customer?.phone) === c.phone && (ad.length === 1 || (r.addressLabel || "خونه").trim() === lbl));
+
+      if (rem <= 3) {
+        if (!openReq && !autoLock[c._id + "_" + ix]) {
+          autoLock[c._id + "_" + ix] = true;
+          fetch(API + "/requests", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: lbl, issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_auto3", isFromPanel: true, preventDupOpen: true })
+          }).then(() => sync());
+        }
+        return;
+      }
+      if (rem <= 20 || a.inReminderQueue) items.push({ c, a, ix, rem, openReq });
+    });
+  });
+  items.sort((x, y) => x.rem - y.rem);
+  $("remC").textContent = items.length;
+
+  if (!items.length) {
+    $("remB").innerHTML = '<tr><td colspan="5" style="text-align:center;padding:12px">موردی در صف یادآور نیست ✅</td></tr>';
+    return;
+  }
+
+  $("remB").innerHTML = items.map(it => {
+    const noteB = it.a.reminderNote ? '<div style="font-size:10px;color:#7e22ce;font-weight:bold;margin-top:3px">📌 هماهنگی: ' + it.a.reminderNote + '</div>' : "";
+    const openB = it.openReq ? '<div class="bdg st-a" style="margin-top:2px">📋 دارای خدمت باز (' + it.openReq.invoiceCode + ')</div>' : "";
+    return '<tr>' +
+      '<td><span class="lnk" onclick="doss(\'' + it.c.phone + '\',' + it.ix + ')">' + (it.c.fullName || "---") + '</span></td>' +
+      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + it.c.phone + '">' + it.c.phone + ' 📞</a></td>' +
+      '<td><b>📍 ' + (it.a.label || "خونه") + ':</b> ' + it.a.fullAddress + openB + '</td>' +
+      '<td><span class="bdg st-p">' + it.rem + ' روز مانده به سرویس 🔔</span>' + noteB + '<div style="font-size:10px;color:#64748b">تکمیل قبلی: ' + toJ(it.a.lastServiceDate) + '</div></td>' +
+      '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
+      '<button class="btn" style="background:#7e22ce" onclick="remTimeM(\'' + it.c._id + '\',' + it.ix + ',' + it.rem + ')">⏳ تغییر زمان</button>' +
+      '<button class="btn" style="background:#16a34a" onclick="remToCurr(\'' + it.c._id + '\',' + it.ix + ')">➕ ارسال به جاری</button>' +
+      '<button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
+  }).join("");
+}
 // PART 4 END
+    
     function remTimeM(cId, ix, oldRem) {
   const c = custs.find(x => x._id === cId);
   $("mTit").textContent = "⏳ تنظیم زمان جدید در صف یادآور (" + (c?.fullName || "") + ")";
