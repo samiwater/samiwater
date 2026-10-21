@@ -36,7 +36,7 @@ th{background:#f8fafc;white-space:nowrap}
 .btn{background:#0284c7;color:#fff;border:none;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold}
 .b-del{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:4px 7px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:bold;margin-top:3px;width:100%}
 .m-bg{position:fixed;inset:0;background:#0f172ab3;display:none;justify-content:center;align-items:center;z-index:999;padding:10px}
-.m-bx{background:#fff;width:min(500px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
+.m-bx{background:#fff;width:min(520px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
 .inp{width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;margin-bottom:6px;font-family:inherit}
 </style>
 </head>
@@ -76,15 +76,15 @@ th{background:#f8fafc;white-space:nowrap}
 </div>
 
 <div id="t-usr" class="card">
-  <h2><span>👨‍🔧 کارتابل تکنسین‌ها، عملکرد و تسویه حساب</span></h2>
+  <h2><span>👨‍🔧 کارتابل تکنسین‌ها، انبارگردانی و مچ‌گیری تسویه حساب</span></h2>
   <div style="display:flex;gap:6px;margin-bottom:8px"><input id="tInp" class="inp" style="margin:0;max-width:220px" placeholder="نام تکنسین جدید..."><button class="btn" onclick="addT()">+ افزودن تکنسین</button></div>
   <div id="tTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
   <div id="tStats" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;margin-bottom:10px;font-size:11px"></div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>مکان، خدمت و یادداشت تکنسین</th><th>تکنسین مسئول</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>خدمت، اقلام و هشدار پیش‌نویس</th><th>مبلغ و وضعیت پرداخت</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
 </div>
 
 <div id="t-rem" class="card">
-  <h2><span>🔔 یادآور سرویس دوره‌ای (تا ۳ روز مانده اینجا می‌ماند و در ۳ روزگی خودکار به خدمات جاری می‌رود)</span></h2>
+  <h2><span>🔔 یادآور سرویس دوره‌ای (در ۳ روزگی خودکار به خدمات جاری منتقل می‌شود)</span></h2>
   <div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>شماره تماس</th><th>عنوان و نشانی مکان</th><th>وضعیت تایمر و یادداشت هماهنگی</th><th>عملیات پیگیری</th></tr></thead><tbody id="remB"></tbody></table></div>
 </div>
 
@@ -102,7 +102,7 @@ th{background:#f8fafc;white-space:nowrap}
     <input id="sQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور...">
     <button class="btn" onclick="searchR()">🔍 جستجو</button>
   </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>خدمت و گزارش تکنسین</th><th>تکنسین و تسویه</th><th>تاریخ درخواست</th><th>تاریخ تکمیل (مبنا)</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">یکی از دکمه‌ها یا بازه تاریخ شمسی را انتخاب کنید.</td></tr></tbody></table></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>اقلام، مبلغ و گزارش</th><th>تکنسین و پرداخت</th><th>تاریخ درخواست</th><th>تاریخ تکمیل</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">یکی از دکمه‌ها یا بازه تاریخ شمسی را انتخاب کنید.</td></tr></tbody></table></div>
 </div>
 
 <div id="t-del" class="card">
@@ -115,7 +115,15 @@ th{background:#f8fafc;white-space:nowrap}
   <div style="overflow-x:auto"><table><thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها و سوابق</th><th>تایمر آدرس و گزارش تغییر</th><th>ویرایش</th></tr></thead><tbody id="custB"></tbody></table></div>
 </div>
 
-<div id="t-srv" class="card"><h2>🏷️ تعرفه کالا و دستمزد</h2><p style="font-size:12px">مدیریت لیست قیمت قطعات و اجرت خدمات جهت صدور فاکتور.</p></div>
+<div id="t-srv" class="card">
+  <h2><span>🏷️ تعرفه کالا، دستمزدها و ایاب‌وذهاب ثابت</span><button class="btn" style="background:#16a34a" onclick="editCatItem('')">+ افزودن کالا / دستمزد جدید</button></h2>
+  <div class="sb" style="justify-content:space-between">
+    <div><b>🚗 ایاب و ذهاب ثابت شهری (تومان):</b> <input id="trvInp" type="number" class="inp" style="width:120px;margin:0;direction:ltr" value="139000"> <button class="btn" onclick="saveTravelFee()">ذخیره ایاب‌وذهاب ✅</button></div>
+    <span style="color:#64748b">این مبلغ به صورت ثابت روی تمام فاکتورهای تکنسین لحاظ می‌شود.</span>
+  </div>
+  <div id="catTabs" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px"></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا / سرویس</th><th>نوع (انبار)</th><th>قیمت مشتری (تومان)</th><th>پورسانت تکنسین (%)</th><th>دستمزد نصب (تومان)</th><th>عملیات</th></tr></thead><tbody id="srvB"></tbody></table></div>
+</div>
 
 <div id="cModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
   <div class="m-bx">
@@ -124,18 +132,21 @@ th{background:#f8fafc;white-space:nowrap}
   </div>
 </div>
 <!-- PART 1 END -->
-  <script>
+    <script>
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
 const uName = localStorage.getItem("username") || "مدیر ارشد";
 const uRole = localStorage.getItem("role") || "admin";
 const SRV_TYPES = ["سرویس دوره‌ای (تعویض فیلتر)", "تعمیرات و عیب‌یابی", "خرید دستگاه", "نصب و راه‌اندازی", "متفرقه (شرح در توضیحات)"];
+const DEFAULT_CATS = ["فیلترها", "حوضینگ ها و مخزن", "پمپ و ترانس", "شیرها", "کلیدها", "زانو و اتصالات", "فیلتر یخچال", "نیمه صنعتی", "تصفیه آب", "متفرقه", "سرویس های انجام شده"];
 
 let custs = JSON.parse(localStorage.getItem("sw_custs") || "[]");
 let reqs = JSON.parse(localStorage.getItem("sw_reqs") || "[]");
 let techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری","تکنسین ۲"]');
-let aMap = {}, reqDays = 9999, archDays = 0, selTech = "ALL", onlyTampered = false, autoLock = {};
+let settings = { fixedTravelFee: 139000, categories: DEFAULT_CATS, catalog: [], techMeta: {} };
+let aMap = {}, reqDays = 9999, archDays = 0, selTech = "ALL", onlyTampered = false, autoLock = {}, selCatF = "ALL";
 
+const fmt = n => (Number(n) || 0).toLocaleString("fa-IR");
 function toEn(s) { return String(s || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)); }
 function toJ(d) { if (!d) return "---"; try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; } }
 function toTm(d) {
@@ -158,6 +169,15 @@ function srcBdg(r) {
   };
   const m = map[r.sourcePath || ""] || ["🛠️ فرم سایت", "#f1f5f9", "#475569"];
   return '<span class="bdg" style="background:' + m[1] + ';color:' + m[2] + ';margin-top:2px">' + m[0] + '</span>';
+}
+
+function draftAlertHtml(r) {
+  if (uRole !== "admin") return "";
+  const mx = Number(r.maxDraftPayable) || 0, py = Number(r.payableAmount) || 0;
+  if (mx > 0 && (r.status !== "done" || mx > py)) {
+    return '<div style="background:#fef2f2;border:1px solid #ef4444;color:#b91c1c;padding:4px 6px;border-radius:4px;font-size:10px;font-weight:bold;margin-top:3px">🕵️ هشدار پیش‌نویس: تکنسین پیش‌فاکتور ' + fmt(mx) + ' تومانی (' + (r.maxDraftSummary || "") + ') ایجاد کرده اما مبلغ نهایی ' + fmt(py) + ' تومان است!</div>';
+  }
+  return "";
 }
 
 function tab(id, b) {
@@ -198,10 +218,8 @@ function drawReqs() {
   const act = allAct.filter(r => {
     if (new Date(r.createdAt || Date.now()).getTime() < min) return false;
     const j = cmpJ(r.createdAt);
-    if (f && j < f) return false;
-    if (t && j > t) return false;
-    const txt = ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase();
-    return !q || txt.includes(q);
+    if (f && j < f) return false; if (t && j > t) return false;
+    return !q || ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase().includes(q);
   }).sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
 
   if (!act.length) {
@@ -216,7 +234,7 @@ function drawReqs() {
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
       '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + nm + '</span></td>' +
       '<td style="direction:ltr">' + ph + '</td>' +
-      '<td><b>📍 ' + tit + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + srcBdg(r) + '</td>' +
+      '<td><b>📍 ' + tit + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + srcBdg(r) + draftAlertHtml(r) + '</td>' +
       '<td>' + stBdg(r) + '</td>' +
       '<td><select class="sel" onchange="if(this.value)assignM(\'' + r._id + '\',this.value);this.value=\'\'">' + tO + '</select></td>' +
       '<td><select class="sel" onchange="onSel(\'' + r._id + '\',this.value,\'\')">' +
@@ -226,8 +244,8 @@ function drawReqs() {
       '<button class="b-del" onclick="delM(\'' + r._id + '\',\'' + (r.invoiceCode || "") + '\')">🗑️ حذف با دلیل</button></td></tr>';
   }).join("");
 }
-
-function assignM(id, tName) {
+// PART 2 END
+      function assignM(id, tName) {
   const r = reqs.find(x => x._id === id); if (!r) return;
   const ph = r.snapshot?.phone || "", lbl = (r.addressLabel || "خونه").trim();
   const prev = reqs.filter(x => x._id !== id && (x.status === "done" || x.status === "completed") && (x.snapshot?.phone === ph) && ((x.addressLabel || "خونه").trim() === lbl))
@@ -240,19 +258,21 @@ function assignM(id, tName) {
     '<label style="font-size:11px;font-weight:bold">۱. نوع خدمت (نمایش در کارت تکنسین)</label>' +
     '<select id="asTp" class="inp">' + typeOpts + '</select>' +
     '<label style="font-size:11px;font-weight:bold">۲. شماره هماهنگی موقت این نوبت (اختیاری - مثلاً همسر یا نگهبان)</label>' +
-    '<input id="asPh" class="inp" style="direction:ltr" value="' + (r.tempPhone || "") + '" placeholder="مثلاً: 0913... (بدون نیاز به نوشتن در آدرس)">' +
-    '<label style="font-size:11px;font-weight:bold">۳. خلاصه سوابق فیلترها و توضیحات اپراتور برای تکنسین *</label>' +
-    '<input id="asNt" class="inp" value="' + defNote + '" placeholder="مثلاً: سه‌گانه مهر ۴۰۴ // هماهنگی قبل از ساعت ۳ // فاکتور رسمی">' +
+    '<input id="asPh" class="inp" style="direction:ltr" value="' + (r.tempPhone || "") + '" placeholder="مثلاً: 0913...">' +
+    '<label style="font-size:11px;font-weight:bold">۳. مبلغ تخفیفات و هدیه شرکتی برای مشتری (تومان - اختیاری)</label>' +
+    '<input id="asDc" type="number" class="inp" style="direction:ltr" value="' + (r.discountAmount || 0) + '" placeholder="0">' +
+    '<label style="font-size:11px;font-weight:bold">۴. خلاصه سوابق فیلترها و توضیحات اپراتور برای تکنسین *</label>' +
+    '<input id="asNt" class="inp" value="' + defNote + '" placeholder="مثلاً: سه‌گانه مهر ۴۰۴ // هماهنگی قبل از ساعت ۳">' +
     '<button class="btn" style="width:100%;background:#0284c7;padding:10px;margin-top:4px" onclick="subAssign(\'' + id + '\',\'' + tName + '\')">تایید و ارسال به کارتابل «' + tName + '» 📤</button>';
   $("cModal").style.display = "flex";
 }
 
 async function subAssign(id, tName) {
-  await upSt(id, { status: "assigned", technicianName: tName, issueType: $("asTp").value, tempPhone: $("asPh").value.trim(), techNote: $("asNt").value.trim() });
+  await upSt(id, { status: "assigned", technicianName: tName, issueType: $("asTp").value, tempPhone: $("asPh").value.trim(), discountAmount: Number($("asDc").value) || 0, techNote: $("asNt").value.trim() });
   $("cModal").style.display = "none";
 }
-// PART 2 END
-    function drawTechs() {
+
+function drawTechs() {
   const assignedAll = reqs.filter(r => r.status === "assigned" || r.status === "open");
   $("techC").textContent = assignedAll.length;
 
@@ -264,49 +284,95 @@ async function subAssign(id, tName) {
   ).join("");
   $("tTabs").innerHTML = tabsHtml;
 
-  const doneList = reqs.filter(r => (r.status === "done" || r.status === "completed") && (selTech === "ALL" || r.technicianName === selTech));
-  const now = Date.now();
-  const d1 = doneList.filter(r => now - new Date(r.completedAt || r.updatedAt || now).getTime() <= 86400000).length;
-  const d7 = doneList.filter(r => now - new Date(r.completedAt || r.updatedAt || now).getTime() <= 7 * 86400000).length;
-  const d30 = doneList.filter(r => now - new Date(r.completedAt || r.updatedAt || now).getTime() <= 30 * 86400000).length;
-  const unsettled = doneList.filter(r => !r.isSettled).length;
+  const unsettledDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && (selTech === "ALL" || r.technicianName === selTech));
   const inHand = assignedAll.filter(r => selTech === "ALL" || r.technicianName === selTech);
 
-  $("tStats").innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
-    '<div><b>📊 عملکرد ' + (selTech === "ALL" ? "کل تکنسین‌ها" : selTech) + ':</b> ' +
-    '<span class="bdg st-a">📂 در دست اقدام: ' + inHand.length + '</span> ' +
-    '<span class="bdg st-d">امروز: ' + d1 + '</span> ' +
-    '<span class="bdg st-d">این هفته: ' + d7 + '</span> ' +
-    '<span class="bdg st-d">این ماه: ' + d30 + '</span> ' +
-    '<span class="bdg st-p" style="font-size:11px">💰 کارکرد تسویه‌نشده: ' + unsettled + ' فاکتور</span></div>' +
-    (selTech !== "ALL" && uRole === "admin" ? '<button class="btn" style="background:#16a34a" onclick="settleT(\'' + selTech + '\',' + unsettled + ')">💳 ثبت تسویه حساب و صفر کردن (' + unsettled + ')</button>' : '<span style="color:#64748b">برای ثبت تسویه، روی نام تکنسین کلیک کنید</span>') +
-    '</div>';
+  let posSum = 0, posCnt = 0, cashSum = 0, chkSum = 0, unpSum = 0, unpCnt = 0, profSum = 0, billSum = 0;
+  unsettledDone.forEach(r => {
+    const a = Number(r.payableAmount) || 0, pr = Number(r.techProfit) || 0;
+    billSum += a; profSum += pr;
+    if (r.paymentMethod === "pos") { posSum += a; posCnt++; }
+    else if (r.paymentMethod === "cash") cashSum += a;
+    else if (r.paymentMethod === "check") chkSum += a;
+    else { unpSum += a; unpCnt++; }
+  });
 
-  if (!inHand.length) {
-    $("techB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:12px">فاکتور فعالی در دست اقدام نیست ✅</td></tr>';
+  const meta = settings.techMeta?.[selTech] || { pin: "1234", locked: false, stock: {} };
+  const ctrlBtns = (selTech !== "ALL" && uRole === "admin") ?
+    '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1">' +
+    '<button class="btn" style="background:#0f172a" onclick="openStockM(\'' + selTech + '\')">📦 مدیریت موجودی انبار و رمز (' + (meta.locked ? "🔒 قفل انبارگردانی" : "🔓 باز") + ')</button>' +
+    '<button class="btn" style="background:#16a34a" onclick="settleT(\'' + selTech + '\',' + unsettledDone.length + ',' + unpCnt + ')">💳 ثبت تسویه حساب و صفر کردن دوره (' + unsettledDone.length + ' فاکتور)</button></div>' :
+    '<div style="color:#64748b;margin-top:6px">💡 برای مدیریت انبار، قفل انبارگردانی یا ثبت تسویه حساب، روی نام تکنسین موردنظر کلیک کنید.</div>';
+
+  $("tStats").innerHTML = '<div><b>📊 میز حسابرسی دوره جاری (' + (selTech === "ALL" ? "کل تکنسین‌ها" : selTech) + '):</b> ' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">' +
+    '<span class="bdg st-a">📂 در دست اقدام: ' + inHand.length + '</span>' +
+    '<span class="bdg" style="background:#e0f2fe;color:#0369a1;font-size:11px">💳 جمع پوز (مچ‌گیری کارتخوان): ' + fmt(posSum) + ' ت (' + posCnt + ' مورد)</span>' +
+    '<span class="bdg" style="background:#fef3c7;color:#b45309;font-size:11px">💵 جمع نقدی: ' + fmt(cashSum) + ' ت</span>' +
+    '<span class="bdg" style="background:#f3e8ff;color:#7e22ce;font-size:11px">📝 جمع چک: ' + fmt(chkSum) + ' ت</span>' +
+    '<span class="bdg st-al" style="font-size:11px">🔴 پرداخت‌نشده: ' + fmt(unpSum) + ' ت (' + unpCnt + ' مورد)</span>' +
+    '<span class="bdg st-d" style="font-size:11px">📈 سود تکنسین: +' + fmt(profSum) + ' ت</span>' +
+    '<span class="bdg" style="background:#1e293b;color:#facc15;font-size:11px">💰 کل صورتحساب دوره: ' + fmt(billSum) + ' ت</span>' +
+    '</div>' + ctrlBtns + '</div>';
+
+  const combined = [...inHand, ...unsettledDone];
+  if (!combined.length) {
+    $("techB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:12px">هیچ فاکتور باز یا تسویه‌نشده‌ای در این دوره وجود ندارد ✅</td></tr>';
     return;
   }
 
-  $("techB").innerHTML = inHand.map(r => {
-    const ph = r.snapshot?.phone || "";
-    const tmpB = r.tempPhone ? '<div style="font-size:10px;color:#b45309;font-weight:bold">📞 هماهنگی موقت: ' + r.tempPhone + '</div>' : "";
-    const ntB = r.techNote ? '<div style="font-size:10px;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 5px;border-radius:4px;color:#15803d;margin-top:3px">📋 یادداشت تکنسین: ' + r.techNote + '</div>' : "";
+  $("techB").innerHTML = combined.map(r => {
+    const ph = r.snapshot?.phone || "", isD = r.status === "done" || r.status === "completed";
+    const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
+    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(r.payableAmount) + ' ت</b> (سود: ' + fmt(r.techProfit) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + '</div>') : '<span class="bdg st-p">⏳ در نوبت انجام تکنسین</span>';
     return '<tr>' +
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
-      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td>' +
-      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a>' + tmpB + '</td>' +
-      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + ntB + '</td>' +
-      '<td><span class="bdg st-a">👨‍🔧 ' + (r.technicianName || "---") + '</span></td>' +
+      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="font-size:10px;color:#64748b">👨‍🔧 ' + (r.technicianName || "") + '</div></td>' +
+      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a></td>' +
+      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + (r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold">🔧 اقلام: ' + r.workReport + '</div>' : '') + draftAlertHtml(r) + '</td>' +
+      '<td>' + payHtml + '</td>' +
       '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
-      '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ ویرایش ارجاع</button>' +
-      '<button class="btn" style="background:#16a34a" onclick="upSt(\'' + r._id + '\',{status:\'done\',technicianName:\'' + (r.technicianName || "") + '\'})">✅ انجام شد</button>' +
+      '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ ویرایش</button>' +
       '<button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری</button></td></tr>';
   }).join("");
 }
+// PART 3 END
+      function openStockM(tName) {
+  if (!settings.techMeta) settings.techMeta = {};
+  if (!settings.techMeta[tName]) settings.techMeta[tName] = { pin: "1234", locked: false, stock: {}, logs: [] };
+  const m = settings.techMeta[tName];
+  const goods = (settings.catalog || []).filter(c => c.isGoods);
 
-async function settleT(tName, cnt) {
+  $("mTit").textContent = "📦 انبار، رمز و قفل انبارگردانی: " + tName;
+  $("mBod").innerHTML = '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px">' +
+    '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><b style="font-size:11px">🔑 رمز ورود تکنسین:</b><input id="tkPin" class="inp" style="width:100px;margin:0;direction:ltr;text-align:center" value="' + (m.pin || "1234") + '"></div>' +
+    '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن پنل تکنسین جهت شمارش و انبارگردانی</label></div>' +
+    '<b style="font-size:11px;display:block;margin-bottom:6px">موجودی کالاهای همراه تکنسین (تعداد فعلی):</b>' +
+    '<div style="max-height:220px;overflow-y:auto;margin-bottom:8px">' +
+    goods.map((g, i) => '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:4px 0;font-size:11px"><span>' + g.title + '</span><input type="number" class="inp st-inp" data-title="' + g.title + '" style="width:70px;margin:0;direction:ltr;text-align:center" value="' + (m.stock?.[g.title] || 0) + '"></div>').join("") +
+    '</div><button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره موجودی انبار و تنظیمات امنیتی ✅</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function saveStockM(tName) {
+  const m = settings.techMeta[tName] || { pin: "1234", locked: false, stock: {}, logs: [] };
+  m.pin = $("tkPin").value.trim() || "1234";
+  m.locked = $("tkLck").checked;
+  const newStock = {};
+  document.querySelectorAll(".st-inp").forEach(el => { newStock[el.dataset.title] = Number(el.value) || 0; });
+  m.stock = newStock;
+  settings.techMeta[tName] = m;
+  await fetch(API + "/requests/settings", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ techMeta: settings.techMeta, logEntry: { techName: tName, title: "مدیریت انبار", text: "موجودی انبار و تنظیمات دسترسی شما توسط مدیریت بروزرسانی گردید." } })
+  });
+  $("cModal").style.display = "none"; sync();
+}
+
+async function settleT(tName, cnt, unpCnt) {
   if (!cnt) return alert("فاکتور تسویه‌نشده‌ای برای " + tName + " وجود ندارد.");
-  if (!confirm("آیا تسویه حساب " + cnt + " فاکتور برای «" + tName + "» ثبت و شمارنده صفر شود؟")) return;
+  if (unpCnt > 0 && !confirm("⚠️ توجه: تعداد " + unpCnt + " فاکتور هنوز در وضعیت «پرداخت نشده» است! آیا مطمئن هستید که می‌خواهید کل دوره را تسویه و پنل تکنسین را پاکسازی کنید؟")) return;
+  if (!confirm("آیا تسویه حساب دوره برای «" + tName + "» ثبت شود و کارتابل او برای دوره جدید صفر گردد؟")) return;
   await fetch(API + "/requests/settle-tech", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ technicianName: tName }) });
   sync();
 }
@@ -314,7 +380,7 @@ async function settleT(tName, cnt) {
 function retReqM(id, tName) {
   $("mTit").textContent = "↩️ برگشت فاکتور از تکنسین به خدمات جاری";
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">علت عدم هماهنگی با مشتری * (اجباری)</label>' +
-    '<input id="rtN" class="inp" placeholder="مثلاً: مشتری پاسخ نداد / گفت ماه آینده تماس بگیریم...">' +
+    '<input id="rtN" class="inp" placeholder="مثلاً: مشتری پاسخ نداد / گفت سر ماه تماس بگیریم...">' +
     '<button class="btn" style="width:100%;background:#d97706;padding:9px" onclick="subRetReq(\'' + id + '\',\'' + tName + '\')">ارسال به خدمات جاری جهت پیگیری پشتیبانی ↩️</button>';
   $("cModal").style.display = "flex";
 }
@@ -374,12 +440,11 @@ function drawRem() {
       '<button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
   }).join("");
 }
-// PART 3 END
+// PART 4 END
     function remTimeM(cId, ix, oldRem) {
   const c = custs.find(x => x._id === cId);
   $("mTit").textContent = "⏳ تنظیم زمان جدید در صف یادآور (" + (c?.fullName || "") + ")";
-  $("mBod").innerHTML = '<p style="font-size:11px;color:#475569;margin-bottom:6px">مشتری در همین تب «یادآور سرویس» باقی می‌ماند و ۳ روز مانده به موعد، خودکار وارد «خدمات جاری» می‌شود.</p>' +
-    '<label style="font-size:11px;font-weight:bold">چند روز دیگر سرویس انجام شود؟ * (عدد دلخواه، مثلاً 10 یا 30)</label>' +
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">چند روز دیگر سرویس انجام شود؟ * (مثلاً 10 یا 30)</label>' +
     '<input id="rtD" type="number" class="inp" placeholder="مثلاً: 30">' +
     '<label style="font-size:11px;font-weight:bold">توضیح هماهنگی / دلیل تغییر زمان * (اجباری)</label>' +
     '<input id="rtR" class="inp" placeholder="مثلاً: مشتری گفت یک ماه دیگر تماس بگیریم...">' +
@@ -414,10 +479,7 @@ async function createRemReq(cId, ix) {
   return (await r.json()).request || null;
 }
 
-async function remToCurr(cId, ix) {
-  await createRemReq(cId, ix);
-  alert("فاکتور به تب «خدمات جاری» منتقل شد ✅"); sync();
-}
+async function remToCurr(cId, ix) { await createRemReq(cId, ix); alert("فاکتور به تب «خدمات جاری» منتقل شد ✅"); sync(); }
 
 function remDelM(cId, ix) {
   const c = custs.find(x => x._id === cId);
@@ -478,7 +540,7 @@ function susM(id) {
   const r = reqs.find(x => x._id === id);
   $("mTit").textContent = "⏸️ تعلیق فاکتور " + (r?.invoiceCode || "");
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل تعلیق *</label><input id="sR" class="inp" value="' + (r?.suspendReason || "") + '">' +
-    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟ (عدد دلخواه)</label><input id="sD" type="number" class="inp" placeholder="مثلاً: 5">' +
+    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟</label><input id="sD" type="number" class="inp" placeholder="مثلاً: 5">' +
     '<button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="if(!$(\'sR\').value.trim())return alert(\'دلیل الزامی است\');upSt(\'' + id + '\',{status:\'suspended\',suspendReason:$(\'sR\').value,suspendDays:$(\'sD\').value});$(\'cModal\').style.display=\'none\'">ثبت تعلیق ⏸️</button>';
   $("cModal").style.display = "flex";
 }
@@ -489,22 +551,25 @@ function delM(id, c) {
     '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="if(!$(\'dR\').value.trim())return alert(\'دلیل الزامی است\');upSt(\'' + id + '\',{status:\'deleted\',deleteReason:$(\'dR\').value,deletedBy:uName,resetTimerOnDelete:$(\'dT\').checked});$(\'cModal\').style.display=\'none\'">تایید و حذف 🗑️</button>';
   $("cModal").style.display = "flex";
 }
-// PART 4 END
-    function drawDel() {
+
+function drawDel() {
   const l = reqs.filter(r => r.status === "deleted"); $("delC").textContent = l.length;
   $("delB").innerHTML = l.length ? l.map(r => '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + (r.snapshot?.phone || "") + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '<br>' + srcBdg(r) + '</td><td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td><td>' + (r.deletedBy || "مدیر") + '</td><td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">خالی است.</td></tr>';
 }
 
 function rArch(l) {
   $("archI").textContent = l.length + " مورد";
+  const pMap = { pos: "💳 پوز", cash: "💵 نقدی", check: "📝 چک", unpaid: "🔴 پرداخت‌نشده" };
   $("archB").innerHTML = l.length ? l.map(r => {
     const ph = r.snapshot?.phone || "", dD = r.completedAt || r.updatedAt || r.createdAt;
-    const stB = r.isSettled ? '<div class="bdg st-d">💰 تسویه‌شده</div>' : '<div class="bdg st-p">⏳ تسویه‌نشده</div>';
-    const wRep = r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold;margin-top:2px">🔧 گزارش تکنسین: ' + r.workReport + '</div>' : "";
-    return '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td style="direction:ltr">' + ph + '</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + wRep + '<br>' + srcBdg(r) + '</td><td>' + (r.technicianName || "---") + '<br>' + stB + '</td><td>📅 ' + toJ(r.createdAt) + '</td><td style="color:#15803d;font-weight:bold">✅ ' + toJ(dD) + toTm(dD) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>';
+    const stB = r.isSettled ? '<span class="bdg st-d">💰 تسویه‌شده</span>' : '<span class="bdg st-p">⏳ تسویه‌نشده</span>';
+    const wRep = r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold;margin-top:2px">🔧 ' + r.workReport + '</div>' : "";
+    const finInfo = r.payableAmount ? '<div style="font-size:10px;color:#0f172a;margin-top:2px"><b>مبلغ: ' + fmt(r.payableAmount) + ' ت</b> | سود تکنسین: ' + fmt(r.techProfit) + ' ت</div>' : "";
+    return '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td style="direction:ltr">' + ph + '</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + wRep + finInfo + draftAlertHtml(r) + '<br>' + srcBdg(r) + '</td><td>' + (r.technicianName || "---") + '<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + ' ' + stB + '</td><td>📅 ' + toJ(r.createdAt) + '</td><td style="color:#15803d;font-weight:bold">✅ ' + toJ(dD) + toTm(dD) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>';
   }).join("") : '<tr><td colspan="8" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>';
 }
-function loadArch(d, b) {
+// PART 5 END
+      function loadArch(d, b) {
   archDays = d; if (b) { b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active")); b.classList.add("active"); }
   const m = Date.now() - d * 86400000;
   rArch(reqs.filter(r => (r.status === "done" || r.status === "completed") && new Date(r.completedAt || r.updatedAt || r.createdAt || Date.now()).getTime() >= m));
@@ -519,21 +584,71 @@ function searchR() {
   }));
 }
 
+function drawSrv() {
+  $("trvInp").value = settings.fixedTravelFee ?? 139000;
+  const cats = settings.categories?.length ? settings.categories : DEFAULT_CATS;
+  $("catTabs").innerHTML = ['<button class="fb ' + (selCatF === "ALL" ? "active" : "") + '" onclick="selCatF=\'ALL\';drawSrv()">همه دسته‌ها</button>']
+    .concat(cats.map(c => '<button class="fb ' + (selCatF === c ? "active" : "") + '" onclick="selCatF=\'' + c + '\';drawSrv()">' + c + '</button>')).join("");
+  const list = (settings.catalog || []).filter(x => selCatF === "ALL" || x.category === selCatF);
+  $("srvB").innerHTML = list.length ? list.map(x => '<tr>' +
+    '<td><span class="bdg st-a">' + (x.category || "متفرقه") + '</span></td>' +
+    '<td style="font-weight:bold">' + x.title + '</td>' +
+    '<td>' + (x.isGoods ? '<span class="bdg st-d">📦 کالا (کسر انبار)</span>' : '<span class="bdg st-p">🛠️ خدمت/اجرت</span>') + '</td>' +
+    '<td style="direction:ltr;font-weight:bold">' + fmt(x.price) + '</td>' +
+    '<td style="direction:ltr">' + (x.commPct || 0) + '% (' + fmt(Math.round((x.price * (x.commPct || 0)) / 100)) + ')</td>' +
+    '<td style="direction:ltr">' + fmt(x.wage || 0) + '</td>' +
+    '<td><button class="btn" onclick="editCatItem(\'' + x.id + '\')">✏️</button> <button class="btn" style="background:#dc2626" onclick="delCatItem(\'' + x.id + '\')">🗑️</button></td></tr>'
+  ).join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">آیتمی در این دسته نیست.</td></tr>';
+}
+
+async function saveTravelFee() {
+  const v = Number($("trvInp").value) || 0;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fixedTravelFee: v }) });
+  alert("مبلغ ایاب و ذهاب ثابت ذخیره شد ✅"); sync();
+}
+
+function editCatItem(id) {
+  const cats = settings.categories?.length ? settings.categories : DEFAULT_CATS;
+  const it = (settings.catalog || []).find(x => x.id === id) || { id: "c_" + Date.now(), category: selCatF === "ALL" ? cats[0] : selCatF, title: "", isGoods: true, price: 0, commPct: 10, wage: 0 };
+  $("mTit").textContent = id ? "✏️ ویرایش تعرفه" : "➕ افزودن کالا / دستمزد جدید";
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دسته‌بندی</label>' +
+    '<select id="ciCat" class="inp">' + cats.map(c => '<option value="' + c + '" ' + (it.category === c ? "selected" : "") + '>' + c + '</option>').join("") + '</select>' +
+    '<label style="font-size:11px;font-weight:bold">عنوان کالا یا سرویس *</label><input id="ciTit" class="inp" value="' + it.title + '">' +
+    '<label style="font-size:11px;font-weight:bold">قیمت واحد برای مشتری (تومان) *</label><input id="ciPrc" type="number" class="inp" style="direction:ltr" value="' + it.price + '">' +
+    '<label style="font-size:11px;font-weight:bold">درصد پورسانت تکنسین از این مبلغ (%) [برای دستمزد خالص عدد 100 بگذارید]</label><input id="ciCm" type="number" class="inp" style="direction:ltr" value="' + (it.commPct ?? 10) + '">' +
+    '<label style="font-size:11px;font-weight:bold">دستمزد نصب مضاعف روی این کالا (تومان - اختیاری)</label><input id="ciWg" type="number" class="inp" style="direction:ltr" value="' + (it.wage || 0) + '">' +
+    '<label style="display:flex;gap:6px;font-size:11px;background:#f8fafc;padding:8px;border-radius:6px;margin:6px 0"><input type="checkbox" id="ciGd" ' + (it.isGoods ? "checked" : "") + '><b>📦 این مورد «کالای فیزیکی» است (هنگام مصرف از انبار تکنسین کسر شود)</b></label>' +
+    '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveCatItem(\'' + it.id + '\')">ذخیره در لیست تعرفه‌ها ✅</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function saveCatItem(id) {
+  const tit = $("ciTit").value.trim(); if (!tit) return alert("عنوان الزامی است");
+  const item = { id, category: $("ciCat").value, title: tit, price: Number($("ciPrc").value) || 0, commPct: Number($("ciCm").value) || 0, wage: Number($("ciWg").value) || 0, isGoods: $("ciGd").checked };
+  const cat = [...(settings.catalog || [])];
+  const idx = cat.findIndex(x => x.id === id);
+  if (idx > -1) cat[idx] = item; else cat.push(item);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) });
+  $("cModal").style.display = "none"; sync();
+}
+
+async function delCatItem(id) {
+  if (!confirm("حذف این آیتم از تعرفه‌ها؟")) return;
+  const cat = (settings.catalog || []).filter(x => x.id !== id);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) });
+  sync();
+}
+
 function cTim(a) {
   if (a?.isActiveTimer === false) return "غیرفعال";
   const rem = getRemDays(a);
   return rem <= 0 ? "موعد سرویس! (" + Math.abs(rem) + " روز گذشته) 🔴" : rem + " روز مانده ✅";
 }
-
 function togTamper() { onlyTampered = !onlyTampered; drawCusts(); }
-
 async function clrAudit(cId, ix) {
   const c = custs.find(x => x._id === cId); if (!c || !c.addresses?.[ix]) return;
   c.addresses[ix].auditText = "";
-  await fetch(API + "/requests/customer-update/" + c._id, {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: c.addresses })
-  });
+  await fetch(API + "/requests/customer-update/" + c._id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: c.addresses }) });
   sync();
 }
 
@@ -542,23 +657,15 @@ function drawCusts() {
   custs.forEach(c => (c.addresses || []).forEach(a => { if (a.auditText) tamperCnt++; }));
   $("tamperBtn").textContent = (onlyTampered ? "📂 نمایش همه مشتریان" : "🕵️ تغییرات دستی تایمر (" + tamperCnt + ")");
   $("tamperBtn").style.display = uRole === "admin" ? "inline-block" : "none";
-
   const list = onlyTampered ? custs.filter(c => (c.addresses || []).some(a => a.auditText)) : custs;
   if (!list.length) { $("custB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>'; return; }
-
   $("custB").innerHTML = list.map(c => {
     const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180 }];
     const ix = aMap[c._id] || 0, cu = ad[ix] || ad[0];
     const tbs = ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="aMap[\'' + c._id + '\']=' + i + ';drawCusts()">📍 ' + (a.label || "خونه") + (a.auditText && uRole === "admin" ? " ⚠️" : "") + '</button>').join("");
     const cnt = reqs.filter(r => r.status !== "deleted" && r.snapshot?.phone === c.phone && (ad.length === 1 || (r.addressLabel || "خونه") === (cu.label || "خونه"))).length;
-    const audHtml = (uRole === "admin" && cu.auditText) ? '<div style="background:#fef2f2;border:1px solid #f87171;color:#b91c1c;padding:4px;border-radius:4px;font-size:10px;margin-top:4px">' + cu.auditText + ' <span class="lnk" style="color:#15803d" onclick="clrAudit(\'' + c._id + '\',' + ix + ')">[تایید و پاک کردن ✓]</span></div>' : "";
-    return '<tr>' +
-      '<td style="font-weight:bold">' + (c.fullName || "---") + '</td>' +
-      '<td style="direction:ltr;font-weight:bold">' + (c.phone || "---") + '</td>' +
-      '<td style="direction:ltr;font-size:10px">' + ((c.secondaryPhones || []).join(" , ") || "---") + '</td>' +
-      '<td><div style="margin-bottom:4px">' + tbs + '</div><div style="background:#f8fafc;padding:5px;border-radius:5px;border:1px solid #e2e8f0"><b>' + (cu.label || "خونه") + ':</b> ' + cu.fullAddress + ' <span class="lnk" style="float:left" onclick="doss(\'' + c.phone + '\',' + ix + ')">سوابق (' + cnt + ') 🔍</span></div></td>' +
-      '<td><span class="bdg st-d">⏱️ ' + cTim(cu) + '</span><div style="font-size:10px;color:#64748b">تکمیل: ' + toJ(cu.lastServiceDate) + '</div>' + audHtml + '</td>' +
-      '<td><button class="btn" onclick="editC(\'' + c._id + '\')">ویرایش ✏️</button></td></tr>';
+    const audHtml = (uRole === "admin" && cu.auditText) ? '<div style="background:#fef2f2;border:1px solid #f87171;color:#b91c1c;padding:4px;border-radius:4px;font-size:10px;margin-top:4px">' + cu.auditText + ' <span class="lnk" style="color:#15803d" onclick="clrAudit(\'' + c._id + '\',' + ix + ')">[تایید ✓]</span></div>' : "";
+    return '<tr><td style="font-weight:bold">' + (c.fullName || "---") + '</td><td style="direction:ltr;font-weight:bold">' + (c.phone || "---") + '</td><td style="direction:ltr;font-size:10px">' + ((c.secondaryPhones || []).join(" , ") || "---") + '</td><td><div style="margin-bottom:4px">' + tbs + '</div><div style="background:#f8fafc;padding:5px;border-radius:5px;border:1px solid #e2e8f0"><b>' + (cu.label || "خونه") + ':</b> ' + cu.fullAddress + ' <span class="lnk" style="float:left" onclick="doss(\'' + c.phone + '\',' + ix + ')">سوابق (' + cnt + ') 🔍</span></div></td><td><span class="bdg st-d">⏱️ ' + cTim(cu) + '</span><div style="font-size:10px;color:#64748b">تکمیل: ' + toJ(cu.lastServiceDate) + '</div>' + audHtml + '</td><td><button class="btn" onclick="editC(\'' + c._id + '\')">ویرایش ✏️</button></td></tr>';
   }).join("");
 }
 
@@ -571,72 +678,56 @@ function doss(ph, ix = 0) {
   $("mBod").innerHTML = '<div style="font-size:12px;margin-bottom:6px"><b>شماره ۱:</b> <a href="tel:' + ph + '">' + ph + '</a> | <b>شماره ۲ و ۳:</b> ' + ((c?.secondaryPhones || []).join(" , ") || "ندارد") + '</div>' +
     '<div style="margin-bottom:5px">' + ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="doss(\'' + ph + '\',' + i + ')">📍 ' + (a.label || "خونه") + '</button>').join("") + '</div>' +
     '<div style="background:#f8fafc;padding:7px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:8px;font-size:11px"><b>نشانی «' + (cu.label || "خونه") + '»:</b> ' + cu.fullAddress + '<div style="color:#15803d;font-weight:bold;margin-top:3px">⏱️ تایمر: ' + cTim(cu) + '</div></div>' +
-    '<div style="max-height:160px;overflow-y:auto;margin-bottom:8px">' + (sub.map(r => '<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>' + r.invoiceCode + ':</b> ' + r.issueType + ' ' + srcBdg(r) + (r.workReport ? '<div style="color:#15803d;font-weight:bold">🔧 گزارش تکنسین: ' + r.workReport + '</div>' : '') + '<div>📅 درخواست: <b>' + toJ(r.createdAt) + '</b> | ✅ تکمیل: <b style="color:#15803d">' + toJ(r.completedAt) + '</b> ' + toTm(r.completedAt) + '</div></div>').join("") || "سابقه‌ای نیست.") + '</div>' +
+    '<div style="max-height:160px;overflow-y:auto;margin-bottom:8px">' + (sub.map(r => '<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>' + r.invoiceCode + ':</b> ' + r.issueType + ' ' + srcBdg(r) + (r.workReport ? '<div style="color:#15803d;font-weight:bold">🔧 ' + r.workReport + ' (مبلغ: ' + fmt(r.payableAmount) + ' ت)</div>' : '') + '<div>📅 درخواست: <b>' + toJ(r.createdAt) + '</b> | ✅ تکمیل: <b style="color:#15803d">' + toJ(r.completedAt) + '</b> ' + toTm(r.completedAt) + '</div></div>').join("") || "سابقه‌ای نیست.") + '</div>' +
     (c ? '<button class="btn" style="width:100%;padding:8px" onclick="editC(\'' + c._id + '\')">✏️ ویرایش مشتری</button>' : "");
   $("cModal").style.display = "flex";
 }
 
 function aRow(l = "محل کار", t = "", v = 180, d = "", q = false, rn = "", au = "") {
   const rem = getRemDays({ serviceIntervalDays: v, lastServiceDate: d });
-  return '<div class="er" data-orig-v="' + (v || 180) + '" data-orig-rem="' + rem + '" data-last="' + (d || "") + '" data-q="' + (q ? "1" : "") + '" data-rn="' + (rn || "") + '" data-au="' + (au || "") + '" style="background:#f8fafc;border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:5px">' +
-    '<div style="display:flex;gap:4px;margin-bottom:4px"><input class="inp al" style="margin:0;width:95px;font-weight:bold" value="' + l + '">' +
-    '<input type="number" class="inp av" style="margin:0;width:70px" value="' + (v || 180) + '">' +
-    '<button class="btn" style="background:#ef4444" onclick="this.closest(\'.er\').remove()">حذف</button></div>' +
-    '<input class="inp atx" style="margin:0" value="' + t + '" placeholder="متن آدرس..."></div>';
+  return '<div class="er" data-orig-v="' + (v || 180) + '" data-orig-rem="' + rem + '" data-last="' + (d || "") + '" data-q="' + (q ? "1" : "") + '" data-rn="' + (rn || "") + '" data-au="' + (au || "") + '" style="background:#f8fafc;border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:5px"><div style="display:flex;gap:4px;margin-bottom:4px"><input class="inp al" style="margin:0;width:95px;font-weight:bold" value="' + l + '"><input type="number" class="inp av" style="margin:0;width:70px" value="' + (v || 180) + '"><button class="btn" style="background:#ef4444" onclick="this.closest(\'.er\').remove()">حذف</button></div><input class="inp atx" style="margin:0" value="' + t + '" placeholder="متن آدرس..."></div>';
 }
 
 function editC(id) {
   const c = custs.find(x => x._id === id) || { fullName: "", phone: "", secondaryPhones: [], addresses: [{ label: "خونه", fullAddress: "", serviceIntervalDays: 180 }] };
   $("mTit").textContent = id ? "✏️ ویرایش مشتری" : "➕ مشتری جدید";
   const adList = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: "", serviceIntervalDays: 180 }];
-  $("mBod").innerHTML = '<input id="eN" class="inp" placeholder="نام مشتری" value="' + (c.fullName || "") + '">' +
-    '<input id="eP1" class="inp" style="direction:ltr" placeholder="شماره اصلی" value="' + (c.phone || "") + '">' +
-    '<div style="display:flex;gap:5px"><input id="eP2" class="inp" style="direction:ltr" placeholder="شماره ۲" value="' + (c.secondaryPhones?.[0] || "") + '">' +
-    '<input id="eP3" class="inp" style="direction:ltr" placeholder="شماره ۳" value="' + (c.secondaryPhones?.[1] || "") + '"></div>' +
-    '<div style="display:flex;justify-content:space-between;margin:4px 0"><b style="font-size:11px">آدرس‌ها و تایمر (روز):</b><button class="btn" onclick="$(\'eAB\').insertAdjacentHTML(\'beforeend\',aRow())">+ آدرس</button></div>' +
-    '<div id="eAB">' + adList.map(a => aRow(a.label, a.fullAddress, a.serviceIntervalDays, a.lastServiceDate, a.inReminderQueue, a.reminderNote, a.auditText)).join("") + '</div>' +
-    '<input id="eReas" class="inp" placeholder="دلیل تغییر تایمر (در صورت تغییر عدد روز الزامی است)">' +
-    '<button class="btn" style="width:100%;background:#16a34a;padding:9px;margin-top:4px" onclick="saveC(\'' + id + '\')">ذخیره تغییرات ✅</button>';
+  $("mBod").innerHTML = '<input id="eN" class="inp" placeholder="نام مشتری" value="' + (c.fullName || "") + '"><input id="eP1" class="inp" style="direction:ltr" placeholder="شماره اصلی" value="' + (c.phone || "") + '"><div style="display:flex;gap:5px"><input id="eP2" class="inp" style="direction:ltr" placeholder="شماره ۲" value="' + (c.secondaryPhones?.[0] || "") + '"><input id="eP3" class="inp" style="direction:ltr" placeholder="شماره ۳" value="' + (c.secondaryPhones?.[1] || "") + '"></div><div style="display:flex;justify-content:space-between;margin:4px 0"><b style="font-size:11px">آدرس‌ها و تایمر (روز):</b><button class="btn" onclick="$(\'eAB\').insertAdjacentHTML(\'beforeend\',aRow())">+ آدرس</button></div><div id="eAB">' + adList.map(a => aRow(a.label, a.fullAddress, a.serviceIntervalDays, a.lastServiceDate, a.inReminderQueue, a.reminderNote, a.auditText)).join("") + '</div><input id="eReas" class="inp" placeholder="دلیل تغییر تایمر (در صورت تغییر عدد روز الزامی است)"><button class="btn" style="width:100%;background:#16a34a;padding:9px;margin-top:4px" onclick="saveC(\'' + id + '\')">ذخیره تغییرات ✅</button>';
   $("cModal").style.display = "flex";
 }
 
 async function saveC(id) {
-  const ad = [], reas = $("eReas").value.trim();
-  let needReas = false;
+  const ad = [], reas = $("eReas").value.trim(); let needReas = false;
   document.querySelectorAll(".er").forEach(r => {
     const l = r.querySelector(".al").value.trim() || "خونه", t = r.querySelector(".atx").value.trim();
     const v = Number(r.querySelector(".av").value) || 180, origV = Number(r.dataset.origV) || 180, origRem = r.dataset.origRem;
     let d = r.dataset.last ? new Date(r.dataset.last) : new Date(), au = r.dataset.au || "";
     if (id && v !== origV) {
       if (!reas) needReas = true;
-      d = new Date();
-      au = "🕵️ تغییر دستی تایمر از " + origRem + " به " + v + " روز توسط " + uName + " (" + toJ(new Date()) + ") | دلیل: " + reas;
+      d = new Date(); au = "🕵️ تغییر دستی تایمر از " + origRem + " به " + v + " روز توسط " + uName + " (" + toJ(new Date()) + ") | دلیل: " + reas;
     } else if (d.getTime() > Date.now()) d = new Date();
     if (t) ad.push({ label: l, fullAddress: t, serviceIntervalDays: v, lastServiceDate: d, isActiveTimer: true, inReminderQueue: r.dataset.q === "1", reminderNote: r.dataset.rn || "", auditText: au });
   });
   if (needReas) return alert("چون عدد تایمر را تغییر دادید، وارد کردن «دلیل تغییر تایمر» الزامی است.");
-  if (id) {
-    await fetch(API + "/requests/customer-update/" + id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad }) });
-  } else {
-    await fetch(API + "/customers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad, address: ad[0]?.fullAddress || "", addressLabel: ad[0]?.label || "خونه" }) });
-  }
+  if (id) await fetch(API + "/requests/customer-update/" + id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad }) });
+  else await fetch(API + "/customers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad, address: ad[0]?.fullAddress || "", addressLabel: ad[0]?.label || "خونه" }) });
   $("cModal").style.display = "none"; sync();
 }
 
 async function upSt(id, b) {
   await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) });
-  await sync();
-  if (archDays) loadArch(archDays); else if ($("sF").value || $("sT").value || $("sQ").value) searchR();
+  await sync(); if (archDays) loadArch(archDays); else if ($("sF").value || $("sT").value || $("sQ").value) searchR();
 }
 
-function drawAll() { drawReqs(); drawTechs(); drawRem(); drawDel(); drawCusts(); if (archDays) loadArch(archDays); }
+function drawAll() { drawReqs(); drawTechs(); drawRem(); drawDel(); drawCusts(); drawSrv(); if (archDays) loadArch(archDays); }
 
 async function sync() {
   drawAll(); $("syncP").textContent = "⏳ دریافت...";
   try {
-    const [r1, r2] = await Promise.all([fetch(API + "/requests"), fetch(API + "/customers")]);
+    const [r1, r2, r3] = await Promise.all([fetch(API + "/requests"), fetch(API + "/customers"), fetch(API + "/requests/settings")]);
     if (r1.ok) { reqs = (await r1.json()).requests || []; localStorage.setItem("sw_reqs", JSON.stringify(reqs)); }
     if (r2.ok) { custs = (await r2.json()).customers || []; localStorage.setItem("sw_custs", JSON.stringify(custs)); }
+    if (r3.ok) { settings = (await r3.json()).settings || settings; }
     drawAll(); $("syncP").textContent = "🟢 آنلاین";
   } catch (e) { $("syncP").textContent = "⚠️ آفلاین"; }
 }
