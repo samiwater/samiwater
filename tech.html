@@ -14,9 +14,12 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 .brand img{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--gold);background:#124432}
 .badge-top{background:#154c3a;border:1px solid var(--gold);color:var(--gold-lt);padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
 .wrap{max-width:520px;margin:0 auto;padding:12px}
-.fin-hdr{background:linear-gradient(135deg,var(--green),#164e3b);border:1.5px solid var(--gold);border-radius:16px;padding:12px;color:#fff;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 4px 12px #0f3b2d33}
+.fin-hdr{background:linear-gradient(135deg,var(--green),#164e3b);border:1.5px solid var(--gold);border-radius:16px;padding:12px;color:#fff;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 4px 12px #0f3b2d33}
 .fin-card{background:#fff;color:var(--txt);border-radius:12px;padding:8px 12px;min-width:190px;box-shadow:0 2px 6px #0002}
 .fin-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0}
+.tabs2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.t-btn{background:#fff;border:1.5px solid #cbd5e1;color:#475569;padding:9px 6px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;text-align:center}
+.t-btn.active{background:var(--green);color:var(--gold-lt);border-color:var(--gold)}
 .box{background:var(--card);border:1.5px solid #cbd5e1;border-radius:16px;padding:13px;margin-bottom:11px;box-shadow:0 3px 8px #0000000d}
 .box-gold{border-color:var(--gold);background:#fffdf7}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center}
@@ -27,13 +30,15 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 .cir-gold{background:#fefce8;border-color:#ca8a04;color:#854d0e}
 .btn-main{width:100%;background:linear-gradient(180deg,var(--green),var(--dark));color:var(--gold-lt);border:1.5px solid var(--gold);padding:13px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px}
 .btn-draft{width:100%;background:#0284c7;color:#fff;border:none;padding:13px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px}
-.btn-pay{width:100%;background:#fefce8;color:#0f3b2d;border:2px solid var(--gold);padding:12px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:8px;text-align:right;display:flex;justify-content:space-between;align-items:center}
+.btn-pay{width:100%;background:#fefce8;color:#0f3b2d;border:2px solid var(--gold);padding:11px 12px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .btn-pay.sel{background:var(--green);color:var(--gold-lt);border-color:var(--gold)}
+.pay-sub{display:none;background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:12px;padding:10px;margin-bottom:10px}
+.pay-sub.open{display:block}
 .btn-ret{width:100%;background:#fff1f2;color:#be123c;border:1px solid #fda4af;padding:10px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:6px}
 .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:2px solid var(--gold);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px;z-index:90}
 .bn-it{color:#cbd5e1;text-align:center;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 .bn-it.active{color:var(--gold)}
-.inp{width:100%;padding:9px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:12px;margin-bottom:8px;font-family:inherit}
+.inp{width:100%;padding:9px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:12px;margin-bottom:6px;font-family:inherit}
 .drw-bg{position:fixed;inset:0;background:#09261db3;display:none;z-index:200}
 .drw{width:270px;background:linear-gradient(180deg,var(--green),var(--dark));height:100%;padding:18px 14px;color:#fff;border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:8px}
 .drw-it{padding:12px 10px;border-bottom:1px solid #ffffff22;font-size:13px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--gold-lt)}
@@ -62,7 +67,8 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
       <span style="background:#09261d;border:1px solid var(--gold);padding:4px 10px;border-radius:8px;font-size:11px;color:var(--gold)">کد کاربری</span>
       <b id="drwName" style="font-size:13px;color:#fff">---</b>
     </div>
-    <div class="drw-it" onclick="closeDrw();showView('listView')"><span>📋 خدمات ارجاع شده</span><span>➕</span></div>
+    <div class="drw-it" onclick="closeDrw();switchMainTab('assigned')"><span>📋 خدمات ارجاع شده (در نوبت)</span><span>➕</span></div>
+    <div class="drw-it" onclick="closeDrw();switchMainTab('done')"><span>✅ خدمات تکمیل شده</span><span>✔️</span></div>
     <div class="drw-it" onclick="closeDrw();showLogs()"><span>🔔 پیام‌ها و گزارش سیستم</span><span>📄</span></div>
     <div class="drw-it" onclick="closeDrw();showLedger()"><span>💳 لیست حساب (تراکنش‌ها)</span><span>📊</span></div>
     <div class="drw-it" onclick="closeDrw();showStock()"><span>📦 موجودی کالا (انبار من)</span><span>📍</span></div>
@@ -98,6 +104,14 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
   </div>
 
   <div id="listView" style="display:none">
+    <div class="tabs2">
+      <button id="mt_assigned" class="t-btn active" onclick="switchMainTab('assigned')">📋 در نوبت انجام (<span id="cntAsg">0</span>)</button>
+      <button id="mt_done" class="t-btn" onclick="switchMainTab('done')">✅ تکمیل‌شده‌ها (<span id="cntDn">0</span>)</button>
+    </div>
+    <div id="doneSubTabs" class="tabs2" style="display:none">
+      <button id="st_unpaid" class="t-btn active" style="border-color:#fda4af" onclick="switchDoneSub('unpaid')">🔴 پرداخت نشده (<span id="cntUnp">0</span>)</button>
+      <button id="st_paid" class="t-btn" onclick="switchDoneSub('paid')">🟢 پرداخت شده (<span id="cntPd">0</span>)</button>
+    </div>
     <div id="ordersList"></div>
   </div>
 
@@ -197,17 +211,40 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
       <div class="box row-btw" style="background:linear-gradient(135deg,var(--gold),#eab308);color:var(--dark);border:none"><span style="font-size:13px;font-weight:800">قابل پرداخت:</span><b id="sPayable" style="font-size:16px">0 تومان</b></div>
 
       <div id="draftActions" style="display:none;margin-bottom:12px">
-        <button class="btn-main" onclick="finalizeInvoice()">✅ تایید نهایی فاکتور و ارسال پیامک مبلغ به مشتری</button>
+        <button class="btn-main" onclick="finalizeInvoice()">✅ تایید نهایی فاکتور و انتقال به بخش پرداخت</button>
         <button class="btn-ret" style="background:#f1f5f9;color:#334155;border-color:#cbd5e1" onclick="openBuilder()">✏️ بازگشت به انتخاب کالا و دستمزد</button>
       </div>
 
       <div id="payBox" class="box" style="display:none">
-        <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:8px">💳 ثبت نوع پرداختی مشتری</div>
-        <p style="font-size:10px;color:#64748b;margin-bottom:8px">⚠️ در صورت اعطای تخفیف شخصی توسط تکنسین، گزینه «پرداخت نقدی» را انتخاب نمایید.</p>
-        <button id="pm_pos" class="btn-pay" onclick="selPay('pos')"><span>پرداخت از طریق دستگاه پوز</span><span>💳</span></button>
-        <button id="pm_cash" class="btn-pay" onclick="selPay('cash')"><span>پرداخت نقدی</span><span>💵</span></button>
-        <button id="pm_check" class="btn-pay" onclick="selPay('check')"><span>پرداخت از طریق چک</span><span>📝</span></button>
-        <button class="btn-main" onclick="submitPayment()">ثبت نوع پرداختی ✅</button>
+        <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:6px">💳 ثبت و تفکیک نوع پرداختی مشتری</div>
+        <p style="font-size:10px;color:#64748b;margin-bottom:8px">⚠️ روی هر روش پرداخت بزنید و مبلغ آن را وارد کنید تا مانده فاکتور صفر شود (در صورت تخفیف شخصی تکنسین، آن را در بخش نقدی وارد کنید).</p>
+
+        <div id="remBar" style="background:#fee2e2;color:#be123c;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between">
+          <span>مانده تعیین‌تکلیف‌نشده:</span>
+          <b id="remVal" style="direction:ltr">0 تومان</b>
+        </div>
+
+        <button id="pm_pos" class="btn-pay" onclick="togPaySec('pos')"><span>پرداخت از طریق دستگاه پوز</span><span>💳</span></button>
+        <div id="sec_pos" class="pay-sub">
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ کشیده‌شده در پوز (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('pos')">درج کل مانده</button></div>
+          <input id="inp_pos" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
+        </div>
+
+        <button id="pm_cash" class="btn-pay" onclick="togPaySec('cash')"><span>پرداخت نقدی</span><span>💵</span></button>
+        <div id="sec_cash" class="pay-sub">
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ دریافتی نقدی (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('cash')">درج کل مانده</button></div>
+          <input id="inp_cash" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
+        </div>
+
+        <button id="pm_check" class="btn-pay" onclick="togPaySec('check')"><span>پرداخت از طریق چک</span><span>📝</span></button>
+        <div id="sec_check" class="pay-sub">
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ چک (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('check')">درج کل مانده</button></div>
+          <input id="inp_check" type="number" inputmode="numeric" class="inp" style="direction:ltr" placeholder="0" oninput="calcRemPay()">
+          <input id="inp_chk_num" class="inp" style="direction:ltr" placeholder="شماره چک / صیادی (الزامی)">
+          <input id="inp_chk_bnk" class="inp" style="margin:0" placeholder="نام بانک چک (مثلاً: ملت / ملی - الزامی)">
+        </div>
+
+        <button class="btn-main" onclick="submitPayment()">✅ ثبت نهایی پرداخت و بستن حساب فاکتور</button>
       </div>
     </div>
   </div>
@@ -215,10 +252,10 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
   <div id="subView" style="display:none"></div>
 </div>
 <!-- PART 2 END -->
-  <div class="bnav">
-  <div class="bn-it active" onclick="showView('listView')"><span>📋</span><span>درخواست‌ها</span></div>
+          <div class="bnav">
+  <div class="bn-it active" onclick="switchMainTab('assigned')"><span>📋</span><span>درخواست‌ها</span></div>
+  <div class="bn-it" onclick="switchMainTab('done')"><span>✅</span><span>تکمیل‌شده‌ها</span></div>
   <div class="bn-it" onclick="showLedger()"><span>💳</span><span>لیست حساب</span></div>
-  <a class="bn-it" href="sms:09130051733"><span>💬</span><span>پیام به اپراتور</span></a>
   <a class="bn-it" href="tel:09130051733"><span>📞</span><span>تماس با اپراتور</span></a>
 </div>
 
@@ -226,11 +263,27 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
 let myName = localStorage.getItem("sw_tech_name") || "";
-let allReqs = [], settings = { fixedTravelFee: 139000, categories: [], catalog: [], techMeta: {} }, curReq = null, pickedPay = "pos", qtys = {}, draftCalc = null;
+let allReqs = [], settings = { fixedTravelFee: 139000, categories: [], catalog: [], techMeta: {} }, curReq = null, qtys = {}, draftCalc = null;
+let mainTab = "assigned", doneSub = "unpaid";
 
 const fmt = n => (Number(n) || 0).toLocaleString("fa-IR") + " تومان";
 function toJ(d) { if (!d) return "---"; try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; } }
 function toTm(d) { if (!d) return ""; try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
+
+function getEffAmounts(r) {
+  const tFee = Number(r?.travelFee) > 0 ? Number(r.travelFee) : (Number(settings.fixedTravelFee) || 139000);
+  const disc = Number(r?.discountAmount) || 0;
+  let tot = Number(r?.totalAmount) || 0, prof = Number(r?.techProfit) || 0;
+  if (tot <= 0) {
+    tot = tFee; prof = tFee;
+    (r?.invoiceItems || []).forEach(it => {
+      const q = Number(it.qty) || 1, p = Number(it.price) || 0, w = Number(it.wage) || 0, cm = Number(it.commPct) || 0;
+      tot += (p * q) + (w * q); prof += Math.round((p * q * cm) / 100) + (w * q);
+    });
+  }
+  const payable = Number(r?.payableAmount) > 0 ? Number(r.payableAmount) : Math.max(0, tot - disc);
+  return { tFee, disc, tot, payable, prof };
+}
 
 function openDrawer() { if (myName) $("drawerBg").style.display = "block"; }
 function closeDrw() { $("drawerBg").style.display = "none"; }
@@ -255,7 +308,7 @@ async function doLogin() {
     if (r.ok) settings = (await r.json()).settings || settings;
   } catch (e) {}
   const meta = settings.techMeta?.[n];
-  if (meta?.locked) return alert("🔒 حساب شما جهت انبارگردانی قفل شده است. لطفاً موجودی کالاهای خود را شمارش و به مدیریت اعلام کنید.");
+  if (meta?.locked) return alert("🔒 حساب شما جهت انبارگردانی قفل شده است.");
   const validPin = meta?.pin || "1234";
   if (p !== validPin && p !== "0913") return alert("رمز ورود اشتباه است!");
   myName = n; localStorage.setItem("sw_tech_name", n); init();
@@ -282,9 +335,27 @@ function getMyActiveCycleDone() {
 function calcHeader() {
   const cyc = getMyActiveCycleDone();
   let bill = 0, prof = 0;
-  cyc.forEach(r => { bill += Number(r.payableAmount) || 0; prof += Number(r.techProfit) || 0; });
+  cyc.forEach(r => {
+    const eff = getEffAmounts(r);
+    bill += eff.payable; prof += eff.prof;
+  });
   $("hBill").textContent = (bill > 0 ? "-" : "") + fmt(bill);
   $("hProfit").textContent = "+" + fmt(prof);
+}
+
+function switchMainTab(t) {
+  mainTab = t;
+  $("mt_assigned").classList.toggle("active", t === "assigned");
+  $("mt_done").classList.toggle("active", t === "done");
+  $("doneSubTabs").style.display = t === "done" ? "grid" : "none";
+  showView("listView");
+}
+
+function switchDoneSub(s) {
+  doneSub = s;
+  $("st_unpaid").classList.toggle("active", s === "unpaid");
+  $("st_paid").classList.toggle("active", s === "paid");
+  renderList();
 }
 
 function showView(v) {
@@ -294,19 +365,30 @@ function showView(v) {
 }
 
 function renderList() {
-  const mine = allReqs.filter(r => (r.technicianName || "").trim() === myName && !r.isSettled && ["assigned", "open", "done", "completed"].includes(r.status))
+  const asgList = allReqs.filter(r => (r.technicianName || "").trim() === myName && !r.isSettled && (r.status === "assigned" || r.status === "open"))
     .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+  const doneAll = getMyActiveCycleDone().sort((a, b) => new Date(b.completedAt || b.createdAt || 0) - new Date(a.completedAt || a.createdAt || 0));
+  const unpList = doneAll.filter(r => !r.paymentMethod || r.paymentMethod === "unpaid");
+  const pdList = doneAll.filter(r => r.paymentMethod && r.paymentMethod !== "unpaid");
 
-  if (!mine.length) {
-    $("ordersList").innerHTML = '<div class="box" style="text-align:center;padding:24px;color:#64748b">هیچ سفارش فعالی در کارتابل این دوره شما نیست ✅</div>';
+  $("cntAsg").textContent = asgList.length;
+  $("cntDn").textContent = doneAll.length;
+  $("cntUnp").textContent = unpList.length;
+  $("cntPd").textContent = pdList.length;
+
+  const list = mainTab === "assigned" ? asgList : (doneSub === "unpaid" ? unpList : pdList);
+  if (!list.length) {
+    const msg = mainTab === "assigned" ? "هیچ سفارش جدیدی در نوبت انجام شما نیست ✅" : (doneSub === "unpaid" ? "فاکتور پرداخت‌نشده‌ای وجود ندارد ✅" : "هنوز فاکتور پرداخت‌شده‌ای در این دوره ثبت نشده است.");
+    $("ordersList").innerHTML = '<div class="box" style="text-align:center;padding:24px;color:#64748b">' + msg + '</div>';
     return;
   }
 
-  $("ordersList").innerHTML = mine.map(r => {
+  $("ordersList").innerHTML = list.map(r => {
     const isDone = r.status === "done" || r.status === "completed";
-    const payMap = { pos: "پرداخت پوز ✅", cash: "پرداخت نقدی ✅", check: "پرداخت چک ✅" };
-    const stTxt = !isDone ? "تایید کارشناس" : (payMap[r.paymentMethod] || "🔴 پرداخت نشده");
-    const stCol = !isDone ? "#b45309" : (r.paymentMethod === "unpaid" ? "#e11d48" : "#15803d");
+    const eff = getEffAmounts(r);
+    const payMap = { pos: "پرداخت پوز ✅", cash: "پرداخت نقدی ✅", check: "پرداخت چک ✅", mixed: "پرداخت ترکیبی ✅" };
+    const stTxt = !isDone ? "تایید کارشناس" : (payMap[r.paymentMethod] || "🔴 پرداخت نشده (" + fmt(eff.payable) + ")");
+    const stCol = !isDone ? "#b45309" : ((!r.paymentMethod || r.paymentMethod === "unpaid") ? "#e11d48" : "#15803d");
     return '<div class="box req-item" onclick="openOrder(\'' + r._id + '\')">' +
       '<div class="grid3" style="align-items:center;text-align:right">' +
       '<div><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.snapshot?.fullName || "مشتری") + '</div><div style="font-size:11px;color:#64748b">' + (r.issueType || "خدمات") + '</div></div>' +
@@ -315,8 +397,8 @@ function renderList() {
       '</div></div>';
   }).join("");
 }
-
-function openOrder(id) {
+// PART 3 END
+  function openOrder(id) {
   curReq = allReqs.find(x => x._id === id); if (!curReq) return;
   showView("detailView");
   $("dCode").textContent = curReq.invoiceCode || "---";
@@ -349,12 +431,10 @@ function openOrder(id) {
     $("dPayBadge").style.display = "none"; $("actBtns").style.display = "block"; $("invSummary").style.display = "none";
   }
 }
-// PART 3 END
-  function openBuilder() {
+
+function openBuilder() {
   $("actBtns").style.display = "none"; $("invSummary").style.display = "none"; $("invBuilder").style.display = "block";
-  if (!Object.keys(qtys).length) {
-    (curReq.invoiceItems || curReq.draftItems || []).forEach(it => { qtys[it.id] = it.qty; });
-  }
+  if (!Object.keys(qtys).length) (curReq.invoiceItems || curReq.draftItems || []).forEach(it => { qtys[it.id] = it.qty; });
   const cats = settings.categories?.length ? settings.categories : ["فیلترها", "حوضینگ ها و مخزن", "پمپ و ترانس", "شیرها", "کلیدها", "زانو و اتصالات", "فیلتر یخچال", "نیمه صنعتی", "تصفیه آب", "متفرقه", "سرویس های انجام شده"];
   const catItems = settings.catalog || [];
 
@@ -368,16 +448,15 @@ function openOrder(id) {
       '<button class="q-btn" onclick="chQty(\'' + c.id + '\',-1)">−</button>' +
       '<b id="q_' + c.id + '" style="font-size:14px;color:var(--gold);min-width:18px;text-align:center">' + (qtys[c.id] || 0) + '</b>' +
       '<button class="q-btn" onclick="chQty(\'' + c.id + '\',1)">+</button></div></div>'
-    ).join("") : '<div style="font-size:11px;color:#64748b;padding:8px">آیتمی در این دسته تعریف نشده است.</div>';
+    ).join("") : '<div style="font-size:11px;color:#64748b;padding:8px">آیتمی تعریف نشده است.</div>';
 
-    return '<div class="acc-hdr ' + (isWage ? "wages" : "") + '" onclick="togAcc(' + idx + ')">' +
-      '<span>' + (isWage ? "🛠️ " : "📦 ") + catName + '</span><span id="ac_cnt_' + idx + '" style="font-size:11px;color:#64748b">⌄</span></div>' +
+    return '<div class="acc-hdr ' + (isWage ? "wages" : "") + '" onclick="$(\'ac_bod_' + idx + '\').classList.toggle(\'open\')">' +
+      '<span>' + (isWage ? "🛠️ " : "📦 ") + catName + '</span><span style="font-size:11px;color:#64748b">⌄</span></div>' +
       '<div id="ac_bod_' + idx + '" class="acc-bod">' + bodyHtml + '</div>';
   }).join("");
   $("wNoteInp").value = curReq.workReport || "";
 }
 
-function togAcc(i) { $("ac_bod_" + i).classList.toggle("open"); }
 function chQty(id, d) { qtys[id] = Math.max(0, (qtys[id] || 0) + d); if ($("q_" + id)) $("q_" + id).textContent = qtys[id]; }
 
 async function openDraftPreview() {
@@ -385,7 +464,7 @@ async function openDraftPreview() {
   cat.forEach(c => {
     if (qtys[c.id] > 0) items.push({ id: c.id, title: c.title, category: c.category, isGoods: c.isGoods, price: c.price, wage: c.wage || 0, commPct: c.commPct || 0, qty: qtys[c.id] });
   });
-  const tFee = Number(curReq.travelFee ?? settings.fixedTravelFee ?? 139000);
+  const tFee = Number(curReq.travelFee) > 0 ? Number(curReq.travelFee) : (Number(settings.fixedTravelFee) || 139000);
   const disc = Number(curReq.discountAmount || 0);
   let tot = tFee, prof = tFee;
   items.forEach(it => {
@@ -406,10 +485,9 @@ async function openDraftPreview() {
 }
 
 function renderInvoiceSummary(isDraft) {
-  const data = isDraft ? draftCalc : {
-    items: curReq.invoiceItems || [], tFee: curReq.travelFee ?? 139000, disc: curReq.discountAmount || 0,
-    tot: curReq.totalAmount || curReq.travelFee || 139000, payable: curReq.payableAmount ?? curReq.totalAmount ?? 139000, prof: curReq.techProfit || curReq.travelFee || 139000
-  };
+  const eff = getEffAmounts(curReq);
+  const data = isDraft ? draftCalc : { items: curReq.invoiceItems || [], tFee: eff.tFee, disc: eff.disc, tot: eff.tot, payable: eff.payable, prof: eff.prof };
+
   $("draftBanner").style.display = isDraft ? "block" : "none";
   $("draftActions").style.display = isDraft ? "block" : "none";
   $("payBox").style.display = isDraft ? "none" : "block";
@@ -418,10 +496,22 @@ function renderInvoiceSummary(isDraft) {
   if (!isDraft) {
     const pMethod = curReq.paymentMethod || "unpaid";
     $("dPayBadge").style.display = "inline-block";
-    const pLabels = { pos: "پرداخت شد (پوز)", cash: "پرداخت شد (نقدی)", check: "پرداخت شد (چک)" };
+    const pLabels = { pos: "پرداخت پوز", cash: "پرداخت نقدی", check: "پرداخت چک", mixed: "پرداخت ترکیبی" };
     $("dPayBadge").className = pMethod === "unpaid" ? "bdg-unpaid" : "bdg-paid";
     $("dPayBadge").textContent = pMethod === "unpaid" ? "پرداخت نشده" : pLabels[pMethod];
-    selPay(pMethod === "unpaid" ? "pos" : pMethod);
+
+    const pb = curReq.paymentBreakdown || {};
+    $("inp_pos").value = pb.pos || "";
+    $("inp_cash").value = pb.cash || "";
+    $("inp_check").value = pb.check || "";
+    $("inp_chk_num").value = pb.checkNumber || "";
+    $("inp_chk_bnk").value = pb.checkBank || "";
+    ["pos", "cash", "check"].forEach(k => {
+      const hasVal = Number($("inp_" + k).value) > 0;
+      $("sec_" + k).classList.toggle("open", hasVal);
+      $("pm_" + k).classList.toggle("sel", hasVal);
+    });
+    calcRemPay();
   }
 
   $("sProf").textContent = fmt(data.prof);
@@ -435,9 +525,37 @@ function renderInvoiceSummary(isDraft) {
   $("sTot").textContent = fmt(data.tot); $("sPayable").textContent = fmt(data.payable);
 }
 
+function togPaySec(k) {
+  const sec = $("sec_" + k), btn = $("pm_" + k);
+  const isOpen = sec.classList.toggle("open");
+  btn.classList.toggle("sel", isOpen);
+  if (!isOpen) { $("inp_" + k).value = ""; calcRemPay(); }
+  else if (getRemPayVal() > 0 && !Number($("inp_" + k).value)) fillRem(k);
+}
+
+function getRemPayVal() {
+  const eff = getEffAmounts(curReq);
+  const p = Number($("inp_pos").value) || 0, c = Number($("inp_cash").value) || 0, k = Number($("inp_check").value) || 0;
+  return eff.payable - (p + c + k);
+}
+
+function fillRem(k) {
+  $("inp_" + k).value = "";
+  const rem = getRemPayVal();
+  if (rem > 0) $("inp_" + k).value = rem;
+  calcRemPay();
+}
+
+function calcRemPay() {
+  const rem = getRemPayVal();
+  $("remVal").textContent = (rem === 0 ? "۰ تومان (تکمیل ✅)" : fmt(rem));
+  $("remBar").style.background = rem === 0 ? "#dcfce7" : "#fee2e2";
+  $("remBar").style.color = rem === 0 ? "#15803d" : "#be123c";
+}
+
 async function finalizeInvoice() {
   if (!draftCalc) return;
-  if (!confirm("آیا از ثبت نهایی فاکتور به مبلغ «" + fmt(draftCalc.payable) + "» مطمئن هستید؟\n(کالاها از انبار شما کسر شده و مبلغ نهایی برای مشتری پیامک می‌شود)")) return;
+  if (!confirm("آیا از ثبت نهایی فاکتور به مبلغ «" + fmt(draftCalc.payable) + "» مطمئن هستید؟")) return;
   const r = await fetch(API + "/requests/" + curReq._id + "/status", {
     method: "PUT", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status: "done", technicianName: myName, invoiceItems: draftCalc.items, travelFee: draftCalc.tFee, workReport: draftCalc.summary, paymentMethod: "unpaid", deductStock: true })
@@ -446,21 +564,32 @@ async function finalizeInvoice() {
     curReq = (await r.json()).request; qtys = {};
     const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
     calcHeader(); openOrder(curReq._id);
-    alert("✅ فاکتور نهایی ثبت شد و اکنون می‌توانید نوع پرداختی مشتری را مشخص کنید.");
+    alert("✅ فاکتور به بخش «تکمیل‌شده‌ها» منتقل شد. اکنون مبالغ پرداختی مشتری را وارد کنید.");
   }
 }
 
-function selPay(m) { pickedPay = m; ["pos", "cash", "check"].forEach(k => $("pm_" + k).classList.toggle("sel", k === m)); }
-
 async function submitPayment() {
+  const eff = getEffAmounts(curReq);
+  const pos = Number($("inp_pos").value) || 0, cash = Number($("inp_cash").value) || 0, check = Number($("inp_check").value) || 0;
+  const rem = eff.payable - (pos + cash + check);
+  if (rem !== 0) return alert("⚠️ تا زمانی که کل مبلغ قابل پرداخت (" + fmt(eff.payable) + ") تعیین تکلیف و مانده صفر نشود، امکان بستن حساب وجود ندارد!\nمانده فعلی: " + fmt(rem));
+
+  const checkNumber = $("inp_chk_num").value.trim(), checkBank = $("inp_chk_bnk").value.trim();
+  if (check > 0 && (!checkNumber || !checkBank)) return alert("⚠️ برای پرداخت چک، وارد کردن «شماره چک» و «نام بانک» الزامی است!");
+
+  const methods = [pos > 0 ? "pos" : null, cash > 0 ? "cash" : null, check > 0 ? "check" : null].filter(Boolean);
+  const pMethod = methods.length > 1 ? "mixed" : (methods[0] || "cash");
+
   const r = await fetch(API + "/requests/" + curReq._id + "/status", {
-    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ paymentMethod: pickedPay })
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "done", invoiceItems: curReq.invoiceItems || [], travelFee: eff.tFee, paymentMethod: pMethod, paymentBreakdown: { pos, cash, check, checkNumber, checkBank } })
   });
   if (r.ok) {
     curReq = (await r.json()).request;
     const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
-    calcHeader(); renderInvoiceSummary(false);
-    alert("نوع پرداختی با موفقیت ثبت شد ✅");
+    calcHeader();
+    alert("✅ اطلاعات پرداخت با موفقیت ثبت شد.");
+    switchMainTab("done"); switchDoneSub("paid");
   }
 }
 
@@ -468,15 +597,22 @@ function showLedger() {
   showView("subView");
   const paid = getMyActiveCycleDone().filter(r => r.paymentMethod && r.paymentMethod !== "unpaid")
     .sort((a, b) => new Date(a.paidAt || a.completedAt || 0) - new Date(b.paidAt || b.completedAt || 0));
-  let run = 0;
-  const cards = paid.map(r => {
-    const amt = Number(r.payableAmount) || 0; run += amt;
-    const pNam = { pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝" }[r.paymentMethod] || "پرداخت";
-    return { html: '<div class="box" style="border-right:5px solid #be123c"><div class="row-btw">' +
-      '<div><div style="font-size:13px;font-weight:800;color:#b45309">' + pNam + '</div><div style="font-size:11px;color:#475569;margin-top:3px">👤 ' + (r.snapshot?.fullName || "") + ' | فاکتور ' + (r.invoiceCode || "") + '</div></div>' +
-      '<div style="text-align:left;direction:ltr"><div style="font-size:13px;font-weight:800;color:#be123c">مبلغ: -' + fmt(amt) + '</div><div style="font-size:11px;color:#64748b;margin-top:3px">موجودی: -' + fmt(run) + '</div></div></div></div>' };
-  }).reverse();
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">💳 لیست تراکنش‌های دوره جاری</h4>' + (cards.map(x => x.html).join("") || '<div class="box" style="text-align:center">تراکنشی در این دوره ثبت نشده است.</div>');
+  let run = 0; const cards = [];
+  paid.forEach(r => {
+    const eff = getEffAmounts(r), pb = r.paymentBreakdown || {};
+    const parts = [];
+    if (pb.pos > 0) parts.push({ t: "پرداخت پوز 💳", a: pb.pos });
+    if (pb.cash > 0) parts.push({ t: "پرداخت نقدی 💵", a: pb.cash });
+    if (pb.check > 0) parts.push({ t: "پرداخت چک 📝 (" + (pb.checkBank || "") + " - چک " + (pb.checkNumber || "") + ")", a: pb.check });
+    if (!parts.length) parts.push({ t: ({ pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝" }[r.paymentMethod] || "پرداخت"), a: eff.payable });
+    parts.forEach(pt => {
+      run += pt.a;
+      cards.push('<div class="box" style="border-right:5px solid #be123c"><div class="row-btw">' +
+        '<div><div style="font-size:13px;font-weight:800;color:#b45309">' + pt.t + '</div><div style="font-size:11px;color:#475569;margin-top:3px">👤 ' + (r.snapshot?.fullName || "") + ' | فاکتور ' + (r.invoiceCode || "") + '</div></div>' +
+        '<div style="text-align:left;direction:ltr"><div style="font-size:13px;font-weight:800;color:#be123c">مبلغ: -' + fmt(pt.a) + '</div><div style="font-size:11px;color:#64748b;margin-top:3px">موجودی: -' + fmt(run) + '</div></div></div></div>');
+    });
+  });
+  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">💳 لیست تراکنش‌های دوره جاری</h4>' + (cards.reverse().join("") || '<div class="box" style="text-align:center">تراکنشی در این دوره ثبت نشده است.</div>');
 }
 
 function showStock() {
