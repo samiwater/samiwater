@@ -398,7 +398,7 @@ function renderList() {
   }).join("");
 }
 // PART 3 END
-  function openOrder(id) {
+function openOrder(id) {
   curReq = allReqs.find(x => x._id === id); if (!curReq) return;
   showView("detailView");
   $("dCode").textContent = curReq.invoiceCode || "---";
@@ -487,30 +487,53 @@ async function openDraftPreview() {
 function renderInvoiceSummary(isDraft) {
   const eff = getEffAmounts(curReq);
   const data = isDraft ? draftCalc : { items: curReq.invoiceItems || [], tFee: eff.tFee, disc: eff.disc, tot: eff.tot, payable: eff.payable, prof: eff.prof };
+  const pMethod = curReq.paymentMethod || "unpaid";
+  const isPaid = !isDraft && pMethod !== "unpaid";
 
   $("draftBanner").style.display = isDraft ? "block" : "none";
   $("draftActions").style.display = isDraft ? "block" : "none";
-  $("payBox").style.display = isDraft ? "none" : "block";
   $("editItemsBtn").style.display = isDraft ? "inline-flex" : "none";
 
-  if (!isDraft) {
-    const pMethod = curReq.paymentMethod || "unpaid";
+  let recBox = $("paidReceiptBox");
+  if (!recBox) {
+    recBox = document.createElement("div");
+    recBox.id = "paidReceiptBox";
+    $("payBox").parentNode.insertBefore(recBox, $("payBox"));
+  }
+
+  if (isDraft) {
+    $("payBox").style.display = "none";
+    recBox.style.display = "none";
+  } else if (isPaid) {
+    $("payBox").style.display = "none";
+    recBox.style.display = "block";
+    const pLabels = { pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝", mixed: "پرداخت ترکیبی 🔀" };
     $("dPayBadge").style.display = "inline-block";
-    const pLabels = { pos: "پرداخت پوز", cash: "پرداخت نقدی", check: "پرداخت چک", mixed: "پرداخت ترکیبی" };
-    $("dPayBadge").className = pMethod === "unpaid" ? "bdg-unpaid" : "bdg-paid";
-    $("dPayBadge").textContent = pMethod === "unpaid" ? "پرداخت نشده" : pLabels[pMethod];
+    $("dPayBadge").className = "bdg-paid";
+    $("dPayBadge").textContent = pLabels[pMethod] || "پرداخت شده";
 
     const pb = curReq.paymentBreakdown || {};
-    $("inp_pos").value = pb.pos || "";
-    $("inp_cash").value = pb.cash || "";
-    $("inp_check").value = pb.check || "";
-    $("inp_chk_num").value = pb.checkNumber || "";
-    $("inp_chk_bnk").value = pb.checkBank || "";
+    const det = [];
+    if (pb.pos > 0) det.push("💳 دستگاه پوز: <b>" + fmt(pb.pos) + "</b>");
+    if (pb.cash > 0) det.push("💵 نقدی: <b>" + fmt(pb.cash) + "</b>");
+    if (pb.check > 0) det.push("📝 چک: <b>" + fmt(pb.check) + "</b> (بانک " + (pb.checkBank || "---") + " - ش: " + (pb.checkNumber || "---") + ")");
+    if (!det.length) det.push((pLabels[pMethod] || "پرداخت") + ": <b>" + fmt(data.payable) + "</b>");
+
+    recBox.innerHTML = '<div class="box" style="background:#f0fdf4;border:2px solid #15803d;color:#15803d;text-align:center">' +
+      '<div style="font-size:13px;font-weight:800;margin-bottom:6px">✅ حساب این فاکتور تسویه و بسته شده است</div>' +
+      '<div style="font-size:12px;color:#0f3b2d;line-height:1.8">' + det.join("<br>") + '</div></div>';
+  } else {
+    recBox.style.display = "none";
+    $("payBox").style.display = "block";
+    $("dPayBadge").style.display = "inline-block";
+    $("dPayBadge").className = "bdg-unpaid";
+    $("dPayBadge").textContent = "پرداخت نشده";
     ["pos", "cash", "check"].forEach(k => {
-      const hasVal = Number($("inp_" + k).value) > 0;
-      $("sec_" + k).classList.toggle("open", hasVal);
-      $("pm_" + k).classList.toggle("sel", hasVal);
+      $("inp_" + k).value = "";
+      $("sec_" + k).classList.remove("open");
+      $("pm_" + k).classList.remove("sel");
     });
+    $("inp_chk_num").value = ""; $("inp_chk_bnk").value = "";
     calcRemPay();
   }
 
@@ -588,7 +611,7 @@ async function submitPayment() {
     curReq = (await r.json()).request;
     const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
     calcHeader();
-    alert("✅ اطلاعات پرداخت با موفقیت ثبت شد.");
+    alert("✅ اطلاعات پرداخت با موفقیت ثبت و قفل شد.");
     switchMainTab("done"); switchDoneSub("paid");
   }
 }
