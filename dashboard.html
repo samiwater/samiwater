@@ -263,7 +263,9 @@ function drawReqs() {
   }).join("");
 }
 // PART 2 END
-      function toClock(d) {
+      let techSubTab = "active";
+
+function toClock(d) {
   if (!d) return "";
   try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; }
 }
@@ -283,12 +285,12 @@ function assignM(id, tName) {
     '<select id="asTc" class="inp" style="font-weight:bold;color:#0f3b2d">' + techOpts + '</select>' +
     '<label style="font-size:11px;font-weight:bold">۱. نوع خدمت (نمایش در کارت تکنسین)</label>' +
     '<select id="asTp" class="inp">' + typeOpts + '</select>' +
-    '<label style="font-size:11px;font-weight:bold">۲. شماره هماهنگی موقت این نوبت (اختیاری - مثلاً همسر یا نگهبان)</label>' +
+    '<label style="font-size:11px;font-weight:bold">۲. شماره هماهنگی موقت این نوبت (اختیاری)</label>' +
     '<input id="asPh" class="inp" style="direction:ltr" value="' + (r.tempPhone || "") + '" placeholder="مثلاً: 0913...">' +
-    '<label style="font-size:11px;font-weight:bold">۳. مبلغ تخفیفات و هدیه شرکتی برای مشتری (تومان - اختیاری)</label>' +
+    '<label style="font-size:11px;font-weight:bold">۳. مبلغ تخفیفات و هدیه شرکتی برای مشتری (تومان)</label>' +
     '<input id="asDc" type="number" class="inp" style="direction:ltr" value="' + (r.discountAmount || 0) + '" placeholder="0">' +
     '<label style="font-size:11px;font-weight:bold">۴. خلاصه سوابق فیلترها و توضیحات اپراتور برای تکنسین *</label>' +
-    '<input id="asNt" class="inp" value="' + defNote + '" placeholder="مثلاً: سه‌گانه مهر ۴۰۴ // هماهنگی قبل از ساعت ۳">' +
+    '<input id="asNt" class="inp" value="' + defNote + '">' +
     '<button class="btn" style="width:100%;background:#0284c7;padding:10px;margin-top:4px" onclick="subAssign(\'' + id + '\')">تایید و ارسال به کارتابل تکنسین (به‌صورت 🆕 بازنشده) 📤</button>';
   $("cModal").style.display = "flex";
 }
@@ -307,7 +309,7 @@ async function appTechSus(id, days, reason, note) {
 }
 
 async function rejTechSus(id) {
-  const msg = prompt("علت رد درخواست تعلیق و دستور به تکنسین را بنویسید (مثلاً: با مشتری هماهنگ شد، امروز منزل هستند):");
+  const msg = prompt("علت رد درخواست تعلیق و دستور به تکنسین را بنویسید:");
   if (!msg || !msg.trim()) return;
   await upSt(id, { techSuspendReq: { active: false, rejectedNote: msg.trim(), rejectedAt: new Date().toISOString() } });
 }
@@ -327,6 +329,7 @@ function drawTechs() {
   $("tTabs").innerHTML = tabsHtml;
 
   const unsettledDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && (selTech === "ALL" || r.technicianName === selTech));
+  const settledDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && r.isSettled && (selTech === "ALL" || r.technicianName === selTech));
   const inHand = assignedAll.filter(r => selTech === "ALL" || r.technicianName === selTech);
 
   let posSum = 0, posCnt = 0, cashSum = 0, chkSum = 0, unpSum = 0, unpCnt = 0, profSum = 0, billSum = 0;
@@ -344,12 +347,19 @@ function drawTechs() {
     else { unpSum += a; unpCnt++; }
   });
 
-  const meta = settings.techMeta?.[selTech] || { pin: "1234", phone: "", locked: false, stock: {} };
+  const meta = settings.techMeta?.[selTech] || { userCode: "Sam12", pin: "1234", phone: "", locked: false, stock: {}, logs: [] };
+  const logsCnt = selTech === "ALL" ? techs.reduce((s, t) => s + (settings.techMeta?.[t]?.logs?.length || 0), 0) : (meta.logs?.length || 0);
+
   const ctrlBtns = (selTech !== "ALL" && uRole === "admin") ?
     '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1">' +
-    '<button class="btn" style="background:#0f172a" onclick="openStockM(\'' + selTech + '\')">📦 مدیریت موجودی انبار و رمز (' + (meta.locked ? "🔒 قفل انبارگردانی" : "🔓 باز") + ')</button>' +
-    '<button class="btn" style="background:#16a34a" onclick="settleT(\'' + selTech + '\',' + unsettledDone.length + ',' + unpCnt + ')">💳 ثبت تسویه حساب و صفر کردن دوره (' + unsettledDone.length + ' خدمت)</button></div>' :
-    '<div style="color:#64748b;margin-top:6px">💡 برای مدیریت انبار، قفل انبارگردانی یا ثبت تسویه حساب، روی نام تکنسین موردنظر کلیک کنید.</div>';
+    '<button class="btn" style="background:#0f172a" onclick="openStockM(\'' + selTech + '\')">⚙️ تنظیمات رمز (' + (meta.userCode || "Sam12") + ')، کارت بانکی و قفل (' + (meta.locked ? "🔒 قفل" : "🔓 باز") + ')</button>' +
+    '<button class="btn" style="background:#16a34a" onclick="settleT(\'' + selTech + '\',' + unsettledDone.length + ',' + unpCnt + ')">💳 ثبت تسویه حساب و بستن دوره (' + unsettledDone.length + ' خدمت)</button></div>' : '';
+
+  const subNavHtml = '<div class="fg" style="margin-top:10px;margin-bottom:0">' +
+    '<button class="fb ' + (techSubTab === "active" ? "active" : "") + '" onclick="techSubTab=\'active\';drawTechs()">⏳ ۱. در دست اقدام (' + inHand.length + ')</button>' +
+    '<button class="fb ' + (techSubTab === "done" ? "active" : "") + '" onclick="techSubTab=\'done\';drawTechs()">✅ ۲. تکمیل‌شده دوره (' + unsettledDone.length + ')</button>' +
+    '<button class="fb ' + (techSubTab === "stock" ? "active" : "") + '" onclick="techSubTab=\'stock\';drawTechs()">📦 ۳. موجودی همراه تکنسین</button>' +
+    '<button class="fb ' + (techSubTab === "logs" ? "active" : "") + '" onclick="techSubTab=\'logs\';drawTechs()">🔔 ۴. گزارش اپ و کل کارکرد (' + logsCnt + ')</button></div>';
 
   $("tStats").innerHTML = '<div><b>📊 میز حسابرسی دوره جاری (' + (selTech === "ALL" ? "کل تکنسین‌ها" : selTech) + '):</b> ' +
     '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">' +
@@ -359,23 +369,46 @@ function drawTechs() {
     '<span class="bdg" style="background:#f3e8ff;color:#7e22ce;font-size:11px">📝 جمع چک: ' + fmt(chkSum) + ' ت</span>' +
     '<span class="bdg st-al" style="font-size:11px">🔴 پرداخت‌نشده: ' + fmt(unpSum) + ' ت (' + unpCnt + ' مورد)</span>' +
     '<span class="bdg st-d" style="font-size:11px">📈 سود تکنسین: +' + fmt(profSum) + ' ت</span>' +
-    '<span class="bdg" style="background:#1e293b;color:#facc15;font-size:11px">💰 کل صورتحساب: ' + fmt(billSum) + ' ت</span>' +
-    '</div>' + ctrlBtns + '</div>';
+    '<span class="bdg" style="background:#1e293b;color:#facc15;font-size:11px">💰 کل صورتحساب دوره: ' + fmt(billSum) + ' ت</span>' +
+    '</div>' + ctrlBtns + subNavHtml + '</div>';
 
-  const combined = [...inHand, ...unsettledDone];
-  if (!combined.length) {
-    $("techB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:12px">هیچ خدمت باز یا تسویه‌نشده‌ای در این دوره وجود ندارد ✅</td></tr>';
+  if (techSubTab === "stock") {
+    const goods = (settings.catalog || []).filter(c => c.isGoods);
+    $("techB").innerHTML = goods.map(g => {
+      const cnt = selTech === "ALL" ? techs.reduce((s, t) => s + Math.max(0, Number(settings.techMeta?.[t]?.stock?.[g.title]) || 0), 0) : Math.max(0, Number(meta.stock?.[g.title]) || 0);
+      return '<tr><td><span class="bdg st-a">' + g.category + '</span></td><td colspan="2"><b>' + g.title + '</b></td><td>قیمت مشتری: ' + fmt(g.price) + ' ت</td><td><span class="bdg ' + (cnt > 0 ? "st-d" : "st-al") + '" style="font-size:12px">' + cnt + ' عدد در کیف/ماشین</span></td><td>' +
+        (selTech !== "ALL" ? '<button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'' + g.title + '\',\'' + selTech + '\')">📤 + حواله</button> <button class="btn" style="background:#d97706" onclick="openWhOpM(\'from_tech\',\'' + g.title + '\',\'' + selTech + '\')">📥 برگشت</button> <button class="btn" style="background:#475569" onclick="fixStockPrompt(\'' + selTech + '\',\'' + g.title + '\',' + cnt + ')">🔧 اصلاح عدد</button>' : 'تکنسین را انتخاب کنید') + '</td></tr>';
+    }).join("");
     return;
   }
 
-  $("techB").innerHTML = combined.map(r => {
+  if (techSubTab === "logs") {
+    const allLogs = [];
+    (selTech === "ALL" ? techs : [selTech]).forEach(t => {
+      (settings.techMeta?.[t]?.logs || []).forEach(l => allLogs.push({ t, ...l }));
+    });
+    allLogs.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+    const histTot = settledDone.reduce((s, r) => s + (Number(r.payableAmount) || 0), 0);
+    const histProf = settledDone.reduce((s, r) => s + (Number(r.techProfit) || 0), 0);
+    const summaryRow = '<tr style="background:#f0fdf4"><td colspan="6"><b>🏆 کل کارکرد تسویه‌شده قبلی (' + (selTech === "ALL" ? "همه" : selTech) + '):</b> تعداد <b>' + settledDone.length + ' خدمت تسویه‌شده</b> | جمع کل مبالغ: <b>' + fmt(histTot) + ' ت</b> | جمع کل سود تکنسین: <b>' + fmt(histProf) + ' ت</b></td></tr>';
+    $("techB").innerHTML = summaryRow + (allLogs.length ? allLogs.map(l => '<tr><td>📅 ' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td><b>👨‍🔧 ' + l.t + '</b></td><td colspan="2"><span class="bdg st-a">' + l.title + '</span></td><td colspan="2">' + l.text + '</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center;padding:12px">هنوز گزارشی در اپ این تکنسین ثبت نشده است.</td></tr>');
+    return;
+  }
+
+  const listToShow = techSubTab === "active" ? inHand : unsettledDone;
+  if (!listToShow.length) {
+    $("techB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:12px">' + (techSubTab === "active" ? "هیچ خدمت بازی در دست اقدام تکنسین نیست ✅" : "هیچ خدمت تکمیل‌شده‌ای در این دوره ثبت نشده است.") + '</td></tr>';
+    return;
+  }
+
+  $("techB").innerHTML = listToShow.map(r => {
     const ph = r.snapshot?.phone || "", isD = r.status === "done" || r.status === "completed";
     const tFee = Number(r.travelFee) || 139000, a = Number(r.payableAmount) > 0 ? Number(r.payableAmount) : tFee, pr = Number(r.techProfit) > 0 ? Number(r.techProfit) : tFee;
     const pb = r.paymentBreakdown || {};
     const pbTxt = [pb.pos ? "💳 پوز: " + fmt(pb.pos) : "", pb.cash ? "💵 نقد: " + fmt(pb.cash) : "", pb.check ? "📝 چک: " + fmt(pb.check) + " (" + (pb.checkBank || "") + " #" + (pb.checkNumber || "") + ")" : ""].filter(Boolean).join(" | ");
     const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', mixed: '<span class="bdg st-d">🔀 پرداخت ترکیبی</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
     const seenHtml = r.seenByTechAt ? '<div class="bdg st-d" style="margin-top:3px">👁️ رویت تکنسین: ' + toJ(r.seenByTechAt) + ' ساعت ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al" style="margin-top:3px">🔴 هنوز باز نشده! (ارجاع: ' + toJ(r.assignedAt || r.createdAt) + ' ' + toClock(r.assignedAt || r.createdAt) + ')</div>';
-    const smsLogHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:2px">💬 پیامک عدم پاسخ ارسال شده: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '';
+    const smsLogHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:2px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '';
 
     let susReqBox = "";
     if (!isD && r.techSuspendReq?.active) {
@@ -389,7 +422,7 @@ function drawTechs() {
 
     const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام تکنسین</span><br>' + seenHtml + smsLogHtml + susReqBox + '</div>');
     const tPh = settings.techMeta?.[r.technicianName]?.phone || "";
-    const smsBtn = (!isD && tPh) ? '<a class="btn" style="background:#0f3b2d;text-decoration:none" href="sms:' + tPh + '?body=' + encodeURIComponent("سامی‌واتر: خدمت جدید (" + (r.invoiceCode || "") + " - " + (r.snapshot?.fullName || "") + ") به کارتابل شما ارجاع شد. لطفاً پنل تکنسین را باز کنید.") + '">📲 پیامک</a>' : '';
+    const smsBtn = (!isD && tPh) ? '<a class="btn" style="background:#0f3b2d;text-decoration:none" href="sms:' + tPh + '?body=' + encodeURIComponent("سامی‌واتر: خدمت جدید (" + (r.invoiceCode || "") + " - " + (r.snapshot?.fullName || "") + ") به کارتابل شما ارجاع شد.") + '">📲 پیامک</a>' : '';
     return '<tr>' +
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
       '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="font-size:10px;color:#64748b">👨‍🔧 ' + (r.technicianName || "") + '</div></td>' +
@@ -403,7 +436,7 @@ function drawTechs() {
   }).join("");
 }
 // PART 3 END
-      let curBranch = "اصفهان (مرکزی)";
+  let curBranch = "اصفهان (مرکزی)";
 
 function applyRoleLocks() {
   if (!localStorage.getItem("token")) { location.href = "login.html"; return; }
@@ -426,6 +459,19 @@ function applyRoleLocks() {
 }
 setTimeout(applyRoleLocks, 50);
 
+async function fixStockPrompt(target, itemTitle, curVal) {
+  if (uRole !== "admin") return alert("فقط مدیر ارشد مجاز به اصلاح مستقیم موجودی است.");
+  const lbl = target === "CENTRAL" ? "انبار مرکزی (" + curBranch + ")" : "انبار «" + target + "»";
+  const inp = prompt("🔧 اصلاح و تطبیق موجودی «" + itemTitle + "» در " + lbl + ":\nموجودی ثبت‌شده فعلی: " + curVal + " عدد\nعدد واقعی و دقیق را وارد کنید:", curVal);
+  if (inp === null || inp.trim() === "") return;
+  const q = Math.max(0, Number(inp) || 0);
+  const r = await fetch(API + "/requests/warehouse-op", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ opType: "set_exact", branch: curBranch, itemTitle, qty: q, techName: target, note: "تطبیق دستی توسط مدیر ارشد", byUser: uName })
+  });
+  if (r.ok) { settings = (await r.json()).settings || settings; drawAll(); drawWh(); alert("موجودی دقیق ثبت شد ✅"); }
+}
+
 function drawWh() {
   const branches = settings.branches?.length ? settings.branches : ["اصفهان (مرکزی)"];
   if (!branches.includes(curBranch)) curBranch = branches[0];
@@ -439,27 +485,27 @@ function drawWh() {
 
   $("whBranchBar").innerHTML = '<div><b>🏙️ شعبه / انبار شهر فعال: </b>' +
     branches.map(b => '<button class="fb ' + (b === curBranch ? "active" : "") + '" style="margin-left:4px" onclick="curBranch=\'' + b + '\';drawWh()">📍 ' + b + '</button>').join("") +
-    '</div><span style="color:#15803d;font-weight:bold">🔒 تخصیص کالا به تکنسین فقط با کسر از موجودی انبار مرکزی امکان‌پذیر است.</span>';
+    '</div><span style="color:#15803d;font-weight:bold">🔒 تمام ورود، حواله و مصرف تکنسین‌ها با عدد قبل و بعد در کاردکس پایین ثبت می‌شود.</span>';
 
   $("whB").innerHTML = goods.map(g => {
-    const centralCnt = Number(cStock[g.title]) || 0;
+    const centralCnt = Math.max(0, Number(cStock[g.title]) || 0);
     let techSum = 0; const techDet = [];
     techs.forEach(t => {
-      const tc = Number(settings.techMeta?.[t]?.stock?.[g.title]) || 0;
+      const tc = Math.max(0, Number(settings.techMeta?.[t]?.stock?.[g.title]) || 0);
       if (tc > 0) { techSum += tc; techDet.push(t + ": " + tc); }
     });
     const stBdg = centralCnt > 3 ? '<span class="bdg st-d" style="font-size:12px">' + centralCnt + ' عدد موجود</span>' : (centralCnt > 0 ? '<span class="bdg st-p" style="font-size:12px">⚠️ ' + centralCnt + ' عدد (رو به اتمام)</span>' : '<span class="bdg st-al" style="font-size:12px">🚫 ۰ (ناموجود در انبار مرکزی)</span>');
     return '<tr><td><span class="bdg st-a">' + (g.category || "کالا") + '</span></td>' +
       '<td style="font-weight:bold">' + g.title + '</td>' +
-      '<td>' + stBdg + '</td>' +
-      '<td><b>' + techSum + ' عدد</b>' + (techDet.length ? '<div style="font-size:10px;color:#64748b">' + techDet.join(" | ") + '</div>' : '') + '</td>' +
+      '<td>' + stBdg + (uRole === "admin" ? ' <span class="lnk" style="font-size:10px" onclick="fixStockPrompt(\'CENTRAL\',\'' + g.title + '\',' + centralCnt + ')">[🔧 اصلاح]</span>' : '') + '</td>' +
+      '<td><b>' + techSum + ' عدد</b>' + (techDet.length ? '<div style="font-size:10px;color:#0f3b2d;font-weight:bold">' + techDet.join(" | ") + '</div>' : '') + '</td>' +
       '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
       '<button class="btn" style="background:#16a34a" onclick="openWhOpM(\'in_central\',\'' + g.title + '\')">➕ شارژ مرکزی</button>' +
       '<button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'' + g.title + '\')">📤 حواله به تکنسین</button></td></tr>';
   }).join("");
 
   const logs = settings.warehouseLogs || [];
-  $("whLogB").innerHTML = logs.length ? logs.map(l => '<tr><td>' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td>' + (l.branch || "اصفهان") + '</td><td><b>' + l.type + '</b></td><td>' + l.item + '</td><td style="direction:ltr;font-weight:bold">' + l.qty + ' عدد</td><td>' + l.target + '</td><td>' + (l.note || "---") + ' (' + (l.by || "") + ')</td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">هنوز گردش کالایی ثبت نشده است.</td></tr>';
+  $("whLogB").innerHTML = logs.length ? logs.map(l => '<tr><td>' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td>' + (l.branch || "اصفهان") + '</td><td><b>' + l.type + '</b></td><td>' + l.item + '</td><td style="direction:ltr;font-weight:bold">' + l.qty + '</td><td>' + l.target + '</td><td>' + (l.note || "---") + ' (' + (l.by || "") + ')</td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">هنوز گردش کالایی ثبت نشده است.</td></tr>';
 }
 
 async function addBranchM() {
@@ -479,7 +525,7 @@ function openWhOpM(opType, defItem, defTech = "") {
   const needTech = opType !== "in_central";
 
   $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">۱. انتخاب کالا *</label>' +
-    '<select id="woItm" class="inp">' + goods.map(g => '<option value="' + g.title + '" ' + (g.title === defItem ? "selected" : "") + '>' + g.title + ' (موجودی مرکزی: ' + (Number(cStock[g.title]) || 0) + ' عدد)</option>').join("") + '</select>' +
+    '<select id="woItm" class="inp">' + goods.map(g => '<option value="' + g.title + '" ' + (g.title === defItem ? "selected" : "") + '>' + g.title + ' (موجودی مرکزی: ' + Math.max(0, Number(cStock[g.title]) || 0) + ' عدد)</option>').join("") + '</select>' +
     (needTech ? '<label style="font-size:11px;font-weight:bold">۲. انتخاب تکنسین *</label><select id="woTch" class="inp">' + techs.map(t => '<option value="' + t + '" ' + (t === defTech ? "selected" : "") + '>' + t + '</option>').join("") + '</select>' : '') +
     '<label style="font-size:11px;font-weight:bold">تعداد کالا *</label><input id="woQty" type="number" min="1" class="inp" style="direction:ltr" value="1">' +
     '<label style="font-size:11px;font-weight:bold">شماره فاکتور خرید / توضیحات حواله</label><input id="woNt" class="inp" placeholder="مثلاً: فاکتور خرید شرکت پارتاک / تحویل صبح">' +
@@ -509,7 +555,7 @@ function openStockM(tName) {
   const m = settings.techMeta[tName];
   const goods = (settings.catalog || []).filter(c => c.isGoods);
 
-  $("mTit").textContent = "📦 پروفایل، کد سازمانی و موجودی انبار: " + tName;
+  $("mTit").textContent = "⚙️ تنظیمات امنیتی، کارت بانکی و انبار: " + tName;
   $("mBod").innerHTML = '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px">' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">' +
     '<div><label style="font-size:10px;font-weight:bold">🆔 کد ورود (User):</label><input id="tkCd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold;color:#0f3b2d" value="' + (m.userCode || idxCode) + '"></div>' +
@@ -518,13 +564,13 @@ function openStockM(tName) {
     '<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:bold">💳 شماره کارت بانکی تکنسین (جهت درج خودکار در فاکتور رسمی مشتری):</label><input id="tkCrd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" placeholder="6037-9975-XXXX-XXXX" value="' + (m.cardNumber || "") + '"></div>' +
     '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن ورود این تکنسین (جهت انبارگردانی یا مسدودسازی)</label></div>' +
     (uRole === "admin" ? '<div style="margin-bottom:8px"><button class="btn" style="background:#334155;width:100%" onclick="openStaffAccM()">👥 مدیریت کد ورود پشتیبانی (Sup1) و انباردار (St1)</button></div>' : '') +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:11px">📦 موجودی فعلی همراه تکنسین (تغییر فقط با حواله از انبار مرکزی):</b><button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'\',\'' + tName + '\')">📤 + حواله از انبار مرکزی</button></div>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:11px">📦 موجودی همراه تکنسین:</b><button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'\',\'' + tName + '\')">📤 + حواله از انبار مرکزی</button></div>' +
     '<div style="max-height:190px;overflow-y:auto;margin-bottom:8px;background:#f8fafc;padding:6px;border-radius:6px;border:1px solid #e2e8f0">' +
     goods.map(g => {
-      const cnt = Number(m.stock?.[g.title]) || 0;
+      const cnt = Math.max(0, Number(m.stock?.[g.title]) || 0);
       return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:5px 0;font-size:11px">' +
         '<span>' + g.title + '</span>' +
-        '<span class="bdg ' + (cnt > 0 ? "st-d" : "st-al") + '" style="direction:ltr">' + cnt + ' عدد</span></div>';
+        '<div><span class="bdg ' + (cnt > 0 ? "st-d" : "st-al") + '" style="direction:ltr">' + cnt + ' عدد</span> <span class="lnk" style="font-size:10px" onclick="fixStockPrompt(\'' + tName + '\',\'' + g.title + '\',' + cnt + ')">[🔧 اصلاح]</span></div></div>';
     }).join("") +
     '</div><button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره پروفایل و تنظیمات امنیتی تکنسین ✅</button>';
   $("cModal").style.display = "flex";
@@ -626,7 +672,6 @@ function drawRem() {
 }
 // PART 4 END
       
-    
     function remTimeM(cId, ix, oldRem) {
   const c = custs.find(x => x._id === cId);
   $("mTit").textContent = "⏳ تنظیم زمان جدید در صف یادآور (" + (c?.fullName || "") + ")";
