@@ -87,7 +87,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
   <div class="wrap">
   <div id="loginBox" class="box" style="display:none;margin-top:20px;text-align:center">
     <h3 style="color:var(--green);margin-bottom:8px">🔐 ورود تکنسین سامی‌واتر</h3>
-    <p style="font-size:11px;color:#64748b;margin-bottom:12px">نام و رمز عبور خود را وارد نمایید</p>
+    <p style="font-size:11px;color:#64748b;margin-bottom:12px">نام یا کد سازمانی و رمز عبور خود را وارد نمایید</p>
     <input id="tNameInp" class="inp" placeholder="نام تکنسین (مثلاً: مهندس شهریاری)">
     <input id="tPinInp" type="password" inputmode="numeric" class="inp" style="text-align:center;direction:ltr" placeholder="رمز ورود (پیش‌فرض: 1234)">
     <button class="btn-main" onclick="doLogin()">ورود به کارتابل ✅</button>
@@ -182,6 +182,17 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
       <div id="dNotes" style="font-size:12px;line-height:1.7;color:#0f3b2d;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px;border-radius:10px;font-weight:600">---</div>
     </div>
 
+    <div id="tempNotesCard" class="box" style="background:#fffdf7;border-color:var(--gold)">
+      <div class="row-btw" style="margin-bottom:6px">
+        <b style="font-size:12px;color:#854d0e">📝 یادداشت‌های موقت پیگیری (حذف خودکار پس از تکمیل)</b>
+      </div>
+      <div id="tempNotesList" style="margin-bottom:8px;font-size:11px"></div>
+      <div style="display:flex;gap:6px">
+        <input id="newTempNoteInp" class="inp" style="margin:0;flex:1" placeholder="مثلاً: زنگ زدم گفت فردا ظهر تماس بگیرم...">
+        <button class="cir-btn" style="background:var(--green);color:var(--gold-lt);padding:8px 12px" onclick="addTempNote()">+ ثبت یادداشت</button>
+      </div>
+    </div>
+
     <div id="actBtns">
       <button class="btn-main" onclick="openBuilder()">📝 ثبت و ویرایش فاکتور</button>
       <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق / عدم هماهنگی (۷ روز به بالا)</button>
@@ -204,12 +215,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
         ⚠️ پیش‌نویس و برآورد اولیه هزینه (فاکتور هنوز نهایی نشده است)<br>
         📩 پس از تایید نهایی، مبلغ قطعی برای شماره موبایل مشتری پیامک می‌شود.
       </div>
-
-      <div class="prof-bar">
-        <span>سود شما از این سفارش:</span>
-        <span id="sProf" style="font-size:16px;direction:ltr">0 تومان</span>
-      </div>
-
+      <div class="prof-bar"><span>سود شما از این سفارش:</span><span id="sProf" style="font-size:16px;direction:ltr">0 تومان</span></div>
       <div class="box" style="border-color:var(--gold)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <span style="background:var(--gold);color:var(--dark);padding:3px 12px;border-radius:8px;font-size:12px;font-weight:800">جزییات فاکتور</span>
@@ -217,11 +223,9 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
         </div>
         <div id="sItemsBox"></div>
         <div style="background:#e2e8f0;color:#1e293b;padding:9px 12px;border-radius:10px;display:flex;justify-content:space-between;font-size:12px;font-weight:800;margin-top:6px">
-          <span>ایاب و ذهاب ثابت شهری</span>
-          <span id="sTravel" style="direction:ltr">0 تومان</span>
+          <span>ایاب و ذهاب ثابت شهری</span><span id="sTravel" style="direction:ltr">0 تومان</span>
         </div>
       </div>
-
       <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">مبلغ تخفیفات و هدیه :</span><b id="sDisc" style="font-size:13px">0 تومان</b></div>
       <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">مبلغ فاکتور:</span><b id="sTot" style="font-size:14px">0 تومان</b></div>
       <div class="box row-btw" style="background:linear-gradient(135deg,var(--gold),#eab308);color:var(--dark);border:none"><span style="font-size:13px;font-weight:800">قابل پرداخت:</span><b id="sPayable" style="font-size:16px">0 تومان</b></div>
@@ -233,33 +237,27 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 
       <div id="payBox" class="box" style="display:none">
         <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:6px">💳 ثبت و تفکیک نوع پرداختی مشتری</div>
-        <p style="font-size:10px;color:#64748b;margin-bottom:8px">⚠️ روی هر روش پرداخت بزنید و مبلغ آن را وارد کنید تا مانده فاکتور صفر شود (در صورت تخفیف شخصی تکنسین، آن را در بخش نقدی وارد کنید).</p>
-
+        <p style="font-size:10px;color:#64748b;margin-bottom:8px">⚠️ روی هر روش پرداخت بزنید و مبلغ آن را وارد کنید تا مانده فاکتور صفر شود.</p>
         <div id="remBar" style="background:#fee2e2;color:#be123c;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between">
-          <span>مانده تعیین‌تکلیف‌نشده:</span>
-          <b id="remVal" style="direction:ltr">0 تومان</b>
+          <span>مانده تعیین‌تکلیف‌نشده:</span><b id="remVal" style="direction:ltr">0 تومان</b>
         </div>
-
         <button id="pm_pos" class="btn-pay" onclick="togPaySec('pos')"><span>پرداخت از طریق دستگاه پوز</span><span>💳</span></button>
         <div id="sec_pos" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ کشیده‌شده در پوز (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('pos')">درج کل مانده</button></div>
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ پوز (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('pos')">درج کل مانده</button></div>
           <input id="inp_pos" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
         </div>
-
         <button id="pm_cash" class="btn-pay" onclick="togPaySec('cash')"><span>پرداخت نقدی</span><span>💵</span></button>
         <div id="sec_cash" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ دریافتی نقدی (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('cash')">درج کل مانده</button></div>
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ نقدی (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('cash')">درج کل مانده</button></div>
           <input id="inp_cash" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
         </div>
-
         <button id="pm_check" class="btn-pay" onclick="togPaySec('check')"><span>پرداخت از طریق چک</span><span>📝</span></button>
         <div id="sec_check" class="pay-sub">
           <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ چک (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('check')">درج کل مانده</button></div>
           <input id="inp_check" type="number" inputmode="numeric" class="inp" style="direction:ltr" placeholder="0" oninput="calcRemPay()">
           <input id="inp_chk_num" class="inp" style="direction:ltr" placeholder="شماره چک / صیادی (الزامی)">
-          <input id="inp_chk_bnk" class="inp" style="margin:0" placeholder="نام بانک چک (مثلاً: ملت / ملی - الزامی)">
+          <input id="inp_chk_bnk" class="inp" style="margin:0" placeholder="نام بانک چک (الزامی)">
         </div>
-
         <button class="btn-main" onclick="submitPayment()">✅ ثبت نهایی پرداخت و بستن حساب فاکتور</button>
       </div>
     </div>
@@ -272,7 +270,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
   <div class="m-bx">
     <h4 style="color:var(--green);margin-bottom:6px;font-size:14px">⏸️ ثبت درخواست تعلیق خدمت</h4>
     <p style="font-size:11px;color:#b45309;background:#fefce8;border:1px solid #fde047;padding:7px;border-radius:8px;margin-bottom:8px;line-height:1.6">
-      ⚠️ <b>قانون شرکت:</b> هماهنگی‌های <b>زیر ۷ روز</b> نیازی به تعلیق ندارند و باید در کارتابل خودتان انجام شوند. تعلیق فقط برای <b>۷ روز به بالا (یا سر برج)</b> و عدم پاسخگویی است.
+      ⚠️ <b>قانون شرکت:</b> هماهنگی‌های <b>زیر ۷ روز</b> نیازی به تعلیق ندارند و باید در بخش «یادداشت موقت» نوشته و انجام شوند. تعلیق فقط برای <b>۷ روز به بالا (یا سر برج)</b> و عدم پاسخگویی است.
     </p>
     <label style="font-size:11px;font-weight:800">۱. علت درخواست تعلیق را انتخاب کنید *</label>
     <select id="susReasSel" class="inp" onchange="onSusReasChange()">
@@ -285,7 +283,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
     </select>
     <div id="susDaysBox">
       <label style="font-size:11px;font-weight:800">۲. چند روز دیگر پیگیری شود؟ (حداقل ۷ روز) *</label>
-      <input id="susDaysInp" type="number" min="7" inputmode="numeric" class="inp" style="direction:ltr" placeholder="مثلاً: 7 یا 15 یا 30" value="7">
+      <input id="susDaysInp" type="number" min="7" inputmode="numeric" class="inp" style="direction:ltr" value="7">
     </div>
     <label style="font-size:11px;font-weight:800">۳. تاریخ موردنظر مشتری (مثلاً سر برج) یا توضیح تکمیلی:</label>
     <input id="susNoteInp" class="inp" placeholder="مثلاً: مشتری گفت اول ماه آینده تماس بگیریم...">
@@ -331,7 +329,7 @@ function getEffAmounts(r) {
 
 function openDrawer() { if (myName) $("drawerBg").style.display = "block"; }
 function closeDrw() { $("drawerBg").style.display = "none"; }
-function doLogout() { if (confirm("خروج از حساب تکنسین؟")) { localStorage.removeItem("sw_tech_name"); myName = ""; closeDrw(); init(); } }
+function doLogout() { if (confirm("خروج از حساب تکنسین؟")) { localStorage.removeItem("sw_tech_name"); myName = ""; closeDrw(); location.href = "login.html"; } }
 
 function init() {
   if (!myName) {
@@ -435,19 +433,38 @@ function renderList() {
     const isUnread = !isDone && !isSusReq && !r.seenByTechAt;
     const eff = getEffAmounts(r);
     const payMap = { pos: "پرداخت پوز ✅", cash: "پرداخت نقدی ✅", check: "پرداخت چک ✅", mixed: "پرداخت ترکیبی ✅" };
-    const stTxt = !isDone ? (isSusReq ? "⏳ در دست بررسی اپراتور" : "تایید کارشناس") : (payMap[r.paymentMethod] || "🔴 پرداخت نشده (" + fmt(eff.payable) + ")");
-    const stCol = !isDone ? (isSusReq ? "#475569" : "#b45309") : ((!r.paymentMethod || r.paymentMethod === "unpaid") ? "#e11d48" : "#15803d");
+
     let topBdg = "";
     if (!isDone) {
-      if (isSusReq) topBdg = '<span class="bdg-sus">⏸️ درخواست تعلیق ارسال شده</span>';
+      if (isSusReq) topBdg = '<span class="bdg-sus">⏸️ درخواست تعلیق</span>';
       else if (isUnread) topBdg = '<span class="bdg-new">🆕 جدید (باز نشده)</span>';
-      else topBdg = '<span class="bdg-seen">👁️ دیده شده</span>';
     }
+
+    const tNotes = Array.isArray(r.tempNotes) ? r.tempNotes : [];
+    const lastNote = tNotes.length ? tNotes[tNotes.length - 1] : null;
+    let midHtml = "";
+    if (!isDone) {
+      midHtml = lastNote ?
+        '<div style="background:#fefce8;border:1px dashed #ca8a04;border-radius:8px;padding:5px 7px;font-size:10px;color:#854d0e;line-height:1.5"><b>📝 یادداشت (' + tNotes.length + '):</b><br>' + lastNote.text + '</div>' :
+        '<div style="font-size:10px;color:#94a3b8">📝 بدون یادداشت هماهنگی</div>';
+    } else {
+      midHtml = '<div style="font-size:11px;font-weight:800;color:#0f3b2d">مبلغ: ' + fmt(eff.payable) + '</div>';
+    }
+
+    let leftStatus = "";
+    if (isDone) {
+      const stTxt = payMap[r.paymentMethod] || "🔴 پرداخت نشده";
+      const stCol = (!r.paymentMethod || r.paymentMethod === "unpaid") ? "#e11d48" : "#15803d";
+      leftStatus = '<div style="font-size:10px;font-weight:800;color:' + stCol + ';margin-top:3px">' + stTxt + '</div>';
+    } else if (isSusReq) {
+      leftStatus = '<div style="font-size:10px;font-weight:800;color:#475569;margin-top:3px">⏳ بررسی اپراتور</div>';
+    }
+
     return '<div class="box req-item ' + (isUnread ? "unread" : "") + ' ' + (isSusReq ? "pending-sus" : "") + '" onclick="openOrder(\'' + r._id + '\')">' +
       '<div class="grid3" style="align-items:center;text-align:right">' +
       '<div>' + topBdg + '<div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.snapshot?.fullName || "مشتری") + '</div><div style="font-size:11px;color:#64748b">' + (r.issueType || "خدمات") + '</div></div>' +
-      '<div style="text-align:center"><div class="lbl">وضعیت</div><div style="font-size:11px;font-weight:800;color:' + stCol + '">' + stTxt + '</div></div>' +
-      '<div style="text-align:left;direction:ltr"><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.invoiceCode || "---") + '</div><div style="font-size:10px;color:#64748b">' + toJ(r.assignedAt || r.createdAt) + '</div></div>' +
+      '<div style="text-align:center;padding:0 4px">' + midHtml + '</div>' +
+      '<div style="text-align:left;direction:ltr"><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.invoiceCode || "---") + '</div><div style="font-size:10px;color:#64748b;margin-top:2px">' + toJ(r.assignedAt || r.createdAt) + '</div>' + leftStatus + '</div>' +
       '</div></div>';
   }).join("");
 }
@@ -494,10 +511,41 @@ function renderList() {
   const isDone = curReq.status === "done" || curReq.status === "completed";
   $("invBuilder").style.display = "none";
   if (isDone) {
+    $("tempNotesCard").style.display = "none";
     $("actBtns").style.display = "none"; $("invSummary").style.display = "block";
     renderInvoiceSummary(false);
   } else {
+    $("tempNotesCard").style.display = "block";
+    renderTempNotes();
     $("dPayBadge").style.display = "none"; $("actBtns").style.display = "block"; $("invSummary").style.display = "none";
+  }
+}
+
+function renderTempNotes() {
+  const list = Array.isArray(curReq?.tempNotes) ? curReq.tempNotes : [];
+  if (!list.length) {
+    $("tempNotesList").innerHTML = '<div style="color:#94a3b8">هنوز یادداشتی برای این خدمت ننوشته‌اید.</div>';
+    return;
+  }
+  $("tempNotesList").innerHTML = list.map((n, i) =>
+    '<div style="background:#fff;border:1px solid #fde047;padding:6px 8px;border-radius:8px;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">' +
+    '<span><b>' + (i + 1) + '.</b> ' + n.text + '</span>' +
+    '<span style="color:#64748b;font-size:10px;white-space:nowrap">' + toJ(n.date) + ' ' + toTm(n.date) + '</span></div>'
+  ).join("");
+}
+
+async function addTempNote() {
+  const txt = $("newTempNoteInp").value.trim();
+  if (!txt) return alert("متن یادداشت هماهنگی را بنویسید");
+  const r = await fetch(API + "/requests/" + curReq._id + "/seen", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ newTempNote: txt })
+  });
+  if (r.ok) {
+    const d = await r.json();
+    curReq.tempNotes = d.tempNotes || [];
+    $("newTempNoteInp").value = "";
+    renderTempNotes();
   }
 }
 
@@ -509,46 +557,29 @@ function sendMissedSms(useTemp) {
   fetch(API + "/requests/" + curReq._id + "/seen", {
     method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ missedCallSms: true })
   }).catch(() => {});
-  const cName = curReq.snapshot?.fullName || "مشتری گرامی";
-  const msg = "درود " + cName + " عزیز\n" + myName + "، تکنسین شرکت گوارانوش (سامی‌واتر) هستم،\nجهت ارائه خدمات تماس گرفته شد و پاسخگو نبودید\nلطفا در اسرع وقت با این شماره تماس بگیرید.\nسپاس🌹";
+  const msg = "درود مشتری عزیز\n" + myName + " هستم، تکنسین مجموعه سامی‌واتر،\nجهت ارائه خدمات تماس گرفته شد و پاسخگو نبودید.\nلطفا در اسرع وقت با این شماره تماس بگیرید.\nسپاس🌹";
   location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg);
 }
 
 function openSusModal() {
-  $("susReasSel").selectedIndex = 0;
-  $("susDaysInp").value = "7";
-  $("susNoteInp").value = "";
-  onSusReasChange();
-  $("susModal").style.display = "flex";
+  $("susReasSel").selectedIndex = 0; $("susDaysInp").value = "7"; $("susNoteInp").value = "";
+  onSusReasChange(); $("susModal").style.display = "flex";
 }
-
 function onSusReasChange() {
   const v = $("susReasSel").value;
-  const noDays = v.includes("عدم پاسخگویی") || v.includes("انصراف");
-  $("susDaysBox").style.display = noDays ? "none" : "block";
+  $("susDaysBox").style.display = (v.includes("عدم پاسخگویی") || v.includes("انصراف")) ? "none" : "block";
 }
 
 async function submitSusReq() {
-  const reason = $("susReasSel").value;
-  const needDays = $("susDaysBox").style.display !== "none";
-  const days = needDays ? (Number($("susDaysInp").value) || 0) : 0;
-  const note = $("susNoteInp").value.trim();
-
-  if (needDays && days < 7) {
-    return alert("⚠️ طبق قانون شرکت، تعلیق زیر ۷ روز مجاز نیست!\nهماهنگی‌های زیر ۷ روز باید در کارتابل خودتان باقی بماند و انجام شود. لطفاً برای تعلیق، عددی از ۷ روز به بالا وارد کنید.");
-  }
-  if (reason === "سایر موارد" && !note) return alert("لطفاً توضیح علت تعلیق را در کادر سوم بنویسید.");
-
-  const reqObj = { active: true, reason, days, note, requestedAt: new Date().toISOString() };
+  const reason = $("susReasSel").value, needDays = $("susDaysBox").style.display !== "none";
+  const days = needDays ? (Number($("susDaysInp").value) || 0) : 0, note = $("susNoteInp").value.trim();
+  if (needDays && days < 7) return alert("⚠️ طبق قانون شرکت، تعلیق زیر ۷ روز مجاز نیست!\nهماهنگی‌های زیر ۷ روز را در بخش «یادداشت موقت» بنویسید.");
+  if (reason === "سایر موارد" && !note) return alert("لطفاً توضیح علت تعلیق را بنویسید.");
   const r = await fetch(API + "/requests/" + curReq._id + "/status", {
     method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ techSuspendReq: reqObj })
+    body: JSON.stringify({ techSuspendReq: { active: true, reason, days, note, requestedAt: new Date().toISOString() } })
   });
-  if (r.ok) {
-    $("susModal").style.display = "none";
-    alert("⏳ درخواست تعلیق ثبت شد و خدمت در وضعیت «در دست بررسی اپراتور» قرار گرفت.");
-    loadData();
-  }
+  if (r.ok) { $("susModal").style.display = "none"; alert("⏳ درخواست تعلیق برای پشتیبانی ارسال شد."); loadData(); }
 }
 
 function getStockFor(title) { return Math.max(0, Number(settings.techMeta?.[myName]?.stock?.[title]) || 0); }
@@ -557,7 +588,7 @@ async function refreshStockInBuilder() {
   try {
     const r = await fetch(API + "/requests/settings");
     if (r.ok) { settings = (await r.json()).settings || settings; openBuilder(); alert("موجودی انبار شما بروزرسانی شد ✅"); }
-  } catch (e) { alert("خطا در بروزرسانی موجودی"); }
+  } catch (e) {}
 }
 
 function openBuilder() {
@@ -666,7 +697,7 @@ function calcRemPay() {
 
 async function finalizeInvoice() {
   if (!draftCalc) return;
-  if (!confirm("آیا از ثبت نهایی فاکتور به مبلغ «" + fmt(draftCalc.payable) + "» مطمئن هستید؟")) return;
+  if (!confirm("آیا از ثبت نهایی فاکتور به مبلغ «" + fmt(draftCalc.payable) + "» مطمئن هستید؟ (یادداشت‌های موقت پاک می‌شوند)")) return;
   const r = await fetch(API + "/requests/" + curReq._id + "/status", {
     method: "PUT", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status: "done", technicianName: myName, invoiceItems: draftCalc.items, travelFee: draftCalc.tFee, workReport: draftCalc.summary, paymentMethod: "unpaid", deductStock: true })
@@ -674,7 +705,7 @@ async function finalizeInvoice() {
   const d = await r.json();
   if (!r.ok) return alert(d.error || "خطا در ثبت فاکتور");
   curReq = d.request; qtys = {}; await loadData(); openOrder(curReq._id);
-  alert("✅ فاکتور نهایی ثبت شد. اکنون روش پرداخت را ثبت کنید.");
+  alert("✅ فاکتور نهایی ثبت شد و یادداشت‌های موقت پاک گردید. اکنون روش پرداخت را ثبت کنید.");
 }
 
 async function submitPayment() {
@@ -722,43 +753,4 @@ function showStock() {
   showView("subView");
   const st = settings.techMeta?.[myName]?.stock || {}, keys = Object.keys(st);
   $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">📦 موجودی کالا (انبار همراه شما)</h4>' +
-    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span class="' + ((Number(st[k]) || 0) > 0 ? "bdg-paid" : "bdg-unpaid") + '" style="direction:ltr">' + (Number(st[k]) || 0) + ' عدد</span></div>').join("") : '<div class="box" style="text-align:center">موجودی کالایی برای شما ثبت نشده است.</div>');
-}
-
-function showLogs() {
-  showView("subView");
-  const logs = settings.techMeta?.[myName]?.logs || [];
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">🔔 پیام‌ها و گزارش سیستمی</h4>' +
-    (logs.length ? logs.map(l => '<div class="box"><div class="row-btw" style="margin-bottom:5px"><b style="color:#b45309;font-size:12px">' + l.title + '</b><span style="font-size:11px;color:#64748b">' + toJ(l.date) + ' ' + toTm(l.date) + '</span></div><div style="font-size:12px;color:#475569;line-height:1.7">' + l.text + '</div></div>').join("") : '<div class="box" style="text-align:center">پیامی ثبت نشده است.</div>');
-}
-
-function saveMyGps() {
-  if (!navigator.geolocation) return alert("GPS پشتیبانی نمی‌شود");
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const coords = pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
-    await fetch(API + "/requests/" + curReq._id + "/location", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locationUrl: coords }) });
-    curReq.locationUrl = coords; $("dMapBtn").href = "https://maps.google.com/?q=" + coords; alert("لوکیشن ذخیره شد 📍✅");
-  }, () => alert("GPS گوشی را روشن کنید."));
-}
-
-function bootTechPanel() {
-  const isAdmin = localStorage.getItem("role") === "admin";
-  if (isAdmin && !myName) {
-    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
-    myName = tList[0] || "مهندس شهریاری";
-  }
-  if (isAdmin) {
-    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
-    const bar = document.createElement("div");
-    bar.style.cssText = "background:#fefce8;border-bottom:2px solid #ca8a04;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:#854d0e";
-    bar.innerHTML = '<span>👑 نمای بازرسی مدیر:</span><select style="padding:4px 8px;border-radius:8px;border:1px solid #ca8a04;font-family:inherit;font-weight:800" onchange="myName=this.value;localStorage.setItem(\'sw_tech_name\',this.value);init()">' +
-      tList.map(t => '<option value="' + t + '" ' + (t === myName ? "selected" : "") + '>👨‍🔧 کارتابل ' + t + '</option>').join("") + '</select><a href="dashboard.html" style="color:#0f3b2d;text-decoration:underline">🔙 داشبورد</a>';
-    document.body.insertBefore(bar, document.body.children[1]);
-  }
-  init();
-}
-bootTechPanel();
-</script>
-</body>
-</html>
-<!-- END -->
+    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span 
