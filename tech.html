@@ -84,12 +84,12 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
   </div>
 </div>
 <!-- PART 1 END -->
-  <div class="wrap">
+<div class="wrap">
   <div id="loginBox" class="box" style="display:none;margin-top:20px;text-align:center">
     <h3 style="color:var(--green);margin-bottom:8px">🔐 ورود تکنسین سامی‌واتر</h3>
-    <p style="font-size:11px;color:#64748b;margin-bottom:12px">نام یا کد سازمانی و رمز عبور خود را وارد نمایید</p>
-    <input id="tNameInp" class="inp" placeholder="نام تکنسین (مثلاً: مهندس شهریاری)">
-    <input id="tPinInp" type="password" inputmode="numeric" class="inp" style="text-align:center;direction:ltr" placeholder="رمز ورود (پیش‌فرض: 1234)">
+    <p style="font-size:11px;color:#64748b;margin-bottom:12px">کد سازمانی و پین خود را وارد نمایید</p>
+    <input id="tNameInp" class="inp" placeholder="نام یا کد تکنسین">
+    <input id="tPinInp" type="password" inputmode="numeric" class="inp" style="text-align:center;direction:ltr" placeholder="رمز ورود">
     <button class="btn-main" onclick="doLogin()">ورود به کارتابل ✅</button>
   </div>
 
@@ -100,14 +100,8 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
       <button class="cir-btn cir-gold" style="margin-top:6px;padding:3px 9px;font-size:10px" onclick="loadData()">🔄 بروزرسانی</button>
     </div>
     <div class="fin-card">
-      <div class="fin-row" style="border-bottom:1px solid #e2e8f0">
-        <span style="color:#64748b">مبلغ صورتحساب:</span>
-        <b id="hBill" style="color:#be123c;direction:ltr">0 تومان</b>
-      </div>
-      <div class="fin-row" style="margin-top:2px">
-        <span style="color:#64748b">سود شما:</span>
-        <b id="hProfit" style="color:#15803d;direction:ltr;font-size:12px">+0 تومان</b>
-      </div>
+      <div class="fin-row" style="border-bottom:1px solid #e2e8f0"><span style="color:#64748b">مبلغ صورتحساب:</span><b id="hBill" style="color:#be123c;direction:ltr">0 تومان</b></div>
+      <div class="fin-row" style="margin-top:2px"><span style="color:#64748b">سود شما:</span><b id="hProfit" style="color:#15803d;direction:ltr;font-size:12px">+0 تومان</b></div>
     </div>
   </div>
 
@@ -143,18 +137,18 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
       <div class="row-btw">
         <div>
           <div id="dCust" style="font-size:14px;font-weight:800;color:var(--green)">---</div>
-          <div id="dPhoneTxt" style="font-size:12px;color:#475569;direction:ltr;margin-top:2px;font-weight:700">---</div>
+          <div id="dPhoneTxt" style="font-size:13px;color:#0f3b2d;direction:ltr;margin-top:3px;font-weight:800">---</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
           <span id="dPayBadge" style="display:none"></span>
           <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <a id="dCallBtn" href="#" class="cir-btn">📞 تماس</a>
+            <button id="dCallBtn" class="cir-btn" onclick="callMainPhone()">📞 تماس</button>
             <button class="cir-btn cir-gold" onclick="sendMissedSms(false)">💬 پیامک عدم پاسخ</button>
           </div>
         </div>
       </div>
       <div id="dTempPhoneBox" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1" class="row-btw">
-        <div style="font-size:11px;color:#854d0e;font-weight:700">📌 هماهنگی این نوبت: <span id="dTempPhoneTxt" style="direction:ltr"></span></div>
+        <div style="font-size:11px;color:#b45309;font-weight:800">📌 هماهنگی این نوبت: <span id="dTempPhoneTxt" style="direction:ltr"></span></div>
         <div style="display:flex;gap:4px">
           <a id="dTempCallBtn" href="#" class="cir-btn cir-gold">📞 تماس</a>
           <button class="cir-btn cir-gold" onclick="sendMissedSms(true)">💬 پیامک</button>
@@ -165,7 +159,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
     <div id="addrCard" class="box">
       <div class="row-btw">
         <div style="flex:1">
-          <div id="dAddrLbl" style="font-size:11px;font-weight:800;color:#b45309;margin-bottom:2px">📍 آدرس</div>
+          <div id="dAddrLbl" style="font-size:11px;font-weight:800;color:#b45309;margin-bottom:2px">📍 نشانی</div>
           <div id="dAddr" style="font-size:12px;line-height:1.7;font-weight:600">---</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:5px">
@@ -178,87 +172,82 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
     <div id="notesCard" class="box">
       <div class="lbl">شرح خدمات</div>
       <div id="dDesc" style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:8px">---</div>
-      <div class="lbl">توضیحات اپراتور و سوابق فیلترها</div>
+      <div class="lbl">توضیحات و سوابق</div>
       <div id="dNotes" style="font-size:12px;line-height:1.7;color:#0f3b2d;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px;border-radius:10px;font-weight:600">---</div>
     </div>
 
     <div id="tempNotesCard" class="box" style="background:#fffdf7;border-color:var(--gold)">
-      <div class="row-btw" style="margin-bottom:6px">
-        <b style="font-size:12px;color:#854d0e">📝 یادداشت‌های موقت پیگیری (حذف خودکار پس از تکمیل)</b>
-      </div>
+      <div class="row-btw" style="margin-bottom:6px"><b style="font-size:12px;color:#854d0e">📝 یادداشت پیگیری</b></div>
       <div id="tempNotesList" style="margin-bottom:8px;font-size:11px"></div>
       <div style="display:flex;gap:6px">
-        <input id="newTempNoteInp" class="inp" style="margin:0;flex:1" placeholder="مثلاً: زنگ زدم گفت فردا ظهر تماس بگیرم...">
-        <button class="cir-btn" style="background:var(--green);color:var(--gold-lt);padding:8px 12px" onclick="addTempNote()">+ ثبت یادداشت</button>
+        <input id="newTempNoteInp" class="inp" style="margin:0;flex:1" placeholder="ثبت گزارش تماس یا زمان هماهنگی...">
+        <button class="cir-btn" style="background:var(--green);color:var(--gold-lt);padding:8px 12px" onclick="addTempNote()">+ ثبت</button>
       </div>
     </div>
 
     <div id="actBtns">
       <button class="btn-main" onclick="openBuilder()">📝 ثبت و ویرایش فاکتور</button>
-      <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق / عدم هماهنگی (۷ روز به بالا)</button>
+      <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق</button>
     </div>
 
     <div id="invBuilder" style="display:none">
       <div class="box box-gold">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="background:var(--gold);color:var(--dark);padding:4px 12px;border-radius:8px;font-size:12px;font-weight:800">انتخاب کالا و سرویس‌های انجام‌شده</span>
-          <span style="font-size:11px;color:#64748b">ایاب‌وذهاب ثابت خودکار است</span>
+          <span style="background:var(--gold);color:var(--dark);padding:4px 12px;border-radius:8px;font-size:12px;font-weight:800">انتخاب کالا و خدمات</span>
         </div>
         <div id="accContainer"></div>
-        <input id="wNoteInp" class="inp" style="margin-top:8px" placeholder="توضیحات تکمیلی فاکتور (اختیاری)...">
-        <button class="btn-draft" onclick="openDraftPreview()">👁️ مشاهده پیش‌نویس و محاسبه مبلغ</button>
+        <input id="wNoteInp" class="inp" style="margin-top:8px" placeholder="توضیحات تکمیلی فاکتور...">
+        <button class="btn-draft" onclick="openDraftPreview()">👁️ مشاهده پیش‌فاکتور</button>
       </div>
     </div>
 
     <div id="invSummary" style="display:none">
       <div id="draftBanner" class="box" style="display:none;background:#fef3c7;border-color:#f59e0b;color:#92400e;font-size:11px;font-weight:800;line-height:1.7;text-align:center">
-        ⚠️ پیش‌نویس و برآورد اولیه هزینه (فاکتور هنوز نهایی نشده است)<br>
-        📩 پس از تایید نهایی، مبلغ قطعی برای شماره موبایل مشتری پیامک می‌شود.
+        ⚠️ پیش‌نویس اولیه فاکتور<br>📩 پس از تایید نهایی، مبلغ قطعی برای مشتری پیامک می‌شود.
       </div>
       <div class="prof-bar"><span>سود شما از این سفارش:</span><span id="sProf" style="font-size:16px;direction:ltr">0 تومان</span></div>
       <div class="box" style="border-color:var(--gold)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <span style="background:var(--gold);color:var(--dark);padding:3px 12px;border-radius:8px;font-size:12px;font-weight:800">جزییات فاکتور</span>
-          <button id="editItemsBtn" class="cir-btn" style="padding:3px 8px;font-size:10px" onclick="openBuilder()">✏️ بازگشت و ویرایش اقلام</button>
+          <button id="editItemsBtn" class="cir-btn" style="padding:3px 8px;font-size:10px" onclick="openBuilder()">✏️ ویرایش اقلام</button>
         </div>
         <div id="sItemsBox"></div>
         <div style="background:#e2e8f0;color:#1e293b;padding:9px 12px;border-radius:10px;display:flex;justify-content:space-between;font-size:12px;font-weight:800;margin-top:6px">
-          <span>ایاب و ذهاب ثابت شهری</span><span id="sTravel" style="direction:ltr">0 تومان</span>
+          <span>ایاب و ذهاب شهری</span><span id="sTravel" style="direction:ltr">0 تومان</span>
         </div>
       </div>
-      <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">مبلغ تخفیفات و هدیه :</span><b id="sDisc" style="font-size:13px">0 تومان</b></div>
-      <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">مبلغ فاکتور:</span><b id="sTot" style="font-size:14px">0 تومان</b></div>
+      <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">تخفیف و هدیه :</span><b id="sDisc" style="font-size:13px">0 تومان</b></div>
+      <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">جمع فاکتور:</span><b id="sTot" style="font-size:14px">0 تومان</b></div>
       <div class="box row-btw" style="background:linear-gradient(135deg,var(--gold),#eab308);color:var(--dark);border:none"><span style="font-size:13px;font-weight:800">قابل پرداخت:</span><b id="sPayable" style="font-size:16px">0 تومان</b></div>
 
       <div id="draftActions" style="display:none;margin-bottom:12px">
-        <button class="btn-main" onclick="finalizeInvoice()">✅ تایید نهایی فاکتور و انتقال به بخش پرداخت</button>
-        <button class="btn-ret" style="background:#f1f5f9;color:#334155;border-color:#cbd5e1" onclick="openBuilder()">✏️ بازگشت به انتخاب کالا و دستمزد</button>
+        <button class="btn-main" onclick="finalizeInvoice()">✅ تایید نهایی فاکتور و ثبت پرداخت</button>
+        <button class="btn-ret" style="background:#f1f5f9;color:#334155;border-color:#cbd5e1" onclick="openBuilder()">✏️ بازگشت به انتخاب کالا</button>
       </div>
 
       <div id="payBox" class="box" style="display:none">
-        <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:6px">💳 ثبت و تفکیک نوع پرداختی مشتری</div>
-        <p style="font-size:10px;color:#64748b;margin-bottom:8px">⚠️ روی هر روش پرداخت بزنید و مبلغ آن را وارد کنید تا مانده فاکتور صفر شود.</p>
+        <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:6px">💳 ثبت روش پرداخت</div>
         <div id="remBar" style="background:#fee2e2;color:#be123c;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between">
-          <span>مانده تعیین‌تکلیف‌نشده:</span><b id="remVal" style="direction:ltr">0 تومان</b>
+          <span>مانده:</span><b id="remVal" style="direction:ltr">0 تومان</b>
         </div>
-        <button id="pm_pos" class="btn-pay" onclick="togPaySec('pos')"><span>پرداخت از طریق دستگاه پوز</span><span>💳</span></button>
+        <button id="pm_pos" class="btn-pay" onclick="togPaySec('pos')"><span>دستگاه پوز</span><span>💳</span></button>
         <div id="sec_pos" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ پوز (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('pos')">درج کل مانده</button></div>
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ پوز (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('pos')">کل مانده</button></div>
           <input id="inp_pos" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
         </div>
-        <button id="pm_cash" class="btn-pay" onclick="togPaySec('cash')"><span>پرداخت نقدی</span><span>💵</span></button>
+        <button id="pm_cash" class="btn-pay" onclick="togPaySec('cash')"><span>نقدی</span><span>💵</span></button>
         <div id="sec_cash" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ نقدی (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('cash')">درج کل مانده</button></div>
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ نقدی (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('cash')">کل مانده</button></div>
           <input id="inp_cash" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
         </div>
-        <button id="pm_check" class="btn-pay" onclick="togPaySec('check')"><span>پرداخت از طریق چک</span><span>📝</span></button>
+        <button id="pm_check" class="btn-pay" onclick="togPaySec('check')"><span>چک</span><span>📝</span></button>
         <div id="sec_check" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ چک (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('check')">درج کل مانده</button></div>
+          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ چک (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('check')">کل مانده</button></div>
           <input id="inp_check" type="number" inputmode="numeric" class="inp" style="direction:ltr" placeholder="0" oninput="calcRemPay()">
-          <input id="inp_chk_num" class="inp" style="direction:ltr" placeholder="شماره چک / صیادی (الزامی)">
-          <input id="inp_chk_bnk" class="inp" style="margin:0" placeholder="نام بانک چک (الزامی)">
+          <input id="inp_chk_num" class="inp" style="direction:ltr" placeholder="شماره چک / صیادی">
+          <input id="inp_chk_bnk" class="inp" style="margin:0" placeholder="نام بانک">
         </div>
-        <button class="btn-main" onclick="submitPayment()">✅ ثبت نهایی پرداخت و بستن حساب فاکتور</button>
+        <button class="btn-main" onclick="submitPayment()">✅ ثبت نهایی پرداخت</button>
       </div>
     </div>
   </div>
@@ -268,32 +257,30 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
 
 <div id="susModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
   <div class="m-bx">
-    <h4 style="color:var(--green);margin-bottom:6px;font-size:14px">⏸️ ثبت درخواست تعلیق خدمت</h4>
-    <p style="font-size:11px;color:#b45309;background:#fefce8;border:1px solid #fde047;padding:7px;border-radius:8px;margin-bottom:8px;line-height:1.6">
-      ⚠️ <b>قانون شرکت:</b> هماهنگی‌های <b>زیر ۷ روز</b> نیازی به تعلیق ندارند و باید در بخش «یادداشت موقت» نوشته و انجام شوند. تعلیق فقط برای <b>۷ روز به بالا (یا سر برج)</b> و عدم پاسخگویی است.
-    </p>
-    <label style="font-size:11px;font-weight:800">۱. علت درخواست تعلیق را انتخاب کنید *</label>
+    <h4 style="color:var(--green);margin-bottom:10px;font-size:14px">⏸️ ثبت درخواست تعلیق</h4>
+    <label style="font-size:11px;font-weight:800">۱. علت تعلیق *</label>
     <select id="susReasSel" class="inp" onchange="onSusReasChange()">
-      <option value="عدم پاسخگویی مشتری (تلفن خاموش / بی‌پاسخ)">📞 عدم پاسخگویی مشتری (تلفن خاموش / بی‌پاسخ)</option>
-      <option value="درخواست مشتری برای موکول شدن به آینده">🗓️ درخواست مشتری برای موکول شدن (۷ روز به بالا)</option>
-      <option value="عدم حضور مشتری در محل / مسافرت">✈️ عدم حضور مشتری در محل / مسافرت (۷ روز به بالا)</option>
-      <option value="عدم آمادگی مالی / موکول شدن به سر برج">💰 عدم آمادگی مالی / موکول شدن به سر برج</option>
-      <option value="انصراف مشتری (خودش سرویس کرده / نیاز ندارد)">❌ انصراف مشتری (خودش سرویس کرده / نیاز ندارد)</option>
-      <option value="سایر موارد">📝 سایر موارد (در توضیحات بنویسید)</option>
+      <option value="عدم پاسخگویی مشتری">📞 عدم پاسخگویی مشتری</option>
+      <option value="درخواست مشتری برای موکول شدن زمان">🗓️ درخواست مشتری برای موکول شدن زمان</option>
+      <option value="عدم حضور مشتری در محل / مسافرت">✈️ عدم حضور مشتری در محل / مسافرت</option>
+      <option value="موکول شدن به سر برج">💰 موکول شدن به سر برج</option>
+      <option value="انصراف مشتری">❌ انصراف مشتری</option>
+      <option value="سایر موارد">📝 سایر موارد</option>
     </select>
     <div id="susDaysBox">
-      <label style="font-size:11px;font-weight:800">۲. چند روز دیگر پیگیری شود؟ (حداقل ۷ روز) *</label>
+      <label style="font-size:11px;font-weight:800">۲. مدت زمان تعلیق (تعداد روز) *</label>
       <input id="susDaysInp" type="number" min="7" inputmode="numeric" class="inp" style="direction:ltr" value="7">
     </div>
-    <label style="font-size:11px;font-weight:800">۳. تاریخ موردنظر مشتری (مثلاً سر برج) یا توضیح تکمیلی:</label>
-    <input id="susNoteInp" class="inp" placeholder="مثلاً: مشتری گفت اول ماه آینده تماس بگیریم...">
+    <label style="font-size:11px;font-weight:800">۳. توضیحات تکمیلی:</label>
+    <input id="susNoteInp" class="inp" placeholder="توضیحات...">
     <div style="display:flex;gap:6px;margin-top:6px">
-      <button class="btn-main" style="margin:0;flex:2" onclick="submitSusReq()">ارسال جهت بررسی پشتیبانی 📤</button>
+      <button class="btn-main" style="margin:0;flex:2" onclick="submitSusReq()">ارسال درخواست 📤</button>
       <button class="btn-ret" style="margin:0;flex:1" onclick="$('susModal').style.display='none'">انصراف</button>
     </div>
   </div>
 </div>
 <!-- PART 2 END -->
+  
   <div class="bnav">
   <div class="bn-it active" onclick="switchMainTab('assigned')"><span>📋</span><span>درخواست‌ها</span></div>
   <div class="bn-it" onclick="switchMainTab('done')"><span>✅</span><span>تکمیل‌شده‌ها</span></div>
