@@ -265,11 +265,20 @@ function drawReqs() {
   }).join("");
 }
 // PART 2 END
-      let techSubTab = "active";
+    let techSubTab = "active";
 
 function toClock(d) {
   if (!d) return "";
   try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; }
+}
+
+function tempNotesHtml(r) {
+  const list = Array.isArray(r.tempNotes) ? r.tempNotes : [];
+  if (!list.length) return "";
+  return '<div style="background:#fefce8;border:1px solid #fde047;padding:5px 7px;border-radius:6px;margin-top:4px;font-size:10px;color:#854d0e">' +
+    '<b>📝 یادداشت‌های پیگیری تکنسین (' + list.length + ' مورد):</b>' +
+    list.map((n, i) => '<div style="margin-top:2px">' + (i + 1) + '. ' + n.text + ' <span style="color:#64748b">(' + toJ(n.date) + ' ساعت ' + toClock(n.date) + ')</span></div>').join("") +
+    '</div>';
 }
 
 function assignM(id, tName) {
@@ -316,16 +325,43 @@ async function rejTechSus(id) {
   await upSt(id, { techSuspendReq: { active: false, rejectedNote: msg.trim(), rejectedAt: new Date().toISOString() } });
 }
 
+function drawSusReqs() {
+  if (uRole === "support") {
+    document.querySelectorAll(".nb").forEach(b => { if ((b.textContent || "").includes("تکنسین‌ها و تسویه")) b.style.display = "none"; });
+  }
+  const list = reqs.filter(r => (r.status === "assigned" || r.status === "open") && r.techSuspendReq?.active);
+  if ($("susReqC")) $("susReqC").textContent = list.length;
+  if (!$("susReqB")) return;
+  if (!list.length) {
+    $("susReqB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:14px">هیچ درخواست تعلیقی از سمت تکنسین‌ها در صف بررسی نیست ✅</td></tr>';
+    return;
+  }
+  $("susReqB").innerHTML = list.map(r => {
+    const ph = r.snapshot?.phone || "", sr = r.techSuspendReq || {};
+    const seenHtml = r.seenByTechAt ? '<div class="bdg st-d">👁️ رویت: ' + toJ(r.seenByTechAt) + ' ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al">🔴 باز نشده</div>';
+    const smsHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:3px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '<div style="font-size:10px;color:#dc2626;margin-top:2px">⚠️ پیامک عدم پاسخ نزده</div>';
+    return '<tr>' +
+      '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
+      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="direction:ltr;font-weight:bold;margin-top:3px"><a href="tel:' + ph + '">' + ph + ' 📞</a></div></td>' +
+      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px;color:#475569">' + (r.snapshot?.address || "") + '</div>' + tempNotesHtml(r) + '</td>' +
+      '<td><b>👨‍🔧 ' + (r.technicianName || "---") + '</b><br>' + seenHtml + '<br>' + smsHtml + '</td>' +
+      '<td style="background:#faf5ff"><b style="color:#6b21a8">⏸️ ' + (sr.reason || "---") + '</b>' + (sr.days ? '<div class="bdg st-s" style="margin-top:3px">⏳ مدت پیشنهادی: ' + sr.days + ' روز</div>' : '') + (sr.note ? '<div style="font-size:11px;color:#334155;margin-top:3px">📝 توضیح: <b>' + sr.note + '</b></div>' : '') + '<div style="font-size:10px;color:#64748b;margin-top:2px">🕒 ثبت درخواست: ساعت ' + toClock(sr.requestedAt) + '</div></td>' +
+      '<td style="display:flex;flex-direction:column;gap:4px">' +
+      '<button class="btn" style="background:#16a34a" onclick="appTechSus(\'' + r._id + '\',' + (sr.days || 7) + ',\'' + (sr.reason || "").replace(/'/g, "") + '\',\'' + (sr.note || "").replace(/'/g, "") + '\')">✅ تایید تعلیق (انتقال به جاری)</button>' +
+      '<button class="btn" style="background:#dc2626" onclick="rejTechSus(\'' + r._id + '\')">❌ رد و الزام به انجام</button>' +
+      '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'\')">🔄 ارجاع به تکنسین دیگر</button></td></tr>';
+  }).join("");
+}
+
 function drawTechs() {
-  const assignedAll = reqs.filter(r => r.status === "assigned" || r.status === "open");
-  const susReqCnt = assignedAll.filter(r => r.techSuspendReq?.active).length;
-  $("techC").textContent = assignedAll.length + (susReqCnt ? " ⚠️" + susReqCnt : "");
+  drawSusReqs();
+  const assignedAll = reqs.filter(r => (r.status === "assigned" || r.status === "open") && !r.techSuspendReq?.active);
+  $("techC").textContent = assignedAll.length;
 
   const tabsHtml = ['<button class="fb ' + (selTech === "ALL" ? "active" : "") + '" onclick="selTech=\'ALL\';drawTechs()">👨‍🔧 همه تکنسین‌ها (' + assignedAll.length + ')</button>'].concat(
     techs.map((t, i) => {
       const c = assignedAll.filter(r => r.technicianName === t).length;
-      const sc = assignedAll.filter(r => r.technicianName === t && r.techSuspendReq?.active).length;
-      return '<button class="fb ' + (selTech === t ? "active" : "") + '" onclick="selTech=\'' + t + '\';drawTechs()">👨‍🔧 ' + t + ' (' + c + (sc ? ' | ⏸️' + sc : '') + ') <span style="color:#ef4444;margin-right:4px" onclick="event.stopPropagation();techs.splice(' + i + ',1);localStorage.setItem(\'sw_techs\',JSON.stringify(techs));drawAll()">×</span></button>';
+      return '<button class="fb ' + (selTech === t ? "active" : "") + '" onclick="selTech=\'' + t + '\';drawTechs()">👨‍🔧 ' + t + ' (' + c + ') <span style="color:#ef4444;margin-right:4px" onclick="event.stopPropagation();techs.splice(' + i + ',1);localStorage.setItem(\'sw_techs\',JSON.stringify(techs));drawAll()">×</span></button>';
     })
   ).join("");
   $("tTabs").innerHTML = tabsHtml;
@@ -386,14 +422,12 @@ function drawTechs() {
 
   if (techSubTab === "logs") {
     const allLogs = [];
-    (selTech === "ALL" ? techs : [selTech]).forEach(t => {
-      (settings.techMeta?.[t]?.logs || []).forEach(l => allLogs.push({ t, ...l }));
-    });
+    (selTech === "ALL" ? techs : [selTech]).forEach(t => { (settings.techMeta?.[t]?.logs || []).forEach(l => allLogs.push({ t, ...l })); });
     allLogs.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
     const histTot = settledDone.reduce((s, r) => s + (Number(r.payableAmount) || 0), 0);
     const histProf = settledDone.reduce((s, r) => s + (Number(r.techProfit) || 0), 0);
     const summaryRow = '<tr style="background:#f0fdf4"><td colspan="6"><b>🏆 کل کارکرد تسویه‌شده قبلی (' + (selTech === "ALL" ? "همه" : selTech) + '):</b> تعداد <b>' + settledDone.length + ' خدمت تسویه‌شده</b> | جمع کل مبالغ: <b>' + fmt(histTot) + ' ت</b> | جمع کل سود تکنسین: <b>' + fmt(histProf) + ' ت</b></td></tr>';
-    $("techB").innerHTML = summaryRow + (allLogs.length ? allLogs.map(l => '<tr><td>📅 ' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td><b>👨‍🔧 ' + l.t + '</b></td><td colspan="2"><span class="bdg st-a">' + l.title + '</span></td><td colspan="2">' + l.text + '</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center;padding:12px">هنوز گزارشی در اپ این تکنسین ثبت نشده است.</td></tr>');
+    $("techB").innerHTML = summaryRow + (allLogs.length ? allLogs.map(l => '<tr><td>📅 ' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td><b>👨‍🔧 ' + l.t + '</b></td><td colspan="2"><span class="bdg st-a">' + l.title + '</span></td><td colspan="2">' + l.text + '</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center;padding:12px">هنوز گزارشی ثبت نشده است.</td></tr>');
     return;
   }
 
@@ -411,25 +445,14 @@ function drawTechs() {
     const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', mixed: '<span class="bdg st-d">🔀 پرداخت ترکیبی</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
     const seenHtml = r.seenByTechAt ? '<div class="bdg st-d" style="margin-top:3px">👁️ رویت تکنسین: ' + toJ(r.seenByTechAt) + ' ساعت ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al" style="margin-top:3px">🔴 هنوز باز نشده! (ارجاع: ' + toJ(r.assignedAt || r.createdAt) + ' ' + toClock(r.assignedAt || r.createdAt) + ')</div>';
     const smsLogHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:2px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '';
-
-    let susReqBox = "";
-    if (!isD && r.techSuspendReq?.active) {
-      const sr = r.techSuspendReq;
-      susReqBox = '<div style="background:#f3e8ff;border:1.5px solid #9333ea;padding:6px;border-radius:6px;margin-top:4px;font-size:10px;color:#581c87">' +
-        '<b>⏸️ درخواست تعلیق از تکنسین (' + toClock(sr.requestedAt) + '):</b><br>علت: <b>' + (sr.reason || "") + '</b>' + (sr.days ? ' | مدت: <b>' + sr.days + ' روز</b>' : '') + (sr.note ? '<br>توضیح: ' + sr.note : '') +
-        '<div style="display:flex;gap:4px;margin-top:5px">' +
-        '<button class="btn" style="background:#16a34a;font-size:10px;padding:3px 7px" onclick="appTechSus(\'' + r._id + '\',' + (sr.days || 7) + ',\'' + (sr.reason || "").replace(/'/g, "") + '\',\'' + (sr.note || "").replace(/'/g, "") + '\')">✅ تایید تعلیق</button>' +
-        '<button class="btn" style="background:#dc2626;font-size:10px;padding:3px 7px" onclick="rejTechSus(\'' + r._id + '\')">❌ رد و الزام به انجام</button></div></div>';
-    }
-
-    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام تکنسین</span><br>' + seenHtml + smsLogHtml + susReqBox + '</div>');
+    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام تکنسین</span><br>' + seenHtml + smsLogHtml + '</div>');
     const tPh = settings.techMeta?.[r.technicianName]?.phone || "";
     const smsBtn = (!isD && tPh) ? '<a class="btn" style="background:#0f3b2d;text-decoration:none" href="sms:' + tPh + '?body=' + encodeURIComponent("سامی‌واتر: خدمت جدید (" + (r.invoiceCode || "") + " - " + (r.snapshot?.fullName || "") + ") به کارتابل شما ارجاع شد.") + '">📲 پیامک</a>' : '';
     return '<tr>' +
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
       '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="font-size:10px;color:#64748b">👨‍🔧 ' + (r.technicianName || "") + '</div></td>' +
       '<td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a></td>' +
-      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + (r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold">🔧 اقلام: ' + r.workReport + '</div>' : '') + draftAlertHtml(r) + '</td>' +
+      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + (r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold">🔧 اقلام: ' + r.workReport + '</div>' : '') + tempNotesHtml(r) + draftAlertHtml(r) + '</td>' +
       '<td>' + payHtml + '</td>' +
       '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
       '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ تغییر تکنسین / ویرایش</button>' +
@@ -438,6 +461,7 @@ function drawTechs() {
   }).join("");
 }
 // PART 3 END
+      
   let curBranch = "اصفهان (مرکزی)";
 
 function applyRoleLocks() {
