@@ -39,12 +39,8 @@ th{background:#f8fafc;white-space:nowrap}
 .m-bx{background:#fff;width:min(540px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
 .inp{width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;margin-bottom:6px;font-family:inherit}
 @media(min-width:1024px){
-  body{padding:18px 26px}
-  .hdr{padding:18px 22px}.hdr h1{font-size:19px}
-  .nb{font-size:13px;padding:11px 8px}
-  .card{padding:18px}.card h2{font-size:15px}
-  th,td{font-size:13px;padding:10px}
-  .btn,.fb,.sel{font-size:12px;padding:7px 12px}
+  body{padding:18px 26px}.hdr{padding:18px 22px}.hdr h1{font-size:19px}.nb{font-size:13px;padding:11px 8px}
+  .card{padding:18px}.card h2{font-size:15px}th,td{font-size:13px;padding:10px}.btn,.fb,.sel{font-size:12px;padding:7px 12px}
 }
 </style>
 </head>
@@ -56,6 +52,7 @@ th{background:#f8fafc;white-space:nowrap}
   </div>
   <nav class="nav">
     <button class="nb active" onclick="tab('t-req',this)">📋 خدمات جاری (<span id="actC">0</span>)</button>
+    <button class="nb" onclick="tab('t-susreq',this)">⏸️ تعلیقی تکنسین (<span id="susReqC">0</span>)</button>
     <button class="nb" onclick="tab('t-usr',this)">👨‍🔧 تکنسین‌ها و تسویه (<span id="techC">0</span>)</button>
     <button class="nb" onclick="tab('t-wh',this);drawWh()">🏭 انبار مرکزی و حواله</button>
     <button class="nb" onclick="tab('t-rem',this)">🔔 یادآور سرویس (<span id="remC">0</span>)</button>
@@ -82,6 +79,11 @@ th{background:#f8fafc;white-space:nowrap}
     <button class="btn" onclick="drawReqs()">🔍 فیلتر</button>
   </div>
   <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره</th><th>مکان، خدمت و منبع</th><th>وضعیت / تعلیق</th><th>ارجاع به تکنسین</th><th>عملیات</th></tr></thead><tbody id="reqB"></tbody></table></div>
+</div>
+
+<div id="t-susreq" class="card">
+  <h2><span>⏸️ درخواست‌های تعلیق ارسالی از سمت تکنسین (جهت بررسی پشتیبانی و مدیریت)</span><button class="btn" onclick="sync()">🔄 بروزرسانی</button></h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری و تماس</th><th>نشانی و نوع خدمت</th><th>تکنسین و رادار عملکرد</th><th>علت، مدت و توضیح تکنسین</th><th>تصمیم پشتیبانی / مدیریت</th></tr></thead><tbody id="susReqB"></tbody></table></div>
 </div>
 
 <div id="t-usr" class="card">
