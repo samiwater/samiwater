@@ -753,4 +753,44 @@ function showStock() {
   showView("subView");
   const st = settings.techMeta?.[myName]?.stock || {}, keys = Object.keys(st);
   $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">📦 موجودی کالا (انبار همراه شما)</h4>' +
-    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span 
+    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span class="' + ((Number(st[k]) || 0) > 0 ? "bdg-paid" : "bdg-unpaid") + '" style="direction:ltr">' + (Number(st[k]) || 0) + ' عدد</span></div>').join("") : '<div class="box" style="text-align:center">موجودی کالایی برای شما ثبت نشده است.</div>');
+}
+
+function showLogs() {
+  showView("subView");
+  const logs = settings.techMeta?.[myName]?.logs || [];
+  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">🔔 پیام‌ها و گزارش سیستمی</h4>' +
+    (logs.length ? logs.map(l => '<div class="box"><div class="row-btw" style="margin-bottom:5px"><b style="color:#b45309;font-size:12px">' + l.title + '</b><span style="font-size:11px;color:#64748b">' + toJ(l.date) + ' ' + toTm(l.date) + '</span></div><div style="font-size:12px;color:#475569;line-height:1.7">' + l.text + '</div></div>').join("") : '<div class="box" style="text-align:center">پیامی ثبت نشده است.</div>');
+}
+
+function saveMyGps() {
+  if (!navigator.geolocation) return alert("GPS پشتیبانی نمی‌شود");
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const coords = pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
+    await fetch(API + "/requests/" + curReq._id + "/location", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locationUrl: coords }) });
+    curReq.locationUrl = coords; $("dMapBtn").href = "https://maps.google.com/?q=" + coords; alert("لوکیشن ذخیره شد 📍✅");
+  }, () => alert("GPS گوشی را روشن کنید."));
+}
+
+function bootTechPanel() {
+  const isAdmin = localStorage.getItem("role") === "admin";
+  if (isAdmin && !myName) {
+    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
+    myName = tList[0] || "مهندس شهریاری";
+  }
+  if (isAdmin) {
+    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
+    const bar = document.createElement("div");
+    bar.style.cssText = "background:#fefce8;border-bottom:2px solid #ca8a04;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:#854d0e";
+    bar.innerHTML = '<span>👑 نمای بازرسی مدیر:</span><select style="padding:4px 8px;border-radius:8px;border:1px solid #ca8a04;font-family:inherit;font-weight:800" onchange="myName=this.value;localStorage.setItem(\'sw_tech_name\',this.value);init()">' +
+      tList.map(t => '<option value="' + t + '" ' + (t === myName ? "selected" : "") + '>👨‍🔧 کارتابل ' + t + '</option>').join("") + '</select><a href="dashboard.html" style="color:#0f3b2d;text-decoration:underline">🔙 داشبورد</a>';
+    document.body.insertBefore(bar, document.body.children[1]);
+  }
+  init();
+}
+bootTechPanel();
+</script>
+</body>
+</html>
+<!-- END -->
+
