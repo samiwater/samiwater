@@ -472,6 +472,36 @@ function drawTechs() {
       '<button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری</button>' + smsBtn + '</td></tr>';
   }).join("");
 }
+      let delDaysF = 9999;
+function setDelF(d, btn) {
+  delDaysF = d;
+  if ($("delF")) $("delF").value = "";
+  if ($("delT")) $("delT").value = "";
+  btn.parentElement.querySelectorAll(".fb").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  drawDel();
+}
+
+setTimeout(() => {
+  window.drawDel = function() {
+    const allDel = reqs.filter(r => r.status === "deleted");
+    $("delC").textContent = allDel.length;
+    const fJ = ($("delF")?.value || "").trim(), tJ = ($("delT")?.value || "").trim(), q = ($("delQ")?.value || "").trim().toLowerCase();
+    const list = allDel.filter(r => {
+      const dt = new Date(r.deletedAt || r.createdAt || Date.now());
+      if (delDaysF < 9999 && (Date.now() - dt.getTime()) > delDaysF * 86400000) return false;
+      const jD = toJ(dt);
+      if (fJ && jD < fJ) return false;
+      if (tJ && jD > tJ) return false;
+      if (q && ![r.invoiceCode, r.snapshot?.fullName, r.snapshot?.phone, r.deleteReason, r.deletedBy].join(" ").toLowerCase().includes(q)) return false;
+      return true;
+    });
+    if ($("delI")) $("delI").textContent = list.length + " مورد نمایش داده شده";
+    $("delB").innerHTML = list.length ? list.map(r => '<tr><td style="direction:ltr"><b>' + (r.invoiceCode || "---") + '</b></td><td>' + (r.snapshot?.fullName || "---") + ' (' + (r.snapshot?.phone || "") + ')</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '</td><td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td><td>' + (r.deletedBy || "مدیر") + '</td><td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td><td><button class="btn" style="background:#16a34a" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">♻️ بازیابی به جاری</button></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:12px">فاکتور حذف‌شده‌ای در این بازه یافت نشد.</td></tr>';
+  };
+  drawDel();
+}, 100);
+      
 // PART 3 END
       
   let curBranch = "اصفهان (مرکزی)";
