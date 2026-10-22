@@ -65,7 +65,7 @@ th{background:#f8fafc;white-space:nowrap}
 </div>
 
 <div id="t-req" class="card active">
-  <h2><span>📋 خدمات جاری (در انتظار تخصیص به تکنسین)</span><div style="display:flex;gap:5px"><button class="btn" style="background:#16a34a" onclick="newPhoneReq()">📞 + ثبت تلفنی</button><button class="btn" onclick="sync()">🔄 بروزرسانی</button></div></h2>
+  <h2><span>📋 خدمات جاری</span><div style="display:flex;gap:5px"><button class="btn" style="background:#16a34a" onclick="newPhoneReq()">📞 + ثبت تلفنی</button><button class="btn" onclick="sync()">🔄 بروزرسانی</button></div></h2>
   <div class="fg">
     <button class="fb active" onclick="setReqF(9999,this)">📂 همه جاری‌ها</button>
     <button class="fb" onclick="setReqF(1,this)">📅 امروز</button>
@@ -82,29 +82,29 @@ th{background:#f8fafc;white-space:nowrap}
 </div>
 
 <div id="t-susreq" class="card">
-  <h2><span>⏸️ درخواست‌های تعلیق ارسالی از سمت تکنسین (جهت بررسی پشتیبانی و مدیریت)</span><button class="btn" onclick="sync()">🔄 بروزرسانی</button></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری و تماس</th><th>نشانی و نوع خدمت</th><th>تکنسین و رادار عملکرد</th><th>علت، مدت و توضیح تکنسین</th><th>تصمیم پشتیبانی / مدیریت</th></tr></thead><tbody id="susReqB"></tbody></table></div>
+  <h2><span>⏸️ درخواست‌های تعلیق تکنسین</span><button class="btn" onclick="sync()">🔄 بروزرسانی</button></h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری و تماس</th><th>نشانی و نوع خدمت</th><th>تکنسین و عملکرد</th><th>علت و توضیح تکنسین</th><th>تصمیم پشتیبانی</th></tr></thead><tbody id="susReqB"></tbody></table></div>
 </div>
 
 <div id="t-usr" class="card">
-  <h2><span>👨‍🔧 کارتابل تکنسین‌ها، انبارگردانی و مچ‌گیری تسویه حساب</span></h2>
+  <h2><span>👨‍🔧 کارتابل و حسابرسی تکنسین‌ها</span></h2>
   <div style="display:flex;gap:6px;margin-bottom:8px"><input id="tInp" class="inp" style="margin:0;max-width:220px" placeholder="نام تکنسین جدید..."><button class="btn" onclick="addT()">+ افزودن تکنسین</button></div>
   <div id="tTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
   <div id="tStats" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;margin-bottom:10px;font-size:11px"></div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>خدمت، اقلام و هشدار پیش‌نویس</th><th>مبلغ و وضعیت پرداخت</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>خدمت و یادداشت</th><th>وضعیت و پرداخت</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
 </div>
 
 <div id="t-wh" class="card">
-  <h2><span>🏭 مدیریت انبار مرکزی، شعبه‌ها و زنجیره تامین کالا</span><div id="whTopBtns" style="display:flex;gap:5px;flex-wrap:wrap"></div></h2>
+  <h2><span>🏭 انبار مرکزی و حواله کالا</span><div id="whTopBtns" style="display:flex;gap:5px;flex-wrap:wrap"></div></h2>
   <div id="whBranchBar" class="sb" style="justify-content:space-between"></div>
-  <div style="overflow-x:auto;margin-bottom:14px"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا</th><th>موجودی انبار مرکزی (شعبه فعلی)</th><th>جمع موجودی دست تکنسین‌ها</th><th>عملیات سریع زنجیره تامین</th></tr></thead><tbody id="whB"></tbody></table></div>
-  <h2><span>📜 کاردکس و تاریخچه گردش کالا (ورود به انبار مرکزی و حواله تکنسین‌ها)</span></h2>
-  <div style="overflow-x:auto;max-height:260px"><table><thead><tr><th>تاریخ و ساعت</th><th>شعبه</th><th>نوع عملیات</th><th>عنوان کالا</th><th>تعداد</th><th>مقصد / تکنسین</th><th>توضیحات و ثبت‌کننده</th></tr></thead><tbody id="whLogB"></tbody></table></div>
+  <div style="overflow-x:auto;margin-bottom:14px"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا</th><th>موجودی انبار مرکزی</th><th>جمع موجودی تکنسین‌ها</th><th>عملیات</th></tr></thead><tbody id="whB"></tbody></table></div>
+  <h2><span>📜 کاردکس گردش کالا</span></h2>
+  <div style="overflow-x:auto;max-height:260px"><table><thead><tr><th>تاریخ و ساعت</th><th>شعبه</th><th>نوع عملیات</th><th>عنوان کالا</th><th>تعداد</th><th>مقصد / تکنسین</th><th>توضیحات</th></tr></thead><tbody id="whLogB"></tbody></table></div>
 </div>
 
 <div id="t-rem" class="card">
-  <h2><span>🔔 یادآور سرویس دوره‌ای (در ۳ روزگی خودکار به خدمات جاری منتقل می‌شود)</span></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>شماره تماس</th><th>عنوان و نشانی مکان</th><th>وضعیت تایمر و یادداشت هماهنگی</th><th>عملیات پیگیری</th></tr></thead><tbody id="remB"></tbody></table></div>
+  <h2><span>🔔 یادآور سرویس دوره‌ای</span></h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>شماره تماس</th><th>عنوان و نشانی مکان</th><th>وضعیت تایمر</th><th>عملیات پیگیری</th></tr></thead><tbody id="remB"></tbody></table></div>
 </div>
 
 <div id="t-arch" class="card">
@@ -121,24 +121,35 @@ th{background:#f8fafc;white-space:nowrap}
     <input id="sQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور...">
     <button class="btn" onclick="searchR()">🔍 جستجو</button>
   </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>اقلام، مبلغ و گزارش</th><th>تکنسین و پرداخت</th><th>تاریخ درخواست</th><th>تاریخ تکمیل</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">یکی از دکمه‌ها یا بازه تاریخ شمسی را انتخاب کنید.</td></tr></tbody></table></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>اقلام و مبلغ</th><th>تکنسین و پرداخت</th><th>تاریخ درخواست</th><th>تاریخ تکمیل</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">بازه زمانی را انتخاب کنید.</td></tr></tbody></table></div>
 </div>
 
 <div id="t-del" class="card">
-  <h2>🗑️ فاکتورهای حذف‌شده (گزارش مدیریتی)</h2>
+  <h2><span>🗑️ فاکتورهای حذفی</span><span id="delI" style="font-size:11px;color:#dc2626">همه حذفیات</span></h2>
+  <div class="fg">
+    <button class="fb" onclick="setDelF(1,this)">📅 امروز</button>
+    <button class="fb" onclick="setDelF(7,this)">📆 این هفته</button>
+    <button class="fb" onclick="setDelF(30,this)">🗓️ ماه جاری</button>
+    <button class="fb active" onclick="setDelF(9999,this)">📂 همه حذفیات</button>
+  </div>
+  <div class="sb">
+    <b>از:</b><input id="delF" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01">
+    <b>تا:</b><input id="delT" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30">
+    <input id="delQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور، دلیل...">
+    <button class="btn" onclick="drawDel()">🔍 فیلتر</button>
+  </div>
   <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>خدمت</th><th>دلیل حذف</th><th>حذف توسط</th><th>تاریخ ثبت و حذف</th><th>عملیات</th></tr></thead><tbody id="delB"></tbody></table></div>
 </div>
 
 <div id="t-cust" class="card">
-  <h2><span>👥 بانک اطلاعات و تایمر هر آدرس</span><div style="display:flex;gap:5px"><button id="tamperBtn" class="btn" style="background:#dc2626" onclick="togTamper()">🕵️ تغییرات دستی تایمر (0)</button><button class="btn" style="background:#16a34a" onclick="editC('')">+ مشتری جدید</button></div></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها و سوابق</th><th>تایمر آدرس و گزارش تغییر</th><th>ویرایش</th></tr></thead><tbody id="custB"></tbody></table></div>
+  <h2><span>👥 بانک اطلاعات و تایمر</span><div style="display:flex;gap:5px"><button id="tamperBtn" class="btn" style="background:#dc2626" onclick="togTamper()">🕵️ تغییرات دستی تایمر (0)</button><button class="btn" style="background:#16a34a" onclick="editC('')">+ مشتری جدید</button></div></h2>
+  <div style="overflow-x:auto"><table><thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها</th><th>تایمر آدرس</th><th>ویرایش</th></tr></thead><tbody id="custB"></tbody></table></div>
 </div>
 
 <div id="t-srv" class="card">
-  <h2><span>🏷️ تعرفه کالا، دستمزدها و ایاب‌وذهاب ثابت</span><button class="btn" style="background:#16a34a" onclick="editCatItem('')">+ افزودن کالا / دستمزد جدید</button></h2>
+  <h2><span>🏷️ تعرفه کالا و دستمزد</span><button class="btn" style="background:#16a34a" onclick="editCatItem('')">+ افزودن کالا / دستمزد</button></h2>
   <div class="sb" style="justify-content:space-between">
-    <div><b>🚗 ایاب و ذهاب ثابت شهری (تومان):</b> <input id="trvInp" type="number" class="inp" style="width:120px;margin:0;direction:ltr" value="139000"> <button class="btn" onclick="saveTravelFee()">ذخیره ایاب‌وذهاب ✅</button></div>
-    <span style="color:#64748b">این مبلغ به صورت ثابت روی تمام فاکتورهای تکنسین لحاظ می‌شود.</span>
+    <div><b>🚗 ایاب و ذهاب شهری (تومان):</b> <input id="trvInp" type="number" class="inp" style="width:120px;margin:0;direction:ltr" value="139000"> <button class="btn" onclick="saveTravelFee()">ذخیره ✅</button></div>
   </div>
   <div id="catTabs" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px"></div>
   <div style="overflow-x:auto"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا / سرویس</th><th>نوع (انبار)</th><th>قیمت مشتری (تومان)</th><th>پورسانت تکنسین (%)</th><th>دستمزد نصب (تومان)</th><th>عملیات</th></tr></thead><tbody id="srvB"></tbody></table></div>
@@ -151,6 +162,7 @@ th{background:#f8fafc;white-space:nowrap}
   </div>
 </div>
 <!-- PART 1 END -->
+  
   
     <script>
 const API = "https://samiwater-backend.onrender.com/api";
