@@ -48,7 +48,7 @@ th{background:#f8fafc;white-space:nowrap}
 <div class="hdr">
   <div class="hdr-t">
     <h1><img src="/logo-samiwater.png" class="hdr-logo" onerror="this.style.display='none'"> پنل جامع مدیریت سامی‌واتر</h1>
-    <div style="display:flex;gap:5px;flex-wrap:wrap"><a href="tech.html" target="_blank" class="pill" style="color:#4ade80;border-color:#4ade80;text-decoration:none">📱 پنل تکنسین</a><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap"><a href="tech.html" target="_blank" class="pill" style="color:#4ade80;border-color:#4ade80;text-decoration:none">📱 پنل تکنسین</a><a href="accounting.html" class="pill" style="color:#facc15;border-color:#facc15;text-decoration:none">📊 نرم‌افزار حسابداری</a><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
   </div>
   <nav class="nav">
     <button class="nb active" onclick="tab('t-req',this)">📋 خدمات جاری (<span id="actC">0</span>)</button>
@@ -142,7 +142,7 @@ th{background:#f8fafc;white-space:nowrap}
 </div>
 
 <div id="t-cust" class="card">
-  <h2><span>👥 بانک اطلاعات و تایمر</span><div style="display:flex;gap:5px"><button id="tamperBtn" class="btn" style="background:#dc2626" onclick="togTamper()">🕵️ تغییرات دستی تایمر (0)</button><button class="btn" style="background:#16a34a" onclick="editC('')">+ مشتری جدید</button></div></h2>
+  <h2><span>👥 بانک اطلاعات و تایمر</span><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn" style="background:#0f172a" onclick="resetAllTestData()">🧹 پاکسازی کل تست‌ها</button><button id="tamperBtn" class="btn" style="background:#dc2626" onclick="togTamper()">🕵️ تغییرات تایمر (0)</button><button class="btn" style="background:#16a34a" onclick="editC('')">+ مشتری جدید</button></div></h2>
   <div style="overflow-x:auto"><table><thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها</th><th>تایمر آدرس</th><th>ویرایش</th></tr></thead><tbody id="custB"></tbody></table></div>
 </div>
 
