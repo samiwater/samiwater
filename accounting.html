@@ -3,143 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نرم‌افزار جامع حسابداری و خزانه‌داری | سامی‌واتر</title>
+<title>نرم‌افزار تخصصی حسابداری و خزانه‌داری | سامی‌واتر</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
-body{background:#0f172a;color:#1e293b;padding:10px}
-.hdr{background:linear-gradient(135deg,#09261d,#134e3a);color:#fff;padding:14px;border-radius:12px;border:2px solid #d9b24c;margin-bottom:12px}
-.hdr-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
-.hdr h1{font-size:15px;color:#f5e6b8;display:flex;align-items:center;gap:8px}
-.pill{background:#071f17;color:#facc15;border:1px solid #d9b24c;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:bold;text-decoration:none}
-.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-@media(min-width:700px){.nav{grid-template-columns:repeat(5,1fr)}}
-.nb{background:#071f17;color:#cbd5e1;border:1px solid #2dd4bf44;padding:10px 6px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer}
-.nb.active{background:#d9b24c;color:#071f17;border-color:#f5e6b8}
-.card{background:#f8fafc;padding:14px;border-radius:12px;margin-bottom:12px;display:none}
-.card.active{display:block}
-.card h2{font-size:13px;color:#0f3b2d;margin-bottom:10px;border-bottom:2px solid #cbd5e1;padding-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
-.box{background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:12px;margin-bottom:10px}
+body{background:#0b1512;color:#1e293b;padding:10px}
+.hdr{background:linear-gradient(135deg,#09261d,#134e3a);color:#fff;padding:14px;border-radius:14px;border:2px solid #d9b24c;margin-bottom:12px}
+.hdr-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.hdr h1{font-size:15px;color:#f5e6b8}
+.pill{background:#071f17;color:#facc15;border:1px solid #d9b24c;padding:5px 11px;border-radius:14px;font-size:11px;font-weight:bold;text-decoration:none;cursor:pointer}
+.vault-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:768px){.vault-bar{grid-template-columns:repeat(4,1fr)}}
+.v-card{background:#071f17cc;border:1px solid #d9b24c66;border-radius:10px;padding:9px;text-align:center}
+.v-card span{font-size:10px;color:#cbd5e1;display:block}
+.v-card b{font-size:13px;color:#4ade80;direction:ltr;display:block;margin-top:4px}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+@media(min-width:768px){.menu-grid{grid-template-columns:repeat(5,1fr)}}
+.m-btn{background:#1e293b;color:#f8fafc;border:1.5px solid #334155;padding:13px 10px;border-radius:12px;font-size:12px;font-weight:bold;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.2s}
+.m-btn.active{background:linear-gradient(135deg,#d9b24c,#eab308);color:#071f17;border-color:#fef08a;box-shadow:0 4px 14px #d9b24c44}
+.sec-panel{display:none;background:#f1f5f9;border-radius:14px;padding:12px;margin-bottom:14px;border:2px solid #d9b24c}
+.sec-panel.open{display:block}
+.drw{background:#fff;border:1.5px solid #cbd5e1;border-radius:11px;margin-bottom:8px;overflow:hidden}
+.drw-h{padding:12px 14px;background:#f8fafc;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:bold;color:#0f3b2d}
+.drw-h:hover{background:#e2e8f0}
+.drw-b{display:none;padding:12px;border-top:1px solid #cbd5e1;background:#fff}
+.drw-b.open{display:block}
+.sub-drw{border:1px solid #94a3b8;border-radius:8px;margin-bottom:8px;overflow:hidden}
+.sub-drw-h{padding:9px 12px;background:#f0fdf4;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:bold;color:#14532d}
+.sub-drw-b{display:none;padding:10px;background:#fff;border-top:1px solid #bbf7d0}
+.sub-drw-b.open{display:block}
+.inp{width:100%;padding:8px 10px;border:1.5px solid #94a3b8;border-radius:7px;font-size:12px;margin-bottom:7px;font-family:inherit}
+.btn{background:#0f3b2d;color:#f5e6b8;border:1px solid #d9b24c;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:bold}
+table{width:100%;border-collapse:collapse;margin-top:4px;background:#fff}
+th,td{border:1px solid #cbd5e1;padding:7px;text-align:right;font-size:11px;vertical-align:middle}
+th{background:#f1f5f9;white-space:nowrap}
+.bdg{padding:3px 7px;border-radius:5px;font-size:10px;font-weight:bold;display:inline-block}
+.st-d{background:#dcfce7;color:#15803d}.st-al{background:#fee2e2;color:#dc2626}.st-p{background:#fef3c7;color:#b45309}.st-a{background:#e0f2fe;color:#0369a1}
 .grid2{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:768px){.grid2{grid-template-columns:1fr 1fr}}
-.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
-@media(min-width:768px){.grid4{grid-template-columns:repeat(4,1fr)}}
-.stat-bx{background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;padding:10px;text-align:center}
-.stat-bx b{display:block;font-size:14px;margin-top:4px;direction:ltr}
-.inp{width:100%;padding:7px 9px;border:1px solid #94a3b8;border-radius:6px;font-size:12px;margin-bottom:6px;font-family:inherit}
-.btn{background:#0f3b2d;color:#f5e6b8;border:1px solid #d9b24c;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:bold}
-table{width:100%;border-collapse:collapse;margin-top:6px;background:#fff}
-th,td{border:1px solid #cbd5e1;padding:7px;text-align:right;font-size:11px;vertical-align:middle}
-th{background:#e2e8f0;white-space:nowrap}
-.bdg{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;display:inline-block}
-.st-d{background:#dcfce7;color:#15803d}.st-al{background:#fee2e2;color:#dc2626}.st-p{background:#fef3c7;color:#b45309}.st-a{background:#e0f2fe;color:#0369a1}
-@media(min-width:1024px){body{padding:18px 28px}.hdr h1{font-size:19px}.nb{font-size:13px}th,td{font-size:13px;padding:10px}}
 </style>
 </head>
 <body>
+
 <div class="hdr">
   <div class="hdr-t">
-    <h1>📊 نرم‌افزار جامع حسابداری، حسابرسی تکنسین و خزانه‌داری سامی‌واتر</h1>
+    <h1>📊 نرم‌افزار تخصصی حسابداری و خزانه‌داری سامی‌واتر</h1>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <a id="backDashBtn" href="dashboard.html" class="pill" style="color:#4ade80;border-color:#4ade80">🔙 پنل عملیات و خدمات</a>
+      <button class="pill" onclick="loadAcc()">🔄 بروزرسانی</button>
+      <a id="backDashBtn" href="dashboard.html" class="pill" style="color:#4ade80;border-color:#4ade80">🔙 پنل مدیریت خدمات</a>
       <span id="uPill" class="pill">👑 مدیر مالی</span>
+      <button class="pill" style="background:#dc2626;color:#fff;border-color:#fca5a5" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
     </div>
   </div>
-  <nav class="nav">
-    <button class="nb active" onclick="swTab('a-settle',this)">🧮 ۱. میز تسویه تکنسین (نفی به اثبات)</button>
-    <button class="nb" onclick="swTab('a-vouchers',this)">🗂️ ۲. بایگانی اسناد تسویه (<span id="vCnt">0</span>)</button>
-    <button class="nb" onclick="swTab('a-exp',this)">💸 ۳. هزینه‌های روزمره و خریدها</button>
-    <button class="nb" onclick="swTab('a-treasury',this)">🏦 ۴. خزانه‌داری، پوزها و ترازنامه</button>
-    <button class="nb" style="background:#dc2626;color:#fff" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
-  </nav>
-</div>
-
-<div id="a-settle" class="card active">
-  <h2><span>🧮 میز حسابرسی و تسویه دوره تکنسین (فرمول از نفی به اثبات)</span><button class="btn" onclick="loadAcc()">🔄 بروزرسانی اطلاعات</button></h2>
-  <div class="box" style="background:#f0fdf4;border-color:#86efac;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px">
-    <b>👨‍🔧 انتخاب تکنسین:</b>
-    <select id="stTech" class="inp" style="width:170px;margin:0;font-weight:bold" onchange="prepareAudit()"></select>
-    <b>📅 از تاریخ:</b>
-    <input id="stFrom" class="inp" style="width:95px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01" oninput="prepareAudit()">
-    <b>تا تاریخ:</b>
-    <input id="stTo" class="inp" style="width:95px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30" oninput="prepareAudit()">
-  </div>
-
-  <div class="grid2">
-    <div class="box">
-      <h3 style="font-size:13px;color:#0f3b2d;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:5px">📱 ۱. گزارش ثبت‌شده توسط تکنسین در اپلیکیشن (جهت مچ‌گیری)</h3>
-      <div id="appClaimBox" style="font-size:12px;line-height:2"></div>
-      <div style="margin-top:8px;max-height:240px;overflow-y:auto">
-        <table><thead><tr><th>فاکتور و تاریخ</th><th>مشتری</th><th>مبلغ فاکتور</th><th>ثبت تکنسین در اپ</th><th>سود سیستمی</th></tr></thead><tbody id="auditOrdersB"></tbody></table>
-      </div>
-    </div>
-
-    <div class="box" style="border:2px solid #0f3b2d;background:#fffdf7">
-      <h3 style="font-size:13px;color:#854d0e;margin-bottom:8px;border-bottom:1px solid #fde047;padding-bottom:5px">✍️ ۲. ورود دستی کسورات واقعی توسط مدیر / حسابدار (از نفی به اثبات)</h3>
-      <div style="background:#1e293b;color:#facc15;padding:10px;border-radius:8px;display:flex;justify-content:space-between;font-size:13px;font-weight:bold;margin-bottom:10px">
-        <span>💰 اصل کل صورتحساب دوره تکنسین:</span>
-        <span id="baseBillTxt" style="direction:ltr">0 تومان</span>
-      </div>
-
-      <label style="font-size:11px;font-weight:bold">💳 الف) سرجمع واقعی کارتخوان (پوز) تحویلی در این بازه (تومان):</label>
-      <input id="inActualPos" type="number" class="inp" style="direction:ltr;font-weight:bold" value="0" oninput="calcElimination()">
-      <div id="posDiffAlert" style="font-size:11px;margin-bottom:8px;font-weight:bold"></div>
-
-      <label style="font-size:11px;font-weight:bold">📝 ب) سرجمع چک‌های فیزیکی تحویل‌گرفته‌شده از تکنسین (تومان):</label>
-      <input id="inActualCheck" type="number" class="inp" style="direction:ltr;font-weight:bold" value="0" oninput="calcElimination()">
-      <input id="inCheckNote" class="inp" placeholder="مشخصات چک‌های تحویلی (بانک، شماره، سررسید)...">
-
-      <label style="font-size:11px;font-weight:bold">👨‍🔧 ج) دستمزد و پورسانت قطعی تکنسین در این دوره (تومان):</label>
-      <input id="inActualWage" type="number" class="inp" style="direction:ltr;font-weight:bold;color:#15803d" value="0" oninput="calcElimination()">
-
-      <div style="border-top:1px dashed #cbd5e1;padding-top:8px;margin-top:6px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <b style="font-size:11px;color:#0f3b2d">➕ د) کسورات توافقی، پاداش، کمک‌هزینه و حساب‌های فیمابین:</b>
-          <button class="btn" style="background:#0284c7;border:none;padding:4px 8px" onclick="addCustomCreditRow('',0)">+ افزودن ردیف کسر از حساب</button>
-        </div>
-        <p style="font-size:10px;color:#64748b;margin-bottom:6px">هر مبلغی که به تکنسین وعده داده‌اید (سرویس نصف شب، کمک‌هزینه تعداد کار، فاکتوری که گفتید نقدی بزن با من و...) را اینجا وارد کنید تا از بدهی او کم شود:</p>
-        <div id="customCreditsList"></div>
-      </div>
-
-      <div id="finalMathBox" style="background:#dcfce7;border:2px solid #16a34a;padding:12px;border-radius:10px;margin-top:10px;line-height:1.9"></div>
-
-      <label style="font-size:11px;font-weight:bold;margin-top:8px;display:block">💵 مبلغ نقدی / کارت‌به‌کارت که تکنسین الان پرداخت کرد (تومان):</label>
-      <input id="inFinalCashPaid" type="number" class="inp" style="direction:ltr;font-weight:bold;font-size:14px" value="0">
-      <input id="inSettleNote" class="inp" placeholder="توضیحات پایانی سند تسویه (شماره پیگیری واریزی، توافقات و...)">
-      <button class="btn" style="width:100%;background:#16a34a;color:#fff;padding:11px;font-size:13px;margin-top:4px" onclick="finalizeSettlementVoucher()">✅ ثبت قطعی سند تسویه، بایگانی و صفر کردن دوره تکنسین</button>
-    </div>
+  <div class="vault-bar">
+    <div class="v-card" style="border-color:#4ade80"><span>💎 موجودی نقد و بانک خزانه (قابل خرج)</span><b id="vNetCashBank">0 ت</b></div>
+    <div class="v-card"><span>💳 موجودی حساب بانک و پوزها</span><b id="vBankPos" style="color:#38bdf8">0 ت</b></div>
+    <div class="v-card"><span>💵 موجودی صندوق نقدی</span><b id="vCashSafe" style="color:#facc15">0 ت</b></div>
+    <div class="v-card"><span>📝 چک‌های نزد صندوق (پاس‌نشده)</span><b id="vPendingChecks" style="color:#c084fc">0 ت</b></div>
   </div>
 </div>
 
-<div id="a-vouchers" class="card">
-  <h2><span>🗂️ بایگانی اسناد تفصیلی تسویه تکنسین‌ها</span></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>کد سند و تاریخ</th><th>تکنسین و بازه دوره</th><th>اصل صورتحساب</th><th>پوز واقعی (و مغایرت)</th><th>چک و دستمزد</th><th>ریز کسورات توافقی و پاداش</th><th>مانده نقدی و پرداختی</th></tr></thead><tbody id="vouchersB"></tbody></table></div>
+<div class="menu-grid">
+  <button class="m-btn" onclick="togMainSec('sec-settle',this)"><span>👨‍🔧 ۱. تسویه تکنسین‌ها</span><span>▾</span></button>
+  <button class="m-btn" onclick="togMainSec('sec-arch',this)"><span>🗂️ ۲. بایگانی تسویه‌ها</span><span>▾</span></button>
+  <button class="m-btn" onclick="togMainSec('sec-vault',this)"><span>🏦 ۳. خزانه، آورده‌ها و چک‌ها</span><span>▾</span></button>
+  <button class="m-btn" onclick="togMainSec('sec-exp',this)"><span>💸 ۴. ثبت مخارج و خریدها</span><span>▾</span></button>
+  <button class="m-btn" onclick="togMainSec('sec-rep',this)"><span>📊 ۵. ترازنامه آورده و خرج</span><span>▾</span></button>
 </div>
 
-<div id="a-exp" class="card">
-  <h2><span>💸 ثبت هزینه‌های روزمره، جاری، خدمات و خریدهای انبار</span></h2>
-  <div class="box" style="background:#fff1f2;border-color:#fecdd3">
-    <div class="grid4">
-      <div><label style="font-size:11px;font-weight:bold">نوع تراکنش:</label><select id="exType" class="inp"><option value="out_expense">🔴 خروج پول (هزینه / خرید)</option><option value="in_manual">🟢 ورود پول متفرقه به خزانه</option></select></div>
-      <div><label style="font-size:11px;font-weight:bold">دسته‌بندی:</label><select id="exCat" class="inp"><option value="خرید کالا و شارژ انبار">📦 خرید کالا و شارژ انبار</option><option value="هزینه‌های روزمره و جاری">🏢 هزینه‌های روزمره و جاری</option><option value="هزینه‌های خدمات و ابزار">🛠️ هزینه‌های خدمات و ابزار</option><option value="تبلیغات و بازاریابی">📣 تبلیغات و بازاریابی</option><option value="حقوق و برداشت مدیریتی">👤 حقوق و برداشت مدیریتی</option></select></div>
-      <div><label style="font-size:11px;font-weight:bold">محل پرداخت / دریافت:</label><select id="exChannel" class="inp"><option value="pos">💳 از حساب متصل به پوز / بانک</option><option value="cash">💵 از صندوق نقدی / کارت</option><option value="check">📝 چک</option></select></div>
-      <div><label style="font-size:11px;font-weight:bold">مبلغ (تومان) *:</label><input id="exAmt" type="number" class="inp" style="direction:ltr;font-weight:bold" placeholder="مثلاً: 2500000"></div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <input id="exTitle" class="inp" style="flex:2;margin:0" placeholder="شرح کامل هزینه یا خرید (مثلاً: خرید ۲۰ عدد فیلتر / ناهار پرسنل / شارژ پنل پیامک)...">
-      <button class="btn" style="background:#dc2626;color:#fff;border:none;padding:8px 18px" onclick="addAccountingTx()">➕ ثبت در دفتر روزنامه و خزانه</button>
+<div id="sec-settle" class="sec-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+    <b style="font-size:13px;color:#0f3b2d">👨‍🔧 انتخاب تکنسین جهت حسابرسی و تسویه دوره (فرمول نفی به اثبات)</b>
+    <div style="font-size:11px;display:flex;gap:5px;align-items:center">
+      <span>فیلتر تاریخ: از</span><input id="stFrom" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01" oninput="renderTechSettleAccordions()">
+      <span>تا</span><input id="stTo" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30" oninput="renderTechSettleAccordions()">
     </div>
   </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>تاریخ و ساعت</th><th>نوع</th><th>دسته‌بندی</th><th>شرح تراکنش</th><th>کانال مالی</th><th>مبلغ (تومان)</th><th>ثبت‌کننده</th><th>حذف</th></tr></thead><tbody id="expB"></tbody></table></div>
+  <div id="techSettleAccordions"></div>
 </div>
 
-<div id="a-treasury" class="card">
-  <h2><span>🏦 خزانه‌داری کل، موجودی پوزها و ترازنامه سود و زیان</span></h2>
-  <div id="trStats" class="grid4"></div>
-  <h2><span>📜 دفتر کل گردش مالی شرکت (تمام ورودی‌های تسویه تکنسین و خروجی‌های هزینه)</span></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>تاریخ</th><th>نوع سند</th><th>عنوان و شرح</th><th>ورودی پوز</th><th>ورودی نقد</th><th>ورودی چک</th><th>خروجی هزینه/خرید</th><th>توضیحات</th></tr></thead><tbody id="treasuryB"></tbody></table></div>
+<div id="sec-arch" class="sec-panel">
+  <b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:10px">🗂️ بایگانی اسناد تسویه به تفکیک هر تکنسین (روی نام تکنسین کلیک کنید)</b>
+  <div id="techArchAccordions"></div>
+</div>
+
+<div id="sec-vault" class="sec-panel">
+  <b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:10px">🏦 مدیریت خزانه مرکزی، تجمیع آورده‌های تکنسین‌ها و وضعیت چک‌ها</b>
+  <div id="vaultAccordions"></div>
+</div>
+
+<div id="sec-exp" class="sec-panel">
+  <b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:10px">💸 ثبت و دسته‌بندی مخارج، خریدهای انبار و هزینه‌های روزمره (کسر از خزانه)</b>
+  <div id="expenseAccordions"></div>
+</div>
+
+<div id="sec-rep" class="sec-panel">
+  <b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:10px">📊 ترازنامه جامع: کل آورده‌ها در برابر کل مخارج و سود خالص</b>
+  <div id="reportAccordions"></div>
 </div>
 <!-- PART 1 END -->
-<script>
+  <script>
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
 const fmt = n => (Number(n) || 0).toLocaleString("fa-IR");
@@ -149,7 +111,8 @@ if (uRole !== "admin" && uRole !== "accountant") { alert("⛔ دسترسی مح�
 if (uRole === "accountant") $("backDashBtn").style.display = "none";
 $("uPill").textContent = (uRole === "admin" ? "👑 مدیر ارشد (" : "📊 حسابدار (") + uName + ")";
 
-let reqs = [], settings = {}, techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]'), curAuditOrders = [], unpaidLeftCount = 0, curBaseBill = 0, curAppPos = 0, curAppChk = 0, curAppCash = 0, curSysWage = 0, customCredits = [];
+let reqs = [], settings = {}, techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
+let customMap = {}, openTechAudit = "";
 
 function toJ(d) {
   if (!d) return "---";
@@ -161,10 +124,11 @@ function toJ(d) {
 }
 function toClock(d) { try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
 
-function swTab(id, b) {
-  document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
-  document.querySelectorAll(".nb").forEach(x => x.classList.remove("active"));
-  $(id).classList.add("active"); b.classList.add("active");
+function togMainSec(id, btn) {
+  const isOpen = $(id).classList.contains("open");
+  document.querySelectorAll(".sec-panel").forEach(p => p.classList.remove("open"));
+  document.querySelectorAll(".m-btn").forEach(b => b.classList.remove("active"));
+  if (!isOpen) { $(id).classList.add("open"); btn.classList.add("active"); }
 }
 
 async function loadAcc() {
@@ -173,109 +137,341 @@ async function loadAcc() {
   if (r2.ok) settings = (await r2.json()).settings || {};
   Object.keys(settings.techMeta || {}).forEach(t => { if (!techs.includes(t)) techs.push(t); });
   const urlTech = new URLSearchParams(location.search).get("tech");
-  const prevT = urlTech || $("stTech").value;
-  $("stTech").innerHTML = techs.map(t => '<option value="' + t + '" ' + (t === prevT ? "selected" : "") + '>' + t + '</option>').join("");
-  prepareAudit(); renderVouchers(); renderExpensesAndTreasury();
+  if (urlTech) {
+    openTechAudit = urlTech;
+    const firstBtn = document.querySelector(".m-btn");
+    if (firstBtn && !$("sec-settle").classList.contains("open")) togMainSec("sec-settle", firstBtn);
+  }
+  renderAll();
 }
 
-function prepareAudit() {
-  const tName = $("stTech").value, fJ = $("stFrom").value.trim(), tJ = $("stTo").value.trim();
+function renderAll() {
+  calcTopVault();
+  renderTechSettleAccordions();
+  renderTechArchAccordions();
+  renderVaultAccordions();
+  renderExpenseAccordions();
+  renderReportAccordions();
+}
+
+function getTreasuryNumbers() {
+  const txList = settings.accountingTx || [];
+  let bankPosIn = 0, cashIn = 0, chkPending = 0, chkCleared = 0, bankOut = 0, cashOut = 0;
+  txList.forEach(x => {
+    if (x.type === "in_settlement") {
+      bankPosIn += Number(x.posAmount) || 0;
+      const cAmt = Number(x.cashAmount) || 0;
+      if (x.cashDest === "cash_safe") cashIn += cAmt; else bankPosIn += cAmt;
+      if (x.checkCleared) bankPosIn += Number(x.checkAmount) || 0;
+      else chkPending += Number(x.checkAmount) || 0;
+    } else if (x.type === "in_manual") {
+      if (x.channel === "cash") cashIn += Number(x.amount) || 0;
+      else if (x.channel === "check") { if (x.checkCleared) bankPosIn += Number(x.amount) || 0; else chkPending += Number(x.amount) || 0; }
+      else bankPosIn += Number(x.amount) || 0;
+    } else if (x.type === "out_expense") {
+      if (x.channel === "cash") cashOut += Number(x.amount) || 0;
+      else bankOut += Number(x.amount) || 0;
+    }
+  });
+  const bankBal = bankPosIn - bankOut, cashBal = cashIn - cashOut;
+  return { bankPosIn, cashIn, chkPending, bankOut, cashOut, totalIn: bankPosIn + cashIn + chkPending, totalOut: bankOut + cashOut, bankBal, cashBal, netLiquid: bankBal + cashBal };
+}
+
+function calcTopVault() {
+  const v = getTreasuryNumbers();
+  $("vNetCashBank").textContent = fmt(v.netLiquid) + " تومان";
+  $("vBankPos").textContent = fmt(v.bankBal) + " تومان";
+  $("vCashSafe").textContent = fmt(v.cashBal) + " تومان";
+  $("vPendingChecks").textContent = fmt(v.chkPending) + " تومان";
+}
+
+function getTechAuditData(tName) {
+  const fJ = $("stFrom").value.trim(), tJ = $("stTo").value.trim();
   const allUnsettled = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && r.technicianName === tName).filter(r => {
     const jD = toJ(r.completedAt || r.createdAt);
     if (fJ && jD < fJ) return false;
     if (tJ && jD > tJ) return false;
     return true;
   });
+  const unpaidOrders = allUnsettled.filter(r => !r.paymentMethod || r.paymentMethod === "unpaid");
+  const paidOrders = allUnsettled.filter(r => r.paymentMethod && r.paymentMethod !== "unpaid");
 
-  unpaidLeftCount = allUnsettled.filter(r => !r.paymentMethod || r.paymentMethod === "unpaid").length;
-  curAuditOrders = allUnsettled.filter(r => r.paymentMethod && r.paymentMethod !== "unpaid");
+  let baseBill = 0, appPos = 0, appChk = 0, appCash = 0, sysWage = 0;
+  const posList = [], chkList = [], cashList = [];
 
-  curBaseBill = 0; curAppPos = 0; curAppChk = 0; curAppCash = 0; curSysWage = 0;
-  let posCnt = 0, chkDetails = [];
-
-  curAuditOrders.forEach(r => {
+  paidOrders.forEach(r => {
     const tFee = Number(r.travelFee) || 139000, a = Number(r.payableAmount) > 0 ? Number(r.payableAmount) : tFee, pr = Number(r.techProfit) > 0 ? Number(r.techProfit) : tFee;
-    curBaseBill += a; curSysWage += pr;
-    const pb = r.paymentBreakdown;
+    baseBill += a; sysWage += pr;
+    const pb = r.paymentBreakdown, dt = toJ(r.completedAt || r.createdAt), cust = r.snapshot?.fullName || "مشتری";
     if (pb && (pb.pos || pb.cash || pb.check)) {
-      if (pb.pos > 0) { curAppPos += Number(pb.pos); posCnt++; }
-      if (pb.cash > 0) curAppCash += Number(pb.cash);
-      if (pb.check > 0) { curAppChk += Number(pb.check); chkDetails.push(fmt(pb.check) + " (" + (pb.checkBank || "") + " #" + (pb.checkNumber || "") + ")"); }
-    } else if (r.paymentMethod === "pos") { curAppPos += a; posCnt++; }
-    else if (r.paymentMethod === "cash") curAppCash += a;
-    else if (r.paymentMethod === "check") curAppChk += a;
+      if (pb.pos > 0) { appPos += Number(pb.pos); posList.push({ code: r.invoiceCode, date: dt, cust, amt: Number(pb.pos), items: r.workReport || r.issueType }); }
+      if (pb.cash > 0) { appCash += Number(pb.cash); cashList.push({ code: r.invoiceCode, date: dt, cust, amt: Number(pb.cash) }); }
+      if (pb.check > 0) { appChk += Number(pb.check); chkList.push({ code: r.invoiceCode, date: dt, cust, amt: Number(pb.check), bank: pb.checkBank || "---", num: pb.checkNumber || "---" }); }
+    } else if (r.paymentMethod === "pos") { appPos += a; posList.push({ code: r.invoiceCode, date: dt, cust, amt: a, items: r.workReport || r.issueType }); }
+    else if (r.paymentMethod === "cash") { appCash += a; cashList.push({ code: r.invoiceCode, date: dt, cust, amt: a }); }
+    else if (r.paymentMethod === "check") { appChk += a; chkList.push({ code: r.invoiceCode, date: dt, cust, amt: a, bank: "---", num: "---" }); }
   });
-
-  const unpaidWarn = unpaidLeftCount > 0 ? '<div style="background:#fee2e2;border:1px solid #ef4444;color:#b91c1c;padding:6px 8px;border-radius:6px;margin-bottom:6px;font-weight:bold">🔒 توجه: تعداد ' + unpaidLeftCount + ' فاکتورِ «پرداخت‌نشده» در کارتابل تکنسین باز مانده است و تا زمان ثبت پرداخت توسط تکنسین، وارد تسویه نمی‌شود.</div>' : '';
-
-  $("appClaimBox").innerHTML = unpaidWarn +
-    '<div>🔢 <b>سرویس‌های پرداخت‌شده قابل تسویه:</b> <span class="bdg st-d">' + curAuditOrders.length + ' سرویس</span></div>' +
-    '<div>💰 <b>جمع کل صورتحساب‌ها (اصل بدهی تکنسین):</b> <b>' + fmt(curBaseBill) + ' تومان</b></div>' +
-    '<div>💳 <b>پوز اعلامی تکنسین در اپ:</b> ' + fmt(curAppPos) + ' تومان (' + posCnt + ' تراکنش)</div>' +
-    '<div>📝 <b>چک اعلامی تکنسین در اپ:</b> ' + fmt(curAppChk) + ' تومان ' + (chkDetails.length ? '<span style="font-size:10px;color:#7e22ce">[' + chkDetails.join(" | ") + ']</span>' : '') + '</div>' +
-    '<div>💵 <b>نقدی اعلامی تکنسین در اپ:</b> ' + fmt(curAppCash) + ' تومان</div>' +
-    '<div>📈 <b>دستمزد و پورسانت سیستمی تکنسین:</b> <span style="color:#15803d;font-weight:bold">' + fmt(curSysWage) + ' تومان</span></div>';
-
-  $("auditOrdersB").innerHTML = curAuditOrders.length ? curAuditOrders.map(r => {
-    const tFee = Number(r.travelFee) || 139000, a = Number(r.payableAmount) > 0 ? Number(r.payableAmount) : tFee, pr = Number(r.techProfit) > 0 ? Number(r.techProfit) : tFee;
-    const pb = r.paymentBreakdown || {};
-    const pTxt = [pb.pos ? "پوز:" + fmt(pb.pos) : "", pb.cash ? "نقد:" + fmt(pb.cash) : "", pb.check ? "چک:" + fmt(pb.check) : ""].filter(Boolean).join(" | ") || r.paymentMethod;
-    return '<tr><td style="direction:ltr"><b>' + (r.invoiceCode || "---") + '</b><br>' + toJ(r.completedAt || r.createdAt) + '</td><td>' + (r.snapshot?.fullName || "---") + '</td><td><b>' + fmt(a) + '</b></td><td>' + pTxt + '</td><td style="color:#15803d;font-weight:bold">' + fmt(pr) + '</td></tr>';
-  }).join("") : '<tr><td colspan="5" style="text-align:center;padding:12px">هیچ فاکتور پرداخت‌شده‌ای جهت تسویه وجود ندارد.</td></tr>';
-
-  $("baseBillTxt").textContent = fmt(curBaseBill) + " تومان";
-  $("inActualPos").value = curAppPos; $("inActualCheck").value = curAppChk;
-  $("inCheckNote").value = chkDetails.join(" | "); $("inActualWage").value = curSysWage;
-  if (!customCredits.length) customCredits = [{ title: "کمک‌هزینه / پاداش سرویس (" + curAuditOrders.length + " کار)", amount: 0 }];
-  renderCustomCredits(); calcElimination();
+  return { paidOrders, unpaidOrders, baseBill, appPos, appChk, appCash, sysWage, posList, chkList, cashList };
 }
 
-function addCustomCreditRow(title = "", amount = 0) { customCredits.push({ title, amount }); renderCustomCredits(); calcElimination(); }
-function removeCustomCreditRow(i) { customCredits.splice(i, 1); renderCustomCredits(); calcElimination(); }
-function renderCustomCredits() {
-  $("customCreditsList").innerHTML = customCredits.map((c, i) =>
-    '<div style="display:flex;gap:5px;margin-bottom:5px;align-items:center">' +
-    '<input class="inp" style="margin:0;flex:2" placeholder="عنوان کسر (پاداش نصف شب / توافقی)" value="' + c.title + '" oninput="customCredits[' + i + '].title=this.value">' +
-    '<input type="number" class="inp" style="margin:0;flex:1;direction:ltr;font-weight:bold" value="' + c.amount + '" oninput="customCredits[' + i + '].amount=Number(this.value)||0;calcElimination()">' +
-    '<button class="btn" style="background:#ef4444;color:#fff;border:none;padding:6px 9px" onclick="removeCustomCreditRow(' + i + ')">×</button></div>'
-  ).join("");
+function renderTechSettleAccordions() {
+  $("techSettleAccordions").innerHTML = techs.map((t, idx) => {
+    const d = getTechAuditData(t);
+    if (!customMap[t]) customMap[t] = [];
+    const isOp = openTechAudit === t;
+    const unpaidBadge = d.unpaidOrders.length ? '<span class="bdg st-al" style="margin-right:5px">🔒 ' + d.unpaidOrders.length + ' پرداخت‌نشده (قفل)</span>' : '';
+
+    const posRows = d.posList.length ? d.posList.map((p, i) => '<tr><td>' + (i + 1) + '</td><td style="direction:ltr"><b>' + p.code + '</b></td><td>' + p.date + '</td><td>' + p.cust + '</td><td>' + (p.items || "") + '</td><td style="direction:ltr;font-weight:bold;color:#0284c7">' + fmt(p.amt) + ' ت</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center">تراکنش پوزی ثبت نشده است.</td></tr>';
+    const chkRows = d.chkList.length ? d.chkList.map((c, i) => '<tr><td>' + (i + 1) + '</td><td style="direction:ltr"><b>' + c.code + '</b></td><td>' + c.date + '</td><td>' + c.cust + '</td><td>بانک: <b>' + c.bank + '</b> | ش: <b>' + c.num + '</b></td><td style="direction:ltr;font-weight:bold;color:#7e22ce">' + fmt(c.amt) + ' ت</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center">چکی ثبت نشده است.</td></tr>';
+    const cashRows = d.cashList.length ? d.cashList.map((c, i) => '<tr><td>' + (i + 1) + '</td><td style="direction:ltr"><b>' + c.code + '</b></td><td>' + c.date + '</td><td>' + c.cust + '</td><td style="direction:ltr;font-weight:bold;color:#b45309">' + fmt(c.amt) + ' ت</td></tr>').join("") : '<tr><td colspan="5" style="text-align:center">نقدی ثبت نشده است.</td></tr>';
+
+    return '<div class="drw">' +
+      '<div class="drw-h" onclick="openTechAudit=(openTechAudit===\'' + t + '\'?\'\':\'' + t + '\');renderTechSettleAccordions()">' +
+        '<div>👨‍🔧 <b>' + t + '</b> <span class="bdg st-a" style="margin-right:6px">' + d.paidOrders.length + ' فاکتور آماده تسویه</span>' + unpaidBadge + '</div>' +
+        '<div style="display:flex;align-items:center;gap:10px"><span style="color:#be123c;direction:ltr">جمع کل کارکرد: ' + fmt(d.baseBill) + ' ت</span><span>' + (isOp ? '▴' : '▾') + '</span></div>' +
+      '</div>' +
+      '<div class="drw-b ' + (isOp ? 'open' : '') + '">' +
+        (d.unpaidOrders.length ? '<div style="background:#fee2e2;border:1px solid #ef4444;color:#991b1b;padding:8px 10px;border-radius:8px;font-size:11px;font-weight:bold;margin-bottom:10px">🔒 تعداد ' + d.unpaidOrders.length + ' فاکتور این تکنسین در وضعیت «پرداخت‌نشده» است و طبق قانون سیستم وارد تسویه این دوره نمی‌شود (در کارتابل تکنسین باقی می‌ماند تا تعیین تکلیف شود).</div>' : '') +
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px;background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #cbd5e1;font-size:11px">' +
+          '<div>💰 <b>اصل کل صورتحساب‌ها:</b> ' + fmt(d.baseBill) + ' ت</div>' +
+          '<div>👨‍🔧 <b>دستمزد سیستمی تکنسین:</b> <b style="color:#15803d">' + fmt(d.sysWage) + ' ت</b></div>' +
+          '<div>💳 <b>جمع پوز اعلامی تکنسین:</b> <b style="color:#0284c7">' + fmt(d.appPos) + ' ت (' + d.posList.length + ' مورد)</b></div>' +
+          '<div>📝 <b>جمع چک اعلامی:</b> <b style="color:#7e22ce">' + fmt(d.appChk) + ' ت</b> | 💵 <b>نقد اعلامی:</b> ' + fmt(d.appCash) + ' ت</div>' +
+        '</div>' +
+
+        '<div class="sub-drw">' +
+          '<div class="sub-drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>💳 ۱. مشاهده ریزِ تک‌تک پوزهای ثبت‌شده توسط «' + t + '» (' + d.posList.length + ' تراکنش = ' + fmt(d.appPos) + ' ت)</span><span>▾</span></div>' +
+          '<div class="sub-drw-b"><div style="overflow-x:auto"><table><thead><tr><th>#</th><th>فاکتور</th><th>تاریخ</th><th>مشتری</th><th>شرح</th><th>مبلغ پوز ثبتی</th></tr></thead><tbody>' + posRows + '</tbody></table></div></div>' +
+        '</div>' +
+
+        '<div class="sub-drw">' +
+          '<div class="sub-drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>📝 ۲. مشاهده ریزِ تک‌تک چک‌ها (' + d.chkList.length + ') و نقدی‌های ثبت‌شده (' + d.cashList.length + ')</span><span>▾</span></div>' +
+          '<div class="sub-drw-b"><div class="grid2"><div style="overflow-x:auto"><b>ریز چک‌ها:</b><table><thead><tr><th>#</th><th>فاکتور</th><th>تاریخ</th><th>مشتری</th><th>مشخصات چک</th><th>مبلغ</th></tr></thead><tbody>' + chkRows + '</tbody></table></div><div style="overflow-x:auto"><b>ریز نقدی‌ها:</b><table><thead><tr><th>#</th><th>فاکتور</th><th>تاریخ</th><th>مشتری</th><th>مبلغ نقد</th></tr></thead><tbody>' + cashRows + '</tbody></table></div></div></div>' +
+        '</div>' +
+
+        '<div class="sub-drw" style="border:2px solid #0f3b2d">' +
+          '<div class="sub-drw-h" style="background:#0f3b2d;color:#f5e6b8" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>✍️ ۳. میز ورود دستی مبالغ تحویلی و تسویه قطعی با «' + t + '» (فرمول از نفی به اثبات)</span><span>▾</span></div>' +
+          '<div class="sub-drw-b open" style="background:#fffdf7">' +
+            '<div class="grid2">' +
+              '<div>' +
+                '<label style="font-size:11px;font-weight:bold">💳 الف) سرجمع واقعی کارتخوان (پوز) تحویلی به شما (تومان):</label>' +
+                '<input id="pos_' + idx + '" type="number" class="inp" style="direction:ltr;font-weight:bold" value="' + d.appPos + '" oninput="recalcTechMath(' + idx + ',\'' + t + '\')">' +
+                '<div id="pdiff_' + idx + '" style="font-size:11px;font-weight:bold;margin-bottom:8px"></div>' +
+                '<label style="font-size:11px;font-weight:bold">📝 ب) سرجمع چک‌های فیزیکی تحویل‌گرفته‌شده از تکنسین (تومان):</label>' +
+                '<input id="chk_' + idx + '" type="number" class="inp" style="direction:ltr;font-weight:bold" value="' + d.appChk + '" oninput="recalcTechMath(' + idx + ',\'' + t + '\')">' +
+                '<input id="chkn_' + idx + '" class="inp" value="' + d.chkList.map(c => c.bank + " #" + c.num).join(" | ") + '" placeholder="مشخصات چک‌ها (جهت انتقال به صندوق چک شرکت)">' +
+                '<label style="font-size:11px;font-weight:bold">👨‍🔧 ج) دستمزد و پورسانت قطعی تکنسین (تومان):</label>' +
+                '<input id="wg_' + idx + '" type="number" class="inp" style="direction:ltr;font-weight:bold;color:#15803d" value="' + d.sysWage + '" oninput="recalcTechMath(' + idx + ',\'' + t + '\')">' +
+              '</div>' +
+              '<div>' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+                  '<b style="font-size:11px;color:#0f3b2d">➕ د) کسورات توافقی، پاداش نصف‌شب، کمک‌هزینه و حساب فیمابین:</b>' +
+                  '<button class="btn" style="background:#0284c7;border:none;padding:4px 8px" onclick="addCred(\'' + t + '\',' + idx + ')">+ افزودن ردیف کسر</button>' +
+                '</div>' +
+                '<div id="credBox_' + idx + '"></div>' +
+                '<div id="mathBox_' + idx + '" style="background:#dcfce7;border:2px solid #16a34a;padding:10px;border-radius:8px;margin-top:8px;line-height:1.8"></div>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">' +
+                  '<div><label style="font-size:11px;font-weight:bold">💵 مبلغ نقدی پرداختی تکنسین:</label><input id="paid_' + idx + '" type="number" class="inp" style="direction:ltr;font-weight:bold;margin:0" value="0"></div>' +
+                  '<div><label style="font-size:11px;font-weight:bold">📥 واریز به کدام حساب خزانه؟</label><select id="dest_' + idx + '" class="inp" style="margin:0"><option value="bank">💳 حساب بانکی شرکت</option><option value="cash_safe">💵 صندوق نقدی شرکت</option></select></div>' +
+                '</div>' +
+                '<input id="nt_' + idx + '" class="inp" style="margin-top:6px" placeholder="توضیحات سند تسویه (شماره پیگیری واریز و...)">' +
+                '<button class="btn" style="width:100%;background:#16a34a;color:#fff;padding:10px;font-size:12px" onclick="submitTechSettle(' + idx + ',\'' + t + '\')">✅ ثبت تسویه، انتقال پول به خزانه مرکزی و صفر کردن دوره</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div></div>';
+  }).join("");
+
+  techs.forEach((t, idx) => { drawCredRows(t, idx); recalcTechMath(idx, t); });
 }
 
-function calcElimination() {
-  const actualPos = Number($("inActualPos").value) || 0, actualChk = Number($("inActualCheck").value) || 0, actualWage = Number($("inActualWage").value) || 0;
-  const customSum = customCredits.reduce((s, x) => s + (Number(x.amount) || 0), 0);
-  const posDiff = actualPos - curAppPos;
-  $("posDiffAlert").innerHTML = posDiff === 0 ? '<span style="color:#15803d">✅ منطبق با اعلام اپ تکنسین (' + fmt(curAppPos) + ' ت)</span>' : (posDiff < 0 ? '<span style="color:#dc2626">⚠️ پوز تحویلی ' + fmt(Math.abs(posDiff)) + ' تومان کمتر از اعلام تکنسین در اپ است!</span>' : '<span style="color:#0284c7">ℹ️ پوز تحویلی ' + fmt(posDiff) + ' تومان بیشتر از اعلام اپ است.</span>');
-  const finalCashPayable = curBaseBill - (actualPos + actualChk + actualWage + customSum);
-  $("finalMathBox").innerHTML = '<div style="font-size:11px;color:#334155"><b>🧮 فرمول نفی به اثبات:</b> کل صورتحساب (' + fmt(curBaseBill) + ') منهای [پوز تحویلی (' + fmt(actualPos) + ') + چک تحویلی (' + fmt(actualChk) + ') + دستمزد (' + fmt(actualWage) + ') + توافقی (' + fmt(customSum) + ')]</div>' +
-    '<div style="font-size:14px;font-weight:bold;color:' + (finalCashPayable >= 0 ? "#be123c" : "#15803d") + ';margin-top:6px;border-top:1px solid #86efac;padding-top:6px">' +
-    (finalCashPayable >= 0 ? '💵 مانده نهایی نقدیِ دست تکنسین: ' + fmt(finalCashPayable) + ' تومان' : '🟢 بستانکاری تکنسین از شرکت: ' + fmt(Math.abs(finalCashPayable)) + ' تومان') + '</div>';
-  $("inFinalCashPaid").value = Math.max(0, finalCashPayable);
+function addCred(t, idx) { customMap[t].push({ title: "", amount: 0 }); drawCredRows(t, idx); recalcTechMath(idx, t); }
+function delCred(t, idx, ci) { customMap[t].splice(ci, 1); drawCredRows(t, idx); recalcTechMath(idx, t); }
+function drawCredRows(t, idx) {
+  const box = $("credBox_" + idx); if (!box) return;
+  const arr = customMap[t] || [];
+  box.innerHTML = arr.length ? arr.map((c, ci) =>
+    '<div style="display:flex;gap:4px;margin-bottom:5px">' +
+    '<input class="inp" style="margin:0;flex:2" placeholder="عنوان (پاداش نصف شب / فاکتور توافقی)" value="' + c.title + '" oninput="customMap[\'' + t + '\'][' + ci + '].title=this.value">' +
+    '<input type="number" class="inp" style="margin:0;flex:1;direction:ltr;font-weight:bold" placeholder="مبلغ" value="' + c.amount + '" oninput="customMap[\'' + t + '\'][' + ci + '].amount=Number(this.value)||0;recalcTechMath(' + idx + ',\'' + t + '\')">' +
+    '<button class="btn" style="background:#ef4444;color:#fff;border:none" onclick="delCred(\'' + t + '\',' + idx + ',' + ci + ')">×</button></div>'
+  ).join("") : '<div style="font-size:10px;color:#64748b;margin-bottom:6px">ردیف توافقی ثبت نشده است (برای افزودن روی + کلیک کنید).</div>';
 }
 
-async function finalizeSettlementVoucher() {
-  if (!curAuditOrders.length) return alert("هیچ فاکتور پرداخت‌شده‌ای برای تسویه وجود ندارد.");
-  const tName = $("stTech").value, actualPos = Number($("inActualPos").value) || 0, actualCheck = Number($("inActualCheck").value) || 0, actualWage = Number($("inActualWage").value) || 0;
-  const validCredits = customCredits.filter(c => c.title.trim() || Number(c.amount) > 0);
+function recalcTechMath(idx, t) {
+  if (!$("pos_" + idx)) return;
+  const d = getTechAuditData(t);
+  const actualPos = Number($("pos_" + idx).value) || 0, actualChk = Number($("chk_" + idx).value) || 0, actualWage = Number($("wg_" + idx).value) || 0;
+  const credSum = (customMap[t] || []).reduce((s, x) => s + (Number(x.amount) || 0), 0);
+  const posDiff = actualPos - d.appPos;
+
+  $("pdiff_" + idx).innerHTML = posDiff === 0 ? '<span style="color:#15803d">✅ منطبق با جمع پوز ثبتی تکنسین در اپ</span>' : (posDiff < 0 ? '<span style="color:#dc2626">⚠️ ' + fmt(Math.abs(posDiff)) + ' ت کمتر از ادعای اپ تکنسین (به نقدی او اضافه شد)</span>' : '<span style="color:#0284c7">ℹ️ ' + fmt(posDiff) + ' ت بیشتر از ثبت اپ</span>');
+  const remCash = d.baseBill - (actualPos + actualChk + actualWage + credSum);
+  $("mathBox_" + idx).innerHTML = '<div style="font-size:11px"><b>فرمول نفی به اثبات:</b> کل کارکرد (' + fmt(d.baseBill) + ') منهای [پوز واقعی (' + fmt(actualPos) + ') + چک (' + fmt(actualChk) + ') + دستمزد (' + fmt(actualWage) + ') + توافقی (' + fmt(credSum) + ')]</div>' +
+    '<div style="font-size:13px;font-weight:bold;color:' + (remCash >= 0 ? "#be123c" : "#15803d") + ';margin-top:4px;border-top:1px solid #86efac;padding-top:4px">' +
+    (remCash >= 0 ? '💵 مانده نقدی قابل دریافت از تکنسین: ' + fmt(remCash) + ' تومان' : '🟢 طلب تکنسین از شرکت: ' + fmt(Math.abs(remCash)) + ' تومان') + '</div>';
+  $("paid_" + idx).value = Math.max(0, remCash);
+}
+
+async function submitTechSettle(idx, tName) {
+  const d = getTechAuditData(tName);
+  if (!d.paidOrders.length) return alert("هیچ فاکتور پرداخت‌شده‌ای جهت تسویه برای «" + tName + "» وجود ندارد.");
+  const actualPos = Number($("pos_" + idx).value) || 0, actualCheck = Number($("chk_" + idx).value) || 0, actualWage = Number($("wg_" + idx).value) || 0;
+  const validCredits = (customMap[tName] || []).filter(c => c.title.trim() || Number(c.amount) > 0);
   const customCreditsSum = validCredits.reduce((s, x) => s + (Number(x.amount) || 0), 0);
-  const finalCashPayable = curBaseBill - (actualPos + actualCheck + actualWage + customCreditsSum);
-  const finalCashReceived = Number($("inFinalCashPaid").value) || 0;
-  if (!confirm(`آیا سند تسویه «${tName}» (${curAuditOrders.length} فاکتور پرداخت‌شده) ثبت و بایگانی شود؟`)) return;
+  const finalCashPayable = d.baseBill - (actualPos + actualCheck + actualWage + customCreditsSum);
+  const finalCashReceived = Number($("paid_" + idx).value) || 0;
+  const cashDest = $("dest_" + idx).value;
+  const totalBroughtToCompany = actualPos + actualCheck + finalCashReceived;
+
+  if (!confirm(`آیا تسویه «${tName}» ثبت شود؟\n\n• کل آورده خالص به خزانه شرکت: ${fmt(totalBroughtToCompany)} تومان\n(شامل پوز: ${fmt(actualPos)} + نقد دریافتی: ${fmt(finalCashReceived)} + چک: ${fmt(actualCheck)})\n• حساب دوره تکنسین صفر شده و به بایگانی او منتقل می‌گردد.`)) return;
 
   const voucher = {
     code: "STL-" + Date.now().toString().slice(-6), technicianName: tName,
     fromDate: $("stFrom").value.trim() || "ابتدای دوره", toDate: $("stTo").value.trim() || toJ(new Date()),
-    ordersCount: curAuditOrders.length, invoiceCodes: curAuditOrders.map(r => r.invoiceCode),
-    totalBill: curBaseBill, appClaimPos: curAppPos, appClaimCheck: curAppChk, appClaimCash: curAppCash, sysWage: curSysWage,
-    actualPos, posDiff: actualPos - curAppPos, actualCheck, checkNote: $("inCheckNote").value.trim(),
-    actualWage, customCredits: validCredits, customCreditsSum, finalCashPayable, finalCashReceived,
-    note: $("inSettleNote").value.trim(), byUser: uName
+    ordersCount: d.paidOrders.length, invoiceCodes: d.paidOrders.map(r => r.invoiceCode),
+    posBreakdown: d.posList, chkBreakdown: d.chkList,
+    totalBill: d.baseBill, appClaimPos: d.appPos, appClaimCheck: d.appChk, appClaimCash: d.appCash, sysWage: d.sysWage,
+    actualPos, posDiff: actualPos - d.appPos, actualCheck, checkNote: $("chkn_" + idx).value.trim(),
+    actualWage, customCredits: validCredits, customCreditsSum, finalCashPayable, finalCashReceived, cashDest,
+    totalBroughtToCompany, note: $("nt_" + idx).value.trim(), byUser: uName
   };
-  const r = await fetch(API + "/requests/settle-tech", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ technicianName: tName, reqIds: curAuditOrders.map(x => x._id), voucher }) });
+
+  const r = await fetch(API + "/requests/settle-tech", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ technicianName: tName, reqIds: d.paidOrders.map(x => x._id), voucher })
+  });
   if (r.ok) {
-    alert("✅ سند تسویه ثبت شد. اکنون از تب «بایگانی اسناد تسویه» می‌توانید نسخه چاپی/PDF یا پیامک ریز صورتحساب را برای تکنسین ارسال کنید.");
-    customCredits = []; $("inSettleNote").value = ""; await loadAcc();
+    customMap[tName] = [];
+    alert("✅ تسویه ثبت شد! مبلغ " + fmt(totalBroughtToCompany) + " تومان به خزانه مرکزی شرکت اضافه گردید و سند در بایگانی «" + tName + "» ذخیره شد.");
+    await loadAcc();
   }
+}
+
+function renderTechArchAccordions() {
+  const allV = settings.settlementVouchers || [];
+  $("techArchAccordions").innerHTML = techs.map(t => {
+    const tVouchers = allV.map((v, gi) => ({ ...v, gi })).filter(v => v.technicianName === t);
+    const sumBrought = tVouchers.reduce((s, v) => s + ((Number(v.actualPos) || 0) + (Number(v.actualCheck) || 0) + (Number(v.finalCashReceived) || 0)), 0);
+    const sumBills = tVouchers.reduce((s, v) => s + (Number(v.totalBill) || 0), 0);
+
+    const vCards = tVouchers.length ? tVouchers.map(v => {
+      const crTxt = (v.customCredits || []).map(c => c.title + ": " + fmt(c.amount) + " ت").join(" | ") || "ندارد");
+    await loadAcc();
+  }
+}
+
+function renderTechArchAccordions() {
+  const allV = settings.settlementVouchers || [];
+  $("techArchAccordions").innerHTML = techs.map(t => {
+    const tVouchers = allV.map((v, gi) => ({ ...v, gi })).filter(v => v.technicianName === t);
+    const sumBrought = tVouchers.reduce((s, v) => s + ((Number(v.actualPos) || 0) + (Number(v.actualCheck) || 0) + (Number(v.finalCashReceived) || 0)), 0);
+    const sumBills = tVouchers.reduce((s, v) => s + (Number(v.totalBill) || 0), 0);
+
+    const vCards = tVouchers.length ? tVouchers.map(v => {
+      const crTxt = (v.customCredits || []).map(c => c.title + ": " + fmt(c.amount) + " ت").join(" | ") || "ندارد";
+      return '<div class="sub-drw">' +
+        '<div class="sub-drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')">' +
+          '<span>📄 سند <b>' + v.code + '</b> (' + toJ(v.date) + ') — ' + v.ordersCount + ' سرویس</span>' +
+          '<span style="direction:ltr;color:#0f3b2d">آورده خالص به شرکت: <b>' + fmt((Number(v.actualPos)||0)+(Number(v.actualCheck)||0)+(Number(v.finalCashReceived)||0)) + ' ت</b> ▾</span>' +
+        '</div>' +
+        '<div class="sub-drw-b">' +
+          '<div style="font-size:11px;line-height:1.9">' +
+            '<div>📅 <b>بازه دوره:</b> ' + v.fromDate + ' تا ' + v.toDate + ' | <b>شماره فاکتورها:</b> ' + (v.invoiceCodes || []).join(" , ") + '</div>' +
+            '<div>💰 <b>اصل کل صورتحساب‌ها:</b> ' + fmt(v.totalBill) + ' ت | 👨‍🔧 <b>دستمزد تکنسین:</b> <b style="color:#15803d">' + fmt(v.actualWage) + ' ت</b></div>' +
+            '<div>💳 <b>پوز:</b> اعلام تکنسین در اپ: ' + fmt(v.appClaimPos) + ' ت | <b>تحویلی واقعی: ' + fmt(v.actualPos) + ' ت</b> (مغایرت: ' + fmt(v.posDiff) + ' ت)</div>' +
+            '<div>📝 <b>چک:</b> اعلام اپ: ' + fmt(v.appClaimCheck) + ' ت | <b>تحویلی واقعی: ' + fmt(v.actualCheck) + ' ت</b> (' + (v.checkNote || "---") + ')</div>' +
+            '<div>➕ <b>کسورات توافقی و پاداش:</b> ' + fmt(v.customCreditsSum) + ' ت (' + crTxt + ')</div>' +
+            '<div style="background:#fefce8;padding:6px 8px;border-radius:6px;margin-top:4px">💵 <b>مانده نقدی محاسبه‌شده:</b> <b style="color:#be123c">' + fmt(v.finalCashPayable) + ' ت</b> | <b>دریافتی نهایی از تکنسین:</b> <b style="color:#15803d">' + fmt(v.finalCashReceived) + ' ت</b></div>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;margin-top:8px">' +
+            '<button class="btn" style="background:#0284c7;color:#fff;border:none" onclick="printOrSmsVoucher(' + v.gi + ',\'pdf\')">🖨️ مشاهده و چاپ فاکتور تسویه (PDF)</button>' +
+            '<button class="btn" style="background:#16a34a;color:#fff;border:none" onclick="printOrSmsVoucher(' + v.gi + ',\'sms\')">📲 پیامک ریز صورتحساب به تکنسین</button>' +
+          '</div>' +
+        '</div></div>';
+    }).join("") : '<div style="padding:10px;color:#64748b;font-size:11px">هنوز سند تسویه‌ای برای «' + t + '» ثبت نشده است.</div>';
+
+    return '<div class="drw">' +
+      '<div class="drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')">' +
+        '<div>👨‍🔧 <b>بایگانی تسویه‌های ' + t + '</b> <span class="bdg st-d" style="margin-right:6px">' + tVouchers.length + ' سند تسویه</span></div>' +
+        '<div style="font-size:11px;color:#15803d">💎 جمع کل پول دریافتی از این تکنسین: <b>' + fmt(sumBrought) + ' ت</b> (از کل کارکرد: ' + fmt(sumBills) + ' ت) ▾</div>' +
+      '</div>' +
+      '<div class="drw-b">' + vCards + '</div></div>';
+  }).join("");
+}
+
+function renderVaultAccordions() {
+  const v = getTreasuryNumbers(), allV = settings.settlementVouchers || [], txList = settings.accountingTx || [];
+  const techContribRows = techs.map(t => {
+    const tv = allV.filter(x => x.technicianName === t);
+    const posS = tv.reduce((s, x) => s + (Number(x.actualPos) || 0), 0);
+    const cashS = tv.reduce((s, x) => s + (Number(x.finalCashReceived) || 0), 0);
+    const chkS = tv.reduce((s, x) => s + (Number(x.actualCheck) || 0), 0);
+    const wageS = tv.reduce((s, x) => s + (Number(x.actualWage) || 0) + (Number(x.customCreditsSum) || 0), 0);
+    return '<tr><td><b>👨‍🔧 ' + t + '</b></td><td>' + tv.length + ' دوره</td><td>' + fmt(posS) + ' ت</td><td>' + fmt(cashS) + ' ت</td><td>' + fmt(chkS) + ' ت</td><td style="color:#64748b">' + fmt(wageS) + ' ت</td><td style="font-weight:bold;color:#15803d;background:#f0fdf4">' + fmt(posS + cashS + chkS) + ' تومان</td></tr>';
+  }).join("");
+
+  const checkTxs = txList.filter(x => (x.type === "in_settlement" && Number(x.checkAmount) > 0) || (x.type === "in_manual" && x.channel === "check"));
+  const checkRows = checkTxs.length ? checkTxs.map(c => {
+    const amt = c.type === "in_settlement" ? c.checkAmount : c.amount;
+    return '<tr><td>' + toJ(c.date) + '</td><td><b>' + c.title + '</b></td><td>' + (c.note || "---") + '</td><td style="direction:ltr;font-weight:bold">' + fmt(amt) + ' ت</td>' +
+      '<td>' + (c.checkCleared ? '<span class="bdg st-d">✅ پاس شده (در حساب بانک)</span>' : '<span class="bdg st-p">⏳ در جریان وصول</span>') + '</td>' +
+      '<td>' + (!c.checkCleared ? '<button class="btn" style="background:#16a34a;color:#fff;border:none" onclick="clearCheckTx(\'' + c.id + '\')">✅ ثبت پاس شدن چک</button>' : '---') + '</td></tr>';
+  }).jon ? checkTxs.map(c => '').join("") : (checkTxs.length ? checkTxs.map(c => '<tr><td>' + toJ(c.date) + '</td><td><b>' + c.title + '</b></td><td>' + (c.note || "---") + '</td><td style="direction:ltr;font-weight:bold">' + fmt(c.type === "in_settlement" ? c.checkAmount : c.amount) + ' ت</td><td>' + (c.checkCleared ? '<span class="bdg st-d">✅ پاس شده</span>' : '<span class="bdg st-p">⏳ وصول</span>') + '</td><td>' + (!c.checkCleared ? '<button class="btn" style="background:#16a34a;color:#fff;border:none" onclick="clearCheckTx(\'' + c.id + '\')">پاس شد</button>' : '---') + '</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center">چکی ثبت نشده است.</td></tr>');
+
+  $("vaultAccordions").innerHTML =
+    '<div class="drw"><div class="drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>💰 ۱. جدول تجمیع پول‌های دریافتی از تکنسین‌ها</span><span>▾</span></div>' +
+    '<div class="drw-b open"><div style="overflow-x:auto"><table><thead><tr><th>تکنسین</th><th>دوره</th><th>پوز</th><th>نقد</th><th>چک</th><th>دستمزد</th><th>💎 کل آورده</th></tr></thead><tbody>' + techContribRows + '</tbody></table></div></div></div>' +
+    '<div class="drw"><div class="drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>📝 ۲. صندوق چک‌های دریافتی</span><span>▾</span></div>' +
+    '<div class="drw-b"><div style="overflow-x:auto"><table><thead><tr><th>تاریخ</th><th>بابت</th><th>مشخصات</th><th>مبلغ</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>' + checkRows + '</tbody></table></div></div></div>';
+}
+
+async function clearCheckTx(txId) {
+  if (!confirm("چک پاس شد؟")) return;
+  const txList = (settings.accountingTx || []).map(x => x.id === txId ? { ...x, checkCleared: true } : x);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accountingTx: txList }) });
+  await loadAcc();
+}
+
+function renderExpenseAccordions() {
+  const txList = (settings.accountingTx || []).filter(x => x.type !== "in_settlement");
+  const cats = ["خرید کالا و شارژ انبار", "هزینه‌های روزمره و جاری", "هزینه‌های خدمات و ابزار", "تبلیغات و بازاریابی", "حقوق و برداشت مدیریتی"];
+  const catDrws = cats.map(cat => {
+    const items = txList.filter(x => x.category === cat);
+    const sum = items.reduce((s, x) => s + (Number(x.amount) || 0), 0);
+    return '<div class="sub-drw"><div class="sub-drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>📂 ' + cat + ' (' + items.length + ' مورد)</span><span style="direction:ltr;color:#be123c">جمع: ' + fmt(sum) + ' ت ▾</span></div>' +
+      '<div class="sub-drw-b"><div style="overflow-x:auto"><table><thead><tr><th>تاریخ</th><th>شرح</th><th>حساب</th><th>مبلغ</th><th>حذف</th></tr></thead><tbody>' +
+      (items.length ? items.map(x => '<tr><td>' + toJ(x.date) + '</td><td><b>' + x.title + '</b></td><td>' + (x.channel === "cash" ? "نقد" : "بانک") + '</td><td style="direction:ltr;font-weight:bold;color:#dc2626">' + fmt(x.amount) + ' ت</td><td><button class="btn" style="background:#ef4444;color:#fff;border:none" onclick="delTx(\'' + x.id + '\')">🗑️</button></td></tr>').join("") : '<tr><td colspan="5" style="text-align:center">ثبت نشده.</td></tr>') +
+      '</tbody></table></div></div></div>';
+  }).join("");
+
+  $("expenseAccordions").innerHTML =
+    '<div class="drw"><div class="drw-h" style="background:#fff1f2;color:#be123c" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>➕ ۱. ثبت هزینه یا خرید جدید</span><span>▾</span></div>' +
+    '<div class="drw-b open"><div class="grid2">' +
+      '<div><label style="font-size:11px;font-weight:bold">نوع:</label><select id="exType" class="inp"><option value="out_expense">🔴 هزینه / خرید</option><option value="in_manual">🟢 ورودی متفرقه</option></select>' +
+      '<label style="font-size:11px;font-weight:bold">دسته:</label><select id="exCat" class="inp">' + cats.map(c => '<option value="' + c + '">' + c + '</option>').join("") + '</select></div>' +
+      '<div><label style="font-size:11px;font-weight:bold">از کدام حساب؟</label><select id="exChannel" class="inp"><option value="pos">💳 بانک / پوز</option><option value="cash">💵 صندوق نقد</option></select>' +
+      '<label style="font-size:11px;font-weight:bold">مبلغ (تومان):</label><input id="exAmt" type="number" class="inp" style="direction:ltr;font-weight:bold" placeholder="0"></div>' +
+    '</div><input id="exTitle" class="inp" placeholder="شرح دقیق هزینه...">' +
+    '<button class="btn" style="width:100%;background:#be123c;color:#fff;border:none;padding:10px" onclick="addAccountingTx()">💾 ثبت و بروزرسانی خزانه</button></div></div>' +
+    '<div class="drw"><div class="drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>🗂️ ۲. ریز مخارج به تفکیک دسته</span><span>▾</span></div><div class="drw-b open">' + catDrws + '</div></div>';
+}
+
+function renderReportAccordions() {
+  const v = getTreasuryNumbers(), allV = settings.settlementVouchers || [];
+  const totalGrossBills = allV.reduce((s, x) => s + (Number(x.totalBill) || 0), 0);
+  const totalTechWages = allV.reduce((s, x) => s + (Number(x.actualWage) || 0) + (Number(x.customCreditsSum) || 0), 0);
+
+  $("reportAccordions").innerHTML =
+    '<div class="drw"><div class="drw-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>📈 خلاصه کلان آورده‌ها و مخارج</span><span>▾</span></div>' +
+    '<div class="drw-b open" style="line-height:2.1;font-size:12px">' +
+      '<div>۱. <b>کل فاکتورهای تسویه‌شده:</b> ' + fmt(totalGrossBills) + ' ت</div>' +
+      '<div>۲. <b>کل دستمزد و پاداش تکنسین‌ها:</b> <span style="color:#b45309">-' + fmt(totalTechWages) + ' ت</span></div>' +
+      '<div style="background:#f0fdf4;padding:8px;border-radius:8px">۳. <b>🟢 کل آورده خالص خزانه:</b> <b style="color:#15803d">' + fmt(v.totalIn) + ' ت</b></div>' +
+      '<div style="background:#fff1f2;padding:8px;border-radius:8px;margin-top:6px">۴. <b>🔴 کل مخارج و خریدها:</b> <b style="color:#dc2626">-' + fmt(v.totalOut) + ' ت</b></div>' +
+      '<div style="background:#09261d;color:#f5e6b8;padding:12px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between"><span>💎 دارایی خالص خزانه:</span><b style="color:#4ade80">' + fmt(v.netLiquid + v.chkPending) + ' ت</b></div>' +
+    '</div></div>';
 }
 
 function printOrSmsVoucher(idx, mode) {
@@ -283,22 +479,13 @@ function printOrSmsVoucher(idx, mode) {
   const crTxt = (v.customCredits || []).map(c => c.title + ": " + fmt(c.amount) + " ت").join(" | ") || "ندارد";
   if (mode === "sms") {
     const ph = (settings.techMeta?.[v.technicianName]?.phone || "").replace(/\D/g, "");
-    const msg = `صورتحساب تسویه سامی‌واتر (${v.code})\nتکنسین: ${v.technicianName}\nتعداد کار: ${v.ordersCount}\nکل صورتحساب: ${fmt(v.totalBill)} ت\nپوز (اعلامی شما: ${fmt(v.appClaimPos)} | تحویلی: ${fmt(v.actualPos)})\nچک (اعلامی: ${fmt(v.appClaimCheck)} | تحویلی: ${fmt(v.actualCheck)})\nدستمزد شما: ${fmt(v.actualWage)} ت\nکسورات/پاداش توافقی: ${fmt(v.customCreditsSum)} ت\nمانده نقدی نهایی: ${fmt(v.finalCashPayable)} ت\nپرداختی شما: ${fmt(v.finalCashReceived)} ت`;
-    location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg);
-    return;
+    const msg = `تسویه سامی‌واتر (${v.code})\nتکنسین: ${v.technicianName}\nفاکتورها: ${v.ordersCount}\nکل کارکرد: ${fmt(v.totalBill)} ت\nپوز تحویلی: ${fmt(v.actualPos)} ت\nچک تحویلی: ${fmt(v.actualCheck)} ت\nدستمزد: ${fmt(v.actualWage)} ت\nمانده نهایی نقدی: ${fmt(v.finalCashPayable)} ت`;
+    location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg); return;
   }
+  const posRowsHtml = (v.posBreakdown || []).map((p, i) => `<tr><td>${i + 1}</td><td>${p.code}</td><td>${p.date}</td><td>${p.cust}</td><td>${fmt(p.amt)} ت</td></tr>`).join("") || '<tr><td colspan="5">ثبت نشده</td></tr>';
   const w = window.open("", "_blank");
-  w.document.write(`<html dir="rtl"><head><meta charset="UTF-8"><title>صورتحساب تسویه ${v.code}</title><style>body{font-family:Tahoma;padding:20px;color:#1e293b}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #94a3b8;padding:8px;text-align:right;font-size:12px}th{background:#f1f5f9}.hdr{border:2px solid #0f3b2d;padding:14px;border-radius:10px;background:#f0fdf4;display:flex;justify-content:space-between}</style></head><body><div class="hdr"><div><h2>📄 صورتحساب رسمی تسویه دوره تکنسین — سامی‌واتر</h2><p>تکنسین: <b>${v.technicianName}</b> | بازه دوره: ${v.fromDate} تا ${v.toDate}</p></div><div style="text-align:left"><b>شماره سند: ${v.code}</b><br>تاریخ: ${toJ(v.date)}</div></div><table><tr><th>شرح ردیف</th><th>اعلام‌شده توسط تکنسین در اپ</th><th>تحویل‌گرفته‌شده واقعی در شرکت</th><th>مغایرت</th></tr><tr><td><b>💰 کل مبلغ فاکتورها (${v.ordersCount} سرویس)</b></td><td colspan="3"><b>${fmt(v.totalBill)} تومان</b> (فاکتورها: ${(v.invoiceCodes || []).join(" , ")})</td></tr><tr><td>💳 دستگاه کارتخوان (پوز)</td><td>${fmt(v.appClaimPos)} ت</td><td><b>${fmt(v.actualPos)} ت</b></td><td>${fmt(v.posDiff)} ت</td></tr><tr><td>📝 چک‌های مشتریان</td><td>${fmt(v.appClaimCheck)} ت</td><td><b>${fmt(v.actualCheck)} ت</b> (${v.checkNote || "---"})</td><td>${fmt((v.actualCheck || 0) - (v.appClaimCheck || 0))} ت</td></tr><tr><td>👨‍🔧 دستمزد و پورسانت تکنسین</td><td>${fmt(v.sysWage)} ت</td><td colspan="2"><b style="color:#15803d">${fmt(v.actualWage)} تومان (کسر از بدهی)</b></td></tr><tr><td>➕ پاداش و کسورات توافقی</td><td colspan="3"><b>${fmt(v.customCreditsSum)} تومان</b> (${crTxt})</td></tr><tr style="background:#fefce8;font-size:14px"><td><b>💵 مانده نهایی نقدی (نفی به اثبات)</b></td><td colspan="3"><b style="color:#be123c">${fmt(v.finalCashPayable)} تومان</b> | مبلغ واریزی تسویه: <b style="color:#15803d">${fmt(v.finalCashReceived)} تومان</b></td></tr></table><p>توضیحات: ${v.note || "---"}</p><button onclick="window.print()" style="padding:10px 20px;background:#0f3b2d;color:#fff;border:none;border-radius:6px;cursor:pointer">🖨️ چاپ / ذخیره به صورت PDF</button></body></html>`);
+  w.document.write(`<html dir="rtl"><head><meta charset="UTF-8"><title>سند تسویه ${v.code}</title><style>body{font-family:Tahoma;padding:20px;color:#1e293b}table{width:100%;border-collapse:collapse;margin:10px 0}th,td{border:1px solid #94a3b8;padding:7px;text-align:right;font-size:11px}th{background:#f1f5f9}.hdr{border:2px solid #0f3b2d;padding:12px;border-radius:10px;background:#f0fdf4;display:flex;justify-content:space-between}</style></head><body><div class="hdr"><div><h2>📄 صورتحساب تسویه تکنسین</h2><p>تکنسین: <b>${v.technicianName}</b></p></div><div><b>سند: ${v.code}</b></div></div><table><tr><th>شرح</th><th>مبلغ</th></tr><tr><td>کل کارکرد</td><td><b>${fmt(v.totalBill)} ت</b></td></tr><tr><td>پوز واقعی</td><td>${fmt(v.actualPos)} ت</td></tr><tr><td>چک واقعی</td><td>${fmt(v.actualCheck)} ت</td></tr><tr><td>دستمزد</td><td>${fmt(v.actualWage)} ت</td></tr><tr><td>مانده نقدی</td><td><b style="color:#be123c">${fmt(v.finalCashPayable)} ت</b></td></tr></table><button onclick="window.print()" style="padding:10px 20px;background:#0f3b2d;color:#fff;border:none;border-radius:6px;cursor:pointer">🖨️ چاپ PDF</button></body></html>`);
   w.document.close();
-}
-
-function renderVouchers() {
-  const list = settings.settlementVouchers || [];
-  $("vCnt").textContent = list.length;
-  $("vouchersB").innerHTML = list.length ? list.map((v, i) => {
-    const crTxt = (v.customCredits || []).map(c => c.title + ": " + fmt(c.amount) + " ت").join("<br>") || "---";
-    return '<tr><td style="direction:ltr"><b>' + v.code + '</b><br>' + toJ(v.date) + '</td><td><b>👨‍🔧 ' + v.technicianName + '</b><br><span style="font-size:10px">' + v.ordersCount + ' سرویس</span></td><td><b>' + fmt(v.totalBill) + ' ت</b></td><td>اعلام اپ: ' + fmt(v.appClaimPos) + '<br><b>تحویلی: ' + fmt(v.actualPos) + ' ت</b></td><td>اعلام اپ: ' + fmt(v.appClaimCheck) + '<br><b>تحویلی: ' + fmt(v.actualCheck) + ' ت</b><br>دستمزد: <b style="color:#15803d">' + fmt(v.actualWage) + '</b></td><td>' + crTxt + '</td><td>مانده نقدی: <b style="color:#be123c">' + fmt(v.finalCashPayable) + ' ت</b><br>دریافتی: <b style="color:#15803d">' + fmt(v.finalCashReceived) + ' ت</b><div style="display:flex;gap:4px;margin-top:5px"><button class="btn" style="background:#0284c7;color:#fff;border:none" onclick="printOrSmsVoucher(' + i + ',\'pdf\')">🖨️ برگه PDF</button><button class="btn" style="background:#16a34a;color:#fff;border:none" onclick="printOrSmsVoucher(' + i + ',\'sms\')">📲 پیامک ریزحساب</button></div></td></tr>';
-  }).join("") : '<tr><td colspan="7" style="text-align:center;padding:14px">هنوز سند تسویه‌ای ثبت نشده است.</td></tr>';
 }
 
 async function addAccountingTx() {
@@ -317,19 +504,6 @@ async function delTx(id) {
   await loadAcc();
 }
 
-function renderExpensesAndTreasury() {
-  const txList = settings.accountingTx || [], manualList = txList.filter(x => x.type !== "in_settlement");
-  const chMap = { pos: "💳 پوز/بانک", cash: "💵 نقدی/کارت", check: "📝 چک" };
-  $("expB").innerHTML = manualList.length ? manualList.map(x => '<tr><td>' + toJ(x.date) + '</td><td><span class="bdg ' + (x.type === "out_expense" ? "st-al" : "st-d") + '">' + (x.type === "out_expense" ? "🔴 هزینه/خرید" : "🟢 ورودی") + '</span></td><td><b>' + x.category + '</b></td><td>' + x.title + '</td><td>' + (chMap[x.channel] || "") + '</td><td style="direction:ltr;font-weight:bold">' + fmt(x.amount) + ' ت</td><td>' + (x.by || "") + '</td><td><button class="btn" style="background:#ef4444;color:#fff;border:none" onclick="delTx(\'' + x.id + '\')">🗑️</button></td></tr>').join("") : '<tr><td colspan="8" style="text-align:center;padding:12px">ثبت نشده است.</td></tr>';
-  let posIn = 0, cashIn = 0, chkIn = 0, expOut = 0;
-  txList.forEach(x => {
-    if (x.type === "in_settlement") { posIn += Number(x.posAmount) || 0; cashIn += Number(x.cashAmount) || 0; chkIn += Number(x.checkAmount) || 0; }
-    else if (x.type === "in_manual") { if (x.channel === "pos") posIn += Number(x.amount) || 0; else if (x.channel === "check") chkIn += Number(x.amount) || 0; else cashIn += Number(x.amount) || 0; }
-    else if (x.type === "out_expense") expOut += Number(x.amount) || 0;
-  });
-  $("trStats").innerHTML = '<div class="stat-bx"><span>💳 ورودی پوزها</span><b style="color:#0284c7">' + fmt(posIn) + ' ت</b></div><div class="stat-bx"><span>💵 نقدی تسویه‌ها</span><b style="color:#15803d">' + fmt(cashIn) + ' ت</b></div><div class="stat-bx"><span>📝 چک‌ها</span><b style="color:#7e22ce">' + fmt(chkIn) + ' ت</b></div><div class="stat-bx" style="background:#fef2f2"><span>🔴 هزینه‌ها و خرید</span><b style="color:#dc2626">-' + fmt(expOut) + ' ت</b></div><div class="stat-bx" style="grid-column:1/-1;background:#09261d;color:#f5e6b8"><span>💎 مانده خالص خزانه</span><b style="font-size:18px;color:#4ade80">' + fmt((posIn + cashIn + chkIn) - expOut) + ' تومان</b></div>';
-  $("treasuryB").innerHTML = txList.length ? txList.map(x => '<tr><td>' + toJ(x.date) + '</td><td><b>' + x.category + '</b></td><td>' + x.title + '</td><td>' + (x.posAmount ? fmt(x.posAmount) : '---') + '</td><td>' + (x.cashAmount ? fmt(x.cashAmount) : '---') + '</td><td>' + (x.checkAmount ? fmt(x.checkAmount) : '---') + '</td><td style="color:#dc2626">' + (x.type === "out_expense" ? '-' + fmt(x.amount) : '---') + '</td><td>' + (x.note || x.by || "---") + '</td></tr>').join("") : '<tr><td colspan="8" style="text-align:center;padding:12px">گردش مالی ثبت نشده است.</td></tr>';
-}
 loadAcc();
 </script>
 </body>
