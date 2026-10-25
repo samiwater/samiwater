@@ -504,7 +504,7 @@ setTimeout(() => {
 }, 100);
       
 // PART 3 END
-      let curBranch = "اصفهان (مرکزی)";
+  let curBranch = "اصفهان (مرکزی)";
 
 function applyRoleLocks() {
   if (!localStorage.getItem("token")) { location.href = "login.html"; return; }
@@ -617,7 +617,7 @@ function openStockM(tName) {
   if (!settings.techMeta) settings.techMeta = {};
   const idxCode = "Sam" + (techs.indexOf(tName) + 1) + "2";
   if (!settings.techMeta[tName]) settings.techMeta[tName] = { userCode: idxCode, pin: "1234", phone: "", cardNumber: "", locked: false, stock: {}, logs: [] };
-  const m = settings.techMeta[tName], goods = (settings.catalog || []).filter(c => c.isGoods);
+  const m = settings.techMeta[tName];
   $("mTit").textContent = "⚙️ تنظیمات امنیتی و کارت بانکی: " + tName;
   $("mBod").innerHTML = '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px">' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">' +
@@ -625,7 +625,7 @@ function openStockM(tName) {
     '<div><label style="font-size:10px;font-weight:bold">🔑 رمز:</label><input id="tkPin" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.pin || "1234") + '"></div>' +
     '<div><label style="font-size:10px;font-weight:bold">📱 موبایل:</label><input id="tkPh" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.phone || "") + '"></div></div>' +
     '<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:bold">💳 شماره کارت بانکی تکنسین (درج در فاکتور رسمی):</label><input id="tkCrd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + (m.cardNumber || "") + '"></div>' +
-    '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن ورود تکنسین</label></div>' +
+    '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن ورود تکنسین (توقف کار)</label></div>' +
     (uRole === "admin" ? '<div style="margin-bottom:8px"><button class="btn" style="background:#334155;width:100%" onclick="openStaffAccM()">👥 مدیریت کد پشتیبانی (Sup1)، انبار (St1) و حسابدار (Acc1)</button></div>' : '') +
     '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره تنظیمات تکنسین ✅</button>';
   $("cModal").style.display = "flex";
@@ -711,6 +711,7 @@ function drawRem() {
   }).join("");
 }
 // PART 4 END
+
     
       
     function remTimeM(cId, ix, oldRem) {
