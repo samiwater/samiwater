@@ -3,1009 +3,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>پنل مدیریت سامی‌واتر</title>
+<title>پنل جامع مدیریت خدمات | سامی‌واتر</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
-body{background:#f1f5f9;color:#1e293b;padding:10px}
-.hdr{background:#1e293b;color:#fff;padding:14px;border-radius:12px;margin-bottom:12px}
-.hdr-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
-.hdr h1{font-size:15px;color:#38bdf8;display:flex;align-items:center;gap:8px}
-.hdr-logo{width:30px;height:30px;border-radius:7px;border:1.5px solid #facc15;background:#0f3b2d}
-.pill{background:#0f172a;color:#facc15;border:1px solid #facc15;padding:3px 8px;border-radius:14px;font-size:11px;font-weight:bold}
-.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-@media(min-width:700px){.nav{grid-template-columns:repeat(5,1fr)}}
-.nb{background:#334155;color:#e2e8f0;border:1px solid #475569;padding:9px 5px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer;text-align:center}
-.nb.active{background:#0284c7;color:#fff;border-color:#38bdf8}
-.card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px #0001;margin-bottom:12px;display:none}
-.card.active{display:block}
-.card h2{font-size:13px;margin-bottom:8px;border-bottom:2px solid #e2e8f0;padding-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
-table{width:100%;border-collapse:collapse;margin-top:4px}
-th,td{border:1px solid #cbd5e1;padding:7px;text-align:right;font-size:11px;vertical-align:middle}
-th{background:#f8fafc;white-space:nowrap}
-.bdg{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;display:inline-block}
-.st-p{background:#fef3c7;color:#d97706}.st-a{background:#e0f2fe;color:#0284c7}.st-s{background:#f3e8ff;color:#7e22ce}.st-al{background:#fee2e2;color:#dc2626}.st-d{background:#dcfce7;color:#15803d}
-.sel{padding:4px;border:1px solid #cbd5e1;border-radius:5px;font-size:11px;width:100%;min-width:95px}
-.lnk{color:#0284c7;font-weight:bold;cursor:pointer;text-decoration:underline}
-.fg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
-@media(min-width:600px){.fg{grid-template-columns:repeat(4,1fr)}}
-.fb{background:#f8fafc;border:1px solid #cbd5e1;padding:7px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer}
-.fb.active{background:#0f172a;color:#38bdf8;border-color:#0284c7}
-.sb{background:#f8fafc;border:1px solid #cbd5e1;border-radius:7px;padding:7px;margin-bottom:8px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;font-size:11px}
-.at{background:#e2e8f0;border:1px solid #cbd5e1;padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;margin-left:3px;font-weight:bold}
-.at.active{background:#0284c7;color:#fff}
-.btn{background:#0284c7;color:#fff;border:none;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold}
-.b-del{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:4px 7px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:bold;margin-top:3px;width:100%}
-.m-bg{position:fixed;inset:0;background:#0f172ab3;display:none;justify-content:center;align-items:center;z-index:999;padding:10px}
-.m-bx{background:#fff;width:min(540px,100%);border-radius:10px;padding:14px;max-height:90vh;overflow-y:auto}
-.inp{width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;margin-bottom:6px;font-family:inherit}
-@media(min-width:1024px){
-  body{padding:18px 26px}.hdr{padding:18px 22px}.hdr h1{font-size:19px}.nb{font-size:13px;padding:11px 8px}
-  .card{padding:18px}.card h2{font-size:15px}th,td{font-size:13px;padding:10px}.btn,.fb,.sel{font-size:12px;padding:7px 12px}
-}
+body{background:#0f172a;color:#1e293b;padding:8px}
+.wrap{width:100%;max-width:1440px;margin:0 auto}
+.hdr{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:14px;border-radius:14px;border:2px solid #d9b24c;margin-bottom:10px}
+.hdr-t{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pill{background:#09261d;color:#facc15;border:1px solid #d9b24c;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:bold;text-decoration:none;cursor:pointer}
+.nav-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+@media(min-width:900px){.nav-grid{grid-template-columns:repeat(5,1fr)}}
+.n-btn{background:#1e293b;color:#f8fafc;border:1px solid #475569;padding:10px 8px;border-radius:10px;font-size:11px;font-weight:bold;cursor:pointer;text-align:center}
+.n-btn.active{background:#0284c7;color:#fff;border-color:#7dd3fc;box-shadow:0 3px 10px #0284c755}
+.panel{display:none;background:#f8fafc;border-radius:14px;padding:12px;border:2px solid #cbd5e1;margin-bottom:12px}
+.panel.open{display:block}
+.card{background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;padding:10px;margin-bottom:8px}
+.grid2{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:900px){.grid2{grid-template-columns:1fr 1fr}}
+.inp{width:100%;padding:7px 9px;border:1.5px solid #94a3b8;border-radius:7px;font-size:12px;margin-bottom:6px;font-family:inherit}
+.btn{background:#0f3b2d;color:#f5e6b8;border:1px solid #d9b24c;padding:7px 11px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:bold}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:6px}
+th,td{border:1px solid #cbd5e1;padding:6px;text-align:right;font-size:11px;vertical-align:middle}
+th{background:#f1f5f9;white-space:nowrap}
+.bdg{padding:3px 7px;border-radius:5px;font-size:10px;font-weight:bold;display:inline-block}
+.st-d{background:#dcfce7;color:#15803d}.st-al{background:#fee2e2;color:#dc2626}.st-p{background:#fef3c7;color:#b45309}.st-a{background:#e0f2fe;color:#0369a1}
 </style>
 </head>
 <body>
-<div class="hdr">
-  <div class="hdr-t">
-    <h1><img src="/logo-samiwater.png" class="hdr-logo" onerror="this.style.display='none'"> پنل جامع مدیریت سامی‌واتر</h1>
-    <div style="display:flex;gap:5px;flex-wrap:wrap"><a href="tech.html" target="_blank" class="pill" style="color:#4ade80;border-color:#4ade80;text-decoration:none">📱 پنل تکنسین</a><a href="accounting.html" class="pill" style="color:#facc15;border-color:#facc15;text-decoration:none">📊 نرم‌افزار حسابداری</a><span id="syncP" class="pill" style="color:#38bdf8;border-color:#38bdf8">⚡ آماده</span><span id="rPill" class="pill">👑 مدیر ارشد</span></div>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-t">
+      <h1 style="font-size:15px;color:#38bdf8">💧 پنل جامع مدیریت عملیات و خدمات سامی‌واتر</h1>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="pill" onclick="loadDash()">🔄 بروزرسانی</button>
+        <a id="btnAccLink" href="accounting.html" class="pill" style="color:#fde047;border-color:#fde047">📊 نرم‌افزار حسابداری</a>
+        <a id="btnTechLink" href="tech.html" class="pill" style="color:#4ade80;border-color:#4ade80">📱 پنل تکنسین</a>
+        <span id="uBadge" class="pill">👑 مدیر</span>
+        <button class="pill" style="background:#dc2626;color:#fff;border:none" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
+      </div>
+    </div>
+    <div class="nav-grid" id="mainNav">
+      <button class="n-btn active" data-roles="admin,supervisor,support" onclick="swTab('p-orders',this)">📋 خدمات جاری (<span id="cntOrd">0</span>)</button>
+      <button class="n-btn" data-roles="admin,supervisor,support,callcenter" onclick="swTab('p-susp',this)">⏸️ تعلیقی تکنسین (<span id="cntSusp">0</span>)</button>
+      <button class="n-btn" data-roles="admin,supervisor,support,callcenter" onclick="swTab('p-rem',this)">🔔 یادآور سرویس (<span id="cntRem">0</span>)</button>
+      <button class="n-btn" data-roles="admin,supervisor,support" onclick="swTab('p-techs',this)">👨‍🔧 کارتابل تکنسین‌ها (<span id="cntTech">0</span>)</button>
+      <button class="n-btn" data-roles="admin,supervisor,warehouse" onclick="swTab('p-wh',this)">🏭 انبار مرکزی و حواله</button>
+      <button class="n-btn" data-roles="admin,supervisor,support,callcenter" onclick="swTab('p-cust',this)">👥 بانک اطلاعات و مناطق</button>
+      <button class="n-btn" data-roles="admin,supervisor,support" onclick="swTab('p-arch',this)">🗂️ بایگانی خدمات</button>
+      <button class="n-btn" data-roles="admin,supervisor" onclick="swTab('p-trash',this)">🗑️ فاکتورهای حذفی (<span id="cntTr">0</span>)</button>
+      <button class="n-btn" data-roles="admin" onclick="swTab('p-cat',this)">🏷️ تعرفه کالا و دستمزد</button>
+      <button class="n-btn" data-roles="admin" onclick="swTab('p-users',this)">🔐 خلق کاربران و دسترسی</button>
+    </div>
   </div>
-  <nav class="nav">
-    <button class="nb active" onclick="tab('t-req',this)">📋 خدمات جاری (<span id="actC">0</span>)</button>
-    <button class="nb" onclick="tab('t-susreq',this)">⏸️ تعلیقی تکنسین (<span id="susReqC">0</span>)</button>
-    <button class="nb" onclick="tab('t-usr',this)">👨‍🔧 تکنسین‌ها و تسویه (<span id="techC">0</span>)</button>
-    <button class="nb" onclick="tab('t-wh',this);drawWh()">🏭 انبار مرکزی و حواله</button>
-    <button class="nb" onclick="tab('t-rem',this)">🔔 یادآور سرویس (<span id="remC">0</span>)</button>
-    <button class="nb" onclick="tab('t-arch',this)">🗂️ بایگانی خدمات</button>
-    <button class="nb" onclick="tab('t-del',this)">🗑️ فاکتورهای حذفی (<span id="delC">0</span>)</button>
-    <button class="nb" onclick="tab('t-cust',this)">👥 بانک اطلاعات و تایمر</button>
-    <button class="nb" onclick="tab('t-srv',this)">🏷️ تعرفه کالا و دستمزد</button>
-    <button class="nb" style="background:#dc2626;color:#fff" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
-  </nav>
-</div>
 
-<div id="t-req" class="card active">
-  <h2><span>📋 خدمات جاری</span><div style="display:flex;gap:5px"><button class="btn" style="background:#16a34a" onclick="newPhoneReq()">📞 + ثبت تلفنی</button><button class="btn" onclick="sync()">🔄 بروزرسانی</button></div></h2>
-  <div class="fg">
-    <button class="fb active" onclick="setReqF(9999,this)">📂 همه جاری‌ها</button>
-    <button class="fb" onclick="setReqF(1,this)">📅 امروز</button>
-    <button class="fb" onclick="setReqF(7,this)">📆 این هفته</button>
-    <button class="fb" onclick="setReqF(30,this)">🗓️ ماه جاری</button>
-  </div>
-  <div class="sb">
-    <b>از:</b><input id="rF" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01">
-    <b>تا:</b><input id="rT" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30">
-    <input id="rQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="جستجو...">
-    <button class="btn" onclick="drawReqs()">🔍 فیلتر</button>
-  </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره</th><th>مکان، خدمت و منبع</th><th>وضعیت / تعلیق</th><th>ارجاع به تکنسین</th><th>عملیات</th></tr></thead><tbody id="reqB"></tbody></table></div>
-</div>
-
-<div id="t-susreq" class="card">
-  <h2><span>⏸️ درخواست‌های تعلیق تکنسین</span><button class="btn" onclick="sync()">🔄 بروزرسانی</button></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری و تماس</th><th>نشانی و نوع خدمت</th><th>تکنسین و عملکرد</th><th>علت و توضیح تکنسین</th><th>تصمیم پشتیبانی</th></tr></thead><tbody id="susReqB"></tbody></table></div>
-</div>
-
-<div id="t-usr" class="card">
-  <h2><span>👨‍🔧 کارتابل و حسابرسی تکنسین‌ها</span></h2>
-  <div style="display:flex;gap:6px;margin-bottom:8px"><input id="tInp" class="inp" style="margin:0;max-width:220px" placeholder="نام تکنسین جدید..."><button class="btn" onclick="addT()">+ افزودن تکنسین</button></div>
-  <div id="tTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
-  <div id="tStats" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;margin-bottom:10px;font-size:11px"></div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور و ثبت</th><th>مشتری</th><th>شماره تماس</th><th>خدمت و یادداشت</th><th>وضعیت و پرداخت</th><th>عملیات</th></tr></thead><tbody id="techB"></tbody></table></div>
-</div>
-
-<div id="t-wh" class="card">
-  <h2><span>🏭 انبار مرکزی و حواله کالا</span><div id="whTopBtns" style="display:flex;gap:5px;flex-wrap:wrap"></div></h2>
-  <div id="whBranchBar" class="sb" style="justify-content:space-between"></div>
-  <div style="overflow-x:auto;margin-bottom:14px"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا</th><th>موجودی انبار مرکزی</th><th>جمع موجودی تکنسین‌ها</th><th>عملیات</th></tr></thead><tbody id="whB"></tbody></table></div>
-  <h2><span>📜 کاردکس گردش کالا</span></h2>
-  <div style="overflow-x:auto;max-height:260px"><table><thead><tr><th>تاریخ و ساعت</th><th>شعبه</th><th>نوع عملیات</th><th>عنوان کالا</th><th>تعداد</th><th>مقصد / تکنسین</th><th>توضیحات</th></tr></thead><tbody id="whLogB"></tbody></table></div>
-</div>
-
-<div id="t-rem" class="card">
-  <h2><span>🔔 یادآور سرویس دوره‌ای</span></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>شماره تماس</th><th>عنوان و نشانی مکان</th><th>وضعیت تایمر</th><th>عملیات پیگیری</th></tr></thead><tbody id="remB"></tbody></table></div>
-</div>
-
-<div id="t-arch" class="card">
-  <h2><span>🗂️ بایگانی خدمات تکمیل‌شده</span><span id="archI" style="font-size:11px;color:#15803d">بازه را انتخاب کنید</span></h2>
-  <div class="fg">
-    <button class="fb" onclick="loadArch(1,this)">📅 امروز</button>
-    <button class="fb" onclick="loadArch(7,this)">📆 این هفته</button>
-    <button class="fb" onclick="loadArch(30,this)">🗓️ ماه جاری</button>
-    <button class="fb" onclick="loadArch(9999,this)">📂 همه بایگانی</button>
-  </div>
-  <div class="sb">
-    <b>از:</b><input id="sF" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01">
-    <b>تا:</b><input id="sT" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30">
-    <input id="sQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور...">
-    <button class="btn" onclick="searchR()">🔍 جستجو</button>
-  </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>شماره</th><th>اقلام و مبلغ</th><th>تکنسین و پرداخت</th><th>تاریخ درخواست</th><th>تاریخ تکمیل</th><th>عملیات</th></tr></thead><tbody id="archB"><tr><td colspan="8" style="text-align:center;padding:12px">بازه زمانی را انتخاب کنید.</td></tr></tbody></table></div>
-</div>
-
-<div id="t-del" class="card">
-  <h2><span>🗑️ فاکتورهای حذفی</span><span id="delI" style="font-size:11px;color:#dc2626">همه حذفیات</span></h2>
-  <div class="fg">
-    <button class="fb" onclick="setDelF(1,this)">📅 امروز</button>
-    <button class="fb" onclick="setDelF(7,this)">📆 این هفته</button>
-    <button class="fb" onclick="setDelF(30,this)">🗓️ ماه جاری</button>
-    <button class="fb active" onclick="setDelF(9999,this)">📂 همه حذفیات</button>
-  </div>
-  <div class="sb">
-    <b>از:</b><input id="delF" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/01">
-    <b>تا:</b><input id="delT" class="inp" style="width:85px;margin:0;direction:ltr;text-align:center" placeholder="1405/07/30">
-    <input id="delQ" class="inp" style="flex:1;min-width:90px;margin:0" placeholder="نام، شماره، فاکتور، دلیل...">
-    <button class="btn" onclick="drawDel()">🔍 فیلتر</button>
-  </div>
-  <div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>مشتری</th><th>خدمت</th><th>دلیل حذف</th><th>حذف توسط</th><th>تاریخ ثبت و حذف</th><th>عملیات</th></tr></thead><tbody id="delB"></tbody></table></div>
-</div>
-
-<div id="t-cust" class="card">
-  <h2><span>👥 بانک اطلاعات و تایمر</span><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn" style="background:#0f172a" onclick="resetAllTestData()">🧹 پاکسازی کل تست‌ها</button><button id="tamperBtn" class="btn" style="background:#dc2626" onclick="togTamper()">🕵️ تغییرات تایمر (0)</button><button class="btn" style="background:#16a34a" onclick="editC('')">+ مشتری جدید</button></div></h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>نام مشتری</th><th>شماره اصلی</th><th>شماره ۲ و ۳</th><th>عنوان آدرس‌ها</th><th>تایمر آدرس</th><th>ویرایش</th></tr></thead><tbody id="custB"></tbody></table></div>
-</div>
-
-<div id="t-srv" class="card">
-  <h2><span>🏷️ تعرفه کالا و دستمزد</span><button class="btn" style="background:#16a34a" onclick="editCatItem('')">+ افزودن کالا / دستمزد</button></h2>
-  <div class="sb" style="justify-content:space-between">
-    <div><b>🚗 ایاب و ذهاب شهری (تومان):</b> <input id="trvInp" type="number" class="inp" style="width:120px;margin:0;direction:ltr" value="139000"> <button class="btn" onclick="saveTravelFee()">ذخیره ✅</button></div>
-  </div>
-  <div id="catTabs" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px"></div>
-  <div style="overflow-x:auto"><table><thead><tr><th>دسته‌بندی</th><th>عنوان کالا / سرویس</th><th>نوع (انبار)</th><th>قیمت مشتری (تومان)</th><th>پورسانت تکنسین (%)</th><th>دستمزد نصب (تومان)</th><th>عملیات</th></tr></thead><tbody id="srvB"></tbody></table></div>
-</div>
-
-<div id="cModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
-  <div class="m-bx">
-    <div style="display:flex;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid #cbd5e1;padding-bottom:5px"><strong id="mTit">پنجره</strong><button class="btn" style="background:#ef4444" onclick="$('cModal').style.display='none'">بستن ×</button></div>
-    <div id="mBod"></div>
-  </div>
+  <div id="p-orders" class="panel open"></div>
+  <div id="p-susp" class="panel"></div>
+  <div id="p-rem" class="panel"></div>
+  <div id="p-techs" class="panel"></div>
+  <div id="p-wh" class="panel"></div>
+  <div id="p-cust" class="panel"></div>
+  <div id="p-arch" class="panel"></div>
+  <div id="p-trash" class="panel"></div>
+  <div id="p-cat" class="panel"></div>
+  <div id="p-users" class="panel"></div>
 </div>
 <!-- PART 1 END -->
-
-  
-  
-    <script>
+  <script>
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
-const uName = localStorage.getItem("username") || "مدیر ارشد";
-const uRole = localStorage.getItem("role") || "admin";
-const SRV_TYPES = ["سرویس دوره‌ای (تعویض فیلتر)", "تعمیرات و عیب‌یابی", "خرید دستگاه", "نصب و راه‌اندازی", "متفرقه (شرح در توضیحات)"];
-const DEFAULT_CATS = ["فیلترها", "حوضینگ ها و مخزن", "پمپ و ترانس", "شیرها", "کلیدها", "زانو و اتصالات", "فیلتر یخچال", "نیمه صنعتی", "تصفیه آب", "متفرقه", "سرویس های انجام شده"];
-
-let custs = JSON.parse(localStorage.getItem("sw_custs") || "[]");
-let reqs = JSON.parse(localStorage.getItem("sw_reqs") || "[]");
-let techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری","تکنسین ۲"]');
-let settings = { fixedTravelFee: 139000, categories: DEFAULT_CATS, catalog: [], techMeta: {} };
-let aMap = {}, reqDays = 9999, archDays = 0, selTech = "ALL", onlyTampered = false, autoLock = {}, selCatF = "ALL";
-
-const fmt = n => (Number(n) || 0).toLocaleString("fa-IR");
-function toEn(s) { return String(s || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)); }
-function toJ(d) { if (!d) return "---"; try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; } }
-function toTm(d) {
-  if (!d || uRole !== "admin") return "";
-  try { return '<div style="font-size:10px;color:#0369a1">🕒 ساعت: ' + new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }) + '</div>'; } catch (e) { return ""; }
+const num = v => Math.round(Number(String(v || 0).replace(/,/g, "")) || 0);
+const fmt = n => num(n).toLocaleString("fa-IR");
+const fmtM = n => num(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function onMoneyInp(el) {
+  let raw = String(el.value || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[^0-9]/g, "");
+  el.value = raw ? Number(raw).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
 }
-function normJ(s) {
-  const p = toEn(s).trim().replace(/-/g, "/").split("/");
-  return p.length === 3 ? p[0].padStart(4, "0") + "/" + p[1].padStart(2, "0") + "/" + p[2].padStart(2, "0") : "";
+function toJ(d) {
+  if (!d) return "---";
+  try {
+    let s = new Intl.DateTimeFormat("fa-IR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(d));
+    ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"].forEach((p, i) => s = s.replace(new RegExp(p, "g"), i));
+    return s;
+  } catch (e) { return "---"; }
 }
-function cmpJ(d) { return d ? normJ(toJ(d)) : "0000/00/00"; }
+function normPh(p) { return String(p || "").replace(/\D/g, "").slice(-10); }
 
-function srcBdg(r) {
-  if (uRole === "technician") return "";
-  const map = {
-    landing_urgent: ["🚨 فوری (لندینگ)", "#fee2e2", "#b91c1c"],
-    phone_panel: ["📞 ثبت تلفنی", "#e0f2fe", "#0369a1"],
-    reminder_panel: ["🔔 یادآور دوره‌ای", "#fef3c7", "#b45309"],
-    reminder_auto3: ["🚨 موعد ۳ روزه (خودکار)", "#fae8ff", "#a21caf"]
-  };
-  const m = map[r.sourcePath || ""] || ["🛠️ فرم سایت", "#f1f5f9", "#475569"];
-  return '<span class="bdg" style="background:' + m[1] + ';color:' + m[2] + ';margin-top:2px">' + m[0] + '</span>';
+const ISF_REGIONS = ["ملاصدرا","توحید","هشت بهشت","نشاط","شاهزید","سیچان","نظر","چهارباغ","بزرگمهر","پروین","کاوه","خانه اصفهان","مرداویج","شیخ صدوق","جی","باهنر","رباط","سجاد","آبشار","مشتاق","لنبان","وحید","خاقانی","محتشم","شمس آبادی","عباس آباد","رودکی","آتشگاه","بهارستان","سپاهان شهر","شاهین شهر","نجف آباد","خمینی شهر","گز"];
+function detectRegion(addr, savedReg) {
+  if (savedReg) return savedReg;
+  const a = String(addr || "");
+  for (const r of ISF_REGIONS) { if (a.includes(r)) return r; }
+  return "سایر مناطق";
 }
 
-function draftAlertHtml(r) {
-  if (uRole !== "admin") return "";
-  const mx = Number(r.maxDraftPayable) || 0, py = Number(r.payableAmount) || 0;
-  if (mx > 0 && (r.status !== "done" || mx > py)) {
-    return '<div style="background:#fef2f2;border:1px solid #ef4444;color:#b91c1c;padding:4px 6px;border-radius:4px;font-size:10px;font-weight:bold;margin-top:3px">🕵️ هشدار پیش‌نویس: تکنسین پیش‌فاکتور ' + fmt(mx) + ' تومانی (' + (r.maxDraftSummary || "") + ') ایجاد کرده اما مبلغ نهایی ' + fmt(py) + ' تومان است!</div>';
-  }
-  return "";
+if (!localStorage.getItem("token")) location.href = "login.html";
+const uRole = localStorage.getItem("role") || "admin", uName = localStorage.getItem("username") || "مدیر";
+if (uRole === "tech") location.href = "tech.html";
+if (uRole === "accountant") location.href = "accounting.html";
+
+let reqs = [], settings = {}, techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]'), selTechFilter = "ALL", techSubTab = "todo";
+
+function applyRoleAccess() {
+  const staff = (settings.staffUsers || []).find(u => u.username === uName);
+  if (staff && staff.locked) { alert("🔒 حساب کاربری شما توسط مدیریت قفل شده است."); localStorage.removeItem("token"); location.href = "login.html"; return; }
+  const roleNames = { admin: "👑 مدیر ارشد", supervisor: "🛡️ سرپرست", support: "🎧 پشتیبانی خدمات", warehouse: "🏭 انباردار", callcenter: "📞 کال‌سنتر یادآور" };
+  $("uBadge").textContent = (roleNames[uRole] || "کاربر") + " (" + uName + ")";
+  if (uRole !== "admin") $("btnAccLink").style.display = "none";
+  if (uRole !== "admin" && uRole !== "supervisor") $("btnTechLink").style.display = "none";
+  let firstAllowedBtn = null;
+  document.querySelectorAll("#mainNav .n-btn").forEach(btn => {
+    const allowed = (btn.getAttribute("data-roles") || "").split(",");
+    if (allowed.includes(uRole)) { if (!firstAllowedBtn) firstAllowedBtn = btn; }
+    else btn.style.display = "none";
+  });
+  const activeBtn = document.querySelector("#mainNav .n-btn.active");
+  if (activeBtn && activeBtn.style.display === "none" && firstAllowedBtn) firstAllowedBtn.click();
 }
 
-function tab(id, b) {
-  document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
-  document.querySelectorAll(".nb").forEach(x => x.classList.remove("active"));
-  $(id).classList.add("active"); b.classList.add("active");
+function swTab(id, btn) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+  document.querySelectorAll(".n-btn").forEach(b => b.classList.remove("active"));
+  if ($(id)) $(id).classList.add("open");
+  if (btn) btn.classList.add("active");
 }
 
-function addT() {
-  const v = $("tInp").value.trim();
-  if (v && !techs.includes(v)) { techs.push(v); localStorage.setItem("sw_techs", JSON.stringify(techs)); $("tInp").value = ""; drawAll(); }
+async function loadDash() {
+  const [r1, r2] = await Promise.all([fetch(API + "/requests"), fetch(API + "/requests/settings")]);
+  if (r1.ok) reqs = (await r1.json()).requests || [];
+  if (r2.ok) settings = (await r2.json()).settings || {};
+  Object.keys(settings.techMeta || {}).forEach(t => { if (!techs.includes(t)) techs.push(t); });
+  reqs.forEach(r => { if (r.technicianName && !techs.includes(r.technicianName)) techs.push(r.technicianName); });
+  applyRoleAccess();
+  renderAllPanels();
 }
 
-function setReqF(d, b) {
-  reqDays = d;
-  if (b) { b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active")); b.classList.add("active"); }
-  $("rF").value = ""; $("rT").value = ""; drawReqs();
+function renderAllPanels() {
+  renderOrdersPanel(); renderSuspPanel(); renderRemPanel(); renderTechsPanel();
+  renderWhPanel(); renderCustPanel(); renderArchPanel(); renderTrashPanel();
+  renderCatPanel(); renderUsersPanel();
 }
 
-function stBdg(r) {
-  let ret = r.returnNote ? '<div class="bdg st-al" style="margin-bottom:3px;display:block">↩️ برگشتی تکنسین: ' + r.returnNote + '</div>' : "";
-  if (r.status === "suspended") {
-    let t = "بدون زمان", due = false;
-    if (r.suspendUntil) {
-      const rem = Math.ceil((new Date(r.suspendUntil) - Date.now()) / 86400000);
-      t = rem <= 0 ? "🔔 موعد پیگیری!" : rem + " روز مانده"; due = rem <= 0;
-    }
-    return ret + '<span class="bdg ' + (due ? "st-al" : "st-s") + '">⏸️ معلق (' + t + ')</span><div style="font-size:10px;color:#6b21a8">دلیل: ' + (r.suspendReason || "---") + '</div>';
-  }
-  return ret + '<span class="bdg st-p">در انتظار تخصیص</span>';
-}
-
-function drawReqs() {
-  const min = Date.now() - reqDays * 86400000, f = normJ($("rF").value), t = normJ($("rT").value), q = $("rQ").value.trim().toLowerCase();
-  const allAct = reqs.filter(r => !["done", "completed", "deleted", "assigned", "open"].includes(r.status));
-  $("actC").textContent = allAct.length;
-
-  const act = allAct.filter(r => {
-    if (new Date(r.createdAt || Date.now()).getTime() < min) return false;
-    const j = cmpJ(r.createdAt);
-    if (f && j < f) return false; if (t && j > t) return false;
-    return !q || ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase().includes(q);
-  }).sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
-
-  if (!act.length) {
-    $("reqB").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:12px">هیچ فاکتوری در صف انتظار تخصیص نیست ✅</td></tr>';
-    return;
-  }
-
-  $("reqB").innerHTML = act.map(r => {
-    const nm = r.snapshot?.fullName || "نامشخص", ph = r.snapshot?.phone || "", tit = r.addressLabel || "خونه";
-    const tO = ['<option value="">-- انتخاب و ارجاع به تکنسین --</option>'].concat(techs.map(x => '<option value="' + x + '">' + x + '</option>')).join("");
-    return '<tr>' +
-      '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
-      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + nm + '</span></td>' +
-      '<td style="direction:ltr">' + ph + '</td>' +
-      '<td><b>📍 ' + tit + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px">' + (r.snapshot?.address || "") + '</div>' + srcBdg(r) + draftAlertHtml(r) + '</td>' +
-      '<td>' + stBdg(r) + '</td>' +
-      '<td><select class="sel" onchange="if(this.value)assignM(\'' + r._id + '\',this.value);this.value=\'\'">' + tO + '</select></td>' +
-      '<td><select class="sel" onchange="onSel(\'' + r._id + '\',this.value,\'\')">' +
-      '<option value="pending" ' + (r.status === "pending" ? "selected" : "") + '>در انتظار</option>' +
-      '<option value="suspended" ' + (r.status === "suspended" ? "selected" : "") + '>⏸️ تعلیقی</option>' +
-      '<option value="done">✅ انجام شد</option></select>' +
-      '<button class="b-del" onclick="delM(\'' + r._id + '\',\'' + (r.invoiceCode || "") + '\')">🗑️ حذف با دلیل</button></td></tr>';
-  }).join("");
+function renderOrdersPanel() {
+  const active = reqs.filter(r => r.status === "pending" || r.status === "assigned" || r.status === "in_progress");
+  $("cntOrd").textContent = active.length;
+  const tOpts = techs.map(t => '<option value="' + t + '">' + t + '</option>').join("");
+  $("p-orders").innerHTML =
+    '<div class="card" style="background:#eff6ff;border-color:#93c5fd">' +
+      '<b style="font-size:12px;color:#1e40af;display:block;margin-bottom:6px">➕ ثبت درخواست سرویس جدید و ارجاع به تکنسین:</b>' +
+      '<div class="grid2">' +
+        '<div><input id="nName" class="inp" placeholder="نام و نام خانوادگی مشتری *"><input id="nPh" class="inp" style="direction:ltr" placeholder="شماره موبایل *"></div>' +
+        '<div><input id="nAddr" class="inp" placeholder="آدرس دقیق (مثلاً: ملاصدرا، کوچه ۵...) *"><div style="display:flex;gap:5px"><input id="nIss" class="inp" style="margin:0;flex:2" placeholder="شرح سرویس (تعویض فیلتر / خرابی)"><select id="nTech" class="inp" style="margin:0;flex:1"><option value="">بدون تکنسین</option>' + tOpts + '</select></div></div>' +
+      '</div><button class="btn" style="width:100%;background:#0284c7;color:#fff;margin-top:6px" onclick="createNewOrder()">💾 ثبت سرویس و ارسال به کارتابل</button>' +
+    '</div>' +
+    (active.length ? active.map(r => '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><div><b>👤 ' + (r.snapshot?.fullName || "مشتری") + '</b> — <a href="tel:' + (r.snapshot?.phone || "") + '">' + (r.snapshot?.phone || "") + '</a> <span class="bdg st-a">' + (r.invoiceCode || "") + '</span></div><div style="display:flex;gap:5px;align-items:center"><select class="inp" style="margin:0;width:135px" onchange="assignTech(\'' + r._id + '\',this.value)"><option value="">ارجاع به تکنسین...</option>' + techs.map(t => '<option value="' + t + '" ' + (r.technicianName === t ? 'selected' : '') + '>' + t + '</option>').join("") + '</select><button class="btn" style="background:#ef4444;color:#fff;border:none" onclick="moveTrash(\'' + r._id + '\')">🗑️</button></div></div><div style="font-size:11px;color:#475569;margin-top:5px">📍 ' + (r.snapshot?.address || "---") + ' | 🔧 ' + (r.issueType || "سرویس") + '</div></div>').join("") : '<div class="card">سرویس فعالی وجود ندارد.</div>');
 }
 // PART 2 END
-    let techSubTab = "active";
-
-function toClock(d) {
-  if (!d) return "";
-  try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; }
+    async function createNewOrder() {
+  const fullName = $("nName").value.trim(), phone = $("nPh").value.trim(), address = $("nAddr").value.trim(), issueType = $("nIss").value.trim() || "سرویس دوره‌ای", tech = $("nTech").value;
+  if (!fullName || !phone) return alert("نام و موبایل مشتری الزامی است.");
+  const r = await fetch(API + "/requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName, phone, address, issueType }) });
+  if (r.ok && tech) { const d = await r.json(); if (d.request?._id) await assignTech(d.request._id, tech); }
+  await loadDash();
+}
+async function assignTech(id, techName) {
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: techName ? "assigned" : "pending", technicianName: techName }) });
+  await loadDash();
+}
+async function moveTrash(id) {
+  const rsn = prompt("علت حذف فاکتور:"); if (!rsn) return;
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "trashed", deleteReason: rsn }) });
+  await loadDash();
 }
 
-function tempNotesHtml(r) {
-  const list = Array.isArray(r.tempNotes) ? r.tempNotes : [];
-  if (!list.length) return "";
-  return '<div style="background:#fefce8;border:1px solid #fde047;padding:5px 7px;border-radius:6px;margin-top:4px;font-size:10px;color:#854d0e">' +
-    '<b>📝 یادداشت‌های پیگیری تکنسین (' + list.length + ' مورد):</b>' +
-    list.map((n, i) => '<div style="margin-top:2px">' + (i + 1) + '. ' + n.text + ' <span style="color:#64748b">(' + toJ(n.date) + ' ساعت ' + toClock(n.date) + ')</span></div>').join("") +
+function renderSuspPanel() {
+  const list = reqs.filter(r => r.status === "suspended");
+  $("cntSusp").textContent = list.length;
+  $("p-susp").innerHTML = list.length ? list.map(r => '<div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><b>👤 ' + (r.snapshot?.fullName || "") + ' (' + (r.snapshot?.phone || "") + ')</b><span class="bdg st-p">تکنسین: ' + (r.technicianName || "---") + ' | موعد: ' + toJ(r.suspendUntil) + '</span></div><div style="font-size:11px;margin:5px 0">⏸️ علت تعلیق: <b>' + (r.suspendReason || "---") + '</b> | 📍 ' + (r.snapshot?.address || "") + '</div><button class="btn" style="background:#16a34a;color:#fff" onclick="assignTech(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">🔄 بازگردانی به خدمات جاری</button></div>').join("") : '<div class="card">مورد تعلیقی وجود ندارد.</div>';
+}
+
+function renderRemPanel() {
+  const done = reqs.filter(r => r.status === "done" || r.status === "completed");
+  const due = done.filter(r => { const days = 180 - Math.round((Date.now() - new Date(r.completedAt || r.createdAt).getTime()) / 86400000); return days <= 20; });
+  $("cntRem").textContent = due.length;
+  $("p-rem").innerHTML = due.length ? due.map(r => {
+    const days = 180 - Math.round((Date.now() - new Date(r.completedAt || r.createdAt).getTime()) / 86400000);
+    return '<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><div><b>👤 ' + (r.snapshot?.fullName || "") + '</b> (' + (r.snapshot?.phone || "") + ') <span class="bdg st-al">' + (days <= 0 ? Math.abs(days) + ' روز گذشته' : days + ' روز مانده') + '</span><div style="font-size:11px;color:#475569">📍 ' + (r.snapshot?.address || "") + ' | آخرین سرویس: ' + toJ(r.completedAt) + '</div></div><a class="btn" style="background:#16a34a;color:#fff;text-decoration:none" href="sms:' + (r.snapshot?.phone || "") + '?body=' + encodeURIComponent("مشتری گرامی سامی‌واتر، موعد تعویض فیلتر دستگاه تصفیه آب شما فرا رسیده است.") + '">📲 ارسال پیامک یادآور</a></div>';
+  }).join("") : '<div class="card">مشتری در موعد زیر ۲۰ روز وجود ندارد.</div>';
+}
+
+function renderTechsPanel() {
+  const todoAll = reqs.filter(r => r.status === "assigned" || r.status === "in_progress");
+  $("cntTech").textContent = todoAll.length;
+  const fTodo = todoAll.filter(r => selTechFilter === "ALL" || r.technicianName === selTechFilter);
+  const fDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && (selTechFilter === "ALL" || r.technicianName === selTechFilter));
+  const isLocked = selTechFilter !== "ALL" && settings.techMeta?.[selTechFilter]?.locked;
+
+  $("p-techs").innerHTML =
+    '<div class="card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px">' +
+        '<b style="font-size:13px;color:#0f3b2d">👨‍🔧 مدیریت عملیات و کارتابل تکنسین‌ها (امور مالی و تسویه در نرم‌افزار حسابداری است)</b>' +
+        (uRole === "admin" ? '<a href="accounting.html' + (selTechFilter !== "ALL" ? '?tech=' + encodeURIComponent(selTechFilter) : '') + '" class="btn" style="background:#d9b24c;color:#071f17;text-decoration:none">📊 ورود به میز تسویه حسابداری</a>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">' +
+        '<button class="btn" style="background:' + (selTechFilter === "ALL" ? '#0f172a;color:#fff' : '#e2e8f0;color:#1e293b') + '" onclick="selTechFilter=\'ALL\';renderTechsPanel()">👨‍🔧 همه تکنسین‌ها (' + todoAll.length + ')</button>' +
+        techs.map(t => '<button class="btn" style="background:' + (selTechFilter === t ? '#0284c7;color:#fff' : '#e2e8f0;color:#1e293b') + '" onclick="selTechFilter=\'' + t + '\';renderTechsPanel()">👨‍🔧 ' + t + '</button>').join("") +
+      '</div>' +
+      (selTechFilter !== "ALL" ? '<div style="display:flex;gap:6px;flex-wrap:wrap;background:#f1f5f9;padding:8px;border-radius:8px;margin-bottom:8px"><button class="btn" style="background:' + (isLocked ? '#16a34a' : '#dc2626') + ';color:#fff" onclick="togTechLock(\'' + selTechFilter + '\')">' + (isLocked ? '🔓 باز کردن قفل کارتابل ' : '🔒 قفل فوری کارتابل و انبار ') + selTechFilter + '</button><a class="btn" style="background:#0284c7;color:#fff;text-decoration:none" href="sms:' + (settings.techMeta?.[selTechFilter]?.phone || "") + '">📲 ارسال پیامک به تکنسین</a></div>' : '') +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">' +
+        '<button class="btn" style="padding:9px;background:' + (techSubTab === "todo" ? '#0f172a;color:#fff' : '#fff;color:#0f172a') + '" onclick="techSubTab=\'todo\';renderTechsPanel()">⏳ ۱. در دست اقدام (' + fTodo.length + ')</button>' +
+        '<button class="btn" style="padding:9px;background:' + (techSubTab === "done" ? '#16a34a;color:#fff' : '#fff;color:#0f172a') + '" onclick="techSubTab=\'done\';renderTechsPanel()">✅ ۲. تکمیل‌شده دوره (' + fDone.length + ')</button>' +
+      '</div>' +
+      ((techSubTab === "todo" ? fTodo : fDone).map(r => '<div style="padding:8px;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:5px;background:#fff;font-size:11px;display:flex;justify-content:space-between;flex-wrap:wrap"><div><b>' + (r.snapshot?.fullName || "") + '</b> (' + (r.snapshot?.phone || "") + ') — <span class="bdg st-a">' + (r.technicianName || "") + '</span><div style="color:#475569;margin-top:3px">📍 ' + (r.snapshot?.address || "") + ' | 🔧 ' + (r.workReport || r.issueType || "") + '</div></div><div><b>' + (r.invoiceCode || "") + '</b></div></div>').join("") || '<div style="font-size:11px;color:#64748b">موردی وجود ندارد.</div>') +
     '</div>';
 }
 
-function assignM(id, tName) {
-  const r = reqs.find(x => x._id === id); if (!r) return;
-  const ph = r.snapshot?.phone || "", lbl = (r.addressLabel || "خونه").trim();
-  const prev = reqs.filter(x => x._id !== id && (x.status === "done" || x.status === "completed") && (x.snapshot?.phone === ph) && ((x.addressLabel || "خونه").trim() === lbl))
-    .slice(0, 3).map(x => toJ(x.completedAt || x.createdAt) + ": " + (x.workReport || x.issueType || "سرویس")).join(" // ");
-  const defNote = r.techNote || [r.resultNote, prev ? "سوابق: " + prev : ""].filter(Boolean).join(" // ");
-  const typeOpts = SRV_TYPES.map(s => '<option value="' + s + '" ' + (r.issueType === s ? "selected" : "") + '>' + s + '</option>').join("");
-  const techOpts = techs.map(t => '<option value="' + t + '" ' + ((tName || r.technicianName) === t ? "selected" : "") + '>' + t + '</option>').join("");
-
-  $("mTit").textContent = "📤 ارجاع / تغییر تکنسین خدمت " + (r.invoiceCode || "");
-  $("mBod").innerHTML = '<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:7px;border-radius:6px;font-size:11px;margin-bottom:8px;color:#15803d"><b>👤 مشتری:</b> ' + (r.snapshot?.fullName || "") + ' (📍 ' + lbl + ')<br><b>🔎 آخرین سوابق این آدرس:</b> ' + (prev || "سابقه تکمیل‌شده‌ای ثبت نشده است") + '</div>' +
-    '<label style="font-size:11px;font-weight:bold">👨‍🔧 تکنسین مسئول این خدمت *</label>' +
-    '<select id="asTc" class="inp" style="font-weight:bold;color:#0f3b2d">' + techOpts + '</select>' +
-    '<label style="font-size:11px;font-weight:bold">۱. نوع خدمت (نمایش در کارت تکنسین)</label>' +
-    '<select id="asTp" class="inp">' + typeOpts + '</select>' +
-    '<label style="font-size:11px;font-weight:bold">۲. شماره هماهنگی موقت این نوبت (اختیاری)</label>' +
-    '<input id="asPh" class="inp" style="direction:ltr" value="' + (r.tempPhone || "") + '" placeholder="مثلاً: 0913...">' +
-    '<label style="font-size:11px;font-weight:bold">۳. مبلغ تخفیفات و هدیه شرکتی برای مشتری (تومان)</label>' +
-    '<input id="asDc" type="number" class="inp" style="direction:ltr" value="' + (r.discountAmount || 0) + '" placeholder="0">' +
-    '<label style="font-size:11px;font-weight:bold">۴. خلاصه سوابق فیلترها و توضیحات اپراتور برای تکنسین *</label>' +
-    '<input id="asNt" class="inp" value="' + defNote + '">' +
-    '<button class="btn" style="width:100%;background:#0284c7;padding:10px;margin-top:4px" onclick="subAssign(\'' + id + '\')">تایید و ارسال به کارتابل تکنسین (به‌صورت 🆕 بازنشده) 📤</button>';
-  $("cModal").style.display = "flex";
+async function togTechLock(tName) {
+  const tm = settings.techMeta || {}; if (!tm[tName]) tm[tName] = {};
+  tm[tName].locked = !tm[tName].locked;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ techMeta: tm }) });
+  await loadDash();
 }
 
-async function subAssign(id) {
-  const chosenTech = $("asTc").value;
-  await upSt(id, { status: "assigned", technicianName: chosenTech, issueType: $("asTp").value, tempPhone: $("asPh").value.trim(), discountAmount: Number($("asDc").value) || 0, techNote: $("asNt").value.trim(), techSuspendReq: null });
-  $("cModal").style.display = "none";
-}
-
-async function appTechSus(id, days, reason, note) {
-  const fullReason = reason + (note ? " (" + note + ")" : "");
-  const d = Number(days) >= 7 ? Number(days) : Number(prompt("چند روز تعلیق شود؟ (حداقل ۷ روز):", "7") || 7);
-  if (!d || d < 1) return;
-  await upSt(id, { status: "suspended", suspendReason: fullReason, suspendDays: d, techSuspendReq: null });
-}
-
-async function rejTechSus(id) {
-  const msg = prompt("علت رد درخواست تعلیق و دستور به تکنسین را بنویسید:");
-  if (!msg || !msg.trim()) return;
-  await upSt(id, { techSuspendReq: { active: false, rejectedNote: msg.trim(), rejectedAt: new Date().toISOString() } });
-}
-
-function drawSusReqs() {
-  if (uRole === "support") {
-    document.querySelectorAll(".nb").forEach(b => { if ((b.textContent || "").includes("تکنسین‌ها و تسویه")) b.style.display = "none"; });
-  }
-  const list = reqs.filter(r => (r.status === "assigned" || r.status === "open") && r.techSuspendReq?.active);
-  if ($("susReqC")) $("susReqC").textContent = list.length;
-  if (!$("susReqB")) return;
-  if (!list.length) {
-    $("susReqB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:14px">هیچ درخواست تعلیقی از سمت تکنسین‌ها در صف بررسی نیست ✅</td></tr>';
-    return;
-  }
-  $("susReqB").innerHTML = list.map(r => {
-    const ph = r.snapshot?.phone || "", sr = r.techSuspendReq || {};
-    const seenHtml = r.seenByTechAt ? '<div class="bdg st-d">👁️ رویت: ' + toJ(r.seenByTechAt) + ' ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al">🔴 باز نشده</div>';
-    const smsHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:3px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '<div style="font-size:10px;color:#dc2626;margin-top:2px">⚠️ پیامک عدم پاسخ نزده</div>';
-    return '<tr>' +
-      '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
-      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="direction:ltr;font-weight:bold;margin-top:3px"><a href="tel:' + ph + '">' + ph + ' 📞</a></div></td>' +
-      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + '<div style="font-size:10px;color:#475569">' + (r.snapshot?.address || "") + '</div>' + tempNotesHtml(r) + '</td>' +
-      '<td><b>👨‍🔧 ' + (r.technicianName || "---") + '</b><br>' + seenHtml + '<br>' + smsHtml + '</td>' +
-      '<td style="background:#faf5ff"><b style="color:#6b21a8">⏸️ ' + (sr.reason || "---") + '</b>' + (sr.days ? '<div class="bdg st-s" style="margin-top:3px">⏳ مدت پیشنهادی: ' + sr.days + ' روز</div>' : '') + (sr.note ? '<div style="font-size:11px;color:#334155;margin-top:3px">📝 توضیح: <b>' + sr.note + '</b></div>' : '') + '<div style="font-size:10px;color:#64748b;margin-top:2px">🕒 ثبت درخواست: ساعت ' + toClock(sr.requestedAt) + '</div></td>' +
-      '<td style="display:flex;flex-direction:column;gap:4px">' +
-      '<button class="btn" style="background:#16a34a" onclick="appTechSus(\'' + r._id + '\',' + (sr.days || 7) + ',\'' + (sr.reason || "").replace(/'/g, "") + '\',\'' + (sr.note || "").replace(/'/g, "") + '\')">✅ تایید تعلیق (انتقال به جاری)</button>' +
-      '<button class="btn" style="background:#dc2626" onclick="rejTechSus(\'' + r._id + '\')">❌ رد و الزام به انجام</button>' +
-      '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'\')">🔄 ارجاع به تکنسین دیگر</button></td></tr>';
-  }).join("");
-}
-
-function drawTechs() {
-  drawSusReqs();
-  const assignedAll = reqs.filter(r => (r.status === "assigned" || r.status === "open") && !r.techSuspendReq?.active);
-  $("techC").textContent = assignedAll.length;
-
-  const tabsHtml = ['<button class="fb ' + (selTech === "ALL" ? "active" : "") + '" onclick="selTech=\'ALL\';drawTechs()">👨‍🔧 همه تکنسین‌ها (' + assignedAll.length + ')</button>'].concat(
-    techs.map((t, i) => {
-      const c = assignedAll.filter(r => r.technicianName === t).length;
-      return '<button class="fb ' + (selTech === t ? "active" : "") + '" onclick="selTech=\'' + t + '\';drawTechs()">👨‍🔧 ' + t + ' (' + c + ') <span style="color:#ef4444;margin-right:4px" onclick="event.stopPropagation();techs.splice(' + i + ',1);localStorage.setItem(\'sw_techs\',JSON.stringify(techs));drawAll()">×</span></button>';
-    })
-  ).join("");
-  $("tTabs").innerHTML = tabsHtml;
-
-  const unsettledDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && (selTech === "ALL" || r.technicianName === selTech));
-  const settledDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && r.isSettled && (selTech === "ALL" || r.technicianName === selTech));
-  const inHand = assignedAll.filter(r => selTech === "ALL" || r.technicianName === selTech);
-
-  let posSum = 0, posCnt = 0, cashSum = 0, chkSum = 0, unpSum = 0, unpCnt = 0, profSum = 0, billSum = 0;
-  unsettledDone.forEach(r => {
-    const tFee = Number(r.travelFee) || 139000, a = Number(r.payableAmount) > 0 ? Number(r.payableAmount) : tFee, pr = Number(r.techProfit) > 0 ? Number(r.techProfit) : tFee;
-    billSum += a; profSum += pr;
-    const pb = r.paymentBreakdown;
-    if (pb && (pb.pos || pb.cash || pb.check)) {
-      if (pb.pos > 0) { posSum += Number(pb.pos); posCnt++; }
-      if (pb.cash > 0) cashSum += Number(pb.cash);
-      if (pb.check > 0) chkSum += Number(pb.check);
-    } else if (r.paymentMethod === "pos") { posSum += a; posCnt++; }
-    else if (r.paymentMethod === "cash") cashSum += a;
-    else if (r.paymentMethod === "check") chkSum += a;
-    else { unpSum += a; unpCnt++; }
-  });
-
-  const meta = settings.techMeta?.[selTech] || { userCode: "Sam12", pin: "1234", phone: "", locked: false, stock: {}, logs: [] };
-  const logsCnt = selTech === "ALL" ? techs.reduce((s, t) => s + (settings.techMeta?.[t]?.logs?.length || 0), 0) : (meta.logs?.length || 0);
-
-  const ctrlBtns = (selTech !== "ALL" && uRole === "admin") ?
-    '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1">' +
-    '<button class="btn" style="background:#0f172a" onclick="openStockM(\'' + selTech + '\')">⚙️ تنظیمات رمز (' + (meta.userCode || "Sam12") + ')، کارت بانکی و قفل (' + (meta.locked ? "🔒 قفل" : "🔓 باز") + ')</button>' +
-    '<button class="btn" style="background:#16a34a" onclick="settleT(\'' + selTech + '\',' + unsettledDone.length + ',' + unpCnt + ')">💳 ثبت تسویه حساب و بستن دوره (' + unsettledDone.length + ' خدمت)</button></div>' : '';
-
-  const subNavHtml = '<div class="fg" style="margin-top:10px;margin-bottom:0">' +
-    '<button class="fb ' + (techSubTab === "active" ? "active" : "") + '" onclick="techSubTab=\'active\';drawTechs()">⏳ ۱. در دست اقدام (' + inHand.length + ')</button>' +
-    '<button class="fb ' + (techSubTab === "done" ? "active" : "") + '" onclick="techSubTab=\'done\';drawTechs()">✅ ۲. تکمیل‌شده دوره (' + unsettledDone.length + ')</button>' +
-    '<button class="fb ' + (techSubTab === "stock" ? "active" : "") + '" onclick="techSubTab=\'stock\';drawTechs()">📦 ۳. موجودی همراه تکنسین</button>' +
-    '<button class="fb ' + (techSubTab === "logs" ? "active" : "") + '" onclick="techSubTab=\'logs\';drawTechs()">🔔 ۴. گزارش اپ و کل کارکرد (' + logsCnt + ')</button></div>';
-
-  $("tStats").innerHTML = '<div><b>📊 میز حسابرسی دوره جاری (' + (selTech === "ALL" ? "کل تکنسین‌ها" : selTech) + '):</b> ' +
-    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">' +
-    '<span class="bdg st-a">📂 در دست اقدام: ' + inHand.length + '</span>' +
-    '<span class="bdg" style="background:#e0f2fe;color:#0369a1;font-size:11px">💳 جمع پوز: ' + fmt(posSum) + ' ت (' + posCnt + ' تراکنش)</span>' +
-    '<span class="bdg" style="background:#fef3c7;color:#b45309;font-size:11px">💵 جمع نقدی: ' + fmt(cashSum) + ' ت</span>' +
-    '<span class="bdg" style="background:#f3e8ff;color:#7e22ce;font-size:11px">📝 جمع چک: ' + fmt(chkSum) + ' ت</span>' +
-    '<span class="bdg st-al" style="font-size:11px">🔴 پرداخت‌نشده: ' + fmt(unpSum) + ' ت (' + unpCnt + ' مورد)</span>' +
-    '<span class="bdg st-d" style="font-size:11px">📈 سود تکنسین: +' + fmt(profSum) + ' ت</span>' +
-    '<span class="bdg" style="background:#1e293b;color:#facc15;font-size:11px">💰 کل صورتحساب دوره: ' + fmt(billSum) + ' ت</span>' +
-    '</div>' + ctrlBtns + subNavHtml + '</div>';
-
-  if (techSubTab === "stock") {
-    const goods = (settings.catalog || []).filter(c => c.isGoods);
-    $("techB").innerHTML = goods.map(g => {
-      const cnt = selTech === "ALL" ? techs.reduce((s, t) => s + Math.max(0, Number(settings.techMeta?.[t]?.stock?.[g.title]) || 0), 0) : Math.max(0, Number(meta.stock?.[g.title]) || 0);
-      return '<tr><td><span class="bdg st-a">' + g.category + '</span></td><td colspan="2"><b>' + g.title + '</b></td><td>قیمت مشتری: ' + fmt(g.price) + ' ت</td><td><span class="bdg ' + (cnt > 0 ? "st-d" : "st-al") + '" style="font-size:12px">' + cnt + ' عدد در کیف/ماشین</span></td><td>' +
-        (selTech !== "ALL" ? '<button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'' + g.title + '\',\'' + selTech + '\')">📤 + حواله</button> <button class="btn" style="background:#d97706" onclick="openWhOpM(\'from_tech\',\'' + g.title + '\',\'' + selTech + '\')">📥 برگشت</button> <button class="btn" style="background:#475569" onclick="fixStockPrompt(\'' + selTech + '\',\'' + g.title + '\',' + cnt + ')">🔧 اصلاح عدد</button>' : 'تکنسین را انتخاب کنید') + '</td></tr>';
-    }).join("");
-    return;
-  }
-
-  if (techSubTab === "logs") {
-    const allLogs = [];
-    (selTech === "ALL" ? techs : [selTech]).forEach(t => { (settings.techMeta?.[t]?.logs || []).forEach(l => allLogs.push({ t, ...l })); });
-    allLogs.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-    const histTot = settledDone.reduce((s, r) => s + (Number(r.payableAmount) || 0), 0);
-    const histProf = settledDone.reduce((s, r) => s + (Number(r.techProfit) || 0), 0);
-    const summaryRow = '<tr style="background:#f0fdf4"><td colspan="6"><b>🏆 کل کارکرد تسویه‌شده قبلی (' + (selTech === "ALL" ? "همه" : selTech) + '):</b> تعداد <b>' + settledDone.length + ' خدمت تسویه‌شده</b> | جمع کل مبالغ: <b>' + fmt(histTot) + ' ت</b> | جمع کل سود تکنسین: <b>' + fmt(histProf) + ' ت</b></td></tr>';
-    $("techB").innerHTML = summaryRow + (allLogs.length ? allLogs.map(l => '<tr><td>📅 ' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td><b>👨‍🔧 ' + l.t + '</b></td><td colspan="2"><span class="bdg st-a">' + l.title + '</span></td><td colspan="2">' + l.text + '</td></tr>').join("") : '<tr><td colspan="6" style="text-align:center;padding:12px">هنوز گزارشی ثبت نشده است.</td></tr>');
-    return;
-  }
-
-  const listToShow = techSubTab === "active" ? inHand : unsettledDone;
-  if (!listToShow.length) {
-    $("techB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:12px">' + (techSubTab === "active" ? "هیچ خدمت بازی در دست اقدام تکنسین نیست ✅" : "هیچ خدمت تکمیل‌شده‌ای در این دوره ثبت نشده است.") + '</td></tr>';
-    return;
-  }
-
-  $("techB").innerHTML = listToShow.map(r => {
-    const ph = r.snapshot?.phone || "", isD = r.status === "done" || r.status === "completed";
-    const tFee = Number(r.travelFee) || 139000, a = Number(r.payableAmount) > 0 ? Number(r.payableAmount) : tFee, pr = Number(r.techProfit) > 0 ? Number(r.techProfit) : tFee;
-    const pb = r.paymentBreakdown || {};
-    const pbTxt = [pb.pos ? "💳 پوز: " + fmt(pb.pos) : "", pb.cash ? "💵 نقد: " + fmt(pb.cash) : "", pb.check ? "📝 چک: " + fmt(pb.check) + " (" + (pb.checkBank || "") + " #" + (pb.checkNumber || "") + ")" : ""].filter(Boolean).join(" | ");
-    const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', mixed: '<span class="bdg st-d">🔀 پرداخت ترکیبی</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
-    const seenHtml = r.seenByTechAt ? '<div class="bdg st-d" style="margin-top:3px">👁️ رویت تکنسین: ' + toJ(r.seenByTechAt) + ' ساعت ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al" style="margin-top:3px">🔴 هنوز باز نشده! (ارجاع: ' + toJ(r.assignedAt || r.createdAt) + ' ' + toClock(r.assignedAt || r.createdAt) + ')</div>';
-    const smsLogHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:2px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '';
-    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام تکنسین</span><br>' + seenHtml + smsLogHtml + '</div>');
-    const tPh = settings.techMeta?.[r.technicianName]?.phone || "";
-    const smsBtn = (!isD && tPh) ? '<a class="btn" style="background:#0f3b2d;text-decoration:none" href="sms:' + tPh + '?body=' + encodeURIComponent("سامی‌واتر: خدمت جدید (" + (r.invoiceCode || "") + " - " + (r.snapshot?.fullName || "") + ") به کارتابل شما ارجاع شد.") + '">📲 پیامک</a>' : '';
-    return '<tr>' +
-      '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
-      '<td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="font-size:10px;color:#64748b">👨‍🔧 ' + (r.technicianName || "") + '</div></td>' +
-      '<td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a></td>' +
-      '<td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + (r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold">🔧 اقلام: ' + r.workReport + '</div>' : '') + tempNotesHtml(r) + draftAlertHtml(r) + '</td>' +
-      '<td>' + payHtml + '</td>' +
-      '<td style="display:flex;gap:4px;flex-wrap:wrap">' +
-      '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ تغییر تکنسین / ویرایش</button>' +
-      '<button class="btn" style="background:#7e22ce" onclick="susM(\'' + r._id + '\')">⏸️ تعلیق</button>' +
-      '<button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری</button>' + smsBtn + '</td></tr>';
-  }).join("");
-}
-      let delDaysF = 9999;
-function setDelF(d, btn) {
-  delDaysF = d;
-  if ($("delF")) $("delF").value = "";
-  if ($("delT")) $("delT").value = "";
-  btn.parentElement.querySelectorAll(".fb").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  drawDel();
-}
-
-setTimeout(() => {
-  window.drawDel = function() {
-    const allDel = reqs.filter(r => r.status === "deleted");
-    $("delC").textContent = allDel.length;
-    const fJ = ($("delF")?.value || "").trim(), tJ = ($("delT")?.value || "").trim(), q = ($("delQ")?.value || "").trim().toLowerCase();
-    const list = allDel.filter(r => {
-      const dt = new Date(r.deletedAt || r.createdAt || Date.now());
-      if (delDaysF < 9999 && (Date.now() - dt.getTime()) > delDaysF * 86400000) return false;
-      const jD = toJ(dt);
-      if (fJ && jD < fJ) return false;
-      if (tJ && jD > tJ) return false;
-      if (q && ![r.invoiceCode, r.snapshot?.fullName, r.snapshot?.phone, r.deleteReason, r.deletedBy].join(" ").toLowerCase().includes(q)) return false;
-      return true;
-    });
-    if ($("delI")) $("delI").textContent = list.length + " مورد نمایش داده شده";
-    $("delB").innerHTML = list.length ? list.map(r => '<tr><td style="direction:ltr"><b>' + (r.invoiceCode || "---") + '</b></td><td>' + (r.snapshot?.fullName || "---") + ' (' + (r.snapshot?.phone || "") + ')</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '</td><td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td><td>' + (r.deletedBy || "مدیر") + '</td><td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td><td><button class="btn" style="background:#16a34a" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">♻️ بازیابی به جاری</button></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:12px">فاکتور حذف‌شده‌ای در این بازه یافت نشد.</td></tr>';
-  };
-  drawDel();
-}, 100);
-      
-// PART 3 END
-  let curBranch = "اصفهان (مرکزی)";
-
-function applyRoleLocks() {
-  if (!localStorage.getItem("token")) { location.href = "login.html"; return; }
-  const roleMap = { admin: "👑 مدیر ارشد", support: "🎧 پشتیبانی خدمات", warehouse: "📦 مسئول انبار", accountant: "📊 حسابدار" };
-  $("rPill").textContent = (roleMap[uRole] || uRole) + " (" + uName + ")";
-  if (uRole === "accountant") { location.href = "accounting.html"; return; }
-
-  if (uRole === "support") {
-    document.querySelectorAll(".nb").forEach(b => {
-      const txt = b.textContent || "";
-      if (txt.includes("تعرفه") || txt.includes("حذفی") || txt.includes("انبار مرکزی") || txt.includes("تکنسین‌ها و تسویه")) b.style.display = "none";
-    });
-  } else if (uRole === "warehouse") {
-    document.querySelectorAll(".nb").forEach(b => {
-      const txt = b.textContent || "";
-      if (!txt.includes("انبار مرکزی") && !txt.includes("تکنسین") && !txt.includes("خروج")) b.style.display = "none";
-    });
-    const whBtn = document.querySelector("button[onclick*='t-wh']");
-    if (whBtn) { tab("t-wh", whBtn); drawWh(); }
-  }
-}
-setTimeout(applyRoleLocks, 50);
-
-async function resetAllTestData() {
-  if (uRole !== "admin") return alert("⛔ فقط مدیر ارشد مجاز به پاکسازی داده‌های تستی است.");
-  const conf = prompt("⚠️ هشدار: با این کار تمام مشتریان و فاکتورهای تستی فعلی پاک می‌شوند تا سیستم را از صفر تست کنید.\nبرای تایید عدد 110 را وارد کنید:");
-  if (conf !== "110") return;
-  const r = await fetch(API + "/requests/reset-test-data", { method: "DELETE" });
-  if (r.ok) { alert("✅ تمام مشتریان و درخواست‌های تستی پاک شدند."); sync(); }
-}
-
-async function fixStockPrompt(target, itemTitle, curVal) {
-  if (uRole !== "admin") return alert("فقط مدیر ارشد مجاز به اصلاح مستقیم موجودی است.");
-  const lbl = target === "CENTRAL" ? "انبار مرکزی (" + curBranch + ")" : "انبار «" + target + "»";
-  const inp = prompt("🔧 اصلاح موجودی «" + itemTitle + "» در " + lbl + ":\nعدد واقعی را وارد کنید:", curVal);
-  if (inp === null || inp.trim() === "") return;
-  const q = Math.max(0, Number(inp) || 0);
-  const r = await fetch(API + "/requests/warehouse-op", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ opType: "set_exact", branch: curBranch, itemTitle, qty: q, techName: target, note: "تطبیق دستی توسط مدیر", byUser: uName })
-  });
-  if (r.ok) { settings = (await r.json()).settings || settings; drawAll(); drawWh(); alert("موجودی ثبت شد ✅"); }
-}
-
-function drawWh() {
-  const branches = settings.branches?.length ? settings.branches : ["اصفهان (مرکزی)"];
-  if (!branches.includes(curBranch)) curBranch = branches[0];
+function renderWhPanel() {
+  const cStock = (settings.centralStock && settings.centralStock["اصفهان (مرکزی)"]) || {};
+  const tStock = settings.techStock || {};
   const goods = (settings.catalog || []).filter(c => c.isGoods);
-  const cStock = settings.centralStock?.[curBranch] || {};
-
-  $("whTopBtns").innerHTML = '<button class="btn" style="background:#16a34a" onclick="openWhOpM(\'in_central\',\'\')">➕ ورود خرید به انبار مرکزی</button>' +
-    '<button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'\')">📤 حواله به تکنسین</button>' +
-    '<button class="btn" style="background:#d97706" onclick="openWhOpM(\'from_tech\',\'\')">📥 برگشت از تکنسین</button>' +
-    (uRole === "admin" ? '<button class="btn" style="background:#0f172a" onclick="addBranchM()">🏙️ + شعبه جدید</button>' : '');
-
-  $("whBranchBar").innerHTML = '<div><b>🏙️ شعبه فعال: </b>' +
-    branches.map(b => '<button class="fb ' + (b === curBranch ? "active" : "") + '" style="margin-left:4px" onclick="curBranch=\'' + b + '\';drawWh()">📍 ' + b + '</button>').join("") +
-    '</div><span style="color:#15803d;font-weight:bold">🔒 ثبت خودکار در کاردکس</span>';
-
-  $("whB").innerHTML = goods.map(g => {
-    const centralCnt = Math.max(0, Number(cStock[g.title]) || 0);
-    let techSum = 0; const techDet = [];
-    techs.forEach(t => {
-      const tc = Math.max(0, Number(settings.techMeta?.[t]?.stock?.[g.title]) || 0);
-      if (tc > 0) { techSum += tc; techDet.push(t + ": " + tc); }
-    });
-    const stBdg = centralCnt > 3 ? '<span class="bdg st-d" style="font-size:12px">' + centralCnt + ' عدد</span>' : (centralCnt > 0 ? '<span class="bdg st-p" style="font-size:12px">⚠️ ' + centralCnt + ' عدد</span>' : '<span class="bdg st-al" style="font-size:12px">🚫 ۰</span>');
-    return '<tr><td><span class="bdg st-a">' + (g.category || "کالا") + '</span></td><td style="font-weight:bold">' + g.title + '</td>' +
-      '<td>' + stBdg + (uRole === "admin" ? ' <span class="lnk" style="font-size:10px" onclick="fixStockPrompt(\'CENTRAL\',\'' + g.title + '\',' + centralCnt + ')">[🔧 اصلاح]</span>' : '') + '</td>' +
-      '<td><b>' + techSum + ' عدد</b>' + (techDet.length ? '<div style="font-size:10px;color:#0f3b2d;font-weight:bold">' + techDet.join(" | ") + '</div>' : '') + '</td>' +
-      '<td style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" style="background:#16a34a" onclick="openWhOpM(\'in_central\',\'' + g.title + '\')">➕ شارژ</button><button class="btn" style="background:#0284c7" onclick="openWhOpM(\'to_tech\',\'' + g.title + '\')">📤 حواله</button></td></tr>';
-  }).join("");
-
-  const logs = settings.warehouseLogs || [];
-  $("whLogB").innerHTML = logs.length ? logs.map(l => '<tr><td>' + toJ(l.date) + ' ' + toClock(l.date) + '</td><td>' + (l.branch || "اصفهان") + '</td><td><b>' + l.type + '</b></td><td>' + l.item + '</td><td style="direction:ltr;font-weight:bold">' + l.qty + '</td><td>' + l.target + '</td><td>' + (l.note || "---") + ' (' + (l.by || "") + ')</td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">گردش کالایی ثبت نشده است.</td></tr>';
+  const gOpts = goods.map(g => '<option value="' + g.title + '">' + g.title + ' (موجودی مرکزی: ' + fmt(cStock[g.title] || 0) + ')</option>').join("");
+  const tOpts = techs.map(t => '<option value="' + t + '">' + t + '</option>').join("");
+  $("p-wh").innerHTML = '<div class="grid2"><div class="card"><b>📤 حواله کالا از انبار مرکزی به انبار سیار تکنسین:</b><select id="whTech" class="inp" style="margin-top:6px">' + tOpts + '</select><select id="whItem" class="inp">' + gOpts + '</select><input id="whQty" type="text" inputmode="numeric" class="inp" style="direction:ltr;font-weight:bold" placeholder="تعداد حواله" value="1" oninput="onMoneyInp(this)"><button class="btn" style="width:100%;background:#0284c7;color:#fff" onclick="transferToTech()">📦 ثبت حواله به تکنسین</button></div><div class="card"><b>🏭 موجودی انبار مرکزی اصفهان:</b><table><thead><tr><th>نام کالا</th><th>موجودی مرکزی</th><th>جمع نزد تکنسین‌ها</th></tr></thead><tbody>' + goods.map(g => { const tSum = techs.reduce((s, t) => s + num(tStock[t]?.[g.title]), 0); return '<tr><td><b>' + g.title + '</b></td><td style="direction:ltr;font-weight:bold;color:#15803d">' + fmt(cStock[g.title] || 0) + '</td><td style="direction:ltr;color:#0284c7">' + fmt(tSum) + '</td></tr>'; }).join("") + '</tbody></table></div></div>';
 }
-
-async function addBranchM() {
-  const b = prompt("نام شهر یا شعبه جدید را وارد کنید:");
-  if (!b || !b.trim()) return;
-  const brs = settings.branches?.length ? [...settings.branches] : ["اصفهان (مرکزی)"];
-  if (!brs.includes(b.trim())) brs.push(b.trim());
-  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ branches: brs }) });
-  curBranch = b.trim(); await sync(); drawWh();
+async function transferToTech() {
+  const techName = $("whTech").value, itemTitle = $("whItem").value, qty = num($("whQty").value);
+  if (!techName || !itemTitle || qty <= 0) return alert("کالا و تعداد را مشخص کنید.");
+  await fetch(API + "/requests/warehouse-op", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ opType: "central_to_tech", branch: "اصفهان (مرکزی)", techName, itemTitle, qty, byUser: uName }) });
+  await loadDash(); alert("✅ حواله ثبت شد.");
 }
-
-function openWhOpM(opType, defItem, defTech = "") {
-  const goods = (settings.catalog || []).filter(c => c.isGoods), cStock = settings.centralStock?.[curBranch] || {};
-  const titles = { in_central: "➕ ورود خرید به انبار مرکزی (" + curBranch + ")", to_tech: "📤 حواله کالا به تکنسین", from_tech: "📥 برگشت کالا از تکنسین" };
-  $("mTit").textContent = titles[opType];
-  const needTech = opType !== "in_central";
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">۱. انتخاب کالا *</label><select id="woItm" class="inp">' + goods.map(g => '<option value="' + g.title + '" ' + (g.title === defItem ? "selected" : "") + '>' + g.title + ' (موجودی مرکزی: ' + Math.max(0, Number(cStock[g.title]) || 0) + ')</option>').join("") + '</select>' +
-    (needTech ? '<label style="font-size:11px;font-weight:bold">۲. تکنسین *</label><select id="woTch" class="inp">' + techs.map(t => '<option value="' + t + '" ' + (t === defTech ? "selected" : "") + '>' + t + '</option>').join("") + '</select>' : '') +
-    '<label style="font-size:11px;font-weight:bold">تعداد *</label><input id="woQty" type="number" min="1" class="inp" style="direction:ltr" value="1">' +
-    '<label style="font-size:11px;font-weight:bold">توضیحات</label><input id="woNt" class="inp" placeholder="شماره فاکتور خرید / توضیحات">' +
-    '<button class="btn" style="width:100%;background:#16a34a;padding:10px;margin-top:4px" onclick="subWhOp(\'' + opType + '\')">ثبت در انبار ✅</button>';
-  $("cModal").style.display = "flex";
-}
-
-async function subWhOp(opType) {
-  const itemTitle = $("woItm").value, qty = Number($("woQty").value) || 0, note = $("woNt").value.trim(), techName = $("woTch") ? $("woTch").value : "";
-  const r = await fetch(API + "/requests/warehouse-op", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ opType, branch: curBranch, itemTitle, qty, techName, note, byUser: uName }) });
-  const d = await r.json();
-  if (!r.ok) return alert(d.error || "خطا");
-  settings = d.settings || settings; $("cModal").style.display = "none"; drawAll(); drawWh(); alert("ثبت شد ✅");
-}
-
-function openStockM(tName) {
-  if (uRole === "support") return alert("⛔ مخصوص مدیریت است.");
-  if (!settings.techMeta) settings.techMeta = {};
-  const idxCode = "Sam" + (techs.indexOf(tName) + 1) + "2";
-  if (!settings.techMeta[tName]) settings.techMeta[tName] = { userCode: idxCode, pin: "1234", phone: "", cardNumber: "", locked: false, stock: {}, logs: [] };
-  const m = settings.techMeta[tName];
-  $("mTit").textContent = "⚙️ تنظیمات امنیتی و کارت بانکی: " + tName;
-  $("mBod").innerHTML = '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px">' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">' +
-    '<div><label style="font-size:10px;font-weight:bold">🆔 کد ورود:</label><input id="tkCd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + (m.userCode || idxCode) + '"></div>' +
-    '<div><label style="font-size:10px;font-weight:bold">🔑 رمز:</label><input id="tkPin" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.pin || "1234") + '"></div>' +
-    '<div><label style="font-size:10px;font-weight:bold">📱 موبایل:</label><input id="tkPh" class="inp" style="margin:0;direction:ltr;text-align:center" value="' + (m.phone || "") + '"></div></div>' +
-    '<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:bold">💳 شماره کارت بانکی تکنسین (درج در فاکتور رسمی):</label><input id="tkCrd" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + (m.cardNumber || "") + '"></div>' +
-    '<label style="display:flex;gap:6px;font-size:11px;color:#dc2626;font-weight:bold"><input type="checkbox" id="tkLck" ' + (m.locked ? "checked" : "") + '> 🔒 قفل کردن ورود تکنسین (توقف کار)</label></div>' +
-    (uRole === "admin" ? '<div style="margin-bottom:8px"><button class="btn" style="background:#334155;width:100%" onclick="openStaffAccM()">👥 مدیریت کد پشتیبانی (Sup1)، انبار (St1) و حسابدار (Acc1)</button></div>' : '') +
-    '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStockM(\'' + tName + '\')">ذخیره تنظیمات تکنسین ✅</button>';
-  $("cModal").style.display = "flex";
-}
-
-async function saveStockM(tName) {
-  const m = settings.techMeta[tName] || { userCode: "Sam12", pin: "1234", phone: "", cardNumber: "", locked: false, stock: {}, logs: [] };
-  m.userCode = $("tkCd").value.trim() || "Sam12"; m.phone = $("tkPh").value.trim(); m.pin = $("tkPin").value.trim() || "1234"; m.cardNumber = $("tkCrd").value.trim(); m.locked = $("tkLck").checked;
-  settings.techMeta[tName] = m;
-  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ techMeta: settings.techMeta }) });
-  $("cModal").style.display = "none"; sync();
-}
-
-function openStaffAccM() {
-  const def = [
-    { username: "Sup1", pin: "1234", role: "support", fullName: "پشتیبانی سامی‌واتر", locked: false },
-    { username: "St1", pin: "1234", role: "warehouse", fullName: "مسئول انبار", locked: false },
-    { username: "Acc1", pin: "1234", role: "accountant", fullName: "حسابدار سامی‌واتر", locked: false }
-  ];
-  const list = (settings.staffAccounts?.length >= 3) ? settings.staffAccounts : def;
-  const rNames = { support: "🎧 پشتیبانی", warehouse: "📦 انباردار", accountant: "📊 حسابدار" };
-  $("mTit").textContent = "👥 مدیریت کد ورود پرسنل";
-  $("mBod").innerHTML = list.map((s, i) => '<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px;font-size:11px"><b>' + (rNames[s.role] || s.role) + ':</b><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:5px"><input class="inp sf-u" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + s.username + '"><input class="inp sf-p" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center" value="' + s.pin + '"><input class="inp sf-n" data-i="' + i + '" style="margin:0" value="' + s.fullName + '"></div><label style="display:flex;gap:5px;margin-top:5px;color:#dc2626"><input type="checkbox" class="sf-l" data-i="' + i + '" ' + (s.locked ? "checked" : "") + '> 🔒 قفل حساب</label></div>').join("") + '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveStaffAccM()">ذخیره حساب‌های پرسنل ✅</button>';
-}
-
-async function saveStaffAccM() {
-  const roles = ["support", "warehouse", "accountant"], defs = ["Sup1", "St1", "Acc1"];
-  const updated = [0, 1, 2].map(i => ({
-    username: document.querySelector('.sf-u[data-i="' + i + '"]').value.trim() || defs[i],
-    pin: document.querySelector('.sf-p[data-i="' + i + '"]').value.trim() || "1234",
-    fullName: document.querySelector('.sf-n[data-i="' + i + '"]').value.trim() || roles[i],
-    role: roles[i], locked: document.querySelector('.sf-l[data-i="' + i + '"]').checked
-  }));
-  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffAccounts: updated }) });
-  $("cModal").style.display = "none"; sync();
-}
-
-function settleT(tName) {
-  if (uRole !== "admin") return alert("⛔ تسویه حساب مالی فقط در نرم‌افزار حسابداری انجام می‌شود.");
-  location.href = "accounting.html?tech=" + encodeURIComponent(tName);
-}
-
-function retReqM(id, tName) {
-  $("mTit").textContent = "↩️ برگشت خدمت به خدمات جاری";
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">علت برگشت *</label><input id="rtN" class="inp"><button class="btn" style="width:100%;background:#d97706;padding:9px" onclick="subRetReq(\'' + id + '\',\'' + tName + '\')">ارسال به خدمات جاری ↩️</button>';
-  $("cModal").style.display = "flex";
-}
-function subRetReq(id, tName) {
-  const v = $("rtN").value.trim(); if (!v) return alert("ذکر علت الزامی است");
-  upSt(id, { status: "pending", returnNote: "(" + tName + ") " + v }); $("cModal").style.display = "none";
-}
-
-function getRemDays(a) {
-  const v = Number(a?.serviceIntervalDays) || 180;
-  const lastT = Math.min(Date.now(), new Date(a?.lastServiceDate || Date.now()).getTime());
-  return v - Math.floor((Date.now() - lastT) / 86400000);
-}
-
-function drawRem() {
-  const items = [];
-  custs.forEach(c => {
-    const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180, lastServiceDate: c.createdAt }];
-    ad.forEach((a, ix) => {
-      if (a.isActiveTimer === false) return;
-      const lbl = (a.label || "خونه").trim(), rem = getRemDays(a);
-      const openReq = reqs.find(r => ["pending", "assigned", "open", "suspended"].includes(r.status) && (r.snapshot?.phone || r.customer?.phone) === c.phone && (ad.length === 1 || (r.addressLabel || "خونه").trim() === lbl));
-      if (rem <= 3) {
-        if (!openReq && !autoLock[c._id + "_" + ix]) {
-          autoLock[c._id + "_" + ix] = true;
-          fetch(API + "/requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: lbl, issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_auto3", isFromPanel: true, preventDupOpen: true }) }).then(() => sync());
-        }
-        return;
-      }
-      if (rem <= 20 || a.inReminderQueue) items.push({ c, a, ix, rem, openReq });
-    });
+// PART 3 END
+    let custRegFilter = "ALL", custSearch = "", openTicketPh = "";
+function renderCustPanel() {
+  const map = {};
+  reqs.forEach(r => {
+    const ph = normPh(r.snapshot?.phone); if (!ph) return;
+    if (!map[ph] || new Date(r.createdAt) > new Date(map[ph].lastDate)) {
+      map[ph] = { name: r.snapshot?.fullName || "مشتری", phone: r.snapshot?.phone || ph, addr: r.snapshot?.address || "", lastDate: r.completedAt || r.createdAt };
+    }
   });
-  items.sort((x, y) => x.rem - y.rem); $("remC").textContent = items.length;
-  if (!items.length) { $("remB").innerHTML = '<tr><td colspan="5" style="text-align:center;padding:12px">موردی در صف یادآور نیست ✅</td></tr>'; return; }
-  $("remB").innerHTML = items.map(it => {
-    const noteB = it.a.reminderNote ? '<div style="font-size:10px;color:#7e22ce;font-weight:bold;margin-top:3px">📌 هماهنگی: ' + it.a.reminderNote + '</div>' : "";
-    const openB = it.openReq ? '<div class="bdg st-a" style="margin-top:2px">📋 دارای خدمت باز (' + it.openReq.invoiceCode + ')</div>' : "";
-    return '<tr><td><span class="lnk" onclick="doss(\'' + it.c.phone + '\',' + it.ix + ')">' + (it.c.fullName || "---") + '</span></td><td style="direction:ltr;font-weight:bold"><a href="tel:' + it.c.phone + '">' + it.c.phone + ' 📞</a></td><td><b>📍 ' + (it.a.label || "خونه") + ':</b> ' + it.a.fullAddress + openB + '</td><td><span class="bdg st-p">' + it.rem + ' روز مانده 🔔</span>' + noteB + '<div style="font-size:10px;color:#64748b">تکمیل قبلی: ' + toJ(it.a.lastServiceDate) + '</div></td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" style="background:#7e22ce" onclick="remTimeM(\'' + it.c._id + '\',' + it.ix + ',' + it.rem + ')">⏳ تغییر زمان</button><button class="btn" style="background:#16a34a" onclick="remToCurr(\'' + it.c._id + '\',' + it.ix + ')">➕ ارسال به جاری</button><button class="btn" style="background:#dc2626" onclick="remDelM(\'' + it.c._id + '\',' + it.ix + ')">🗑️ حذف و ریست</button></td></tr>';
-  }).join("");
-}
-// PART 4 END
+  const custRegions = settings.customerRegions || {}, allTickets = settings.customerTickets || [];
+  const allCusts = Object.keys(map).map(ph => ({ ...map[ph], phKey: ph, region: detectRegion(map[ph].addr, custRegions[ph]), tickets: allTickets.filter(tk => normPh(tk.phone) === ph) }));
+  const filtered = allCusts.filter(c => (custRegFilter === "ALL" || c.region === custRegFilter) && (!custSearch || c.name.includes(custSearch) || c.phone.includes(custSearch) || c.addr.includes(custSearch)));
+  const regOpts = '<option value="ALL">📍 همه مناطق اصفهان (' + allCusts.length + ')</option>' + ISF_REGIONS.map(r => '<option value="' + r + '" ' + (custRegFilter === r ? 'selected' : '') + '>محله ' + r + '</option>').join("") + '<option value="سایر مناطق" ' + (custRegFilter === "سایر مناطق" ? 'selected' : '') + '>سایر مناطق</option>';
 
-    
-      
-    function remTimeM(cId, ix, oldRem) {
-  const c = custs.find(x => x._id === cId);
-  $("mTit").textContent = "⏳ تنظیم زمان جدید در صف یادآور (" + (c?.fullName || "") + ")";
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">چند روز دیگر سرویس انجام شود؟ * (مثلاً 10 یا 30)</label>' +
-    '<input id="rtD" type="number" class="inp" placeholder="مثلاً: 30">' +
-    '<label style="font-size:11px;font-weight:bold">توضیح هماهنگی / دلیل تغییر زمان * (اجباری)</label>' +
-    '<input id="rtR" class="inp" placeholder="مثلاً: مشتری گفت یک ماه دیگر تماس بگیریم...">' +
-    '<button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="subRemTime(\'' + cId + '\',' + ix + ',' + oldRem + ')">ثبت زمان جدید در یادآور 📌</button>';
-  $("cModal").style.display = "flex";
+  $("p-cust").innerHTML =
+    '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px"><b style="font-size:13px;color:#0f3b2d">👥 بانک اطلاعات مشتریان، منطقه‌بندی هوشمند آدرس و تیکت‌ها</b><button class="btn" style="background:#16a34a;color:#fff" onclick="sendRegionalSms()">📲 ارسال پیامک به مشتریان منطقه انتخابی (' + filtered.length + ' نفر)</button></div>' +
+    '<div class="grid2"><input class="inp" placeholder="🔍 جستجوی نام، تلفن یا آدرس..." value="' + custSearch + '" oninput="custSearch=this.value;renderCustPanel()"><select class="inp" onchange="custRegFilter=this.value;renderCustPanel()">' + regOpts + '</select></div>' +
+    '<div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>تلفن</th><th>منطقه (هوشمند/دستی)</th><th>آدرس</th><th>🎫 تیکت‌ها (از جدید به قدیم)</th></tr></thead><tbody>' +
+    filtered.slice(0, 60).map(c => '<tr><td><b>' + c.name + '</b></td><td style="direction:ltr">' + c.phone + '</td><td><select class="inp" style="margin:0;width:115px;font-size:10px" onchange="setCustReg(\'' + c.phKey + '\',this.value)">' + [...ISF_REGIONS, "سایر مناطق"].map(r => '<option value="' + r + '" ' + (c.region === r ? 'selected' : '') + '>' + r + '</option>').join("") + '</select></td><td>' + c.addr + '</td><td><button class="btn" style="background:' + (c.tickets.length ? '#be123c' : '#475569') + ';color:#fff;padding:4px 8px" onclick="openTicketPh=(openTicketPh===\'' + c.phKey + '\'?\'\':\'' + c.phKey + '\');renderCustPanel()">🎫 تیکت‌ها (' + c.tickets.length + ')</button>' +
+      (openTicketPh === c.phKey ? '<div style="margin-top:5px;background:#fff1f2;padding:6px;border-radius:6px;border:1px solid #fda4af">' + (c.tickets.length ? c.tickets.map(tk => '<div style="border-bottom:1px dashed #fecdd3;padding:3px 0"><b>' + tk.date + ' (' + (tk.techName || "سیستم") + '):</b> <span class="bdg st-al">' + (tk.tag || "نکته") + '</span> ' + (tk.note || "") + '</div>').join("") : '<div>تیکتی ثبت نشده.</div>') + '<div style="display:flex;gap:4px;margin-top:4px"><input id="newTk_' + c.phKey + '" class="inp" style="margin:0" placeholder="ثبت تیکت جدید..."><button class="btn" style="background:#be123c;color:#fff" onclick="addCustTk(\'' + c.phone + '\',\'' + c.name + '\',\'' + c.phKey + '\')">+</button></div></div>' : '') +
+    '</td></tr>').join("") + '</tbody></table></div></div>';
 }
-
-async function subRemTime(cId, ix, oldRem) {
-  const d = Number($("rtD").value.trim()), r = $("rtR").value.trim();
-  if (!d || d < 1 || !r) return alert("لطفاً تعداد روز و دلیل را کامل وارد کنید.");
-  const c = custs.find(x => x._id === cId); if (!c) return;
-  const ad = c.addresses?.length ? [...c.addresses] : [{ label: "خونه", fullAddress: c.address || "---" }];
-  const a = ad[ix] || ad[0];
-  a.serviceIntervalDays = d; a.lastServiceDate = new Date(); a.inReminderQueue = true;
-  a.reminderNote = r + " (" + toJ(new Date()) + ")";
-  a.auditText = "🕵️ تغییر تایمر از " + oldRem + " به " + d + " روز توسط " + uName + " (" + toJ(new Date()) + ") | دلیل: " + r;
-  await fetch(API + "/requests/customer-update/" + c._id, {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: ad })
-  });
-  $("cModal").style.display = "none"; sync();
+async function setCustReg(phKey, reg) {
+  const cr = settings.customerRegions || {}; cr[phKey] = reg;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerRegions: cr }) });
+  await loadDash();
+}
+async function addCustTk(phone, customerName, phKey) {
+  const note = $("newTk_" + phKey).value.trim(); if (!note) return;
+  const tkList = settings.customerTickets || [];
+  tkList.unshift({ id: "tk_" + Date.now(), date: toJ(new Date()), phone, customerName, techName: uName, tag: "یادداشت مدیریت/پشتیبانی", note });
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerTickets: tkList }) });
+  await loadDash();
+}
+function sendRegionalSms() {
+  const msg = prompt("متن پیامک برای ارسال به مشتریان منطقه «" + custRegFilter + "»:"); if (!msg) return;
+  alert("📲 آماده ارسال پیامک هدفمند به مشتریان منطقه «" + custRegFilter + "»:\n" + msg);
 }
 
-async function createRemReq(cId, ix) {
-  const c = custs.find(x => x._id === cId); if (!c) return null;
-  const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---" }];
-  const a = ad[ix] || ad[0];
-  const r = await fetch(API + "/requests", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ customerId: c._id, phone: c.phone, fullName: c.fullName, address: a.fullAddress, addressLabel: a.label || "خونه", issueType: "سرویس دوره‌ای (تعویض فیلتر)", sourcePath: "reminder_panel", isFromPanel: true, preventDupOpen: true })
-  });
-  return (await r.json()).request || null;
+function renderArchPanel() {
+  const done = reqs.filter(r => r.status === "done" || r.status === "completed");
+  $("p-arch").innerHTML = '<div class="card"><b>🗂️ بایگانی کل خدمات انجام‌شده (' + done.length + ' سرویس):</b><div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>تاریخ</th><th>مشتری</th><th>تکنسین</th><th>گزارش و تیکت</th><th>مبلغ</th></tr></thead><tbody>' + done.slice(0, 60).map(r => '<tr><td><b>' + (r.invoiceCode || "") + '</b></td><td>' + toJ(r.completedAt || r.createdAt) + '</td><td>' + (r.snapshot?.fullName || "") + '</td><td>' + (r.technicianName || "") + '</td><td>' + (r.workReport || "") + '</td><td style="direction:ltr;font-weight:bold">' + fmt(r.payableAmount) + ' ت</td></tr>').join("") + '</tbody></table></div></div>';
+}
+function renderTrashPanel() {
+  const tr = reqs.filter(r => r.status === "trashed"); $("cntTr").textContent = tr.length;
+  $("p-trash").innerHTML = '<div class="card"><b>🗑️ فاکتورهای حذفی (' + tr.length + '):</b>' + (tr.map(r => '<div style="padding:6px;border-bottom:1px solid #cbd5e1;font-size:11px;display:flex;justify-content:space-between"><span><b>' + (r.snapshot?.fullName || "") + '</b> — علت حذف: ' + (r.deleteReason || "---") + '</span><button class="btn" onclick="assignTech(\'' + r._id + '\',\'\')">♻️ بازیابی</button></div>').join("") || '<div>خالی است.</div>') + '</div>';
 }
 
-async function remToCurr(cId, ix) { await createRemReq(cId, ix); alert("فاکتور به تب «خدمات جاری» منتقل شد ✅"); sync(); }
-
-function remDelM(cId, ix) {
-  const c = custs.find(x => x._id === cId);
-  $("mTit").textContent = "🗑️ حذف نوبت این دوره و ریست تایمر (" + (c?.fullName || "") + ")";
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل حذف دوره و ریست تایمر * (اجباری)</label>' +
-    '<input id="rmDR" class="inp" placeholder="مثلاً: مشتری خودش فیلترها را تعویض کرده است...">' +
-    '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="subRemDel(\'' + cId + '\',' + ix + ')">ثبت در حذفیات و ریست تایمر ۱۸۰ روزه 🗑️</button>';
-  $("cModal").style.display = "flex";
+function renderCatPanel() {
+  const cat = settings.catalog || [];
+  $("p-cat").innerHTML = '<div class="card"><b>🏷️ تعرفه کالاها، قیمت خرید شرکت، قیمت فروش مشتری و دستمزد تکنسین:</b><div class="grid2" style="margin-top:6px"><div><input id="cTit" class="inp" placeholder="نام کالا یا خدمت *"><input id="cBuy" type="text" inputmode="numeric" class="inp" style="direction:ltr" placeholder="قیمت خرید شرکت (تومان)" oninput="onMoneyInp(this)"></div><div><input id="cPr" type="text" inputmode="numeric" class="inp" style="direction:ltr" placeholder="قیمت فروش به مشتری (تومان) *" oninput="onMoneyInp(this)"><div style="display:flex;gap:5px"><input id="cWg" type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;flex:2" placeholder="دستمزد تکنسین *" oninput="onMoneyInp(this)"><select id="cGd" class="inp" style="margin:0;flex:1"><option value="1">📦 کالا (انباری)</option><option value="0">🔧 خدمات</option></select></div></div></div><button class="btn" style="width:100%;background:#16a34a;color:#fff;margin-top:5px" onclick="addCatItem()">➕ افزودن/بروزرسانی تعرفه</button><div style="overflow-x:auto"><table><thead><tr><th>شرح</th><th>نوع</th><th>فی خرید شرکت</th><th>فروش مشتری</th><th>سهم تکنسین</th><th>حذف</th></tr></thead><tbody>' + cat.map((c, i) => '<tr><td><b>' + c.title + '</b></td><td>' + (c.isGoods ? '📦 کالا' : '🔧 خدمت') + '</td><td style="direction:ltr;color:#b45309">' + fmt(c.buyPrice || 0) + ' ت</td><td style="direction:ltr;font-weight:bold">' + fmt(c.customerPrice) + ' ت</td><td style="direction:ltr;color:#15803d">' + fmt(c.techWage) + ' ت</td><td><button class="btn" style="background:#ef4444;color:#fff;padding:2px 6px" onclick="delCat(' + i + ')">×</button></td></tr>').join("") + '</tbody></table></div></div>';
 }
-
-async function subRemDel(cId, ix) {
-  const reason = $("rmDR").value.trim(); if (!reason) return alert("وارد کردن دلیل الزامی است.");
-  const req = await createRemReq(cId, ix);
-  if (req) {
-    await fetch(API + "/requests/" + req._id + "/status", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "deleted", deleteReason: reason, deletedBy: uName, resetTimerOnDelete: true })
-    });
-  }
-  const c = custs.find(x => x._id === cId);
-  if (c && c.addresses?.length) {
-    const a = c.addresses[ix || 0];
-    a.serviceIntervalDays = 180; a.lastServiceDate = new Date(); a.inReminderQueue = false; a.reminderNote = "";
-    a.auditText = "🕵️ ریست دوره به ۱۸۰ روز توسط " + uName + " | دلیل: " + reason;
-    await fetch(API + "/requests/customer-update/" + c._id, {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: c.addresses })
-    });
-  }
-  $("cModal").style.display = "none"; sync();
-}
-
-function newPhoneReq() {
-  const typeOpts = SRV_TYPES.map(s => '<option value="' + s + '">' + s + '</option>').join("");
-  $("mTit").textContent = "📞 ثبت فاکتور تلفنی (پشتیبانی)";
-  $("mBod").innerHTML = '<input id="pPh" class="inp" style="direction:ltr" placeholder="شماره موبایل اصلی مشتری (0913...)">' +
-    '<input id="pNm" class="inp" placeholder="نام و نام‌خانوادگی">' +
-    '<input id="pLb" class="inp" value="خونه" placeholder="عنوان مکان (خونه / محل کار)">' +
-    '<input id="pAd" class="inp" placeholder="آدرس کامل">' +
-    '<select id="pIs" class="inp">' + typeOpts + '</select>' +
-    '<input id="pTmp" class="inp" style="direction:ltr" placeholder="شماره هماهنگی موقت این نوبت (اختیاری)">' +
-    '<input id="pNt" class="inp" placeholder="خلاصه سوابق فیلترها / توضیحات برای تکنسین (اختیاری)">' +
-    '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="subPhoneReq()">ثبت فوری در خدمات جاری ✅</button>';
-  $("cModal").style.display = "flex";
-}
-async function subPhoneReq() {
-  const phone = $("pPh").value.trim(), fullName = $("pNm").value.trim();
-  if (!phone || !fullName) return alert("نام و شماره الزامی است");
-  await fetch(API + "/requests", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, fullName, address: $("pAd").value.trim(), addressLabel: $("pLb").value.trim() || "خونه", issueType: $("pIs").value, tempPhone: $("pTmp").value.trim(), techNote: $("pNt").value.trim(), sourcePath: "phone_panel", isFromPanel: true })
-  });
-  $("cModal").style.display = "none"; sync();
-}
-
-function onSel(id, v, t) { if (v === "suspended") susM(id); else upSt(id, { status: v, technicianName: t }); }
-function susM(id) {
-  const r = reqs.find(x => x._id === id);
-  $("mTit").textContent = "⏸️ تعلیق فاکتور " + (r?.invoiceCode || "");
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل تعلیق *</label><input id="sR" class="inp" value="' + (r?.suspendReason || "") + '">' +
-    '<label style="font-size:11px;font-weight:bold">چند روز دیگر یادآوری شود؟</label><input id="sD" type="number" class="inp" placeholder="مثلاً: 5">' +
-    '<button class="btn" style="width:100%;background:#7e22ce;padding:9px" onclick="if(!$(\'sR\').value.trim())return alert(\'دلیل الزامی است\');upSt(\'' + id + '\',{status:\'suspended\',suspendReason:$(\'sR\').value,suspendDays:$(\'sD\').value});$(\'cModal\').style.display=\'none\'">ثبت تعلیق ⏸️</button>';
-  $("cModal").style.display = "flex";
-}
-function delM(id, c) {
-  $("mTit").textContent = "🗑️ حذف فاکتور " + c;
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دلیل حذف فاکتور *</label><input id="dR" class="inp">' +
-    '<label style="display:flex;gap:6px;font-size:11px;background:#f0fdf4;padding:8px;border-radius:6px;margin:6px 0"><input type="checkbox" id="dT" checked><b>ریست تایمر برای دوره بعد</b></label>' +
-    '<button class="btn" style="width:100%;background:#dc2626;padding:9px" onclick="if(!$(\'dR\').value.trim())return alert(\'دلیل الزامی است\');upSt(\'' + id + '\',{status:\'deleted\',deleteReason:$(\'dR\').value,deletedBy:uName,resetTimerOnDelete:$(\'dT\').checked});$(\'cModal\').style.display=\'none\'">تایید و حذف 🗑️</button>';
-  $("cModal").style.display = "flex";
-}
-
-function drawDel() {
-  const l = reqs.filter(r => r.status === "deleted"); $("delC").textContent = l.length;
-  $("delB").innerHTML = l.length ? l.map(r => '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + (r.snapshot?.phone || "") + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + '<br>' + srcBdg(r) + '</td><td style="color:#dc2626;font-weight:bold">' + (r.deleteReason || "---") + '</td><td>' + (r.deletedBy || "مدیر") + '</td><td>ثبت: ' + toJ(r.createdAt) + '<br>حذف: ' + toJ(r.deletedAt) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">خالی است.</td></tr>';
-}
-
-function rArch(l) {
-  $("archI").textContent = l.length + " مورد";
-  const pMap = { pos: "💳 پوز", cash: "💵 نقدی", check: "📝 چک", unpaid: "🔴 پرداخت‌نشده" };
-  $("archB").innerHTML = l.length ? l.map(r => {
-    const ph = r.snapshot?.phone || "", dD = r.completedAt || r.updatedAt || r.createdAt;
-    const stB = r.isSettled ? '<span class="bdg st-d">💰 تسویه‌شده</span>' : '<span class="bdg st-p">⏳ تسویه‌نشده</span>';
-    const wRep = r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold;margin-top:2px">🔧 ' + r.workReport + '</div>' : "";
-    const finInfo = r.payableAmount ? '<div style="font-size:10px;color:#0f172a;margin-top:2px"><b>مبلغ: ' + fmt(r.payableAmount) + ' ت</b> | سود تکنسین: ' + fmt(r.techProfit) + ' ت</div>' : "";
-    return '<tr><td style="direction:ltr;font-weight:bold">' + (r.invoiceCode || "---") + '</td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span></td><td style="direction:ltr">' + ph + '</td><td>📍 ' + (r.addressLabel || "خونه") + ' - ' + (r.issueType || "") + wRep + finInfo + draftAlertHtml(r) + '<br>' + srcBdg(r) + '</td><td>' + (r.technicianName || "---") + '<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + ' ' + stB + '</td><td>📅 ' + toJ(r.createdAt) + '</td><td style="color:#15803d;font-weight:bold">✅ ' + toJ(dD) + toTm(dD) + '</td><td><button class="btn" onclick="upSt(\'' + r._id + '\',{status:\'pending\'})">بازگردانی ↩️</button></td></tr>';
-  }).join("") : '<tr><td colspan="8" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>';
-}
-// PART 5 END
-      function loadArch(d, b) {
-  archDays = d; if (b) { b.parentElement.querySelectorAll(".fb").forEach(x => x.classList.remove("active")); b.classList.add("active"); }
-  const m = Date.now() - d * 86400000;
-  rArch(reqs.filter(r => (r.status === "done" || r.status === "completed") && new Date(r.completedAt || r.updatedAt || r.createdAt || Date.now()).getTime() >= m));
-}
-function searchR() {
-  archDays = 0; const f = normJ($("sF").value), t = normJ($("sT").value), q = $("sQ").value.trim().toLowerCase();
-  rArch(reqs.filter(r => {
-    if (r.status !== "done" && r.status !== "completed") return false;
-    const j = cmpJ(r.completedAt || r.updatedAt || r.createdAt);
-    if (f && j < f) return false; if (t && j > t) return false;
-    return !q || ((r.snapshot?.fullName || "") + " " + (r.snapshot?.phone || "") + " " + (r.invoiceCode || "")).toLowerCase().includes(q);
-  }));
-}
-
-function drawSrv() {
-  $("trvInp").value = settings.fixedTravelFee ?? 139000;
-  const cats = settings.categories?.length ? settings.categories : DEFAULT_CATS;
-  $("catTabs").innerHTML = ['<button class="fb ' + (selCatF === "ALL" ? "active" : "") + '" onclick="selCatF=\'ALL\';drawSrv()">همه دسته‌ها</button>']
-    .concat(cats.map(c => '<button class="fb ' + (selCatF === c ? "active" : "") + '" onclick="selCatF=\'' + c + '\';drawSrv()">' + c + '</button>')).join("");
-  const list = (settings.catalog || []).filter(x => selCatF === "ALL" || x.category === selCatF);
-  $("srvB").innerHTML = list.length ? list.map(x => '<tr>' +
-    '<td><span class="bdg st-a">' + (x.category || "متفرقه") + '</span></td>' +
-    '<td style="font-weight:bold">' + x.title + '</td>' +
-    '<td>' + (x.isGoods ? '<span class="bdg st-d">📦 کالا (کسر انبار)</span>' : '<span class="bdg st-p">🛠️ خدمت/اجرت</span>') + '</td>' +
-    '<td style="direction:ltr;font-weight:bold">' + fmt(x.price) + '</td>' +
-    '<td style="direction:ltr">' + (x.commPct || 0) + '% (' + fmt(Math.round((x.price * (x.commPct || 0)) / 100)) + ')</td>' +
-    '<td style="direction:ltr">' + fmt(x.wage || 0) + '</td>' +
-    '<td><button class="btn" onclick="editCatItem(\'' + x.id + '\')">✏️</button> <button class="btn" style="background:#dc2626" onclick="delCatItem(\'' + x.id + '\')">🗑️</button></td></tr>'
-  ).join("") : '<tr><td colspan="7" style="text-align:center;padding:10px">آیتمی در این دسته نیست.</td></tr>';
-}
-
-async function saveTravelFee() {
-  const v = Number($("trvInp").value) || 0;
-  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fixedTravelFee: v }) });
-  alert("مبلغ ایاب و ذهاب ثابت ذخیره شد ✅"); sync();
-}
-
-function editCatItem(id) {
-  const cats = settings.categories?.length ? settings.categories : DEFAULT_CATS;
-  const it = (settings.catalog || []).find(x => x.id === id) || { id: "c_" + Date.now(), category: selCatF === "ALL" ? cats[0] : selCatF, title: "", isGoods: true, price: 0, commPct: 10, wage: 0 };
-  $("mTit").textContent = id ? "✏️ ویرایش تعرفه" : "➕ افزودن کالا / دستمزد جدید";
-  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دسته‌بندی</label>' +
-    '<select id="ciCat" class="inp">' + cats.map(c => '<option value="' + c + '" ' + (it.category === c ? "selected" : "") + '>' + c + '</option>').join("") + '</select>' +
-    '<label style="font-size:11px;font-weight:bold">عنوان کالا یا سرویس *</label><input id="ciTit" class="inp" value="' + it.title + '">' +
-    '<label style="font-size:11px;font-weight:bold">قیمت واحد برای مشتری (تومان) *</label><input id="ciPrc" type="number" class="inp" style="direction:ltr" value="' + it.price + '">' +
-    '<label style="font-size:11px;font-weight:bold">درصد پورسانت تکنسین از این مبلغ (%) [برای دستمزد خالص عدد 100 بگذارید]</label><input id="ciCm" type="number" class="inp" style="direction:ltr" value="' + (it.commPct ?? 10) + '">' +
-    '<label style="font-size:11px;font-weight:bold">دستمزد نصب مضاعف روی این کالا (تومان - اختیاری)</label><input id="ciWg" type="number" class="inp" style="direction:ltr" value="' + (it.wage || 0) + '">' +
-    '<label style="display:flex;gap:6px;font-size:11px;background:#f8fafc;padding:8px;border-radius:6px;margin:6px 0"><input type="checkbox" id="ciGd" ' + (it.isGoods ? "checked" : "") + '><b>📦 این مورد «کالای فیزیکی» است (هنگام مصرف از انبار تکنسین کسر شود)</b></label>' +
-    '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveCatItem(\'' + it.id + '\')">ذخیره در لیست تعرفه‌ها ✅</button>';
-  $("cModal").style.display = "flex";
-}
-
-async function saveCatItem(id) {
-  const tit = $("ciTit").value.trim(); if (!tit) return alert("عنوان الزامی است");
-  const item = { id, category: $("ciCat").value, title: tit, price: Number($("ciPrc").value) || 0, commPct: Number($("ciCm").value) || 0, wage: Number($("ciWg").value) || 0, isGoods: $("ciGd").checked };
-  const cat = [...(settings.catalog || [])];
-  const idx = cat.findIndex(x => x.id === id);
-  if (idx > -1) cat[idx] = item; else cat.push(item);
+async function addCatItem() {
+  const title = $("cTit").value.trim(), buyPrice = num($("cBuy").value), customerPrice = num($("cPr").value), techWage = num($("cWg").value), isGoods = $("cGd").value === "1";
+  if (!title || customerPrice <= 0) return alert("نام و قیمت فروش الزامی است.");
+  const cat = (settings.catalog || []).filter(c => c.title !== title);
+  cat.push({ title, buyPrice, customerPrice, techWage, isGoods });
   await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) });
-  $("cModal").style.display = "none"; sync();
+  await loadDash();
 }
+async function delCat(i) { const cat = settings.catalog || []; cat.splice(i, 1); await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) }); await loadDash(); }
 
-async function delCatItem(id) {
-  if (!confirm("حذف این آیتم از تعرفه‌ها؟")) return;
-  const cat = (settings.catalog || []).filter(x => x.id !== id);
-  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) });
-  sync();
+const ROLE_PERMS = {
+  support: { label: "🎧 نیروی پشتیبانی خدمات", desc: "فقط دسترسی به: خدمات جاری، تعلیقی‌ها، یادآور سرویس، وضعیت تکنسین‌ها و بانک مشتریان (بدون حسابداری و انبار)" },
+  tech: { label: "👨‍🔧 تکنسین فنی", desc: "فقط دسترسی به: کارتابل خدمات اختصاص‌داده‌شده به شخص خودش و انبار سیار خودش در پنل تکنسین" },
+  warehouse: { label: "🏭 انباردار", desc: "فقط دسترسی به: انبار مرکزی و ثبت حواله کالا" },
+  accountant: { label: "📊 حسابدار", desc: "فقط دسترسی به: نرم‌افزار تخصصی حسابداری ۶ بخشی" },
+  callcenter: { label: "📞 کال‌سنتر یادآور", desc: "فقط دسترسی به: یادآور سرویس، تعلیقی‌ها و بانک مشتریان" },
+  supervisor: { label: "🛡️ سرپرست عملیات", desc: "دسترسی به: خدمات، تکنسین‌ها، انبار و مشتریان (بدون تعرفه و حسابداری)" }
+};
+function renderUsersPanel() {
+  const users = settings.staffUsers || [];
+  $("p-users").innerHTML = '<div class="card"><b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:6px">🔐 خلق دکمه کاربری با سطح دسترسیِ از پیش قفل‌شده (RBAC):</b><div class="grid2"><div><select id="uRoleSel" class="inp" onchange="$(\'rolePermDesc\').textContent=ROLE_PERMS[this.value].desc">' + Object.keys(ROLE_PERMS).map(k => '<option value="' + k + '">' + ROLE_PERMS[k].label + '</option>').join("") + '</select><div id="rolePermDesc" style="font-size:11px;background:#fef9c3;padding:6px;border-radius:6px;margin-bottom:6px;color:#854d0e">' + ROLE_PERMS.support.desc + '</div><input id="uFullName" class="inp" placeholder="نام شخص (مثلاً: خانم رضایی / مهندس کریمی) *"></div><div><input id="uPhone" class="inp" style="direction:ltr" placeholder="شماره موبایل شخص"><div style="display:flex;gap:5px"><input id="uUser" class="inp" style="direction:ltr" placeholder="نام کاربری (خودکار/دستی)"><input id="uPass" class="inp" style="direction:ltr" placeholder="رمز عبور (خودکار/دستی)"></div><button class="btn" style="width:100%;background:#0284c7;color:#fff" onclick="genAutoCreds()">🎲 تولید خودکار نام کاربری و رمز</button></div></div><button class="btn" style="width:100%;background:#16a34a;color:#fff;margin-top:6px;padding:10px" onclick="createStaffRoleUser()">✅ خلق کاربر با دسترسیِ قفل‌شده این نقش</button><div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>نام شخص</th><th>نقش و دسترسی قفل‌شده</th><th>نام کاربری</th><th>رمز عبور</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>' + users.map((u, i) => '<tr><td><b>' + u.fullName + '</b></td><td>' + (ROLE_PERMS[u.role]?.label || u.role) + '</td><td style="direction:ltr"><b>' + u.username + '</b></td><td style="direction:ltr">' + u.password + '</td><td>' + (u.locked ? '<span class="bdg st-al">🔒 قفل</span>' : '<span class="bdg st-d">🟢 فعال</span>') + '</td><td><button class="btn" style="background:' + (u.locked ? '#16a34a' : '#d97706') + ';color:#fff;padding:3px 7px" onclick="togStaffLock(' + i + ')">' + (u.locked ? '🔓 باز کردن' : '🔒 قفل آنی') + '</button> <button class="btn" style="background:#ef4444;color:#fff;padding:3px 7px" onclick="delStaffUser(' + i + ')">🗑️</button></td></tr>').join("") + '</tbody></table></div></div>';
 }
-
-function cTim(a) {
-  if (a?.isActiveTimer === false) return "غیرفعال";
-  const rem = getRemDays(a);
-  return rem <= 0 ? "موعد سرویس! (" + Math.abs(rem) + " روز گذشته) 🔴" : rem + " روز مانده ✅";
+function genAutoCreds() {
+  const r = $("uRoleSel").value;
+  $("uUser").value = r + "_" + Math.floor(100 + Math.random() * 900);
+  $("uPass").value = String(Math.floor(100000 + Math.random() * 900000));
 }
-function togTamper() { onlyTampered = !onlyTampered; drawCusts(); }
-async function clrAudit(cId, ix) {
-  const c = custs.find(x => x._id === cId); if (!c || !c.addresses?.[ix]) return;
-  c.addresses[ix].auditText = "";
-  await fetch(API + "/requests/customer-update/" + c._id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: c.fullName, phone: c.phone, secondaryPhones: c.secondaryPhones, addresses: c.addresses }) });
-  sync();
+async function createStaffRoleUser() {
+  const role = $("uRoleSel").value, fullName = $("uFullName").value.trim(), phone = $("uPhone").value.trim();
+  if (!fullName) return alert("نام شخص را وارد کنید.");
+  if (!$("uUser").value.trim() || !$("uPass").value.trim()) genAutoCreds();
+  const username = $("uUser").value.trim(), password = $("uPass").value.trim();
+  const users = settings.staffUsers || [], tm = settings.techMeta || {};
+  users.unshift({ id: "usr_" + Date.now(), role, fullName, phone, username, password, locked: false, createdAt: toJ(new Date()) });
+  if (role === "tech") {
+    if (!techs.includes(fullName)) { techs.push(fullName); localStorage.setItem("sw_techs", JSON.stringify(techs)); }
+    tm[fullName] = { ...(tm[fullName] || {}), phone, username, password, locked: false };
+  }
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users, techMeta: tm }) });
+  await loadDash(); alert(`✅ کاربر «${fullName}» با نقش «${ROLE_PERMS[role].label}» خلق شد.\nنام کاربری: ${username}\nرمز عبور: ${password}`);
 }
-
-function drawCusts() {
-  let tamperCnt = 0;
-  custs.forEach(c => (c.addresses || []).forEach(a => { if (a.auditText) tamperCnt++; }));
-  $("tamperBtn").textContent = (onlyTampered ? "📂 نمایش همه مشتریان" : "🕵️ تغییرات دستی تایمر (" + tamperCnt + ")");
-  $("tamperBtn").style.display = uRole === "admin" ? "inline-block" : "none";
-  const list = onlyTampered ? custs.filter(c => (c.addresses || []).some(a => a.auditText)) : custs;
-  if (!list.length) { $("custB").innerHTML = '<tr><td colspan="6" style="text-align:center;padding:10px">موردی یافت نشد.</td></tr>'; return; }
-  $("custB").innerHTML = list.map(c => {
-    const ad = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: c.address || "---", serviceIntervalDays: 180 }];
-    const ix = aMap[c._id] || 0, cu = ad[ix] || ad[0];
-    const tbs = ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="aMap[\'' + c._id + '\']=' + i + ';drawCusts()">📍 ' + (a.label || "خونه") + (a.auditText && uRole === "admin" ? " ⚠️" : "") + '</button>').join("");
-    const cnt = reqs.filter(r => r.status !== "deleted" && r.snapshot?.phone === c.phone && (ad.length === 1 || (r.addressLabel || "خونه") === (cu.label || "خونه"))).length;
-    const audHtml = (uRole === "admin" && cu.auditText) ? '<div style="background:#fef2f2;border:1px solid #f87171;color:#b91c1c;padding:4px;border-radius:4px;font-size:10px;margin-top:4px">' + cu.auditText + ' <span class="lnk" style="color:#15803d" onclick="clrAudit(\'' + c._id + '\',' + ix + ')">[تایید ✓]</span></div>' : "";
-    return '<tr><td style="font-weight:bold">' + (c.fullName || "---") + '</td><td style="direction:ltr;font-weight:bold">' + (c.phone || "---") + '</td><td style="direction:ltr;font-size:10px">' + ((c.secondaryPhones || []).join(" , ") || "---") + '</td><td><div style="margin-bottom:4px">' + tbs + '</div><div style="background:#f8fafc;padding:5px;border-radius:5px;border:1px solid #e2e8f0"><b>' + (cu.label || "خونه") + ':</b> ' + cu.fullAddress + ' <span class="lnk" style="float:left" onclick="doss(\'' + c.phone + '\',' + ix + ')">سوابق (' + cnt + ') 🔍</span></div></td><td><span class="bdg st-d">⏱️ ' + cTim(cu) + '</span><div style="font-size:10px;color:#64748b">تکمیل: ' + toJ(cu.lastServiceDate) + '</div>' + audHtml + '</td><td><button class="btn" onclick="editC(\'' + c._id + '\')">ویرایش ✏️</button></td></tr>';
-  }).join("");
+async function togStaffLock(i) {
+  const users = settings.staffUsers || [], u = users[i]; if (!u) return;
+  u.locked = !u.locked;
+  const tm = settings.techMeta || {}; if (u.role === "tech" && tm[u.fullName]) tm[u.fullName].locked = u.locked;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users, techMeta: tm }) });
+  await loadDash();
 }
-
-function doss(ph, ix = 0) {
-  const c = custs.find(x => x.phone === ph), cR = reqs.filter(r => (r.snapshot?.phone || r.customer?.phone) === ph);
-  const ad = c?.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: cR[0]?.snapshot?.address || "---", serviceIntervalDays: 180 }];
-  const cu = ad[ix] || ad[0];
-  const sub = cR.filter(r => ad.length === 1 || (r.addressLabel || "خونه") === (cu.label || "خونه"));
-  $("mTit").textContent = "👤 پرونده: " + (c?.fullName || cR[0]?.snapshot?.fullName || ph);
-  $("mBod").innerHTML = '<div style="font-size:12px;margin-bottom:6px"><b>شماره ۱:</b> <a href="tel:' + ph + '">' + ph + '</a> | <b>شماره ۲ و ۳:</b> ' + ((c?.secondaryPhones || []).join(" , ") || "ندارد") + '</div>' +
-    '<div style="margin-bottom:5px">' + ad.map((a, i) => '<button class="at ' + (i === ix ? "active" : "") + '" onclick="doss(\'' + ph + '\',' + i + ')">📍 ' + (a.label || "خونه") + '</button>').join("") + '</div>' +
-    '<div style="background:#f8fafc;padding:7px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:8px;font-size:11px"><b>نشانی «' + (cu.label || "خونه") + '»:</b> ' + cu.fullAddress + '<div style="color:#15803d;font-weight:bold;margin-top:3px">⏱️ تایمر: ' + cTim(cu) + '</div></div>' +
-    '<div style="max-height:160px;overflow-y:auto;margin-bottom:8px">' + (sub.map(r => '<div style="border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:4px;font-size:11px"><b>' + r.invoiceCode + ':</b> ' + r.issueType + ' ' + srcBdg(r) + (r.workReport ? '<div style="color:#15803d;font-weight:bold">🔧 ' + r.workReport + ' (مبلغ: ' + fmt(r.payableAmount) + ' ت)</div>' : '') + '<div>📅 درخواست: <b>' + toJ(r.createdAt) + '</b> | ✅ تکمیل: <b style="color:#15803d">' + toJ(r.completedAt) + '</b> ' + toTm(r.completedAt) + '</div></div>').join("") || "سابقه‌ای نیست.") + '</div>' +
-    (c ? '<button class="btn" style="width:100%;padding:8px" onclick="editC(\'' + c._id + '\')">✏️ ویرایش مشتری</button>' : "");
-  $("cModal").style.display = "flex";
+async function delStaffUser(i) {
+  if (!confirm("این کاربر و دسترسی او حذف شود؟")) return;
+  const users = settings.staffUsers || []; users.splice(i, 1);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users }) });
+  await loadDash();
 }
-
-function aRow(l = "محل کار", t = "", v = 180, d = "", q = false, rn = "", au = "") {
-  const rem = getRemDays({ serviceIntervalDays: v, lastServiceDate: d });
-  return '<div class="er" data-orig-v="' + (v || 180) + '" data-orig-rem="' + rem + '" data-last="' + (d || "") + '" data-q="' + (q ? "1" : "") + '" data-rn="' + (rn || "") + '" data-au="' + (au || "") + '" style="background:#f8fafc;border:1px solid #cbd5e1;padding:5px;border-radius:5px;margin-bottom:5px"><div style="display:flex;gap:4px;margin-bottom:4px"><input class="inp al" style="margin:0;width:95px;font-weight:bold" value="' + l + '"><input type="number" class="inp av" style="margin:0;width:70px" value="' + (v || 180) + '"><button class="btn" style="background:#ef4444" onclick="this.closest(\'.er\').remove()">حذف</button></div><input class="inp atx" style="margin:0" value="' + t + '" placeholder="متن آدرس..."></div>';
-}
-
-function editC(id) {
-  const c = custs.find(x => x._id === id) || { fullName: "", phone: "", secondaryPhones: [], addresses: [{ label: "خونه", fullAddress: "", serviceIntervalDays: 180 }] };
-  $("mTit").textContent = id ? "✏️ ویرایش مشتری" : "➕ مشتری جدید";
-  const adList = c.addresses?.length ? c.addresses : [{ label: "خونه", fullAddress: "", serviceIntervalDays: 180 }];
-  $("mBod").innerHTML = '<input id="eN" class="inp" placeholder="نام مشتری" value="' + (c.fullName || "") + '"><input id="eP1" class="inp" style="direction:ltr" placeholder="شماره اصلی" value="' + (c.phone || "") + '"><div style="display:flex;gap:5px"><input id="eP2" class="inp" style="direction:ltr" placeholder="شماره ۲" value="' + (c.secondaryPhones?.[0] || "") + '"><input id="eP3" class="inp" style="direction:ltr" placeholder="شماره ۳" value="' + (c.secondaryPhones?.[1] || "") + '"></div><div style="display:flex;justify-content:space-between;margin:4px 0"><b style="font-size:11px">آدرس‌ها و تایمر (روز):</b><button class="btn" onclick="$(\'eAB\').insertAdjacentHTML(\'beforeend\',aRow())">+ آدرس</button></div><div id="eAB">' + adList.map(a => aRow(a.label, a.fullAddress, a.serviceIntervalDays, a.lastServiceDate, a.inReminderQueue, a.reminderNote, a.auditText)).join("") + '</div><input id="eReas" class="inp" placeholder="دلیل تغییر تایمر (در صورت تغییر عدد روز الزامی است)"><button class="btn" style="width:100%;background:#16a34a;padding:9px;margin-top:4px" onclick="saveC(\'' + id + '\')">ذخیره تغییرات ✅</button>';
-  $("cModal").style.display = "flex";
-}
-
-async function saveC(id) {
-  const ad = [], reas = $("eReas").value.trim(); let needReas = false;
-  document.querySelectorAll(".er").forEach(r => {
-    const l = r.querySelector(".al").value.trim() || "خونه", t = r.querySelector(".atx").value.trim();
-    const v = Number(r.querySelector(".av").value) || 180, origV = Number(r.dataset.origV) || 180, origRem = r.dataset.origRem;
-    let d = r.dataset.last ? new Date(r.dataset.last) : new Date(), au = r.dataset.au || "";
-    if (id && v !== origV) {
-      if (!reas) needReas = true;
-      d = new Date(); au = "🕵️ تغییر دستی تایمر از " + origRem + " به " + v + " روز توسط " + uName + " (" + toJ(new Date()) + ") | دلیل: " + reas;
-    } else if (d.getTime() > Date.now()) d = new Date();
-    if (t) ad.push({ label: l, fullAddress: t, serviceIntervalDays: v, lastServiceDate: d, isActiveTimer: true, inReminderQueue: r.dataset.q === "1", reminderNote: r.dataset.rn || "", auditText: au });
-  });
-  if (needReas) return alert("چون عدد تایمر را تغییر دادید، وارد کردن «دلیل تغییر تایمر» الزامی است.");
-  if (id) await fetch(API + "/requests/customer-update/" + id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad }) });
-  else await fetch(API + "/customers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad, address: ad[0]?.fullAddress || "", addressLabel: ad[0]?.label || "خونه" }) });
-  $("cModal").style.display = "none"; sync();
-}
-
-async function upSt(id, b) {
-  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) });
-  await sync(); if (archDays) loadArch(archDays); else if ($("sF").value || $("sT").value || $("sQ").value) searchR();
-}
-
-function drawAll() { drawReqs(); drawTechs(); drawRem(); drawDel(); drawCusts(); drawSrv(); if (archDays) loadArch(archDays); }
-
-async function sync() {
-  drawAll(); $("syncP").textContent = "⏳ دریافت...";
-  try {
-    const [r1, r2, r3] = await Promise.all([fetch(API + "/requests"), fetch(API + "/customers"), fetch(API + "/requests/settings")]);
-    if (r1.ok) { reqs = (await r1.json()).requests || []; localStorage.setItem("sw_reqs", JSON.stringify(reqs)); }
-    if (r2.ok) { custs = (await r2.json()).customers || []; localStorage.setItem("sw_custs", JSON.stringify(custs)); }
-    if (r3.ok) { settings = (await r3.json()).settings || settings; }
-    drawAll(); $("syncP").textContent = "🟢 آنلاین";
-  } catch (e) { $("syncP").textContent = "⚠️ آفلاین"; }
-}
-sync();
+loadDash();
 </script>
 </body>
 </html>
-<!-- END -->
