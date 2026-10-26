@@ -3,784 +3,361 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SamiWater | پنل تکنسین</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<title>پنل عملیاتی تکنسین | سامی‌واتر</title>
 <style>
-:root{--green:#0f3b2d;--dark:#09261d;--gold:#d9b24c;--gold-lt:#f5e6b8;--bg:#e8efec;--card:#ffffff;--txt:#1e293b}
-*{box-sizing:border-box;margin:0;padding:0;font-family:"Vazirmatn",Tahoma,sans-serif}
-body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
-.top{background:linear-gradient(180deg,var(--green),var(--dark));color:#fff;padding:12px 14px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 4px 12px #0003}
-.brand{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--gold);font-size:15px}
-.brand img{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--gold);background:#124432}
-.badge-top{background:#154c3a;border:1px solid var(--gold);color:var(--gold-lt);padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
-.wrap{max-width:520px;margin:0 auto;padding:12px}
-.fin-hdr{background:linear-gradient(135deg,var(--green),#164e3b);border:1.5px solid var(--gold);border-radius:16px;padding:12px;color:#fff;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 4px 12px #0f3b2d33}
-.fin-card{background:#fff;color:var(--txt);border-radius:12px;padding:8px 12px;min-width:190px;box-shadow:0 2px 6px #0002}
-.fin-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0}
-.tabs2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-.t-btn{background:#fff;border:1.5px solid #cbd5e1;color:#475569;padding:9px 6px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;text-align:center}
-.t-btn.active{background:var(--green);color:var(--gold-lt);border-color:var(--gold)}
-.box{background:var(--card);border:1.5px solid #cbd5e1;border-radius:16px;padding:13px;margin-bottom:11px;box-shadow:0 3px 8px #0000000d}
-.box-gold{border-color:var(--gold);background:#fffdf7}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center}
-.lbl{font-size:11px;color:#64748b;margin-bottom:3px;font-weight:600}
-.val{font-size:13px;font-weight:800;color:var(--green)}
-.row-btw{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.cir-btn{display:flex;align-items:center;gap:5px;background:#f0fdf4;border:1.5px solid var(--green);color:var(--green);padding:7px 10px;border-radius:30px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;white-space:nowrap}
-.cir-gold{background:#fefce8;border-color:#ca8a04;color:#854d0e}
-.btn-main{width:100%;background:linear-gradient(180deg,var(--green),var(--dark));color:var(--gold-lt);border:1.5px solid var(--gold);padding:13px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px}
-.btn-draft{width:100%;background:#0284c7;color:#fff;border:none;padding:13px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px}
-.btn-pay{width:100%;background:#fefce8;color:#0f3b2d;border:2px solid var(--gold);padding:11px 12px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.btn-pay.sel{background:var(--green);color:var(--gold-lt);border-color:var(--gold)}
-.pay-sub{display:none;background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:12px;padding:10px;margin-bottom:10px}
-.pay-sub.open{display:block}
-.btn-ret{width:100%;background:#fff1f2;color:#be123c;border:1px solid #fda4af;padding:10px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:6px}
-.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:2px solid var(--gold);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px;z-index:90}
-.bn-it{color:#cbd5e1;text-align:center;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
-.bn-it.active{color:var(--gold)}
-.inp{width:100%;padding:9px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:12px;margin-bottom:6px;font-family:inherit}
-.drw-bg{position:fixed;inset:0;background:#09261db3;display:none;z-index:200}
-.drw{width:270px;background:linear-gradient(180deg,var(--green),var(--dark));height:100%;padding:18px 14px;color:#fff;border-left:2px solid var(--gold);display:flex;flex-direction:column;gap:8px}
-.drw-it{padding:12px 10px;border-bottom:1px solid #ffffff22;font-size:13px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--gold-lt)}
-.req-item{cursor:pointer;border-right:5px solid var(--green)}
-.req-item.unread{background:linear-gradient(135deg,#fefce8,#fef08a)!important;border:2px solid #ca8a04!important;border-right:6px solid #dc2626!important;box-shadow:0 4px 14px #ca8a0440!important}
-.req-item.pending-sus{background:#e2e8f0!important;border-color:#94a3b8!important;border-right:6px solid #64748b!important;opacity:.75}
-.bdg-new{background:#dc2626;color:#fff;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:800;display:inline-block;margin-bottom:3px}
-.bdg-seen{background:#e2e8f0;color:#475569;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:3px}
-.bdg-sus{background:#475569;color:#fff;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:800;display:inline-block;margin-bottom:3px}
-.bdg-unpaid{background:#e11d48;color:#fff;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:800}
-.bdg-paid{background:#15803d;color:#fff;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:800}
-.prof-bar{background:linear-gradient(135deg,#15803d,#166534);color:#fff;border-radius:14px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
-.acc-hdr{background:#fff;border:1.5px solid #cbd5e1;border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--green);font-size:13px}
-.acc-hdr.wages{border-color:var(--gold);background:#fffdf7;color:#b45309;margin-top:14px}
-.acc-bod{display:none;padding:4px 4px 10px 4px}
-.acc-bod.open{display:block}
-.cat-card{background:linear-gradient(135deg,var(--green),#144938);color:#fff;border:1.5px solid var(--gold);border-radius:12px;padding:11px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.q-btn{width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold-lt);font-size:16px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-.q-btn.disabled{opacity:.35;border-color:#94a3b8;color:#94a3b8;cursor:not-allowed}
-.m-bg{position:fixed;inset:0;background:#09261dd9;display:none;justify-content:center;align-items:center;z-index:250;padding:12px}
-.m-bx{background:#fff;width:min(440px,100%);border-radius:16px;padding:15px;border:2px solid var(--gold);max-height:90vh;overflow-y:auto}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
+body{background:#0f172a;color:#1e293b;padding:8px}
+.wrap{width:100%;max-width:1360px;margin:0 auto}
+.hdr{background:linear-gradient(135deg,#0f3b2d,#1e293b);color:#fff;padding:12px;border-radius:14px;border:2px solid #d9b24c;margin-bottom:10px}
+.hdr-t{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.pill{background:#09261d;color:#facc15;border:1px solid #d9b24c;padding:5px 10px;border-radius:12px;font-size:11px;font-weight:bold;text-decoration:none;cursor:pointer}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.t-btn{background:#1e293b;color:#cbd5e1;border:1px solid #475569;padding:10px 6px;border-radius:10px;font-size:11px;font-weight:bold;cursor:pointer;text-align:center}
+.t-btn.active{background:#d9b24c;color:#071f17;border-color:#fef08a}
+.cards-grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:900px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:#fff;border-radius:12px;padding:12px;border:2px solid #cbd5e1}
+.bdg{padding:3px 7px;border-radius:6px;font-size:10px;font-weight:bold;display:inline-block}
+.inp{width:100%;padding:8px;border:1.5px solid #94a3b8;border-radius:8px;font-size:12px;margin-bottom:6px;font-family:inherit}
+.btn{background:#0f3b2d;color:#f5e6b8;border:1px solid #d9b24c;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:bold}
+.hist-drw{margin-top:8px;border:1px solid #94a3b8;border-radius:8px;overflow:hidden;background:#f8fafc}
+.hist-h{padding:8px 10px;background:#e2e8f0;font-size:11px;font-weight:bold;color:#0f3b2d;cursor:pointer;display:flex;justify-content:space-between}
+.hist-b{display:none;padding:8px;font-size:11px;max-height:220px;overflow-y:auto}
+.hist-b.open{display:block}
+.modal-bg{display:none;position:fixed;inset:0;background:#000b;z-index:999;padding:10px;overflow-y:auto}
+.modal-bg.open{display:flex;align-items:flex-start;justify-content:center}
+.modal{background:#fff;width:100%;max-width:720px;border-radius:14px;padding:14px;border:2px solid #d9b24c;margin:15px auto}
+.tag-btn{background:#f1f5f9;color:#334155;border:1.5px solid #94a3b8;padding:6px 9px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer}
+.tag-btn.sel{background:#fee2e2;color:#b91c1c;border-color:#dc2626}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-t">
+      <h1 style="font-size:14px;color:#f5e6b8">📱 پنل عملیاتی تکنسین سامی‌واتر</h1>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="pill" onclick="loadTechData()">🔄 بروزرسانی</button>
+        <a id="admBack" href="dashboard.html" class="pill" style="display:none;color:#4ade80;border-color:#4ade80">🔙 پنل مدیریت</a>
+        <span id="tPill" class="pill">👨‍🔧 تکنسین</span>
+        <button class="pill" style="background:#dc2626;color:#fff;border:none" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
+      </div>
+    </div>
+    <div id="admTechBar" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #ffffff33">
+      <select id="techSel" class="inp" style="margin:0;background:#071f17;color:#fff" onchange="curTech=this.value;renderTechView()"></select>
+    </div>
+  </div>
 
-<div class="top">
-  <div class="brand"><img src="/logo-samiwater.png" onerror="this.style.display='none'"> سامی‌واتر | پنل تکنسین</div>
-  <div id="topAct" class="badge-top" onclick="openDrawer()">☰ منو</div>
+  <div id="lockBanner" style="display:none;background:#fee2e2;border:2px solid #dc2626;color:#991b1b;padding:16px;border-radius:12px;text-align:center;font-weight:bold;margin-bottom:10px">
+    🔒 دسترسی کارتابل یا انبار شما توسط مدیریت موقتاً قفل شده است. لطفاً با مدیریت هماهنگ فرمایید.
+  </div>
+
+  <div id="mainContent">
+    <div class="tabs">
+      <button class="t-btn active" onclick="setTab('todo',this)">🛠️ در دست اقدام (<span id="cTodo">0</span>)</button>
+      <button class="t-btn" onclick="setTab('stock',this)">📦 انبار سیار من</button>
+      <button class="t-btn" onclick="setTab('done',this)">✅ تکمیل‌شده دوره (<span id="cDone">0</span>)</button>
+    </div>
+    <div id="viewBox"></div>
+  </div>
 </div>
 
-<div id="drawerBg" class="drw-bg" onclick="if(event.target===this)this.style.display='none'">
-  <div class="drw">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <span style="background:#09261d;border:1px solid var(--gold);padding:4px 10px;border-radius:8px;font-size:11px;color:var(--gold)">کد کاربری</span>
-      <b id="drwName" style="font-size:13px;color:#fff">---</b>
+<div id="compModal" class="modal-bg">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #cbd5e1;padding-bottom:8px;margin-bottom:10px">
+      <b id="mTitle" style="font-size:13px;color:#0f3b2d">✅ تکمیل فاکتور و ثبت جزئیات سرویس</b>
+      <button class="btn" style="background:#dc2626;color:#fff;border:none" onclick="closeCompModal()">✖ بستن</button>
     </div>
-    <div class="drw-it" onclick="closeDrw();switchMainTab('assigned')"><span>📋 خدمات ارجاع شده (در نوبت)</span><span>➕</span></div>
-    <div class="drw-it" onclick="closeDrw();switchMainTab('done')"><span>✅ خدمات تکمیل شده</span><span>✔️</span></div>
-    <div class="drw-it" onclick="closeDrw();showLogs()"><span>🔔 پیام‌ها و گزارش سیستم</span><span>📄</span></div>
-    <div class="drw-it" onclick="closeDrw();showLedger()"><span>💳 لیست حساب (تراکنش‌ها)</span><span>📊</span></div>
-    <div class="drw-it" onclick="closeDrw();showStock()"><span>📦 موجودی کالا (انبار من)</span><span>📍</span></div>
-    <div class="drw-it" style="color:#fda4af;border:none;margin-top:auto" onclick="doLogout()"><span>🚪 خروج از حساب</span><span>✖️</span></div>
+    <div style="background:#f8fafc;padding:9px;border-radius:9px;border:1px solid #cbd5e1;margin-bottom:10px">
+      <b style="font-size:11px;display:block;margin-bottom:5px">➕ ۱. افزودن کالا، فیلتر یا خدمات انجام‌شده:</b>
+      <div style="display:flex;gap:5px">
+        <select id="catSel" class="inp" style="margin:0;flex:2"></select>
+        <input id="catQty" type="text" inputmode="numeric" class="inp" style="margin:0;width:65px;text-align:center;direction:ltr;font-weight:bold" value="1" oninput="onMoneyInp(this)">
+        <button class="btn" style="background:#16a34a;color:#fff" onclick="addItemToInv()">+ افزودن</button>
+      </div>
+      <div id="selItemsBox" style="margin-top:8px;font-size:11px"></div>
+    </div>
+
+    <div style="background:#fffdf7;padding:9px;border-radius:9px;border:1.5px solid #eab308;margin-bottom:10px">
+      <b style="font-size:11px;color:#0f3b2d;display:block;margin-bottom:6px">💳 ۲. ثبت نحوه دریافت وجه (نقد، پوز، چک یا ترکیبی):</b>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div><label style="font-size:11px;font-weight:bold">💳 مبلغ کارتخوان (پوز):</label><input id="payPos" type="text" inputmode="numeric" class="inp" style="direction:ltr;font-weight:bold" value="0" oninput="onMoneyInp(this);recalcModalPay()"></div>
+        <div><label style="font-size:11px;font-weight:bold">💵 مبلغ نقدی دریافتی:</label><input id="payCash" type="text" inputmode="numeric" class="inp" style="direction:ltr;font-weight:bold" value="0" oninput="onMoneyInp(this);recalcModalPay()"></div>
+      </div>
+      <div style="margin-top:4px;background:#faf5ff;border:1.5px solid #c084fc;padding:8px;border-radius:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <b style="font-size:11px;color:#6b21a8">📝 دریافت چک از مشتری (۴ فیلد الزامی چک):</b>
+          <span style="font-size:10px;color:#7e22ce">مبلغ چک در لحظه از مانده کسر می‌شود</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div><label style="font-size:10px;font-weight:bold">۱. مبلغ چک (تومان):</label><input id="payChkAmt" type="text" inputmode="numeric" class="inp" style="direction:ltr;font-weight:bold;margin:0" value="0" oninput="onMoneyInp(this);recalcModalPay()"></div>
+          <div><label style="font-size:10px;font-weight:bold">۲. تاریخ سررسید چک:</label><input id="payChkDate" class="inp" style="direction:ltr;text-align:center;margin:0" placeholder="مثلاً 1405/09/15"></div>
+          <div><label style="font-size:10px;font-weight:bold">۳. نام بانک چک:</label><input id="payChkBank" class="inp" style="margin:0" placeholder="مثلاً بانک ملت"></div>
+          <div><label style="font-size:10px;font-weight:bold">۴. شماره چک / سریال ۶ رقمی:</label><input id="payChkNum" class="inp" style="direction:ltr;text-align:center;font-weight:bold;margin:0" placeholder="شماره چک"></div>
+        </div>
+      </div>
+      <div id="paySummaryBar" style="margin-top:8px;padding:8px;border-radius:8px;background:#0f3b2d;color:#fff;font-size:12px"></div>
+    </div>
+
+    <div style="background:#fff1f2;padding:9px;border-radius:9px;border:1.5px solid #fda4af;margin-bottom:10px">
+      <b style="font-size:11px;color:#9f1239;display:block;margin-bottom:6px">🎫 ۳. ثبت تیکت و نکته مهم این مشتری (برای اطلاع تکنسین‌های دوره بعد و مدیریت):</b>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
+        <button type="button" class="tag-btn" onclick="togTicketTag(this,'فیلتر تعویض نشد به درخواست خودش')">⚠️ فیلتر تعویض نشد به درخواست خودش</button>
+        <button type="button" class="tag-btn" onclick="togTicketTag(this,'قطعه تعویض نشد به درخواست خودش')">⚙️ قطعه تعویض نشد به درخواست خودش</button>
+        <button type="button" class="tag-btn" onclick="togTicketTag(this,'بدحساب')">💰 بدحساب</button>
+        <button type="button" class="tag-btn" onclick="togTicketTag(this,'سایر موارد')">📝 سایر موارد</button>
+      </div>
+      <input id="ticketNoteInp" class="inp" style="margin:0" placeholder="توضیح تکمیلی تیکت (مثلاً: ممبران یا پمپ ضعیف بود خودش نخواست عوض شود)...">
+    </div>
+    <button class="btn" style="width:100%;background:#16a34a;color:#fff;padding:11px;font-size:13px" onclick="submitCompleteOrder()">✅ ثبت نهایی فاکتور و بستن سرویس</button>
   </div>
 </div>
 <!-- PART 1 END -->
-<div class="wrap">
-  <div id="loginBox" class="box" style="display:none;margin-top:20px;text-align:center">
-    <h3 style="color:var(--green);margin-bottom:8px">🔐 ورود تکنسین سامی‌واتر</h3>
-    <p style="font-size:11px;color:#64748b;margin-bottom:12px">کد سازمانی و پین خود را وارد نمایید</p>
-    <input id="tNameInp" class="inp" placeholder="نام یا کد تکنسین">
-    <input id="tPinInp" type="password" inputmode="numeric" class="inp" style="text-align:center;direction:ltr" placeholder="رمز ورود">
-    <button class="btn-main" onclick="doLogin()">ورود به کارتابل ✅</button>
-  </div>
-
-  <div id="mainHdr" class="fin-hdr" style="display:none">
-    <div>
-      <div style="font-size:11px;color:var(--gold-lt)">سلام و خداقوت</div>
-      <div id="hTechName" style="font-size:15px;font-weight:800;color:var(--gold)">---</div>
-      <button class="cir-btn cir-gold" style="margin-top:6px;padding:3px 9px;font-size:10px" onclick="loadData()">🔄 بروزرسانی</button>
-    </div>
-    <div class="fin-card">
-      <div class="fin-row" style="border-bottom:1px solid #e2e8f0"><span style="color:#64748b">مبلغ صورتحساب:</span><b id="hBill" style="color:#be123c;direction:ltr">0 تومان</b></div>
-      <div class="fin-row" style="margin-top:2px"><span style="color:#64748b">سود شما:</span><b id="hProfit" style="color:#15803d;direction:ltr;font-size:12px">+0 تومان</b></div>
-    </div>
-  </div>
-
-  <div id="listView" style="display:none">
-    <div class="tabs2">
-      <button id="mt_assigned" class="t-btn active" onclick="switchMainTab('assigned')">📋 در نوبت انجام (<span id="cntAsg">0</span>)</button>
-      <button id="mt_done" class="t-btn" onclick="switchMainTab('done')">✅ تکمیل‌شده‌ها (<span id="cntDn">0</span>)</button>
-    </div>
-    <div id="doneSubTabs" class="tabs2" style="display:none">
-      <button id="st_unpaid" class="t-btn active" style="border-color:#fda4af" onclick="switchDoneSub('unpaid')">🔴 پرداخت نشده (<span id="cntUnp">0</span>)</button>
-      <button id="st_paid" class="t-btn" onclick="switchDoneSub('paid')">🟢 پرداخت شده (<span id="cntPd">0</span>)</button>
-    </div>
-    <div id="ordersList"></div>
-  </div>
-
-  <div id="detailView" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <b style="color:var(--green);font-size:13px">📄 جزئیات خدمت</b>
-      <button class="cir-btn" style="padding:4px 10px" onclick="showView('listView')">🔙 بازگشت به لیست</button>
-    </div>
-
-    <div id="susStatusBanner" class="box" style="display:none"></div>
-
-    <div class="box box-gold">
-      <div class="grid3">
-        <div><div class="lbl">شماره درخواست</div><div id="dCode" class="val" style="direction:ltr">---</div></div>
-        <div><div class="lbl">نوع خدمت</div><div id="dType" class="val" style="color:#b45309">---</div></div>
-        <div><div class="lbl">تاریخ و ساعت</div><div id="dDate" class="val" style="font-size:11px">---</div><div id="dTime" style="font-size:10px;color:#475569;font-weight:700"></div></div>
-      </div>
-    </div>
-
-    <div class="box">
-      <div class="row-btw">
-        <div>
-          <div id="dCust" style="font-size:14px;font-weight:800;color:var(--green)">---</div>
-          <div id="dPhoneTxt" style="font-size:13px;color:#0f3b2d;direction:ltr;margin-top:3px;font-weight:800">---</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
-          <span id="dPayBadge" style="display:none"></span>
-          <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <button id="dCallBtn" class="cir-btn" onclick="callMainPhone()">📞 تماس</button>
-            <button class="cir-btn cir-gold" onclick="sendMissedSms(false)">💬 پیامک عدم پاسخ</button>
-          </div>
-        </div>
-      </div>
-      <div id="dTempPhoneBox" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1" class="row-btw">
-        <div style="font-size:11px;color:#b45309;font-weight:800">📌 هماهنگی این نوبت: <span id="dTempPhoneTxt" style="direction:ltr"></span></div>
-        <div style="display:flex;gap:4px">
-          <a id="dTempCallBtn" href="#" class="cir-btn cir-gold">📞 تماس</a>
-          <button class="cir-btn cir-gold" onclick="sendMissedSms(true)">💬 پیامک</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="addrCard" class="box">
-      <div class="row-btw">
-        <div style="flex:1">
-          <div id="dAddrLbl" style="font-size:11px;font-weight:800;color:#b45309;margin-bottom:2px">📍 نشانی</div>
-          <div id="dAddr" style="font-size:12px;line-height:1.7;font-weight:600">---</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <a id="dMapBtn" href="#" target="_blank" class="cir-btn">🗺️ مسیریابی</a>
-          <button class="cir-btn cir-gold" style="font-size:10px;padding:4px 8px" onclick="saveMyGps()">📍 ثبت لوکیشن</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="notesCard" class="box">
-      <div class="lbl">شرح خدمات</div>
-      <div id="dDesc" style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:8px">---</div>
-      <div class="lbl">توضیحات و سوابق</div>
-      <div id="dNotes" style="font-size:12px;line-height:1.7;color:#0f3b2d;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px;border-radius:10px;font-weight:600">---</div>
-    </div>
-
-    <div id="tempNotesCard" class="box" style="background:#fffdf7;border-color:var(--gold)">
-      <div class="row-btw" style="margin-bottom:6px"><b style="font-size:12px;color:#854d0e">📝 یادداشت پیگیری</b></div>
-      <div id="tempNotesList" style="margin-bottom:8px;font-size:11px"></div>
-      <div style="display:flex;gap:6px">
-        <input id="newTempNoteInp" class="inp" style="margin:0;flex:1" placeholder="ثبت گزارش تماس یا زمان هماهنگی...">
-        <button class="cir-btn" style="background:var(--green);color:var(--gold-lt);padding:8px 12px" onclick="addTempNote()">+ ثبت</button>
-      </div>
-    </div>
-
-    <div id="actBtns">
-      <button class="btn-main" onclick="openBuilder()">📝 ثبت و ویرایش فاکتور</button>
-      <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق</button>
-    </div>
-
-    <div id="invBuilder" style="display:none">
-      <div class="box box-gold">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="background:var(--gold);color:var(--dark);padding:4px 12px;border-radius:8px;font-size:12px;font-weight:800">انتخاب کالا و خدمات</span>
-        </div>
-        <div id="accContainer"></div>
-        <input id="wNoteInp" class="inp" style="margin-top:8px" placeholder="توضیحات تکمیلی فاکتور...">
-        <button class="btn-draft" onclick="openDraftPreview()">👁️ مشاهده پیش‌فاکتور</button>
-      </div>
-    </div>
-
-    <div id="invSummary" style="display:none">
-      <div id="draftBanner" class="box" style="display:none;background:#fef3c7;border-color:#f59e0b;color:#92400e;font-size:11px;font-weight:800;line-height:1.7;text-align:center">
-        ⚠️ پیش‌نویس اولیه فاکتور<br>📩 پس از تایید نهایی، مبلغ قطعی برای مشتری پیامک می‌شود.
-      </div>
-      <div class="prof-bar"><span>سود شما از این سفارش:</span><span id="sProf" style="font-size:16px;direction:ltr">0 تومان</span></div>
-      <div class="box" style="border-color:var(--gold)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="background:var(--gold);color:var(--dark);padding:3px 12px;border-radius:8px;font-size:12px;font-weight:800">جزییات فاکتور</span>
-          <button id="editItemsBtn" class="cir-btn" style="padding:3px 8px;font-size:10px" onclick="openBuilder()">✏️ ویرایش اقلام</button>
-        </div>
-        <div id="sItemsBox"></div>
-        <div style="background:#e2e8f0;color:#1e293b;padding:9px 12px;border-radius:10px;display:flex;justify-content:space-between;font-size:12px;font-weight:800;margin-top:6px">
-          <span>ایاب و ذهاب شهری</span><span id="sTravel" style="direction:ltr">0 تومان</span>
-        </div>
-      </div>
-      <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">تخفیف و هدیه :</span><b id="sDisc" style="font-size:13px">0 تومان</b></div>
-      <div class="box row-btw"><span style="font-size:12px;font-weight:800;color:#b45309">جمع فاکتور:</span><b id="sTot" style="font-size:14px">0 تومان</b></div>
-      <div class="box row-btw" style="background:linear-gradient(135deg,var(--gold),#eab308);color:var(--dark);border:none"><span style="font-size:13px;font-weight:800">قابل پرداخت:</span><b id="sPayable" style="font-size:16px">0 تومان</b></div>
-
-      <div id="draftActions" style="display:none;margin-bottom:12px">
-        <button class="btn-main" onclick="finalizeInvoice()">✅ تایید نهایی فاکتور و ثبت پرداخت</button>
-        <button class="btn-ret" style="background:#f1f5f9;color:#334155;border-color:#cbd5e1" onclick="openBuilder()">✏️ بازگشت به انتخاب کالا</button>
-      </div>
-
-      <div id="payBox" class="box" style="display:none">
-        <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:6px">💳 ثبت روش پرداخت</div>
-        <div id="remBar" style="background:#fee2e2;color:#be123c;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between">
-          <span>مانده:</span><b id="remVal" style="direction:ltr">0 تومان</b>
-        </div>
-        <button id="pm_pos" class="btn-pay" onclick="togPaySec('pos')"><span>دستگاه پوز</span><span>💳</span></button>
-        <div id="sec_pos" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ پوز (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('pos')">کل مانده</button></div>
-          <input id="inp_pos" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
-        </div>
-        <button id="pm_cash" class="btn-pay" onclick="togPaySec('cash')"><span>نقدی</span><span>💵</span></button>
-        <div id="sec_cash" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ نقدی (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('cash')">کل مانده</button></div>
-          <input id="inp_cash" type="number" inputmode="numeric" class="inp" style="direction:ltr;margin:0" placeholder="0" oninput="calcRemPay()">
-        </div>
-        <button id="pm_check" class="btn-pay" onclick="togPaySec('check')"><span>چک</span><span>📝</span></button>
-        <div id="sec_check" class="pay-sub">
-          <div class="row-btw" style="margin-bottom:4px"><span style="font-size:11px;font-weight:700">مبلغ چک (تومان):</span><button class="cir-btn" style="padding:2px 8px;font-size:10px" onclick="fillRem('check')">کل مانده</button></div>
-          <input id="inp_check" type="number" inputmode="numeric" class="inp" style="direction:ltr" placeholder="0" oninput="calcRemPay()">
-          <input id="inp_chk_num" class="inp" style="direction:ltr" placeholder="شماره چک / صیادی">
-          <input id="inp_chk_bnk" class="inp" style="margin:0" placeholder="نام بانک">
-        </div>
-        <button class="btn-main" onclick="submitPayment()">✅ ثبت نهایی پرداخت</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="subView" style="display:none"></div>
-</div>
-
-<div id="susModal" class="m-bg" onclick="if(event.target===this)this.style.display='none'">
-  <div class="m-bx">
-    <h4 style="color:var(--green);margin-bottom:10px;font-size:14px">⏸️ ثبت درخواست تعلیق</h4>
-    <label style="font-size:11px;font-weight:800">۱. علت تعلیق *</label>
-    <select id="susReasSel" class="inp" onchange="onSusReasChange()">
-      <option value="عدم پاسخگویی مشتری">📞 عدم پاسخگویی مشتری</option>
-      <option value="درخواست مشتری برای موکول شدن زمان">🗓️ درخواست مشتری برای موکول شدن زمان</option>
-      <option value="عدم حضور مشتری در محل / مسافرت">✈️ عدم حضور مشتری در محل / مسافرت</option>
-      <option value="موکول شدن به سر برج">💰 موکول شدن به سر برج</option>
-      <option value="انصراف مشتری">❌ انصراف مشتری</option>
-      <option value="سایر موارد">📝 سایر موارد</option>
-    </select>
-    <div id="susDaysBox">
-      <label style="font-size:11px;font-weight:800">۲. مدت زمان تعلیق (تعداد روز) *</label>
-      <input id="susDaysInp" type="number" min="7" inputmode="numeric" class="inp" style="direction:ltr" value="7">
-    </div>
-    <label style="font-size:11px;font-weight:800">۳. توضیحات تکمیلی:</label>
-    <input id="susNoteInp" class="inp" placeholder="توضیحات...">
-    <div style="display:flex;gap:6px;margin-top:6px">
-      <button class="btn-main" style="margin:0;flex:2" onclick="submitSusReq()">ارسال درخواست 📤</button>
-      <button class="btn-ret" style="margin:0;flex:1" onclick="$('susModal').style.display='none'">انصراف</button>
-    </div>
-  </div>
-</div>
-<!-- PART 2 END -->
-  
-  <div class="bnav">
-  <div class="bn-it active" onclick="switchMainTab('assigned')"><span>📋</span><span>درخواست‌ها</span></div>
-  <div class="bn-it" onclick="switchMainTab('done')"><span>✅</span><span>تکمیل‌شده‌ها</span></div>
-  <div class="bn-it" onclick="showLedger()"><span>💳</span><span>لیست حساب</span></div>
-  <a class="bn-it" href="tel:09130051733"><span>📞</span><span>تماس با اپراتور</span></a>
-</div>
-
-<script>
+  <script>
 const API = "https://samiwater-backend.onrender.com/api";
 const $ = id => document.getElementById(id);
-let myName = localStorage.getItem("sw_tech_name") || "";
-let allReqs = [], settings = { fixedTravelFee: 139000, categories: [], catalog: [], techMeta: {} }, curReq = null, qtys = {}, draftCalc = null;
-let mainTab = "assigned", doneSub = "unpaid";
+const num = v => Math.round(Number(String(v || 0).replace(/,/g, "")) || 0);
+const fmt = n => num(n).toLocaleString("fa-IR");
+const fmtM = n => num(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function onMoneyInp(el) {
+  let raw = String(el.value || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[^0-9]/g, "");
+  el.value = raw ? Number(raw).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+}
+function toJ(d) {
+  if (!d) return "---";
+  try {
+    let s = new Intl.DateTimeFormat("fa-IR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(d));
+    ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"].forEach((p, i) => s = s.replace(new RegExp(p, "g"), i));
+    return s;
+  } catch (e) { return "---"; }
+}
+function normPh(p) { return String(p || "").replace(/\D/g, "").slice(-10); }
 
-const fmt = n => (Number(n) || 0).toLocaleString("fa-IR") + " تومان";
-function toJ(d) { if (!d) return "---"; try { return new Date(d).toLocaleDateString("fa-IR"); } catch (e) { return "---"; } }
-function toTm(d) { if (!d) return ""; try { return new Date(d).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
+if (!localStorage.getItem("token")) location.href = "login.html";
+const uRole = localStorage.getItem("role") || "tech", uName = localStorage.getItem("username") || "";
+let reqs = [], settings = {}, curTab = "todo", curTech = uName, activeReq = null, modalItems = [], selectedTags = [];
 
-function getEffAmounts(r) {
-  const tFee = Number(r?.travelFee) > 0 ? Number(r.travelFee) : (Number(settings.fixedTravelFee) || 139000);
-  const disc = Number(r?.discountAmount) || 0;
-  let tot = Number(r?.totalAmount) || 0, prof = Number(r?.techProfit) || 0;
-  if (tot <= 0) {
-    tot = tFee; prof = tFee;
-    (r?.invoiceItems || []).forEach(it => {
-      const q = Number(it.qty) || 1, p = Number(it.price) || 0, w = Number(it.wage) || 0, cm = Number(it.commPct) || 0;
-      tot += (p * q) + (w * q); prof += Math.round((p * q * cm) / 100) + (w * q);
-    });
-  }
-  const payable = Number(r?.payableAmount) > 0 ? Number(r.payableAmount) : Math.max(0, tot - disc);
-  return { tFee, disc, tot, payable, prof };
+if (uRole === "admin" || uRole === "supervisor") {
+  $("admBack").style.display = "inline-block";
+  $("admTechBar").style.display = "block";
 }
 
-function openDrawer() { if (myName) $("drawerBg").style.display = "block"; }
-function closeDrw() { $("drawerBg").style.display = "none"; }
-function doLogout() { if (confirm("خروج از حساب تکنسین؟")) { localStorage.removeItem("sw_tech_name"); myName = ""; closeDrw(); location.href = "login.html"; } }
+function setTab(t, btn) {
+  curTab = t;
+  document.querySelectorAll(".t-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  renderTechView();
+}
 
-function init() {
-  if (!myName) {
-    $("loginBox").style.display = "block"; $("mainHdr").style.display = "none";
-    $("listView").style.display = "none"; $("detailView").style.display = "none"; $("subView").style.display = "none";
+async function loadTechData() {
+  const [r1, r2] = await Promise.all([fetch(API + "/requests"), fetch(API + "/requests/settings")]);
+  if (r1.ok) reqs = (await r1.json()).requests || [];
+  if (r2.ok) settings = (await r2.json()).settings || {};
+
+  let techList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
+  Object.keys(settings.techMeta || {}).forEach(t => { if (!techList.includes(t)) techList.push(t); });
+  reqs.forEach(r => { if (r.technicianName && !techList.includes(r.technicianName)) techList.push(r.technicianName); });
+
+  if (uRole === "admin" || uRole === "supervisor") {
+    if (!curTech || curTech === "مدیر" || !techList.includes(curTech)) curTech = techList[0] || "مهندس شهریاری";
+    $("techSel").innerHTML = techList.map(t => '<option value="' + t + '" ' + (t === curTech ? 'selected' : '') + '>👨‍🔧 مشاهده کارتابل: ' + t + '</option>').join("");
   } else {
-    $("loginBox").style.display = "none"; $("mainHdr").style.display = "flex";
-    $("hTechName").textContent = myName; $("drwName").textContent = myName;
-    loadData();
+    curTech = localStorage.getItem("techName") || uName;
   }
+  $("tPill").textContent = "👨‍🔧 " + curTech;
+  renderTechView();
 }
 
-async function doLogin() {
-  const n = $("tNameInp").value.trim(), p = $("tPinInp").value.trim();
-  if (!n || !p) return alert("نام و رمز را وارد کنید");
-  try {
-    const r = await fetch(API + "/requests/settings");
-    if (r.ok) settings = (await r.json()).settings || settings;
-  } catch (e) {}
-  const meta = settings.techMeta?.[n];
-  if (meta?.locked) return alert("🔒 حساب شما جهت انبارگردانی قفل شده است.");
-  const validPin = meta?.pin || "1234";
-  if (p !== validPin && p !== "0913") return alert("رمز ورود اشتباه است!");
-  myName = n; localStorage.setItem("sw_tech_name", n); init();
+function buildCustomerHistory10(r) {
+  const cPh = normPh(r.snapshot?.phone), cName = (r.snapshot?.fullName || "").trim();
+  const pastOrders = reqs.filter(x => x._id !== r._id && (x.status === "done" || x.status === "completed") && ((cPh && normPh(x.snapshot?.phone) === cPh) || (cName && x.snapshot?.fullName === cName)))
+    .sort((a, b) => new Date(b.completedAt || b.createdAt) - new Date(a.completedAt || a.createdAt))
+    .slice(0, 10);
+
+  const allTickets = (settings.customerTickets || []).filter(tk => (cPh && normPh(tk.phone) === cPh) || (cName && tk.customerName === cName)).slice(0, 5);
+  const ticketsHtml = allTickets.length ? '<div style="background:#fff1f2;border:1px solid #fda4af;padding:6px 8px;border-radius:6px;margin-bottom:6px"><b style="color:#be123c;display:block;margin-bottom:3px">🎫 آخرین تیکت‌ها و نکات ثبت‌شده این مشتری:</b>' +
+    allTickets.map(tk => '<div style="padding:3px 0;border-bottom:1px dashed #fecdd3">📅 <b>' + tk.date + ':</b> <span class="bdg" style="background:#fee2e2;color:#991b1b">' + (tk.tag || "تیکت") + '</span> ' + (tk.note || "") + '</div>').join("") + '</div>' : '';
+
+  const ordersHtml = pastOrders.length ? pastOrders.map((h, i) => {
+    const dt = toJ(h.completedAt || h.createdAt);
+    const daysAgo = Math.max(0, Math.round((Date.now() - new Date(h.completedAt || h.createdAt).getTime()) / 86400000));
+    const agoTxt = daysAgo >= 30 ? Math.round(daysAgo / 30) + " ماه پیش" : (daysAgo === 0 ? "امروز" : daysAgo + " روز پیش");
+    const itemsTxt = (h.usedItems && h.usedItems.length) ? h.usedItems.map(u => u.title + (num(u.qty) > 1 ? " (×" + u.qty + ")" : "")).join(" ، ") : (h.workReport || h.issueType || "سرویس عمومی");
+    return '<div style="padding:6px;border-bottom:1px solid #cbd5e1;line-height:1.7">' +
+      '<div style="display:flex;justify-content:space-between"><b style="color:#0f3b2d">#' + (i + 1) + ' — تاریخ: ' + dt + '</b><span class="bdg" style="background:#e0f2fe;color:#0369a1">' + agoTxt + '</span></div>' +
+      '<div>🔧 <b>کالاها و فیلترهای مصرفی:</b> ' + itemsTxt + '</div>' +
+      (h.customerTicket ? '<div style="color:#be123c;font-weight:bold">🎫 تیکت آن دوره: ' + h.customerTicket + '</div>' : '') +
+    '</div>';
+  }).join("") : '<div style="color:#64748b;padding:4px">سابقه قبلی برای این مشتری ثبت نشده است.</div>';
+
+  return '<div class="hist-drw">' +
+    '<div class="hist-h" onclick="this.nextElementSibling.classList.toggle(\'open\')"><span>📜 مشاهده ۱۰ فاکتور قبلی (کالاهای مصرفی و تاریخ) و تیکت‌ها (' + pastOrders.length + ' سابقه)</span><span>▾</span></div>' +
+    '<div class="hist-b">' + ticketsHtml + ordersHtml + '</div></div>';
 }
+// PART 2 END
+    function renderTechView() {
+  const isLocked = settings.techMeta?.[curTech]?.locked;
+  if (isLocked && uRole !== "admin") {
+    $("lockBanner").style.display = "block";
+    $("mainContent").style.display = "none";
+    return;
+  }
+  $("lockBanner").style.display = isLocked ? "block" : "none";
+  $("mainContent").style.display = "block";
 
-async function loadData() {
-  try {
-    const [r1, r2] = await Promise.all([fetch(API + "/requests"), fetch(API + "/requests/settings")]);
-    if (r1.ok) allReqs = (await r1.json()).requests || [];
-    if (r2.ok) settings = (await r2.json()).settings || settings;
-    if (settings.techMeta?.[myName]?.locked) {
-      alert("🔒 پنل شما توسط مدیریت جهت انبارگردانی قفل شد.");
-      localStorage.removeItem("sw_tech_name"); myName = ""; init(); return;
-    }
-    calcHeader();
-    showView("listView");
-  } catch (e) { alert("خطا در ارتباط با سرور"); }
-}
+  const myTodo = reqs.filter(r => r.technicianName === curTech && (r.status === "assigned" || r.status === "in_progress" || r.status === "pending"));
+  const myDone = reqs.filter(r => r.technicianName === curTech && (r.status === "done" || r.status === "completed") && !r.isSettled);
+  $("cTodo").textContent = myTodo.length;
+  $("cDone").textContent = myDone.length;
 
-function getMyActiveCycleDone() {
-  return allReqs.filter(r => (r.status === "done" || r.status === "completed") && (r.technicianName || "").trim() === myName && !r.isSettled);
-}
-
-function calcHeader() {
-  const cyc = getMyActiveCycleDone();
-  let bill = 0, prof = 0;
-  cyc.forEach(r => { const eff = getEffAmounts(r); bill += eff.payable; prof += eff.prof; });
-  $("hBill").textContent = (bill > 0 ? "-" : "") + fmt(bill);
-  $("hProfit").textContent = "+" + fmt(prof);
-}
-
-function switchMainTab(t) {
-  mainTab = t;
-  $("mt_assigned").classList.toggle("active", t === "assigned");
-  $("mt_done").classList.toggle("active", t === "done");
-  $("doneSubTabs").style.display = t === "done" ? "grid" : "none";
-  showView("listView");
-}
-
-function switchDoneSub(s) {
-  doneSub = s;
-  $("st_unpaid").classList.toggle("active", s === "unpaid");
-  $("st_paid").classList.toggle("active", s === "paid");
-  renderList();
-}
-
-function showView(v) {
-  if (!myName) return;
-  ["listView", "detailView", "subView"].forEach(x => $(x).style.display = x === v ? "block" : "none");
-  if (v === "listView") renderList();
-}
-
-function renderList() {
-  const asgList = allReqs.filter(r => (r.technicianName || "").trim() === myName && !r.isSettled && (r.status === "assigned" || r.status === "open"))
-    .sort((a, b) => {
-      const aSus = a.techSuspendReq?.active ? 1 : 0, bSus = b.techSuspendReq?.active ? 1 : 0;
-      if (aSus !== bSus) return aSus - bSus;
-      return (a.seenByTechAt ? 1 : 0) - (b.seenByTechAt ? 1 : 0) || new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-    });
-  const doneAll = getMyActiveCycleDone().sort((a, b) => new Date(b.completedAt || b.createdAt || 0) - new Date(a.completedAt || a.createdAt || 0));
-  const unpList = doneAll.filter(r => !r.paymentMethod || r.paymentMethod === "unpaid");
-  const pdList = doneAll.filter(r => r.paymentMethod && r.paymentMethod !== "unpaid");
-
-  const unreadCnt = asgList.filter(r => !r.seenByTechAt && !r.techSuspendReq?.active).length;
-  $("cntAsg").textContent = asgList.length + (unreadCnt ? " | 🆕" + unreadCnt : "");
-  $("cntDn").textContent = doneAll.length;
-  $("cntUnp").textContent = unpList.length;
-  $("cntPd").textContent = pdList.length;
-
-  const list = mainTab === "assigned" ? asgList : (doneSub === "unpaid" ? unpList : pdList);
-  if (!list.length) {
-    const msg = mainTab === "assigned" ? "هیچ خدمت جدیدی در نوبت انجام شما نیست ✅" : (doneSub === "unpaid" ? "فاکتور پرداخت‌نشده‌ای وجود ندارد ✅" : "هنوز فاکتور پرداخت‌شده‌ای در این دوره ثبت نشده است.");
-    $("ordersList").innerHTML = '<div class="box" style="text-align:center;padding:24px;color:#64748b">' + msg + '</div>';
+  if (curTab === "stock") {
+    const st = (settings.techStock && settings.techStock[curTech]) || {};
+    const keys = Object.keys(st).filter(k => num(st[k]) !== 0);
+    $("viewBox").innerHTML = '<div class="card"><b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:8px">📦 موجودی انبار سیار تحویلی به «' + curTech + '»:</b>' +
+      (keys.length ? keys.map(k => '<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #e2e8f0;font-size:12px"><b>' + k + '</b><span class="bdg" style="background:#dcfce7;color:#15803d">' + fmt(st[k]) + ' عدد</span></div>').join("") : '<div style="color:#64748b;font-size:12px">موجودی در انبار سیار شما ثبت نشده است.</div>') + '</div>';
     return;
   }
 
-  $("ordersList").innerHTML = list.map(r => {
-    const isDone = r.status === "done" || r.status === "completed";
-    const isSusReq = !isDone && r.techSuspendReq?.active;
-    const isUnread = !isDone && !isSusReq && !r.seenByTechAt;
-    const eff = getEffAmounts(r);
-    const payMap = { pos: "پرداخت پوز ✅", cash: "پرداخت نقدی ✅", check: "پرداخت چک ✅", mixed: "پرداخت ترکیبی ✅" };
-
-    let topBdg = "";
-    if (!isDone) {
-      if (isSusReq) topBdg = '<span class="bdg-sus">⏸️ درخواست تعلیق</span>';
-      else if (isUnread) topBdg = '<span class="bdg-new">🆕 جدید (باز نشده)</span>';
-    }
-
-    const tNotes = Array.isArray(r.tempNotes) ? r.tempNotes : [];
-    const lastNote = tNotes.length ? tNotes[tNotes.length - 1] : null;
-    let midHtml = "";
-    if (!isDone) {
-      midHtml = lastNote ?
-        '<div style="background:#fefce8;border:1px dashed #ca8a04;border-radius:8px;padding:5px 7px;font-size:10px;color:#854d0e;line-height:1.5"><b>📝 یادداشت (' + tNotes.length + '):</b><br>' + lastNote.text + '</div>' :
-        '<div style="font-size:10px;color:#94a3b8">📝 بدون یادداشت هماهنگی</div>';
-    } else {
-      midHtml = '<div style="font-size:11px;font-weight:800;color:#0f3b2d">مبلغ: ' + fmt(eff.payable) + '</div>';
-    }
-
-    let leftStatus = "";
-    if (isDone) {
-      const stTxt = payMap[r.paymentMethod] || "🔴 پرداخت نشده";
-      const stCol = (!r.paymentMethod || r.paymentMethod === "unpaid") ? "#e11d48" : "#15803d";
-      leftStatus = '<div style="font-size:10px;font-weight:800;color:' + stCol + ';margin-top:3px">' + stTxt + '</div>';
-    } else if (isSusReq) {
-      leftStatus = '<div style="font-size:10px;font-weight:800;color:#475569;margin-top:3px">⏳ بررسی اپراتور</div>';
-    }
-
-    return '<div class="box req-item ' + (isUnread ? "unread" : "") + ' ' + (isSusReq ? "pending-sus" : "") + '" onclick="openOrder(\'' + r._id + '\')">' +
-      '<div class="grid3" style="align-items:center;text-align:right">' +
-      '<div>' + topBdg + '<div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.snapshot?.fullName || "مشتری") + '</div><div style="font-size:11px;color:#64748b">' + (r.issueType || "خدمات") + '</div></div>' +
-      '<div style="text-align:center;padding:0 4px">' + midHtml + '</div>' +
-      '<div style="text-align:left;direction:ltr"><div style="font-size:12px;font-weight:800;color:var(--green)">' + (r.invoiceCode || "---") + '</div><div style="font-size:10px;color:#64748b;margin-top:2px">' + toJ(r.assignedAt || r.createdAt) + '</div>' + leftStatus + '</div>' +
-      '</div></div>';
-  }).join("");
+  const list = curTab === "todo" ? myTodo : myDone;
+  $("viewBox").innerHTML = list.length ? '<div class="cards-grid">' + list.map(r => {
+    const cust = r.snapshot?.fullName || "مشتری", ph = r.snapshot?.phone || "", addr = r.snapshot?.address || "---";
+    const histBox = buildCustomerHistory10(r);
+    return '<div class="card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:6px;margin-bottom:6px">' +
+        '<b style="font-size:13px;color:#0f3b2d">👤 ' + cust + '</b>' +
+        '<span class="bdg" style="background:#fef3c7;color:#b45309;direction:ltr">' + (r.invoiceCode || "---") + '</span>' +
+      '</div>' +
+      '<div style="font-size:12px;line-height:1.8">' +
+        '<div>📞 <b>تلفن:</b> <a href="tel:' + ph + '" style="color:#0284c7;font-weight:bold;text-decoration:none">' + ph + '</a></div>' +
+        '<div>📍 <b>آدرس:</b> ' + addr + '</div>' +
+        '<div>🔧 <b>درخواست:</b> ' + (r.issueType || "سرویس دوره‌ای") + '</div>' +
+      '</div>' +
+      histBox +
+      (curTab === "todo" ?
+        '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">' +
+          '<button class="btn" style="flex:2;background:#16a34a;color:#fff" onclick="openCompModal(\'' + r._id + '\')">✅ تکمیل فاکتور و ثبت پرداخت</button>' +
+          '<button class="btn" style="flex:1;background:#d97706;color:#fff" onclick="suspendOrder(\'' + r._id + '\')">⏸️ تعلیق</button>' +
+        '</div>' :
+        '<div style="margin-top:8px;padding:7px;background:#f0fdf4;border-radius:7px;font-size:11px;color:#15803d"><b>✅ تکمیل‌شده در ' + toJ(r.completedAt) + '</b> | مبلغ فاکتور: <b>' + fmt(r.payableAmount) + ' ت</b></div>'
+      ) +
+    '</div>';
+  }).join("") + '</div>' : '<div class="card" style="text-align:center;color:#64748b;font-size:12px">موردی در این بخش وجود ندارد.</div>';
 }
-// PART 3 END
-  function openOrder(id) {
-  curReq = allReqs.find(x => x._id === id); if (!curReq) return;
-  if (!curReq.seenByTechAt && (curReq.status === "assigned" || curReq.status === "open")) {
-    curReq.seenByTechAt = new Date().toISOString();
-    fetch(API + "/requests/" + curReq._id + "/seen", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) }).catch(() => {});
+
+function openCompModal(reqId) {
+  activeReq = reqs.find(x => x._id === reqId); if (!activeReq) return;
+  modalItems = (activeReq.usedItems && activeReq.usedItems.length) ? JSON.parse(JSON.stringify(activeReq.usedItems)) : [];
+  selectedTags = [];
+  document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("sel"));
+  $("ticketNoteInp").value = "";
+  const cat = settings.catalog || [];
+  $("catSel").innerHTML = cat.map((c, i) => '<option value="' + i + '">' + c.title + ' — ' + fmt(c.customerPrice) + ' ت</option>').join("");
+  $("payPos").value = "0"; $("payCash").value = "0"; $("payChkAmt").value = "0";
+  $("payChkDate").value = ""; $("payChkBank").value = ""; $("payChkNum").value = "";
+  drawModalItems();
+  $("compModal").classList.add("open");
+}
+function closeCompModal() { $("compModal").classList.remove("open"); }
+
+function addItemToInv() {
+  const cat = settings.catalog || [], c = cat[$("catSel").value]; if (!c) return;
+  const q = Math.max(1, num($("catQty").value));
+  modalItems.push({ title: c.title, qty: q, price: num(c.customerPrice), wage: num(c.techWage), isGoods: !!c.isGoods });
+  $("catQty").value = "1";
+  drawModalItems();
+}
+function delModalItem(i) { modalItems.splice(i, 1); drawModalItems(); }
+
+function getModalTotals() {
+  const tFee = num(activeReq?.travelFee) || 139000;
+  if (!modalItems.length) return { bill: tFee, wage: tFee };
+  let bill = 0, wage = 0;
+  modalItems.forEach(m => { bill += num(m.price) * num(m.qty); wage += num(m.wage) * num(m.qty); });
+  return { bill, wage };
+}
+
+function drawModalItems() {
+  const t = getModalTotals();
+  $("selItemsBox").innerHTML = modalItems.length ? modalItems.map((m, i) =>
+    '<div style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:5px 8px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:4px">' +
+    '<span><b>' + m.title + '</b> (×' + m.qty + ') — ' + fmt(num(m.price) * num(m.qty)) + ' ت</span>' +
+    '<button class="btn" style="background:#ef4444;color:#fff;padding:2px 6px;border:none" onclick="delModalItem(' + i + ')">×</button></div>'
+  ).join("") : '<div style="color:#64748b">کالایی انتخاب نشده (ایاب و ذهاب پیش‌فرض: ' + fmt(t.bill) + ' ت)</div>';
+  recalcModalPay();
+}
+
+function recalcModalPay() {
+  const t = getModalTotals();
+  const p = num($("payPos").value), c = num($("payCash").value), k = num($("payChkAmt").value);
+  const entered = p + c + k, rem = t.bill - entered;
+  $("paySummaryBar").innerHTML =
+    '<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>💰 جمع کل فاکتور مشتری:</span><b style="color:#4ade80;direction:ltr">' + fmt(t.bill) + ' تومان</b></div>' +
+    '<div style="display:flex;justify-content:space-between;border-top:1px dashed #ffffff44;padding-top:4px">' +
+      '<span>⚖️ مانده فاکتور (کسر پوز، نقد و چک):</span>' +
+      '<b style="color:' + (rem === 0 ? '#4ade80' : '#facc15') + ';direction:ltr">' + fmt(rem) + ' تومان</b>' +
+    '</div>';
+}
+
+function togTicketTag(btn, tag) {
+  btn.classList.toggle("sel");
+  if (selectedTags.includes(tag)) selectedTags = selectedTags.filter(x => x !== tag);
+  else selectedTags.push(tag);
+}
+
+async function submitCompleteOrder() {
+  if (!activeReq) return;
+  const t = getModalTotals();
+  const p = num($("payPos").value), c = num($("payCash").value), k = num($("payChkAmt").value);
+  const chkDate = $("payChkDate").value.trim(), chkBank = $("payChkBank").value.trim(), chkNum = $("payChkNum").value.trim();
+  if (k > 0 && (!chkDate || !chkBank || !chkNum)) return alert("⚠️ برای ثبت چک، وارد کردن هر ۴ مورد (مبلغ، تاریخ چک، نام بانک و شماره چک) الزامی است.");
+  if (p + c + k !== t.bill) {
+    if (!confirm(`جمع مبالغ واردشده (${fmt(p + c + k)} ت) با مبلغ فاکتور (${fmt(t.bill)} ت) برابر نیست.\nآیا مابقی به عنوان نقدی تکنسین ثبت شود؟`)) return;
   }
-  showView("detailView");
-  $("dCode").textContent = curReq.invoiceCode || "---";
-  $("dType").textContent = curReq.issueType || "خدمات";
-  $("dDate").textContent = "تاریخ: " + toJ(curReq.assignedAt || curReq.createdAt);
-  $("dTime").textContent = "ساعت: " + toTm(curReq.assignedAt || curReq.createdAt);
+  const finalCash = Math.max(c, t.bill - (p + k));
+  const pMethod = (k > 0 && p === 0 && finalCash === 0) ? "check" : ((p > 0 && k === 0 && finalCash === 0) ? "pos" : (p + k + finalCash > 0 ? (p >= finalCash && p >= k ? "pos" : (k >= finalCash ? "check" : "cash")) : "unpaid"));
 
-  const sr = curReq.techSuspendReq;
-  if (sr?.active) {
-    $("susStatusBanner").style.display = "block";
-    $("susStatusBanner").style.background = "#f1f5f9"; $("susStatusBanner").style.borderColor = "#64748b";
-    $("susStatusBanner").innerHTML = '<div style="font-size:12px;font-weight:800;color:#334155">⏳ درخواست تعلیق در انتظار بررسی پشتیبانی</div><div style="font-size:11px;color:#475569;margin-top:4px">علت: ' + (sr.reason || "") + (sr.days ? " (" + sr.days + " روز)" : "") + (sr.note ? " - " + sr.note : "") + '</div>';
-  } else if (sr?.rejectedNote) {
-    $("susStatusBanner").style.display = "block";
-    $("susStatusBanner").style.background = "#fef2f2"; $("susStatusBanner").style.borderColor = "#ef4444";
-    $("susStatusBanner").innerHTML = '<div style="font-size:12px;font-weight:800;color:#be123c">❌ پیام پشتیبانی (رد درخواست تعلیق):</div><div style="font-size:11px;color:#991b1b;margin-top:4px">' + sr.rejectedNote + '</div>';
-  } else $("susStatusBanner").style.display = "none";
+  const tagStr = selectedTags.join(" | "), noteStr = $("ticketNoteInp").value.trim();
+  const fullTicket = (tagStr || noteStr) ? ((tagStr ? "[" + tagStr + "] " : "") + noteStr) : "";
+  const repTxt = (modalItems.map(m => m.title + (m.qty > 1 ? "×" + m.qty : "")).join("، ") || "سرویس انجام شد") + (fullTicket ? " | تیکت: " + fullTicket : "");
 
-  const mainPh = curReq.snapshot?.phone || curReq.customer?.phone || "";
-  $("dCust").textContent = curReq.snapshot?.fullName || curReq.customer?.fullName || "نامشخص";
-  $("dPhoneTxt").textContent = mainPh || "شماره ثبت نشده";
-
-  if (curReq.tempPhone) {
-    $("dTempPhoneBox").style.display = "flex"; $("dTempPhoneTxt").textContent = curReq.tempPhone;
-    $("dTempCallBtn").href = "tel:" + curReq.tempPhone.replace(/\D/g, "");
-  } else $("dTempPhoneBox").style.display = "none";
-
-  $("dAddrLbl").textContent = "📍 نشانی («" + (curReq.addressLabel || "خونه") + "»)";
-  $("dAddr").textContent = curReq.snapshot?.address || "---";
-  const loc = curReq.locationUrl || "";
-  $("dMapBtn").href = loc ? (loc.startsWith("http") ? loc : "https://maps.google.com/?q=" + loc) : "https://maps.google.com/?q=" + encodeURIComponent("اصفهان " + (curReq.snapshot?.address || ""));
-  $("dDesc").textContent = curReq.issueType || "سرویس و خدمات";
-  $("dNotes").textContent = curReq.techNote || curReq.resultNote || "توضیح خاصی ثبت نشده است.";
-
-  const isDone = curReq.status === "done" || curReq.status === "completed";
-  $("invBuilder").style.display = "none";
-  if (isDone) {
-    $("tempNotesCard").style.display = "none";
-    $("actBtns").style.display = "none"; $("invSummary").style.display = "block";
-    renderInvoiceSummary(false);
-  } else {
-    $("tempNotesCard").style.display = "block";
-    renderTempNotes();
-    $("dPayBadge").style.display = "none"; $("actBtns").style.display = "block"; $("invSummary").style.display = "none";
-  }
-}
-
-function callMainPhone() {
-  if (!curReq) return;
-  const ph = (curReq.snapshot?.phone || curReq.customer?.phone || "").replace(/\D/g, "");
-  if (!ph) return alert("شماره تماس اصلی ثبت نشده است");
-  if (curReq.tempPhone && !confirm("⚠️ توجه: برای این نوبت، شماره هماهنگی دیگری (" + curReq.tempPhone + ") ثبت شده است.\nآیا مطمئن هستید که می‌خواهید با شماره اصلی تماس بگیرید؟")) return;
-  location.href = "tel:" + ph;
-}
-
-function renderTempNotes() {
-  const list = Array.isArray(curReq?.tempNotes) ? curReq.tempNotes : [];
-  if (!list.length) { $("tempNotesList").innerHTML = '<div style="color:#94a3b8">یادداشتی ثبت نشده است.</div>'; return; }
-  $("tempNotesList").innerHTML = list.map((n, i) =>
-    '<div style="background:#fff;border:1px solid #fde047;padding:6px 8px;border-radius:8px;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">' +
-    '<span><b>' + (i + 1) + '.</b> ' + n.text + '</span>' +
-    '<span style="color:#64748b;font-size:10px;white-space:nowrap">' + toJ(n.date) + ' ' + toTm(n.date) + '</span></div>'
-  ).join("");
-}
-
-async function addTempNote() {
-  const txt = $("newTempNoteInp").value.trim();
-  if (!txt) return alert("متن یادداشت را بنویسید");
-  const r = await fetch(API + "/requests/" + curReq._id + "/seen", {
-    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ newTempNote: txt })
-  });
-  if (r.ok) {
-    curReq.tempNotes = (await r.json()).tempNotes || [];
-    $("newTempNoteInp").value = ""; renderTempNotes();
-  }
-}
-
-function sendMissedSms(useTemp) {
-  if (!curReq) return;
-  if (!useTemp && curReq.tempPhone && !confirm("⚠️ توجه: برای این نوبت، شماره هماهنگی دیگری (" + curReq.tempPhone + ") ثبت شده است.\nآیا مطمئن هستید که می‌خواهید به شماره اصلی پیامک بفرستید؟")) return;
-  const rawPh = useTemp ? (curReq.tempPhone || "") : (curReq.snapshot?.phone || curReq.customer?.phone || "");
-  const ph = rawPh.replace(/\D/g, "");
-  if (!ph) return alert("شماره تماس معتبر یافت نشد");
-  fetch(API + "/requests/" + curReq._id + "/seen", {
-    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ missedCallSms: true })
-  }).catch(() => {});
-  const msg = "درود مشتری عزیز\n" + myName + " هستم، تکنسین مجموعه سامی‌واتر،\nجهت ارائه خدمات تماس گرفته شد و پاسخگو نبودید.\nلطفا در اسرع وقت با این شماره تماس بگیرید.\nسپاس🌹";
-  location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg);
-}
-
-function openSusModal() {
-  $("susReasSel").selectedIndex = 0; $("susDaysInp").value = "7"; $("susNoteInp").value = "";
-  onSusReasChange(); $("susModal").style.display = "flex";
-}
-function onSusReasChange() {
-  const v = $("susReasSel").value;
-  $("susDaysBox").style.display = (v.includes("عدم پاسخگویی") || v.includes("انصراف")) ? "none" : "block";
-}
-
-async function submitSusReq() {
-  const reason = $("susReasSel").value, needDays = $("susDaysBox").style.display !== "none";
-  const days = needDays ? (Number($("susDaysInp").value) || 0) : 0, note = $("susNoteInp").value.trim();
-  if (needDays && days < 7) return alert("⚠️ تعلیق فقط برای هماهنگی‌های ۷ روز به بالا مجاز است.\nموارد زیر ۷ روز را در بخش «یادداشت پیگیری» ثبت کنید.");
-  if (reason === "سایر موارد" && !note) return alert("لطفاً توضیحات را بنویسید.");
-  const r = await fetch(API + "/requests/" + curReq._id + "/status", {
+  await fetch(API + "/requests/" + activeReq._id + "/status", {
     method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ techSuspendReq: { active: true, reason, days, note, requestedAt: new Date().toISOString() } })
+    body: JSON.stringify({
+      status: "done", payableAmount: t.bill, techProfit: t.wage, paymentMethod: pMethod,
+      usedItems: modalItems, workReport: repTxt, customerTicket: fullTicket,
+      paymentBreakdown: { pos: p, cash: finalCash, check: k, checkDate: chkDate, checkBank: chkBank, checkNumber: chkNum }
+    })
   });
-  if (r.ok) { $("susModal").style.display = "none"; alert("⏳ درخواست تعلیق ارسال شد."); loadData(); }
-}
 
-function getStockFor(title) { return Math.max(0, Number(settings.techMeta?.[myName]?.stock?.[title]) || 0); }
-
-async function refreshStockInBuilder() {
-  try {
-    const r = await fetch(API + "/requests/settings");
-    if (r.ok) { settings = (await r.json()).settings || settings; openBuilder(); alert("موجودی انبار بروزرسانی شد ✅"); }
-  } catch (e) {}
-}
-
-function openBuilder() {
-  $("actBtns").style.display = "none"; $("invSummary").style.display = "none"; $("invBuilder").style.display = "block";
-  if (!Object.keys(qtys).length) (curReq.invoiceItems || curReq.draftItems || []).forEach(it => { qtys[it.id] = it.qty; });
-  const cats = settings.categories?.length ? settings.categories : ["فیلترها", "حوضینگ ها و مخزن", "پمپ و ترانس", "شیرها", "کلیدها", "زانو و اتصالات", "فیلتر یخچال", "نیمه صنعتی", "تصفیه آب", "متفرقه", "سرویس های انجام شده"];
-  const catItems = settings.catalog || [];
-  const refreshBtn = '<div style="display:flex;justify-content:space-between;align-items:center;background:#f0fdf4;border:1px solid #bbf7d0;padding:7px 10px;border-radius:10px;margin-bottom:10px;font-size:11px;color:#0f3b2d"><span>📦 موجودی انبار همراه شما</span><button class="cir-btn" style="padding:3px 8px;font-size:10px" onclick="refreshStockInBuilder()">🔄 بروزرسانی انبار</button></div>';
-
-  $("accContainer").innerHTML = refreshBtn + cats.map((catName, idx) => {
-    const isWage = catName === "سرویس های انجام شده";
-    const sub = catItems.filter(x => (x.category || "متفرقه") === catName);
-    const bodyHtml = sub.length ? sub.map(c => {
-      const av = c.isGoods ? getStockFor(c.title) : 999;
-      if (c.isGoods && (qtys[c.id] || 0) > av) qtys[c.id] = av;
-      const curQ = qtys[c.id] || 0;
-      const stBadge = c.isGoods ? (av > 0 ? '<span style="color:#4ade80;font-size:10px;display:block">📦 موجودی: ' + av + ' عدد</span>' : '<span style="color:#fda4af;font-size:10px;font-weight:800;display:block">🚫 ناموجود (۰)</span>') : '<span style="color:#cbd5e1;font-size:10px;display:block">🛠️ خدمت / دستمزد</span>';
-      return '<div class="cat-card" style="' + (c.isGoods && av <= 0 ? "opacity:.65" : "") + '"><div style="flex:1"><div style="font-size:12px;font-weight:800;color:#fff">' + c.title + '</div><div style="font-size:11px;color:var(--gold-lt);margin-top:2px">' + fmt(c.price) + (c.wage ? " + اجرت: " + fmt(c.wage) : "") + '</div>' + stBadge + '</div><div style="display:flex;align-items:center;gap:10px;direction:ltr"><button class="q-btn" onclick="chQty(\'' + c.id + '\',-1)">−</button><b id="q_' + c.id + '" style="font-size:14px;color:var(--gold);min-width:18px;text-align:center">' + curQ + '</b><button id="pl_' + c.id + '" class="q-btn ' + (c.isGoods && curQ >= av ? "disabled" : "") + '" onclick="chQty(\'' + c.id + '\',1)">+</button></div></div>';
-    }).join("") : '<div style="font-size:11px;color:#64748b;padding:8px">آیتمی تعریف نشده است.</div>';
-    return '<div class="acc-hdr ' + (isWage ? "wages" : "") + '" onclick="$(\'ac_bod_' + idx + '\').classList.toggle(\'open\')"><span>' + (isWage ? "🛠️ " : "📦 ") + catName + '</span><span style="font-size:11px;color:#64748b">⌄</span></div><div id="ac_bod_' + idx + '" class="acc-bod">' + bodyHtml + '</div>';
-  }).join("");
-  $("wNoteInp").value = curReq.workReport || "";
-}
-
-function chQty(id, d) {
-  const c = (settings.catalog || []).find(x => x.id === id); if (!c) return;
-  const cur = qtys[id] || 0;
-  if (d > 0 && c.isGoods) {
-    const av = getStockFor(c.title);
-    if (av <= 0) return alert("🚫 موجودی کالای «" + c.title + "» در انبار شما صفر است!");
-    if (cur + d > av) return alert("⚠️ سقف موجودی «" + c.title + "» در انبار شما " + av + " عدد است.");
-  }
-  qtys[id] = Math.max(0, cur + d);
-  if ($("q_" + id)) $("q_" + id).textContent = qtys[id];
-  if (c.isGoods && $("pl_" + id)) $("pl_" + id).classList.toggle("disabled", qtys[id] >= getStockFor(c.title));
-}
-
-async function openDraftPreview() {
-  const cat = settings.catalog || [], items = [];
-  for (const c of cat) {
-    if (qtys[c.id] > 0) {
-      if (c.isGoods && qtys[c.id] > getStockFor(c.title)) return alert("🚫 موجودی انبار شما برای «" + c.title + "» کافی نیست.");
-      items.push({ id: c.id, title: c.title, category: c.category, isGoods: c.isGoods, price: c.price, wage: c.wage || 0, commPct: c.commPct || 0, qty: qtys[c.id] });
+  for (const m of modalItems) {
+    if (m.isGoods) {
+      await fetch(API + "/requests/warehouse-op", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opType: "consume_tech", techName: curTech, itemTitle: m.title, qty: m.qty, note: "فاکتور " + (activeReq.invoiceCode || ""), byUser: curTech })
+      });
     }
   }
-  const tFee = Number(curReq.travelFee) > 0 ? Number(curReq.travelFee) : (Number(settings.fixedTravelFee) || 139000);
-  const disc = Number(curReq.discountAmount || 0);
-  let tot = tFee, prof = tFee;
-  items.forEach(it => { tot += (it.price * it.qty) + (it.wage * it.qty); prof += Math.round((it.price * it.qty * (it.commPct || 0)) / 100) + (it.wage * it.qty); });
-  const payable = Math.max(0, tot - disc);
-  const summary = items.map(i => i.title + " (" + i.qty + ")").join(" ، ") || $("wNoteInp").value.trim() || "ایاب و ذهاب و بازدید";
-  draftCalc = { items, tFee, disc, tot, payable, prof, summary };
-  fetch(API + "/requests/" + curReq._id + "/draft", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ draftItems: items, draftPayable: payable, draftSummary: summary }) }).catch(() => {});
-  $("invBuilder").style.display = "none"; $("invSummary").style.display = "block"; renderInvoiceSummary(true);
-}
 
-function renderInvoiceSummary(isDraft) {
-  const eff = getEffAmounts(curReq);
-  const data = isDraft ? draftCalc : { items: curReq.invoiceItems || [], tFee: eff.tFee, disc: eff.disc, tot: eff.tot, payable: eff.payable, prof: eff.prof };
-  const pMethod = curReq.paymentMethod || "unpaid", isPaid = !isDraft && pMethod !== "unpaid";
-
-  $("draftBanner").style.display = isDraft ? "block" : "none";
-  $("draftActions").style.display = isDraft ? "block" : "none";
-  $("editItemsBtn").style.display = isDraft ? "inline-flex" : "none";
-
-  let recBox = $("paidReceiptBox");
-  if (!recBox) { recBox = document.createElement("div"); recBox.id = "paidReceiptBox"; $("payBox").parentNode.insertBefore(recBox, $("payBox")); }
-
-  if (isDraft) { $("payBox").style.display = "none"; recBox.style.display = "none"; }
-  else if (isPaid) {
-    $("payBox").style.display = "none"; recBox.style.display = "block";
-    const pLabels = { pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝", mixed: "پرداخت ترکیبی 🔀" };
-    $("dPayBadge").style.display = "inline-block"; $("dPayBadge").className = "bdg-paid"; $("dPayBadge").textContent = pLabels[pMethod] || "پرداخت شده";
-    const pb = curReq.paymentBreakdown || {}, det = [];
-    if (pb.pos > 0) det.push("💳 دستگاه پوز: <b>" + fmt(pb.pos) + "</b>");
-    if (pb.cash > 0) det.push("💵 نقدی: <b>" + fmt(pb.cash) + "</b>");
-    if (pb.check > 0) det.push("📝 چک: <b>" + fmt(pb.check) + "</b> (بانک " + (pb.checkBank || "---") + " - ش: " + (pb.checkNumber || "---") + ")");
-    if (!det.length) det.push((pLabels[pMethod] || "پرداخت") + ": <b>" + fmt(data.payable) + "</b>");
-    recBox.innerHTML = '<div class="box" style="background:#f0fdf4;border:2px solid #15803d;color:#15803d;text-align:center"><div style="font-size:13px;font-weight:800;margin-bottom:6px">✅ حساب این فاکتور تسویه شده است</div><div style="font-size:12px;color:#0f3b2d;line-height:1.8">' + det.join("<br>") + '</div></div>';
-  } else {
-    recBox.style.display = "none"; $("payBox").style.display = "block";
-    $("dPayBadge").style.display = "inline-block"; $("dPayBadge").className = "bdg-unpaid"; $("dPayBadge").textContent = "پرداخت نشده";
-    ["pos", "cash", "check"].forEach(k => { $("inp_" + k).value = ""; $("sec_" + k).classList.remove("open"); $("pm_" + k).classList.remove("sel"); });
-    $("inp_chk_num").value = ""; $("inp_chk_bnk").value = ""; calcRemPay();
+  if (fullTicket) {
+    const tkList = settings.customerTickets || [];
+    tkList.unshift({ id: "tk_" + Date.now(), date: toJ(new Date()), phone: activeReq.snapshot?.phone || "", customerName: activeReq.snapshot?.fullName || "", invoiceCode: activeReq.invoiceCode || "", techName: curTech, tag: tagStr || "یادداشت فنی", note: noteStr });
+    await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerTickets: tkList }) });
   }
 
-  $("sProf").textContent = fmt(data.prof);
-  $("sItemsBox").innerHTML = data.items.map(it => '<div class="box" style="margin-bottom:8px;padding:10px"><div style="font-size:12px;font-weight:800;color:var(--green);border-bottom:1px solid #e2e8f0;padding-bottom:5px;margin-bottom:6px">' + it.title + '</div><div class="grid3"><div><div class="lbl">تعداد</div><div class="val">' + it.qty + '</div></div><div><div class="lbl">قیمت واحد</div><div class="val">' + fmt(it.price) + '</div></div><div><div class="lbl">جمع</div><div class="val">' + fmt(it.price * it.qty) + '</div></div></div></div>').join("") || '<div style="font-size:11px;color:#64748b;text-align:center;padding:6px">قطعه مصرفی انتخاب نشده</div>';
-  $("sTravel").textContent = fmt(data.tFee); $("sDisc").textContent = fmt(data.disc);
-  $("sTot").textContent = fmt(data.tot); $("sPayable").textContent = fmt(data.payable);
+  closeCompModal();
+  alert("✅ فاکتور با موفقیت تکمیل شد (اطلاعات مالی در کارتابل شما ثبت شد و پس از تسویه حضوری وارد حسابداری شرکت می‌شود).");
+  await loadTechData();
 }
 
-function togPaySec(k) {
-  const sec = $("sec_" + k), btn = $("pm_" + k), isOpen = sec.classList.toggle("open");
-  btn.classList.toggle("sel", isOpen);
-  if (!isOpen) { $("inp_" + k).value = ""; calcRemPay(); }
-  else if (getRemPayVal() > 0 && !Number($("inp_" + k).value)) fillRem(k);
-}
-function getRemPayVal() { const eff = getEffAmounts(curReq); return eff.payable - ((Number($("inp_pos").value) || 0) + (Number($("inp_cash").value) || 0) + (Number($("inp_check").value) || 0)); }
-function fillRem(k) { $("inp_" + k).value = ""; const rem = getRemPayVal(); if (rem > 0) $("inp_" + k).value = rem; calcRemPay(); }
-function calcRemPay() {
-  const rem = getRemPayVal();
-  $("remVal").textContent = (rem === 0 ? "۰ تومان (تکمیل ✅)" : fmt(rem));
-  $("remBar").style.background = rem === 0 ? "#dcfce7" : "#fee2e2"; $("remBar").style.color = rem === 0 ? "#15803d" : "#be123c";
+async function suspendOrder(id) {
+  const rsn = prompt("علت تعلیق سرویس (مثلاً مشتری مسافرت است):"); if (!rsn) return;
+  const days = num(prompt("چند روز دیگر یادآوری شود؟", "7")) || 7;
+  const dt = new Date(); dt.setDate(dt.getDate() + days);
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "suspended", suspendReason: rsn, suspendUntil: dt }) });
+  await loadTechData();
 }
 
-async function finalizeInvoice() {
-  if (!draftCalc) return;
-  if (!confirm("آیا از ثبت نهایی فاکتور به مبلغ «" + fmt(draftCalc.payable) + "» مطمئن هستید؟")) return;
-  const r = await fetch(API + "/requests/" + curReq._id + "/status", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status: "done", technicianName: myName, invoiceItems: draftCalc.items, travelFee: draftCalc.tFee, workReport: draftCalc.summary, paymentMethod: "unpaid", deductStock: true })
-  });
-  const d = await r.json();
-  if (!r.ok) return alert(d.error || "خطا در ثبت فاکتور");
-  curReq = d.request; qtys = {}; await loadData(); openOrder(curReq._id);
-  alert("✅ فاکتور ثبت شد. اکنون روش پرداخت را مشخص کنید.");
-}
-
-async function submitPayment() {
-  const eff = getEffAmounts(curReq);
-  const pos = Number($("inp_pos").value) || 0, cash = Number($("inp_cash").value) || 0, check = Number($("inp_check").value) || 0;
-  const rem = eff.payable - (pos + cash + check);
-  if (rem !== 0) return alert("⚠️ مانده فاکتور باید صفر شود!\nمانده: " + fmt(rem));
-  const checkNumber = $("inp_chk_num").value.trim(), checkBank = $("inp_chk_bnk").value.trim();
-  if (check > 0 && (!checkNumber || !checkBank)) return alert("⚠️ شماره چک و نام بانک الزامی است!");
-  const methods = [pos > 0 ? "pos" : null, cash > 0 ? "cash" : null, check > 0 ? "check" : null].filter(Boolean);
-  const pMethod = methods.length > 1 ? "mixed" : (methods[0] || "cash");
-
-  const r = await fetch(API + "/requests/" + curReq._id + "/status", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status: "done", invoiceItems: curReq.invoiceItems || [], travelFee: eff.tFee, paymentMethod: pMethod, paymentBreakdown: { pos, cash, check, checkNumber, checkBank } })
-  });
-  if (r.ok) {
-    curReq = (await r.json()).request;
-    const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
-    calcHeader(); alert("✅ اطلاعات پرداخت با موفقیت ثبت شد.");
-    switchMainTab("done"); switchDoneSub("paid");
-  }
-}
-
-function showLedger() {
-  showView("subView");
-  const paid = getMyActiveCycleDone().filter(r => r.paymentMethod && r.paymentMethod !== "unpaid")
-    .sort((a, b) => new Date(a.paidAt || a.completedAt || 0) - new Date(b.paidAt || b.completedAt || 0));
-  let run = 0; const cards = [];
-  paid.forEach(r => {
-    const eff = getEffAmounts(r), pb = r.paymentBreakdown || {}, parts = [];
-    if (pb.pos > 0) parts.push({ t: "پرداخت پوز 💳", a: pb.pos });
-    if (pb.cash > 0) parts.push({ t: "پرداخت نقدی 💵", a: pb.cash });
-    if (pb.check > 0) parts.push({ t: "پرداخت چک 📝 (" + (pb.checkBank || "") + " - چک " + (pb.checkNumber || "") + ")", a: pb.check });
-    if (!parts.length) parts.push({ t: ({ pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝" }[r.paymentMethod] || "پرداخت"), a: eff.payable });
-    parts.forEach(pt => {
-      run += pt.a;
-      cards.push('<div class="box" style="border-right:5px solid #be123c"><div class="row-btw"><div><div style="font-size:13px;font-weight:800;color:#b45309">' + pt.t + '</div><div style="font-size:11px;color:#475569;margin-top:3px">👤 ' + (r.snapshot?.fullName || "") + ' | فاکتور ' + (r.invoiceCode || "") + '</div></div><div style="text-align:left;direction:ltr"><div style="font-size:13px;font-weight:800;color:#be123c">مبلغ: -' + fmt(pt.a) + '</div><div style="font-size:11px;color:#64748b;margin-top:3px">موجودی: -' + fmt(run) + '</div></div></div></div>');
-    });
-  });
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">💳 لیست تراکنش‌های دوره جاری</h4>' + (cards.reverse().join("") || '<div class="box" style="text-align:center">تراکنشی ثبت نشده است.</div>');
-}
-
-function showStock() {
-  showView("subView");
-  const st = settings.techMeta?.[myName]?.stock || {}, keys = Object.keys(st);
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">📦 موجودی کالا (انبار همراه شما)</h4>' +
-    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span class="' + ((Number(st[k]) || 0) > 0 ? "bdg-paid" : "bdg-unpaid") + '" style="direction:ltr">' + (Number(st[k]) || 0) + ' عدد</span></div>').join("") : '<div class="box" style="text-align:center">موجودی کالایی ثبت نشده است.</div>');
-}
-
-function showLogs() {
-  showView("subView");
-  const logs = settings.techMeta?.[myName]?.logs || [];
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">🔔 پیام‌ها و گزارش سیستمی</h4>' +
-    (logs.length ? logs.map(l => '<div class="box"><div class="row-btw" style="margin-bottom:5px"><b style="color:#b45309;font-size:12px">' + l.title + '</b><span style="font-size:11px;color:#64748b">' + toJ(l.date) + ' ' + toTm(l.date) + '</span></div><div style="font-size:12px;color:#475569;line-height:1.7">' + l.text + '</div></div>').join("") : '<div class="box" style="text-align:center">پیامی ثبت نشده است.</div>');
-}
-
-function saveMyGps() {
-  if (!navigator.geolocation) return alert("GPS پشتیبانی نمی‌شود");
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const coords = pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
-    await fetch(API + "/requests/" + curReq._id + "/location", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locationUrl: coords }) });
-    curReq.locationUrl = coords; $("dMapBtn").href = "https://maps.google.com/?q=" + coords; alert("لوکیشن ذخیره شد 📍✅");
-  }, () => alert("GPS گوشی را روشن کنید."));
-}
-
-function bootTechPanel() {
-  const isAdmin = localStorage.getItem("role") === "admin";
-  if (isAdmin && !myName) {
-    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
-    myName = tList[0] || "مهندس شهریاری";
-  }
-  if (isAdmin) {
-    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
-    const bar = document.createElement("div");
-    bar.style.cssText = "background:#fefce8;border-bottom:2px solid #ca8a04;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:#854d0e";
-    bar.innerHTML = '<span>👑 نمای بازرسی مدیر:</span><select style="padding:4px 8px;border-radius:8px;border:1px solid #ca8a04;font-family:inherit;font-weight:800" onchange="myName=this.value;localStorage.setItem(\'sw_tech_name\',this.value);init()">' +
-      tList.map(t => '<option value="' + t + '" ' + (t === myName ? "selected" : "") + '>👨‍🔧 کارتابل ' + t + '</option>').join("") + '</select><a href="dashboard.html" style="color:#0f3b2d;text-decoration:underline">🔙 داشبورد</a>';
-    document.body.insertBefore(bar, document.body.children[1]);
-  }
-  init();
-}
-bootTechPanel();
+loadTechData();
 </script>
 </body>
 </html>
-<!-- END -->
-
