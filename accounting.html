@@ -207,7 +207,23 @@ function getTechAuditData(tName) {
   return { paidOrders, unpaidOrders, baseBill, appPos, appChk, appCash, sysWage, totalCogs, posList, chkList, cashList };
 }
 // PART 2 END
-    function renderTechSettleAccordions() {
+    function fmtM(n) {
+  return num(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+function onMoneyInp(el) {
+  let raw = String(el.value || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[^0-9]/g, "");
+  el.value = raw ? Number(raw).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+}
+document.addEventListener("focusin", e => {
+  if (e.target && (e.target.id === "pvCost" || e.target.id === "exAmt")) {
+    e.target.type = "text"; e.target.setAttribute("inputmode", "numeric");
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target && (e.target.id === "pvCost" || e.target.id === "exAmt")) onMoneyInp(e.target);
+});
+
+function renderTechSettleAccordions() {
   $("techSettleAccordions").innerHTML = techs.map((t, idx) => {
     const d = getTechAuditData(t);
     if (!customMap[t]) customMap[t] = [];
@@ -230,16 +246,16 @@ function getTechAuditData(tName) {
           '<div style="background:#f8fafc;border:1.5px solid #cbd5e1;padding:10px;border-radius:10px">' +
             '<b style="font-size:12px;color:#0f3b2d;display:block;margin-bottom:8px">📥 ۱. ستون موارد تحویل‌گرفته‌شده فیزیکی و کسورات (بستانکار تکنسین):</b>' +
             '<div style="margin-bottom:6px"><b style="font-size:11px;color:#7e22ce">☑️ تطبیق فیزیکی چک‌های تحویلی تکنسین:</b>' + chkVerifyHtml + '</div>' +
-            '<div class="f-row"><span>📝 جمع چک‌های فیزیکی تحویل‌گرفته‌شده:</span><input id="chk_' + idx + '" type="number" class="inp" value="' + d.appChk + '" oninput="recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
-            '<div class="f-row"><span>💳 جمع کارتخوان (پوز) تحویلی تکنسین:</span><input id="pos_' + idx + '" type="number" class="inp" value="' + d.appPos + '" oninput="recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
-            '<div class="f-row"><span>🏢 کارتخوان شرکت / واریزی مستقیم به شرکت:</span><input id="cpos_' + idx + '" type="number" class="inp" value="0" oninput="recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
-            '<div class="f-row"><span>💵 نقد / علی‌الحساب تحویلی قبلی:</span><input id="adv_' + idx + '" type="number" class="inp" value="0" oninput="recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
-            '<div class="f-row"><span style="color:#15803d;font-weight:bold">👨‍🔧 سهم تکنسین (دستمزد سیستمی دوره):</span><input id="wg_' + idx + '" type="number" class="inp" style="color:#15803d" value="' + d.sysWage + '" oninput="recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
+            '<div class="f-row"><span>📝 جمع چک‌های فیزیکی تحویل‌گرفته‌شده:</span><input id="chk_' + idx + '" type="text" inputmode="numeric" class="inp" value="' + fmtM(d.appChk) + '" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
+            '<div class="f-row"><span>💳 جمع کارتخوان (پوز) تحویلی تکنسین:</span><input id="pos_' + idx + '" type="text" inputmode="numeric" class="inp" value="' + fmtM(d.appPos) + '" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
+            '<div class="f-row"><span>🏢 کارتخوان شرکت / واریزی مستقیم به شرکت:</span><input id="cpos_' + idx + '" type="text" inputmode="numeric" class="inp" value="0" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
+            '<div class="f-row"><span>💵 نقد:</span><input id="adv_' + idx + '" type="text" inputmode="numeric" class="inp" value="0" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
+            '<div class="f-row"><span style="color:#15803d;font-weight:bold">👨‍🔧 سهم تکنسین (دستمزد سیستمی دوره):</span><input id="wg_' + idx + '" type="text" inputmode="numeric" class="inp" style="color:#15803d" value="' + fmtM(d.sysWage) + '" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')"></div>' +
             '<div style="background:#eff6ff;border:1px solid #93c5fd;padding:7px;border-radius:7px;margin-bottom:6px">' +
-              '<b style="font-size:11px;color:#1e40af;display:block;margin-bottom:4px">🛡️ فیلد ثابت کمک‌هزینه بیمه (تعداد × فی = جمع خودکار):</b>' +
+              '<b style="font-size:11px;color:#1e40af;display:block;margin-bottom:4px">🛡️ کمک‌هزینه بیمه (تعداد فاکتور تکمیل‌شده × مبلغ = جمع خودکار):</b>' +
               '<div style="display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:5px;align-items:center">' +
-                '<input id="insQ_' + idx + '" type="number" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="تعداد (مثلاً 92)" value="0" oninput="recalcTechMath(' + idx + ',\'' + t + '\')">' +
-                '<input id="insR_' + idx + '" type="number" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="فی (مثلاً 150000)" value="150000" oninput="recalcTechMath(' + idx + ',\'' + t + '\')">' +
+                '<input id="insQ_' + idx + '" type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="تعداد فاکتور" value="' + d.paidOrders.length + '" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')">' +
+                '<input id="insR_' + idx + '" type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="مبلغ هر فاکتور" value="' + fmtM(150000) + '" oninput="onMoneyInp(this);recalcTechMath(' + idx + ',\'' + t + '\')">' +
                 '<div id="insSum_' + idx + '" style="font-size:11px;font-weight:bold;color:#1e40af;direction:ltr;text-align:center">= ۰ ت</div>' +
               '</div>' +
             '</div>' +
@@ -257,7 +273,7 @@ function getTechAuditData(tName) {
             '<div id="compareBox_' + idx + '" style="margin-top:8px"></div>' +
             '<div id="bigMathBox_' + idx + '" style="margin-top:8px"></div>' +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;background:#f1f5f9;padding:8px;border-radius:8px">' +
-              '<div><label style="font-size:11px;font-weight:bold">💵 مبلغ واریزی نهایی تکنسین (تسویه مانده):</label><input id="paid_' + idx + '" type="number" class="inp" style="direction:ltr;font-weight:bold;margin:0" value="0"></div>' +
+              '<div><label style="font-size:11px;font-weight:bold">💵 مبلغ واریزی نهایی تکنسین (تسویه مانده):</label><input id="paid_' + idx + '" type="text" inputmode="numeric" class="inp" style="direction:ltr;font-weight:bold;margin:0" value="0" oninput="onMoneyInp(this)"></div>' +
               '<div><label style="font-size:11px;font-weight:bold">📥 واریز به کدام حساب خزانه؟</label><select id="dest_' + idx + '" class="inp" style="margin:0"><option value="bank">💳 حساب بانک شرکت</option><option value="cash_safe">💵 صندوق نقدی شرکت</option></select></div>' +
             '</div>' +
             '<input id="nt_' + idx + '" class="inp" style="margin-top:6px" placeholder="توضیحات سند تسویه (شماره فیش، تاریخ گزارش و...)">' +
@@ -267,27 +283,36 @@ function getTechAuditData(tName) {
       '</div></div>';
   }).join("");
   techs.forEach((t, idx) => { drawCredRows(t, idx); recalcTechMath(idx, t); });
-}
-
-function syncVerifiedChecks(idx, t) {
+    }
+      function syncVerifiedChecks(idx, t) {
   const d = getTechAuditData(t);
   const sumC = d.chkList.reduce((s, c, ci) => s + (chkVerifyMap[t]?.[ci] ? num(c.amt) : 0), 0);
-  if ($("chk_" + idx)) $("chk_" + idx).value = sumC;
+  if ($("chk_" + idx)) $("chk_" + idx).value = fmtM(sumC);
   recalcTechMath(idx, t);
 }
 
 function addCred(t, idx, pref, q, r) { customMap[t].push({ title: pref || "", qty: q || 1, rate: r || 0 }); drawCredRows(t, idx); recalcTechMath(idx, t); }
 function delCred(t, idx, ci) { customMap[t].splice(ci, 1); drawCredRows(t, idx); recalcTechMath(idx, t); }
+
+function onCredInp(el, t, idx, ci, field) {
+  onMoneyInp(el);
+  customMap[t][ci][field] = num(el.value);
+  const rowSum = num(customMap[t][ci].qty) * num(customMap[t][ci].rate);
+  const sumEl = $("crSum_" + idx + "_" + ci);
+  if (sumEl) sumEl.textContent = "=" + fmt(rowSum);
+  recalcTechMath(idx, t);
+}
+
 function drawCredRows(t, idx) {
   const box = $("credBox_" + idx); if (!box) return;
   const arr = customMap[t] || [];
   box.innerHTML = arr.length ? arr.map((c, ci) => {
     const rowSum = num(c.qty) * num(c.rate);
-    return '<div style="display:grid;grid-template-columns:1.8fr .7fr 1.2fr 1.1fr auto;gap:4px;align-items:center;margin-bottom:5px;background:#fff;padding:4px;border-radius:6px;border:1px solid #cbd5e1">' +
+    return '<div style="display:grid;grid-template-columns:1.8fr .65fr 1.25fr 1.1fr auto;gap:4px;align-items:center;margin-bottom:5px;background:#fff;padding:4px;border-radius:6px;border:1px solid #cbd5e1">' +
       '<input class="inp" style="margin:0" placeholder="شرح (نجف‌آباد / فولاد / تخفیف)" value="' + c.title + '" oninput="customMap[\'' + t + '\'][' + ci + '].title=this.value">' +
-      '<input type="number" class="inp" style="margin:0;direction:ltr;text-align:center" placeholder="تعداد" value="' + c.qty + '" oninput="customMap[\'' + t + '\'][' + ci + '].qty=num(this.value);drawCredRows(\'' + t + '\',' + idx + ');recalcTechMath(' + idx + ',\'' + t + '\')">' +
-      '<input type="number" class="inp" style="margin:0;direction:ltr" placeholder="فی/مبلغ" value="' + c.rate + '" oninput="customMap[\'' + t + '\'][' + ci + '].rate=num(this.value);drawCredRows(\'' + t + '\',' + idx + ');recalcTechMath(' + idx + ',\'' + t + '\')">' +
-      '<b style="font-size:11px;color:#0f3b2d;direction:ltr;text-align:center">=' + fmt(rowSum) + '</b>' +
+      '<input type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" placeholder="تعداد" value="' + fmtM(c.qty) + '" oninput="onCredInp(this,\'' + t + '\',' + idx + ',' + ci + ',\'qty\')">' +
+      '<input type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;font-weight:bold" placeholder="فی/مبلغ" value="' + fmtM(c.rate) + '" oninput="onCredInp(this,\'' + t + '\',' + idx + ',' + ci + ',\'rate\')">' +
+      '<b id="crSum_' + idx + '_' + ci + '" style="font-size:11px;color:#0f3b2d;direction:ltr;text-align:center">=' + fmt(rowSum) + '</b>' +
       '<button class="btn" style="background:#ef4444;color:#fff;border:none;padding:4px 7px" onclick="delCred(\'' + t + '\',' + idx + ',' + ci + ')">×</button></div>';
   }).join("") : '<div style="font-size:10px;color:#64748b;padding:4px">ردیف اضافی ثبت نشده است (از دکمه‌های بالا برای افزودن بیرون‌شهر یا فاکتور شرکتی استفاده کنید).</div>';
 }
@@ -315,7 +340,7 @@ function recalcTechMath(idx, t) {
     '</div>';
 
   $("bigMathBox_" + idx).innerHTML =
-    '<div style="background:#fefce8;border:2px solid #eab308;border-radius:10px;padding:10px;line-height:1.9">' +
+    '<div style="background:#fefce8;border:2px solid #eab380;border-radius:10px;padding:10px;line-height:1.9">' +
       '<div style="display:flex;justify-content:space-between;font-size:12px;border-bottom:1px dashed #cbd5e1;padding-bottom:4px"><span>۱. <b>جمع داخل اپ (چک + پوز + نقد ثبت‌شده):</b></span><b style="font-size:14px;color:#0f172a;direction:ltr">' + fmt(appTotal) + '</b></div>' +
       '<div style="display:flex;justify-content:space-between;font-size:12px;border-bottom:1px dashed #cbd5e1;padding:4px 0"><span>۲. <b>جمع موارد تحویل‌گرفته‌شده و کسورات بالا:</b></span><b style="font-size:14px;color:#0369a1;direction:ltr">- ' + fmt(totalDelivered) + '</b></div>' +
       '<div style="background:#fde047;color:#0f172a;padding:8px 10px;border-radius:8px;margin-top:6px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:bold">' +
@@ -325,9 +350,10 @@ function recalcTechMath(idx, t) {
         (remDebt > 0 ? '📢 آقای ' + t + '، مبلغ ' + fmt(remDebt) + ' بدهکار هستید؛ لطفاً به حساب اعلام‌شده واریز نمایید.' : (remDebt < 0 ? '🟢 آقای ' + t + '، مبلغ ' + fmt(Math.abs(remDebt)) + ' از مجموعه بستانکار هستید.' : '✅ حساب آقای ' + t + ' کاملاً تراز و صفر است.')) +
       '</div>' +
     '</div>';
-  $("paid_" + idx).value = Math.max(0, remDebt);
+  $("paid_" + idx).value = fmtM(Math.max(0, remDebt));
 }
 // PART 3 END
+    
     async function submitTechSettle(idx, tName) {
   const d = getTechAuditData(tName);
   if (!d.paidOrders.length) return alert("هیچ فاکتور تسویه‌نشده‌ای برای «" + tName + "» در این بازه وجود ندارد.");
