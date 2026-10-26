@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل جامع مدیریت سامی‌واتر</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
+body{background:#0f172a;color:#1e293b;padding:8px}
+.wrap{width:100%;max-width:1440px;margin:0 auto}
+.hdr{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:14px;border-radius:14px;border:2px solid #d9b24c;margin-bottom:10px}
+.hdr-t{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.ham-btn{background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:2px solid #7dd3fc;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px #0006}
+.ham-drawer{display:none;background:#0f172a;border:2px solid #38bdf8;border-radius:12px;padding:10px;margin-top:10px;grid-template-columns:1fr;gap:7px}
+.ham-drawer.open{display:grid}
+@media(min-width:768px){.ham-drawer.open{grid-template-columns:repeat(3,1fr)}}
+.n-btn{background:#1e293b;color:#f8fafc;border:1px solid #475569;padding:11px 12px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer;text-align:right;display:flex;justify-content:space-between;align-items:center}
+.n-btn.active{background:#0284c7;color:#fff;border-color:#bae6fd}
+.pill{background:#09261d;color:#facc15;border:1px solid #d9b24c;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:bold;text-decoration:none;cursor:pointer}
+.panel{display:none;background:#f1f5f9;border-radius:14px;padding:12px;border:2px solid #cbd5e1;margin-bottom:12px}
+.panel.open{display:block}
+.card{background:#fff;border:1.5px solid #cbd5e1;border-radius:11px;padding:10px;margin-bottom:8px}
+.drw{background:#fff;border:1.5px solid #cbd5e1;border-radius:11px;margin-bottom:8px;overflow:hidden}
+.drw-h{padding:10px 12px;background:#f8fafc;cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;font-size:12px;font-weight:bold}
+.drw-b{display:none;padding:12px;border-top:1px solid #cbd5e1;background:#fff;font-size:12px;line-height:1.9}
+.drw-b.open{display:block}
+.grid2{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:900px){.grid2{grid-template-columns:1fr 1fr}}
+.inp{width:100%;padding:7px 9px;border:1.5px solid #94a3b8;border-radius:7px;font-size:12px;margin-bottom:6px;font-family:inherit}
+.btn{background:#0f3b2d;color:#f5e6b8;border:1px solid #d9b24c;padding:7px 11px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:bold}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:6px}
+th,td{border:1px solid #cbd5e1;padding:6px;text-align:right;font-size:11px;vertical-align:middle}
+th{background:#f1f5f9;white-space:nowrap}
+.bdg{padding:3px 7px;border-radius:5px;font-size:10px;font-weight:bold;display:inline-block}
+.st-d{background:#dcfce7;color:#15803d}.st-al{background:#fee2e2;color:#dc2626}.st-p{background:#fef3c7;color:#b45309}.st-a{background:#e0f2fe;color:#0369a1}
+.perm-chk{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #94a3b8;padding:7px 10px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-t">
+      <button class="ham-btn" onclick="$('hamNav').classList.toggle('open')">☰ منوی بخش‌های مدیریت (<span id="curTabTitle">خدمات جاری</span>)</button>
+      <h1 style="font-size:15px;color:#38bdf8">💧 پنل جامع مدیریت سامی‌واتر</h1>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="pill" onclick="loadDash()">🔄 بروزرسانی</button>
+        <a id="btnAccLink" href="accounting.html" class="pill" style="color:#fde047;border-color:#fde047">📊 نرم‌افزار حسابداری</a>
+        <a id="btnTechLink" href="tech.html" class="pill" style="color:#4ade80;border-color:#4ade80">📱 پنل تکنسین</a>
+        <span id="uBadge" class="pill">👑 مدیر ارشد</span>
+        <button class="pill" style="background:#dc2626;color:#fff;border:none" onclick="localStorage.removeItem('token');location.href='login.html'">🚪 خروج</button>
+      </div>
+    </div>
+    <div id="hamNav" class="ham-drawer">
+      <button class="n-btn active" data-tab="p-orders" onclick="swTab('p-orders',this,'خدمات جاری')"><span>📋 ۱. خدمات جاری و ثبت سرویس</span><span id="cntOrd" class="bdg st-a">0</span></button>
+      <button class="n-btn" data-tab="p-techs" onclick="swTab('p-techs',this,'کارتابل تکنسین‌ها')"><span>👨‍🔧 ۲. کارتابل و رصد تکنسین‌ها</span><span id="cntTech" class="bdg st-a">0</span></button>
+      <button class="n-btn" data-tab="p-susp" onclick="swTab('p-susp',this,'تعلیقی تکنسین')"><span>⏸️ ۳. تعلیقی تکنسین</span><span id="cntSusp" class="bdg st-p">0</span></button>
+      <button class="n-btn" data-tab="p-rem" onclick="swTab('p-rem',this,'یادآور سرویس')"><span>🔔 ۴. یادآور سرویس (زیر ۲۰ روز)</span><span id="cntRem" class="bdg st-al">0</span></button>
+      <button class="n-btn" data-tab="p-wh" onclick="swTab('p-wh',this,'انبار مرکزی و حواله')"><span>🏭 ۵. انبار مرکزی و حواله</span><span>◀</span></button>
+      <button class="n-btn" data-tab="p-cust" onclick="swTab('p-cust',this,'بانک اطلاعات و مناطق')"><span>👥 ۶. بانک اطلاعات، تیکت و مناطق</span><span>◀</span></button>
+      <button class="n-btn" data-tab="p-arch" onclick="swTab('p-arch',this,'بایگانی خدمات')"><span>🗂️ ۷. بایگانی کل خدمات</span><span>◀</span></button>
+      <button class="n-btn" data-tab="p-trash" onclick="swTab('p-trash',this,'فاکتورهای حذفی')"><span>🗑️ ۸. فاکتورهای حذفی</span><span id="cntTr" class="bdg st-al">0</span></button>
+      <button class="n-btn" data-tab="p-cat" onclick="swTab('p-cat',this,'تعرفه کالا و دستمزد')"><span>🏷️ ۹. تعرفه کالا و دستمزد</span><span>◀</span></button>
+      <button class="n-btn" data-tab="p-users" onclick="swTab('p-users',this,'خلق کاربران و دسترسی')"><span>🔐 ۱۰. خلق کاربران و تعیین دسترسی</span><span>◀</span></button>
+    </div>
+  </div>
+  <div id="p-orders" class="panel open"></div>
+  <div id="p-techs" class="panel"></div>
+  <div id="p-susp" class="panel"></div>
+  <div id="p-rem" class="panel"></div>
+  <div id="p-wh" class="panel"></div>
+  <div id="p-cust" class="panel"></div>
+  <div id="p-arch" class="panel"></div>
+  <div id="p-trash" class="panel"></div>
+  <div id="p-cat" class="panel"></div>
+  <div id="p-users" class="panel"></div>
+</div>
+<!-- PART 1 END -->
+  <script>
+const API = "https://samiwater-backend.onrender.com/api";
+const $ = id => document.getElementById(id);
+const num = v => Math.round(Number(String(v || 0).replace(/,/g, "")) || 0);
+const fmt = n => num(n).toLocaleString("fa-IR");
+function onMoneyInp(el) {
+  let raw = String(el.value || "").replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[^0-9]/g, "");
+  el.value = raw ? Number(raw).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+}
+function toJ(d, withTime) {
+  if (!d) return "---";
+  try {
+    const dt = new Date(d);
+    let s = new Intl.DateTimeFormat("fa-IR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(dt);
+    if (withTime) s += " ساعت " + new Intl.DateTimeFormat("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false }).format(dt);
+    ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"].forEach((p, i) => s = s.replace(new RegExp(p, "g"), i));
+    return s;
+  } catch (e) { return "---"; }
+}
+function normPh(p) { return String(p || "").replace(/\D/g, "").slice(-10); }
+
+const ISF_REGIONS = ["ملاصدرا","توحید","هشت بهشت","نشاط","شاهزید","سیچان","نظر","چهارباغ","بزرگمهر","پروین","کاوه","خانه اصفهان","مرداویج","شیخ صدوق","جی","باهنر","رباط","سجاد","آبشار","مشتاق","لنبان","وحید","خاقانی","محتشم","شمس آبادی","عباس آباد","رودکی","آتشگاه","بهارستان","سپاهان شهر","شاهین شهر","نجف آباد","خمینی شهر","گز"];
+function detectRegion(addr, savedReg) {
+  if (savedReg) return savedReg;
+  const a = String(addr || "");
+  for (const r of ISF_REGIONS) { if (a.includes(r)) return r; }
+  return "سایر مناطق";
+}
+
+if (!localStorage.getItem("token")) location.href = "login.html";
+const uRole = localStorage.getItem("role") || "admin", uName = localStorage.getItem("username") || "مدیر";
+let reqs = [], settings = {}, techs = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
+let selTechFilter = "ALL", techSubTab = "todo", openOrdId = "", openTechOrdId = "";
+
+const ROLE_POOL = {
+  support: { label: "🎧 نیروی پشتیبانی خدمات", tabs: [["p-orders","📋 خدمات جاری و ثبت سرویس"],["p-techs","👨‍🔧 رصد کارتابل تکنسین‌ها"],["p-susp","⏸️ تعلیقی تکنسین"],["p-rem","🔔 یادآور سرویس"],["p-cust","👥 بانک اطلاعات و مناطق"],["p-arch","🗂️ بایگانی خدمات"],["p-trash","🗑️ فاکتورهای حذفی"]] },
+  callcenter: { label: "📞 کال‌سنتر یادآور", tabs: [["p-rem","🔔 یادآور سرویس"],["p-susp","⏸️ تعلیقی تکنسین"],["p-cust","👥 بانک اطلاعات مشتریان"],["p-orders","📋 ثبت سفارش جدید"]] },
+  warehouse: { label: "🏭 انباردار", tabs: [["p-wh","🏭 انبار مرکزی و حواله"],["p-techs","👨‍🔧 موجودی انبار تکنسین‌ها"]] },
+  supervisor: { label: "🛡️ سرپرست عملیات", tabs: [["p-orders","📋 خدمات جاری"],["p-techs","👨‍🔧 کارتابل تکنسین‌ها"],["p-susp","⏸️ تعلیقی‌ها"],["p-rem","🔔 یادآور سرویس"],["p-wh","🏭 انبار مرکزی"],["p-cust","👥 بانک مشتریان"],["p-arch","🗂️ بایگانی خدمات"],["p-trash","🗑️ فاکتورهای حذفی"]] },
+  accountant: { label: "📊 حسابدار", tabs: [["ACCOUNTING","📊 نرم‌افزار تخصصی حسابداری"],["p-arch","🗂️ مشاهده بایگانی فاکتورها"]] },
+  tech: { label: "👨‍🔧 تکنسین فنی", tabs: [["TECH_PANEL","📱 کارتابل و انبار سیار تکنسین"]] }
+};
+
+function applyUserPermissions() {
+  const staff = (settings.staffUsers || []).find(u => u.username === uName);
+  if (staff && staff.locked) { alert("🔒 دسترسی حساب شما توسط مدیریت قفل شده است."); localStorage.removeItem("token"); location.href = "login.html"; return; }
+  if (uRole === "tech") { location.href = "tech.html"; return; }
+  if (uRole === "accountant" && (!staff || !(staff.allowedTabs || []).includes("p-arch"))) { location.href = "accounting.html"; return; }
+  $("uBadge").textContent = (uRole === "admin" ? "👑 مدیر ارشد (" : (ROLE_POOL[uRole]?.label || "کاربر") + " (") + uName + ")";
+  if (uRole !== "admin") {
+    const allowed = staff?.allowedTabs || (ROLE_POOL[uRole]?.tabs || []).map(x => x[0]);
+    if (!allowed.includes("ACCOUNTING")) $("btnAccLink").style.display = "none";
+    $("btnTechLink").style.display = "none";
+    let firstBtn = null;
+    document.querySelectorAll("#hamNav .n-btn").forEach(btn => {
+      const t = btn.getAttribute("data-tab");
+      if (allowed.includes(t)) { btn.style.display = "flex"; if (!firstBtn) firstBtn = btn; }
+      else btn.style.display = "none";
+    });
+    const curAct = document.querySelector("#hamNav .n-btn.active");
+    if (curAct && curAct.style.display === "none" && firstBtn) firstBtn.click();
+  }
+}
+
+function swTab(id, btn, title) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+  document.querySelectorAll(".n-btn").forEach(b => b.classList.remove("active"));
+  if ($(id))$(id).classList.add("open");
+  if (btn) btn.classList.add("active");
+  if (title) $("curTabTitle").textContent = title;
+  $("hamNav").classList.remove("open");
+}
+
+async function loadDash() {
+  const [r1, r2] = await Promise.all([fetch(API + "/requests"), fetch(API + "/requests/settings")]);
+  if (r1.ok) reqs = (await r1.json()).requests || [];
+  if (r2.ok) settings = (await r2.json()).settings || {};
+  Object.keys(settings.techMeta || {}).forEach(t => { if (!techs.includes(t)) techs.push(t); });
+  reqs.forEach(r => { if (r.technicianName && !techs.includes(r.technicianName)) techs.push(r.technicianName); });
+  applyUserPermissions();
+  renderOrdersPanel(); renderTechsPanel(); renderSuspPanel(); renderRemPanel();
+  renderWhPanel(); renderCustPanel(); renderArchPanel(); renderTrashPanel();
+  renderCatPanel(); renderUsersPanel();
+}
+
+function getCustPastInfo(phone, name, excludeId) {
+  const cPh = normPh(phone);
+  const past = reqs.filter(x => x._id !== excludeId && ((cPh && normPh(x.snapshot?.phone) === cPh) || (name && x.snapshot?.fullName === name)));
+  const addrs = [...new Set(past.map(x => x.snapshot?.address).filter(Boolean))];
+  const tickets = (settings.customerTickets || []).filter(tk => (cPh && normPh(tk.phone) === cPh) || (name && tk.customerName === name));
+  return { past, addrs, tickets };
+}
+
+function renderOrdersPanel() {
+  const active = reqs.filter(r => r.status === "pending" || r.status === "assigned" || r.status === "in_progress");
+  $("cntOrd").textContent = active.length;
+  const tOpts = techs.map(t => '<option value="' + t + '">' + t + '</option>').join("");
+  $("p-orders").innerHTML =
+    '<div class="card" style="background:#eff6ff;border-color:#93c5fd">' +
+      '<b style="font-size:12px;color:#1e40af;display:block;margin-bottom:6px">➕ ثبت درخواست سرویس جدید و ارجاع به تکنسین:</b>' +
+      '<div class="grid2">' +
+        '<div><input id="nName" class="inp" placeholder="نام و نام خانوادگی مشتری *"><input id="nPh" class="inp" style="direction:ltr" placeholder="شماره موبایل مشتری *"></div>' +
+        '<div><input id="nAddr" class="inp" placeholder="آدرس دقیق مشتری *"><div style="display:flex;gap:5px"><input id="nIss" class="inp" style="margin:0;flex:2" placeholder="علت سرویس / توضیحات برای تکنسین"><select id="nTech" class="inp" style="margin:0;flex:1"><option value="">انتخاب تکنسین...</option>' + tOpts + '</select></div></div>' +
+      '</div><button class="btn" style="width:100%;background:#0284c7;color:#fff;margin-top:6px;padding:9px" onclick="createNewOrder()">💾 ثبت سرویس و ارسال به کارتابل</button>' +
+    '</div>' +
+    (active.length ? active.map(r => {
+      const cust = r.snapshot?.fullName || "مشتری", ph = r.snapshot?.phone || "", addr = r.snapshot?.address || "---";
+      const info = getCustPastInfo(ph, cust, r._id), isOp = openOrdId === r._id;
+      return '<div class="drw">' +
+        '<div class="drw-h" onclick="openOrdId=(openOrdId===\'' + r._id + '\'?\'\':\'' + r._id + '\');renderOrdersPanel()">' +
+          '<div>👤 <b>' + cust + '</b> (' + ph + ') <span class="bdg st-a">' + (r.invoiceCode || "---") + '</span> ' + (r.technicianName ? '<span class="bdg st-d">👨‍🔧 ' + r.technicianName + '</span>' : '<span class="bdg st-al">⏳ بدون تکنسین</span>') + '</div>' +
+          '<div style="font-size:11px;color:#475569">🕒 ثبت: ' + toJ(r.createdAt, true) + ' | باز کردن جزئیات ▾</div>' +
+        '</div>' +
+        '<div class="drw-b ' + (isOp ? 'open' : '') + '">' +
+          '<div>📍 <b>آدرس فعلی:</b> ' + addr + ' <span class="bdg st-p">' + detectRegion(addr) + '</span></div>' +
+          (info.addrs.length > 1 ? '<div>🏠 <b>سایر آدرس‌های ثبت‌شده قبلی این مشتری:</b> ' + info.addrs.join(" | ") + '</div>' : '') +
+          '<div>🔧 <b>شرح درخواست و توضیحات:</b> ' + (r.issueType || "سرویس دوره‌ای") + ' | 📞 <b>تلفن:</b> <a href="tel:' + ph + '" style="font-weight:bold;color:#0284c7">' + ph + '</a></div>' +
+          '<div>📜 <b>سابقه قبلی مشتری:</b> ' + info.past.length + ' سرویس قبلی ' + (info.past[0] ? '(آخرین سرویس: ' + toJ(info.past[0].completedAt || info.past[0].createdAt) + ' — ' + (info.past[0].workReport || "انجام شد") + ')' : '') + '</div>' +
+          (info.tickets.length ? '<div style="background:#fff1f2;padding:6px;border-radius:6px;color:#be123c">🎫 <b>تیکت‌های قبلی مشتری:</b> ' + info.tickets.map(t => t.date + ': [' + t.tag + '] ' + t.note).join(" | ") + '</div>' : '') +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1">' +
+            '<select class="inp" style="margin:0;width:160px" onchange="assignTech(\'' + r._id + '\',this.value)"><option value="">تغییر/ارجاع تکنسین...</option>' + techs.map(t => '<option value="' + t + '" ' + (r.technicianName === t ? 'selected' : '') + '>' + t + '</option>').join("") + '</select>' +
+            '<button class="btn" style="background:#16a34a;color:#fff" onclick="sendOrderSms(\'' + r._id + '\',\'' + ph + '\',\'' + cust + '\',\'' + (r.technicianName || "") + '\')">📲 پیامک به مشتری ' + (r.smsSentAt ? '(✅ ارسال‌شده در ' + r.smsSentAt + ')' : '') + '</button>' +
+            '<button class="btn" style="background:#0284c7;color:#fff" onclick="editOrderNote(\'' + r._id + '\')">✏️ ویرایش آدرس/توضیح</button>' +
+            '<button class="btn" style="background:#ef4444;color:#fff" onclick="moveTrash(\'' + r._id + '\')">🗑️ حذف</button>' +
+          '</div>' +
+        '</div></div>';
+    }).join("") : '<div class="card">سرویس فعالی در جریان نیست.</div>');
+}
+// PART 2 END
+    async function createNewOrder() {
+  const fullName = $("nName").value.trim(), phone = $("nPh").value.trim(), address = $("nAddr").value.trim(), issueType = $("nIss").value.trim() || "سرویس دوره‌ای", tech = $("nTech").value;
+  if (!fullName || !phone) return alert("نام و موبایل مشتری الزامی است.");
+  const r = await fetch(API + "/requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName, phone, address, issueType }) });
+  if (r.ok && tech) { const d = await r.json(); if (d.request?._id) await assignTech(d.request._id, tech); }
+  await loadDash();
+}
+async function assignTech(id, techName) {
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: techName ? "assigned" : "pending", technicianName: techName }) });
+  await loadDash();
+}
+async function sendOrderSms(id, ph, cust, tech) {
+  const tm = toJ(new Date(), true);
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ smsSentAt: tm }) });
+  location.href = "sms:" + ph + "?body=" + encodeURIComponent(`مشتری گرامی ${cust}، درخواست سرویس تصفیه آب شما در سامی‌واتر ثبت و به تکنسین (${tech || "فنی"}) ارجاع شد.`);
+  setTimeout(loadDash, 800);
+}
+async function editOrderNote(id) {
+  const r = reqs.find(x => x._id === id); if (!r) return;
+  const nIss = prompt("ویرایش توضیحات / یادداشت برای تکنسین:", r.issueType || ""); if (nIss === null) return;
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ issueType: nIss }) });
+  await loadDash();
+}
+async function moveTrash(id) {
+  const rsn = prompt("علت حذف فاکتور:"); if (!rsn) return;
+  await fetch(API + "/requests/" + id + "/status", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "trashed", deleteReason: rsn }) });
+  await loadDash();
+}
+
+function renderTechsPanel() {
+  const todoAll = reqs.filter(r => r.status === "assigned" || r.status === "in_progress");
+  $("cntTech").textContent = todoAll.length;
+  const fTodo = todoAll.filter(r => selTechFilter === "ALL" || r.technicianName === selTechFilter);
+  const fDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && (selTechFilter === "ALL" || r.technicianName === selTechFilter));
+  const fSusp = reqs.filter(r => r.status === "suspended" && (selTechFilter === "ALL" || r.technicianName === selTechFilter));
+  const isLocked = selTechFilter !== "ALL" && settings.techMeta?.[selTechFilter]?.locked;
+  const curList = techSubTab === "todo" ? fTodo : (techSubTab === "done" ? fDone : fSusp);
+
+  $("p-techs").innerHTML =
+    '<div class="card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px">' +
+        '<b style="font-size:13px;color:#0f3b2d">👨‍🔧 کارتابل عملیاتی و رصد لحظه‌ای تکنسین‌ها (تسویه مالی در نرم‌افزار حسابداری است)</b>' +
+        (uRole === "admin" ? '<a href="accounting.html' + (selTechFilter !== "ALL" ? '?tech=' + encodeURIComponent(selTechFilter) : '') + '" class="btn" style="background:#d9b24c;color:#071f17;text-decoration:none">📊 ورود به میز تسویه حسابداری</a>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:6px;margin-bottom:8px"><input id="newTechInp" class="inp" style="margin:0;flex:1" placeholder="نام تکنسین جدید..."><button class="btn" style="background:#0284c7;color:#fff" onclick="addNewTech()">+ افزودن تکنسین</button></div>' +
+      '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">' +
+        '<button class="btn" style="background:' + (selTechFilter === "ALL" ? '#0f172a;color:#fff' : '#e2e8f0;color:#1e293b') + '" onclick="selTechFilter=\'ALL\';renderTechsPanel()">👨‍🔧 همه تکنسین‌ها (' + todoAll.length + ')</button>' +
+        techs.map(t => {
+          const c = todoAll.filter(x => x.technicianName === t).length;
+          return '<button class="btn" style="background:' + (selTechFilter === t ? '#0284c7;color:#fff' : '#fff;color:#1e293b;border:1px solid #cbd5e1') + '" onclick="selTechFilter=\'' + t + '\';renderTechsPanel()">👨‍🔧 ' + t + ' (' + c + ')</button>';
+        }).join("") +
+      '</div>' +
+      (selTechFilter !== "ALL" ? '<div style="display:flex;gap:6px;flex-wrap:wrap;background:#f8fafc;padding:8px;border-radius:8px;border:1px solid #cbd5e1;margin-bottom:8px"><button class="btn" style="background:' + (isLocked ? '#16a34a' : '#dc2626') + ';color:#fff" onclick="togTechLock(\'' + selTechFilter + '\')">' + (isLocked ? '🔓 باز کردن قفل ' : '🔒 قفل فوری کارتابل و انبار ') + selTechFilter + '</button><a class="btn" style="background:#0284c7;color:#fff;text-decoration:none" href="sms:' + (settings.techMeta?.[selTechFilter]?.phone || "") + '">📲 ارسال پیامک مستقیم به ' + selTechFilter + '</a></div>' : '') +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">' +
+        '<button class="btn" style="padding:9px;background:' + (techSubTab === "todo" ? '#0f172a;color:#fff' : '#fff;color:#0f172a') + '" onclick="techSubTab=\'todo\';renderTechsPanel()">⏳ ۱. در دست اقدام (' + fTodo.length + ')</button>' +
+        '<button class="btn" style="padding:9px;background:' + (techSubTab === "done" ? '#16a34a;color:#fff' : '#fff;color:#0f172a') + '" onclick="techSubTab=\'done\';renderTechsPanel()">✅ ۲. تکمیل‌شده دوره (' + fDone.length + ')</button>' +
+        '<button class="btn" style="padding:9px;background:' + (techSubTab === "susp" ? '#d97706;color:#fff' : '#fff;color:#0f172a') + '" onclick="techSubTab=\'susp\';renderTechsPanel()">⏸️ ۳. تعلیقی و یادآور (' + fSusp.length + ')</button>' +
+      '</div>' +
+      (curList.length ? curList.map(r => {
+        const cust = r.snapshot?.fullName || "مشتری", ph = r.snapshot?.phone || "", isOp = openTechOrdId === r._id;
+        const usedTxt = (r.usedItems && r.usedItems.length) ? r.usedItems.map(u => u.title + "×" + u.qty).join(" ، ") : "---";
+        return '<div class="drw">' +
+          '<div class="drw-h" onclick="openTechOrdId=(openTechOrdId===\'' + r._id + '\'?\'\':\'' + r._id + '\');renderTechsPanel()">' +
+            '<div>👤 <b>' + cust + '</b> (' + ph + ') — <span class="bdg st-a">👨‍🔧 ' + (r.technicianName || "") + '</span> <span class="bdg st-p">' + (r.invoiceCode || "") + '</span> ' + (r.smsSentAt ? '<span class="bdg st-d">📲 پیامک: ' + r.smsSentAt + '</span>' : '<span class="bdg st-al">📵 پیامک نداده</span>') + '</div>' +
+            '<div style="font-size:11px;color:#0f3b2d">🕒 ' + (r.completedAt ? 'تکمیل: ' + toJ(r.completedAt, true) : 'ارجاع/باز شدن: ' + toJ(r.updatedAt || r.createdAt, true)) + ' ▾</div>' +
+          '</div>' +
+          '<div class="drw-b ' + (isOp ? 'open' : '') + '">' +
+            '<div>📍 <b>آدرس کامل مشتری:</b> ' + (r.snapshot?.address || "---") + ' | 📞 <a href="tel:' + ph + '">' + ph + '</a></div>' +
+            '<div>🕒 <b>زمان ثبت سفارش:</b> ' + toJ(r.createdAt, true) + ' | <b>آخرین باز شدن/عملیات تکنسین:</b> ' + toJ(r.completedAt || r.updatedAt || r.createdAt, true) + '</div>' +
+            '<div>🔧 <b>گزارش کار و قطعات مصرفی:</b> ' + (r.workReport || r.issueType || "---") + ' (' + usedTxt + ')</div>' +
+            (r.customerTicket ? '<div style="background:#fff1f2;color:#be123c;padding:5px 8px;border-radius:6px;font-weight:bold">🎫 تیکت ثبت‌شده تکنسین: ' + r.customerTicket + '</div>' : '') +
+            (r.suspendReason ? '<div style="background:#fef3c7;color:#b45309;padding:5px 8px;border-radius:6px;font-weight:bold">⏸️ یادداشت تعلیق/یادآور تکنسین: ' + r.suspendReason + ' (موعد یادآوری: ' + toJ(r.suspendUntil) + ')</div>' : '') +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">' +
+              '<button class="btn" style="background:#16a34a;color:#fff" onclick="sendOrderSms(\'' + r._id + '\',\'' + ph + '\',\'' + cust + '\',\'' + (r.technicianName || "") + '\')">📲 ارسال پیامک به مشتری</button>' +
+              '<a class="btn" style="background:#0284c7;color:#fff;text-decoration:none" href="sms:' + (settings.techMeta?.[r.technicianName]?.phone || "") + '?body=' + encodeURIComponent(`پیگیری سرویس ${cust} (${ph}) - آدرس: ${r.snapshot?.address || ""}`) + '">📲 پیامک پیگیری به تکنسین</a>' +
+            '</div>' +
+          '</div></div>';
+      }).join("") : '<div style="font-size:11px;color:#64748b;padding:8px">موردی در این تب وجود ندارد.</div>') +
+    '</div>';
+}
+function addNewTech() {
+  const v = $("newTechInp").value.trim(); if (!v) return;
+  if (!techs.includes(v)) { techs.push(v); localStorage.setItem("sw_techs", JSON.stringify(techs)); }
+  $("newTechInp").value = ""; renderTechsPanel();
+}
+async function togTechLock(tName) {
+  const tm = settings.techMeta || {}; if (!tm[tName]) tm[tName] = {};
+  tm[tName].locked = !tm[tName].locked;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ techMeta: tm }) });
+  await loadDash();
+}
+
+function renderSuspPanel() {
+  const list = reqs.filter(r => r.status === "suspended"); $("cntSusp").textContent = list.length;
+  $("p-susp").innerHTML = list.length ? list.map(r => '<div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><b>👤 ' + (r.snapshot?.fullName || "") + ' (' + (r.snapshot?.phone || "") + ')</b><span class="bdg st-p">تکنسین: ' + (r.technicianName || "---") + ' | موعد یادآور: ' + toJ(r.suspendUntil) + '</span></div><div style="font-size:11px;margin:5px 0">⏸️ تیکت تعلیق تکنسین: <b>' + (r.suspendReason || "---") + '</b> | 📍 ' + (r.snapshot?.address || "") + '</div><button class="btn" style="background:#16a34a;color:#fff" onclick="assignTech(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">🔄 بازگردانی به خدمات جاری</button></div>').join("") : '<div class="card">مورد تعلیقی وجود ندارد.</div>';
+}
+function renderRemPanel() {
+  const done = reqs.filter(r => r.status === "done" || r.status === "completed");
+  const due = done.filter(r => (180 - Math.round((Date.now() - new Date(r.completedAt || r.createdAt).getTime()) / 86400000)) <= 20);
+  $("cntRem").textContent = due.length;
+  $("p-rem").innerHTML = due.length ? due.map(r => {
+    const days = 180 - Math.round((Date.now() - new Date(r.completedAt || r.createdAt).getTime()) / 86400000);
+    return '<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><div><b>👤 ' + (r.snapshot?.fullName || "") + '</b> (' + (r.snapshot?.phone || "") + ') <span class="bdg st-al">' + (days <= 0 ? Math.abs(days) + ' روز گذشته' : days + ' روز مانده') + '</span><div style="font-size:11px;color:#475569">📍 ' + (r.snapshot?.address || "") + ' | آخرین سرویس: ' + toJ(r.completedAt) + '</div></div><a class="btn" style="background:#16a34a;color:#fff;text-decoration:none" href="sms:' + (r.snapshot?.phone || "") + '?body=' + encodeURIComponent("مشتری گرامی سامی‌واتر، موعد تعویض فیلتر دستگاه تصفیه آب شما فرا رسیده است.") + '">📲 ارسال پیامک یادآور</a></div>';
+  }).join("") : '<div class="card">مشتری در موعد زیر ۲۰ روز وجود ندارد.</div>';
+}
+function renderWhPanel() {
+  const cStock = (settings.centralStock && settings.centralStock["اصفهان (مرکزی)"]) || {}, tStock = settings.techStock || {}, goods = (settings.catalog || []).filter(c => c.isGoods);
+  $("p-wh").innerHTML = '<div class="grid2"><div class="card"><b>📤 حواله کالا از انبار مرکزی به تکنسین:</b><select id="whTech" class="inp" style="margin-top:6px">' + techs.map(t => '<option value="' + t + '">' + t + '</option>').join("") + '</select><select id="whItem" class="inp">' + goods.map(g => '<option value="' + g.title + '">' + g.title + ' (مرکزی: ' + fmt(cStock[g.title] || 0) + ')</option>').join("") + '</select><input id="whQty" type="text" inputmode="numeric" class="inp" style="direction:ltr;font-weight:bold" value="1" oninput="onMoneyInp(this)"><button class="btn" style="width:100%;background:#0284c7;color:#fff" onclick="transferToTech()">📦 ثبت حواله به تکنسین</button></div><div class="card"><b>🏭 موجودی انبار مرکزی و تکنسین‌ها:</b><table><thead><tr><th>کالا</th><th>انبار مرکزی</th><th>نزد تکنسین‌ها</th></tr></thead><tbody>' + goods.map(g => '<tr><td><b>' + g.title + '</b></td><td style="direction:ltr;color:#15803d;font-weight:bold">' + fmt(cStock[g.title] || 0) + '</td><td style="direction:ltr">' + fmt(techs.reduce((s, t) => s + num(tStock[t]?.[g.title]), 0)) + '</td></tr>').join("") + '</tbody></table></div></div>';
+}
+async function transferToTech() {
+  const techName = $("whTech").value, itemTitle = $("whItem").value, qty = num($("whQty").value);
+  if (!techName || !itemTitle || qty <= 0) return;
+  await fetch(API + "/requests/warehouse-op", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ opType: "central_to_tech", branch: "اصفهان (مرکزی)", techName, itemTitle, qty, byUser: uName }) });
+  await loadDash(); alert("✅ حواله ثبت شد.");
+}
+// PART 3 END
+    let custRegFilter = "ALL", custSearch = "", openTicketPh = "";
+function renderCustPanel() {
+  const map = {};
+  reqs.forEach(r => {
+    const ph = normPh(r.snapshot?.phone); if (!ph) return;
+    if (!map[ph]) map[ph] = { name: r.snapshot?.fullName || "مشتری", phone: r.snapshot?.phone || ph, addrs: [], lastDate: r.completedAt || r.createdAt };
+    if (r.snapshot?.address && !map[ph].addrs.includes(r.snapshot.address)) map[ph].addrs.push(r.snapshot.address);
+  });
+  const custRegions = settings.customerRegions || {}, allTickets = settings.customerTickets || [];
+  const allCusts = Object.keys(map).map(ph => ({ ...map[ph], phKey: ph, region: detectRegion(map[ph].addrs[0] || "", custRegions[ph]), tickets: allTickets.filter(tk => normPh(tk.phone) === ph) }));
+  const filtered = allCusts.filter(c => (custRegFilter === "ALL" || c.region === custRegFilter) && (!custSearch || c.name.includes(custSearch) || c.phone.includes(custSearch) || c.addrs.join(" ").includes(custSearch)));
+  const regOpts = '<option value="ALL">📍 همه مناطق اصفهان (' + allCusts.length + ')</option>' + ISF_REGIONS.map(r => '<option value="' + r + '" ' + (custRegFilter === r ? 'selected' : '') + '>محله ' + r + '</option>').join("") + '<option value="سایر مناطق">سایر مناطق</option>';
+
+  $("p-cust").innerHTML = '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px"><b style="font-size:13px;color:#0f3b2d">👥 بانک اطلاعات مشتریان، تمام آدرس‌ها، منطقه‌بندی و تیکت‌ها</b><button class="btn" style="background:#16a34a;color:#fff" onclick="alert(\'آماده ارسال پیامک به \' + ' + filtered.length + ' + \' مشتری منطقه\')">📲 پیامک گروهی به این منطقه (' + filtered.length + ' نفر)</button></div>' +
+    '<div class="grid2"><input class="inp" placeholder="🔍 جستجوی نام، تلفن یا آدرس..." value="' + custSearch + '" oninput="custSearch=this.value;renderCustPanel()"><select class="inp" onchange="custRegFilter=this.value;renderCustPanel()">' + regOpts + '</select></div>' +
+    '<div style="overflow-x:auto"><table><thead><tr><th>مشتری</th><th>تلفن</th><th>منطقه</th><th>تمام آدرس‌های ثبت‌شده</th><th>🎫 تیکت‌ها (جدید به قدیم)</th></tr></thead><tbody>' +
+    filtered.slice(0, 60).map(c => '<tr><td><b>' + c.name + '</b></td><td style="direction:ltr">' + c.phone + '</td><td><select class="inp" style="margin:0;width:110px;font-size:10px" onchange="setCustReg(\'' + c.phKey + '\',this.value)">' + [...ISF_REGIONS, "سایر مناطق"].map(r => '<option value="' + r + '" ' + (c.region === r ? 'selected' : '') + '>' + r + '</option>').join("") + '</select></td><td>' + c.addrs.join(" <hr style=\'margin:3px 0\'> ") + '</td><td><button class="btn" style="background:' + (c.tickets.length ? '#be123c' : '#475569') + ';color:#fff;padding:4px 8px" onclick="openTicketPh=(openTicketPh===\'' + c.phKey + '\'?\'\':\'' + c.phKey + '\');renderCustPanel()">🎫 تیکت‌ها (' + c.tickets.length + ')</button>' +
+      (openTicketPh === c.phKey ? '<div style="margin-top:5px;background:#fff1f2;padding:6px;border-radius:6px;border:1px solid #fda4af">' + (c.tickets.length ? c.tickets.map(tk => '<div style="border-bottom:1px dashed #fecdd3;padding:3px 0"><b>' + tk.date + ':</b> <span class="bdg st-al">' + (tk.tag || "تیکت") + '</span> ' + (tk.note || "") + '</div>').join("") : '<div>تیکتی ثبت نشده.</div>') + '<div style="display:flex;gap:4px;margin-top:4px"><input id="newTk_' + c.phKey + '" class="inp" style="margin:0" placeholder="تیکت جدید..."><button class="btn" style="background:#be123c;color:#fff" onclick="addCustTk(\'' + c.phone + '\',\'' + c.name + '\',\'' + c.phKey + '\')">+</button></div></div>' : '') +
+    '</td></tr>').join("") + '</tbody></table></div></div>';
+}
+async function setCustReg(phKey, reg) { const cr = settings.customerRegions || {}; cr[phKey] = reg; await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerRegions: cr }) }); await loadDash(); }
+async function addCustTk(phone, customerName, phKey) {
+  const note = $("newTk_" + phKey).value.trim(); if (!note) return;
+  const tkList = settings.customerTickets || []; tkList.unshift({ id: "tk_" + Date.now(), date: toJ(new Date()), phone, customerName, techName: uName, tag: "یادداشت مدیریت", note });
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerTickets: tkList }) }); await loadDash();
+}
+
+function renderArchPanel() {
+  const done = reqs.filter(r => r.status === "done" || r.status === "completed");
+  $("p-arch").innerHTML = '<div class="card"><b>🗂️ بایگانی کل خدمات انجام‌شده (' + done.length + ' سرویس):</b><div style="overflow-x:auto"><table><thead><tr><th>فاکتور</th><th>تاریخ و ساعت</th><th>مشتری</th><th>تکنسین</th><th>گزارش و تیکت</th><th>مبلغ</th></tr></thead><tbody>' + done.slice(0, 60).map(r => '<tr><td><b>' + (r.invoiceCode || "") + '</b></td><td>' + toJ(r.completedAt || r.createdAt, true) + '</td><td>' + (r.snapshot?.fullName || "") + '</td><td>' + (r.technicianName || "") + '</td><td>' + (r.workReport || "") + '</td><td style="direction:ltr;font-weight:bold">' + fmt(r.payableAmount) + ' ت</td></tr>').join("") + '</tbody></table></div></div>';
+}
+function renderTrashPanel() {
+  const tr = reqs.filter(r => r.status === "trashed"); $("cntTr").textContent = tr.length;
+  $("p-trash").innerHTML = '<div class="card"><b>🗑️ فاکتورهای حذفی (' + tr.length + '):</b>' + (tr.map(r => '<div style="padding:6px;border-bottom:1px solid #cbd5e1;font-size:11px;display:flex;justify-content:space-between"><span><b>' + (r.snapshot?.fullName || "") + '</b> — علت حذف: ' + (r.deleteReason || "---") + '</span><button class="btn" onclick="assignTech(\'' + r._id + '\',\'\')">♻️ بازیابی</button></div>').join("") || '<div>خالی است.</div>') + '</div>';
+}
+function renderCatPanel() {
+  const cat = settings.catalog || [];
+  $("p-cat").innerHTML = '<div class="card"><b>🏷️ تعرفه کالاها، فی خرید شرکت، فروش مشتری و دستمزد تکنسین:</b><div class="grid2" style="margin-top:6px"><div><input id="cTit" class="inp" placeholder="نام کالا یا خدمت *"><input id="cBuy" type="text" inputmode="numeric" class="inp" style="direction:ltr" placeholder="قیمت خرید شرکت (تومان)" oninput="onMoneyInp(this)"></div><div><input id="cPr" type="text" inputmode="numeric" class="inp" style="direction:ltr" placeholder="قیمت فروش به مشتری *" oninput="onMoneyInp(this)"><div style="display:flex;gap:5px"><input id="cWg" type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;flex:2" placeholder="دستمزد تکنسین *" oninput="onMoneyInp(this)"><select id="cGd" class="inp" style="margin:0;flex:1"><option value="1">📦 کالا</option><option value="0">🔧 خدمات</option></select></div></div></div><button class="btn" style="width:100%;background:#16a34a;color:#fff;margin-top:5px" onclick="addCatItem()">➕ ذخیره در تعرفه</button><div style="overflow-x:auto"><table><thead><tr><th>شرح</th><th>نوع</th><th>فی خرید</th><th>فروش</th><th>دستمزد</th><th>حذف</th></tr></thead><tbody>' + cat.map((c, i) => '<tr><td><b>' + c.title + '</b></td><td>' + (c.isGoods ? '📦 کالا' : '🔧 خدمت') + '</td><td style="direction:ltr">' + fmt(c.buyPrice || 0) + '</td><td style="direction:ltr"><b>' + fmt(c.customerPrice) + '</b></td><td style="direction:ltr">' + fmt(c.techWage) + '</td><td><button class="btn" style="background:#ef4444;color:#fff;padding:2px 6px" onclick="delCat(' + i + ')">×</button></td></tr>').join("") + '</tbody></table></div></div>';
+}
+async function addCatItem() {
+  const title = $("cTit").value.trim(), buyPrice = num($("cBuy").value), customerPrice = num($("cPr").value), techWage = num($("cWg").value), isGoods = $("cGd").value === "1";
+  if (!title || customerPrice <= 0) return;
+  const cat = (settings.catalog || []).filter(c => c.title !== title); cat.push({ title, buyPrice, customerPrice, techWage, isGoods });
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) }); await loadDash();
+}
+async function delCat(i) { const cat = settings.catalog || []; cat.splice(i, 1); await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) }); await loadDash(); }
+
+function renderRoleCheckboxes() {
+  const r = $("uRoleSel") ? $("uRoleSel").value : "support";
+  const pool = ROLE_POOL[r]?.tabs || [];
+  $("roleChkContainer").innerHTML = pool.map(item =>
+    '<label class="perm-chk"><input type="checkbox" class="u-perm-box" value="' + item[0] + '" checked> <span>' + item[1] + '</span></label>'
+  ).join("");
+}
+
+function renderUsersPanel() {
+  const users = settings.staffUsers || [];
+  $("p-users").innerHTML =
+    '<div class="card">' +
+      '<b style="font-size:13px;color:#0f3b2d;display:block;margin-bottom:8px">🔐 خلق کاربر جدید با انتخاب دستیِ بخش‌های مجاز (فقط گزینه‌های مرتبط با همان نقش نمایش داده می‌شوند):</b>' +
+      '<div class="grid2">' +
+        '<div><label style="font-size:11px;font-weight:bold">۱. انتخاب نوع کاربر (نقش):</label><select id="uRoleSel" class="inp" onchange="renderRoleCheckboxes()">' + Object.keys(ROLE_POOL).map(k => '<option value="' + k + '">' + ROLE_POOL[k].label + '</option>').join("") + '</select>' +
+        '<input id="uFullName" class="inp" placeholder="نام و نام خانوادگی شخص *"><input id="uPhone" class="inp" style="direction:ltr" placeholder="شماره موبایل"></div>' +
+        '<div><label style="font-size:11px;font-weight:bold">۲. نام کاربری و رمز عبور ورود:</label><div style="display:flex;gap:5px"><input id="uUser" class="inp" style="direction:ltr" placeholder="نام کاربری"><input id="uPass" class="inp" style="direction:ltr" placeholder="رمز عبور"></div>' +
+        '<button class="btn" style="width:100%;background:#0284c7;color:#fff;margin-bottom:6px" onclick="genAutoCreds()">🎲 تولید خودکار نام کاربری و رمز</button></div>' +
+      '</div>' +
+      '<div style="background:#eff6ff;border:1.5px solid #93c5fd;padding:10px;border-radius:10px;margin:6px 0">' +
+        '<b style="font-size:12px;color:#1e40af;display:block;margin-bottom:6px">☑️ ۳. دسترسی به کدام بخش‌ها برای این شخص مجاز است؟ (دستی تیک بزنید یا بردارید):</b>' +
+        '<div id="roleChkContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:6px"></div>' +
+      '</div>' +
+      '<button class="btn" style="width:100%;background:#16a34a;color:#fff;padding:10px;font-size:12px" onclick="createStaffRoleUser()">✅ ثبت کاربر با دسترسی‌های انتخاب‌شده</button>' +
+      '<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>نام شخص</th><th>نقش</th><th>بخش‌های مجاز انتخاب‌شده</th><th>نام کاربری</th><th>رمز</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>' +
+      users.map((u, i) => {
+        const pool = ROLE_POOL[u.role]?.tabs || [];
+        const allowedNames = (u.allowedTabs || []).map(k => (pool.find(x => x[0] === k) || [k, k])[1]).join(" ، ") || "بدون دسترسی";
+        return '<tr><td><b>' + u.fullName + '</b></td><td>' + (ROLE_POOL[u.role]?.label || u.role) + '</td><td style="font-size:10px;color:#0369a1">' + allowedNames + '</td><td style="direction:ltr"><b>' + u.username + '</b></td><td style="direction:ltr">' + u.password + '</td><td>' + (u.locked ? '<span class="bdg st-al">🔒 قفل</span>' : '<span class="bdg st-d">🟢 فعال</span>') + '</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" style="background:#0284c7;color:#fff;padding:3px 7px" onclick="editUserPerms(' + i + ')">⚙️ ویرایش دسترسی</button><button class="btn" style="background:' + (u.locked ? '#16a34a' : '#d97706') + ';color:#fff;padding:3px 7px" onclick="togStaffLock(' + i + ')">' + (u.locked ? '🔓 باز کردن' : '🔒 قفل') + '</button><button class="btn" style="background:#ef4444;color:#fff;padding:3px 7px" onclick="delStaffUser(' + i + ')">🗑️</button></td></tr>';
+      }).join("") + '</tbody></table></div></div>';
+  renderRoleCheckboxes();
+}
+function genAutoCreds() {
+  const r = $("uRoleSel").value;
+  $("uUser").value = r + "_" + Math.floor(100 + Math.random() * 900);
+  $("uPass").value = String(Math.floor(100000 + Math.random() * 900000));
+}
+async function createStaffRoleUser() {
+  const role = $("uRoleSel").value, fullName = $("uFullName").value.trim(), phone = $("uPhone").value.trim();
+  if (!fullName) return alert("نام شخص را وارد کنید.");
+  const allowedTabs = [...document.querySelectorAll(".u-perm-box:checked")].map(el => el.value);
+  if (!allowedTabs.length) return alert("حداقل یک بخش مجاز را برای این کاربر تیک بزنید.");
+  if (!$("uUser").value.trim() || !$("uPass").value.trim()) genAutoCreds();
+  const username = $("uUser").value.trim(), password = $("uPass").value.trim();
+  const users = settings.staffUsers || [], tm = settings.techMeta || {};
+  users.unshift({ id: "usr_" + Date.now(), role, fullName, phone, username, password, allowedTabs, locked: false });
+  if (role === "tech") {
+    if (!techs.includes(fullName)) { techs.push(fullName); localStorage.setItem("sw_techs", JSON.stringify(techs)); }
+    tm[fullName] = { ...(tm[fullName] || {}), phone, username, password, locked: false };
+  }
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users, techMeta: tm }) });
+  await loadDash(); alert(`✅ کاربر «${fullName}» ساخته شد.\nنام کاربری: ${username}\nرمز: ${password}`);
+}
+async function editUserPerms(i) {
+  const users = settings.staffUsers || [], u = users[i]; if (!u) return;
+  const pool = ROLE_POOL[u.role]?.tabs || [];
+  const newAllowed = [];
+  for (const item of pool) {
+    const hasNow = (u.allowedTabs || []).includes(item[0]);
+    if (confirm(`آیا «${u.fullName}» به بخش «${item[1]}» دسترسی داشته باشد؟\n(وضعیت فعلی: ${hasNow ? "دارد ✅" : "ندارد ❌"})\n\nOK = بله، دسترسی داشته باشد\nCancel = خیر، بسته شود`)) newAllowed.push(item[0]);
+  }
+  u.allowedTabs = newAllowed;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users }) });
+  await loadDash();
+}
+async function togStaffLock(i) {
+  const users = settings.staffUsers || [], u = users[i]; if (!u) return; u.locked = !u.locked;
+  const tm = settings.techMeta || {}; if (u.role === "tech" && tm[u.fullName]) tm[u.fullName].locked = u.locked;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users, techMeta: tm }) }); await loadDash();
+}
+async function delStaffUser(i) {
+  if (!confirm("حذف شود؟")) return;
+  const users = settings.staffUsers || []; users.splice(i, 1);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffUsers: users }) }); await loadDash();
+}
+loadDash();
+</script>
+</body>
+</html>
