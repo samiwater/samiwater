@@ -475,7 +475,50 @@ function renderList() {
   }).join("");
 }
 // PART 3 END
-  function openOrder(id) {
+let selTkTags = [];
+function normPh10(p) { return String(p || "").replace(/\D/g, "").slice(-10); }
+
+function togTkTag(btn, tag) {
+  if (selTkTags.includes(tag)) {
+    selTkTags = selTkTags.filter(x => x !== tag);
+    btn.style.background = "#f0fdf4"; btn.style.color = "var(--green)"; btn.style.borderColor = "var(--green)";
+  } else {
+    selTkTags.push(tag);
+    btn.style.background = "#fee2e2"; btn.style.color = "#be123c"; btn.style.borderColor = "#be123c";
+  }
+}
+
+function renderCustHist10() {
+  if (!curReq || !$("dHistBod")) return;
+  const cPh = normPh10(curReq.snapshot?.phone || curReq.customer?.phone);
+  const cName = (curReq.snapshot?.fullName || curReq.customer?.fullName || "").trim();
+  const past = allReqs.filter(x => x._id !== curReq._id && (x.status === "done" || x.status === "completed") && ((cPh && normPh10(x.snapshot?.phone || x.customer?.phone) === cPh) || (cName && (x.snapshot?.fullName || x.customer?.fullName) === cName)))
+    .sort((a, b) => new Date(b.completedAt || b.createdAt || 0) - new Date(a.completedAt || a.createdAt || 0))
+    .slice(0, 10);
+
+  const tkList = (settings.customerTickets || []).filter(tk => (cPh && normPh10(tk.phone) === cPh) || (cName && tk.customerName === cName));
+  if ($("dHistCnt")) $("dHistCnt").textContent = past.length + (tkList.length ? " | 🎫" + tkList.length : "");
+  $("dHistBod").classList.remove("open");
+
+  const tkHtml = tkList.length ? '<div style="background:#fff1f2;border:1px solid #fda4af;border-radius:8px;padding:7px;margin-bottom:8px">' +
+    '<b style="color:#be123c;display:block;margin-bottom:4px">🎫 تیکت‌های ثبت‌شده این مشتری (از جدید به قدیم):</b>' +
+    tkList.slice(0, 6).map(t => '<div style="padding:3px 0;border-bottom:1px dashed #fecdd3;color:#881337">• <b>' + t.date + ':</b> [' + (t.tag || "نکته") + '] ' + (t.note || "") + '</div>').join("") +
+    '</div>' : '';
+
+  const ordHtml = past.length ? past.map((h, i) => {
+    const dt = toJ(h.completedAt || h.createdAt);
+    const itemsTxt = (h.invoiceItems && h.invoiceItems.length) ? h.invoiceItems.map(it => it.title + (Number(it.qty) > 1 ? " (" + it.qty + ")" : "")).join(" ، ") : (h.workReport || h.issueType || "سرویس دوره‌ای");
+    return '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:7px;margin-bottom:5px;line-height:1.7">' +
+      '<div style="display:flex;justify-content:space-between;color:var(--green);font-weight:800"><span>#' + (i + 1) + ' — تاریخ سرویس: ' + dt + '</span><span>📍 ' + (h.addressLabel || "خونه") + '</span></div>' +
+      '<div style="color:#334155;margin-top:2px">🔧 <b>اقلام و خدمات انجام‌شده:</b> ' + itemsTxt + '</div>' +
+      (h.customerTicket ? '<div style="color:#be123c;font-weight:700;margin-top:2px">🎫 تیکت آن نوبت: ' + h.customerTicket + '</div>' : '') +
+      '</div>';
+  }).join("") : '<div style="color:#64748b;text-align:center;padding:6px">سابقه تکمیل‌شده قبلی برای این مشتری ثبت نشده است.</div>';
+
+  $("dHistBod").innerHTML = tkHtml + ordHtml;
+}
+
+function openOrder(id) {
   curReq = allReqs.find(x => x._id === id); if (!curReq) return;
   if (!curReq.seenByTechAt && (curReq.status === "assigned" || curReq.status === "open")) {
     curReq.seenByTechAt = new Date().toISOString();
@@ -513,6 +556,7 @@ function renderList() {
   $("dMapBtn").href = loc ? (loc.startsWith("http") ? loc : "https://maps.google.com/?q=" + loc) : "https://maps.google.com/?q=" + encodeURIComponent("اصفهان " + (curReq.snapshot?.address || ""));
   $("dDesc").textContent = curReq.issueType || "سرویس و خدمات";
   $("dNotes").textContent = curReq.techNote || curReq.resultNote || "توضیح خاصی ثبت نشده است.";
+  renderCustHist10();
 
   const isDone = curReq.status === "done" || curReq.status === "completed";
   $("invBuilder").style.display = "none";
@@ -674,14 +718,20 @@ function renderInvoiceSummary(isDraft) {
     const pb = curReq.paymentBreakdown || {}, det = [];
     if (pb.pos > 0) det.push("💳 دستگاه پوز: <b>" + fmt(pb.pos) + "</b>");
     if (pb.cash > 0) det.push("💵 نقدی: <b>" + fmt(pb.cash) + "</b>");
-    if (pb.check > 0) det.push("📝 چک: <b>" + fmt(pb.check) + "</b> (بانک " + (pb.checkBank || "---") + " - ش: " + (pb.checkNumber || "---") + ")");
+    if (pb.check > 0) det.push("📝 چک: <b>" + fmt(pb.check) + "</b> (بانک " + (pb.checkBank || "---") + " - ش: " + (pb.checkNumber || "---") + (pb.checkDate ? " - سررسید: " + pb.checkDate : "") + ")");
     if (!det.length) det.push((pLabels[pMethod] || "پرداخت") + ": <b>" + fmt(data.payable) + "</b>");
+    if (curReq.customerTicket) det.push("🎫 تیکت ثبت‌شده: <b style='color:#be123c'>" + curReq.customerTicket + "</b>");
     recBox.innerHTML = '<div class="box" style="background:#f0fdf4;border:2px solid #15803d;color:#15803d;text-align:center"><div style="font-size:13px;font-weight:800;margin-bottom:6px">✅ حساب این فاکتور تسویه شده است</div><div style="font-size:12px;color:#0f3b2d;line-height:1.8">' + det.join("<br>") + '</div></div>';
   } else {
     recBox.style.display = "none"; $("payBox").style.display = "block";
     $("dPayBadge").style.display = "inline-block"; $("dPayBadge").className = "bdg-unpaid"; $("dPayBadge").textContent = "پرداخت نشده";
     ["pos", "cash", "check"].forEach(k => { $("inp_" + k).value = ""; $("sec_" + k).classList.remove("open"); $("pm_" + k).classList.remove("sel"); });
-    $("inp_chk_num").value = ""; $("inp_chk_bnk").value = ""; calcRemPay();
+    if ($("inp_chk_date")) $("inp_chk_date").value = "";
+    $("inp_chk_num").value = ""; $("inp_chk_bnk").value = "";
+    selTkTags = [];
+    document.querySelectorAll(".tk-tag").forEach(b => { b.style.background = "#f0fdf4"; b.style.color = "var(--green)"; b.style.borderColor = "var(--green)"; });
+    if ($("inp_tk_note")) $("inp_tk_note").value = "";
+    calcRemPay();
   }
 
   $("sProf").textContent = fmt(data.prof);
@@ -708,98 +758,4 @@ async function finalizeInvoice() {
   if (!draftCalc) return;
   if (!confirm("آیا از ثبت نهایی فاکتور به مبلغ «" + fmt(draftCalc.payable) + "» مطمئن هستید؟")) return;
   const r = await fetch(API + "/requests/" + curReq._id + "/status", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status: "done", technicianName: myName, invoiceItems: draftCalc.items, travelFee: draftCalc.tFee, workReport: draftCalc.summary, paymentMethod: "unpaid", deductStock: true })
-  });
-  const d = await r.json();
-  if (!r.ok) return alert(d.error || "خطا در ثبت فاکتور");
-  curReq = d.request; qtys = {}; await loadData(); openOrder(curReq._id);
-  alert("✅ فاکتور ثبت شد. اکنون روش پرداخت را مشخص کنید.");
-}
-
-async function submitPayment() {
-  const eff = getEffAmounts(curReq);
-  const pos = Number($("inp_pos").value) || 0, cash = Number($("inp_cash").value) || 0, check = Number($("inp_check").value) || 0;
-  const rem = eff.payable - (pos + cash + check);
-  if (rem !== 0) return alert("⚠️ مانده فاکتور باید صفر شود!\nمانده: " + fmt(rem));
-  const checkNumber = $("inp_chk_num").value.trim(), checkBank = $("inp_chk_bnk").value.trim();
-  if (check > 0 && (!checkNumber || !checkBank)) return alert("⚠️ شماره چک و نام بانک الزامی است!");
-  const methods = [pos > 0 ? "pos" : null, cash > 0 ? "cash" : null, check > 0 ? "check" : null].filter(Boolean);
-  const pMethod = methods.length > 1 ? "mixed" : (methods[0] || "cash");
-
-  const r = await fetch(API + "/requests/" + curReq._id + "/status", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status: "done", invoiceItems: curReq.invoiceItems || [], travelFee: eff.tFee, paymentMethod: pMethod, paymentBreakdown: { pos, cash, check, checkNumber, checkBank } })
-  });
-  if (r.ok) {
-    curReq = (await r.json()).request;
-    const idx = allReqs.findIndex(x => x._id === curReq._id); if (idx > -1) allReqs[idx] = curReq;
-    calcHeader(); alert("✅ اطلاعات پرداخت با موفقیت ثبت شد.");
-    switchMainTab("done"); switchDoneSub("paid");
-  }
-}
-
-function showLedger() {
-  showView("subView");
-  const paid = getMyActiveCycleDone().filter(r => r.paymentMethod && r.paymentMethod !== "unpaid")
-    .sort((a, b) => new Date(a.paidAt || a.completedAt || 0) - new Date(b.paidAt || b.completedAt || 0));
-  let run = 0; const cards = [];
-  paid.forEach(r => {
-    const eff = getEffAmounts(r), pb = r.paymentBreakdown || {}, parts = [];
-    if (pb.pos > 0) parts.push({ t: "پرداخت پوز 💳", a: pb.pos });
-    if (pb.cash > 0) parts.push({ t: "پرداخت نقدی 💵", a: pb.cash });
-    if (pb.check > 0) parts.push({ t: "پرداخت چک 📝 (" + (pb.checkBank || "") + " - چک " + (pb.checkNumber || "") + ")", a: pb.check });
-    if (!parts.length) parts.push({ t: ({ pos: "پرداخت پوز 💳", cash: "پرداخت نقدی 💵", check: "پرداخت چک 📝" }[r.paymentMethod] || "پرداخت"), a: eff.payable });
-    parts.forEach(pt => {
-      run += pt.a;
-      cards.push('<div class="box" style="border-right:5px solid #be123c"><div class="row-btw"><div><div style="font-size:13px;font-weight:800;color:#b45309">' + pt.t + '</div><div style="font-size:11px;color:#475569;margin-top:3px">👤 ' + (r.snapshot?.fullName || "") + ' | فاکتور ' + (r.invoiceCode || "") + '</div></div><div style="text-align:left;direction:ltr"><div style="font-size:13px;font-weight:800;color:#be123c">مبلغ: -' + fmt(pt.a) + '</div><div style="font-size:11px;color:#64748b;margin-top:3px">موجودی: -' + fmt(run) + '</div></div></div></div>');
-    });
-  });
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">💳 لیست تراکنش‌های دوره جاری</h4>' + (cards.reverse().join("") || '<div class="box" style="text-align:center">تراکنشی ثبت نشده است.</div>');
-}
-
-function showStock() {
-  showView("subView");
-  const st = settings.techMeta?.[myName]?.stock || {}, keys = Object.keys(st);
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">📦 موجودی کالا (انبار همراه شما)</h4>' +
-    (keys.length ? keys.map(k => '<div class="box row-btw"><b style="font-size:13px;color:var(--green)">' + k + '</b><span class="' + ((Number(st[k]) || 0) > 0 ? "bdg-paid" : "bdg-unpaid") + '" style="direction:ltr">' + (Number(st[k]) || 0) + ' عدد</span></div>').join("") : '<div class="box" style="text-align:center">موجودی کالایی ثبت نشده است.</div>');
-}
-
-function showLogs() {
-  showView("subView");
-  const logs = settings.techMeta?.[myName]?.logs || [];
-  $("subView").innerHTML = '<h4 style="color:var(--green);margin-bottom:10px">🔔 پیام‌ها و گزارش سیستمی</h4>' +
-    (logs.length ? logs.map(l => '<div class="box"><div class="row-btw" style="margin-bottom:5px"><b style="color:#b45309;font-size:12px">' + l.title + '</b><span style="font-size:11px;color:#64748b">' + toJ(l.date) + ' ' + toTm(l.date) + '</span></div><div style="font-size:12px;color:#475569;line-height:1.7">' + l.text + '</div></div>').join("") : '<div class="box" style="text-align:center">پیامی ثبت نشده است.</div>');
-}
-
-function saveMyGps() {
-  if (!navigator.geolocation) return alert("GPS پشتیبانی نمی‌شود");
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const coords = pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
-    await fetch(API + "/requests/" + curReq._id + "/location", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locationUrl: coords }) });
-    curReq.locationUrl = coords; $("dMapBtn").href = "https://maps.google.com/?q=" + coords; alert("لوکیشن ذخیره شد 📍✅");
-  }, () => alert("GPS گوشی را روشن کنید."));
-}
-
-function bootTechPanel() {
-  const isAdmin = localStorage.getItem("role") === "admin";
-  if (isAdmin && !myName) {
-    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
-    myName = tList[0] || "مهندس شهریاری";
-  }
-  if (isAdmin) {
-    const tList = JSON.parse(localStorage.getItem("sw_techs") || '["مهندس شهریاری"]');
-    const bar = document.createElement("div");
-    bar.style.cssText = "background:#fefce8;border-bottom:2px solid #ca8a04;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:#854d0e";
-    bar.innerHTML = '<span>👑 نمای بازرسی مدیر:</span><select style="padding:4px 8px;border-radius:8px;border:1px solid #ca8a04;font-family:inherit;font-weight:800" onchange="myName=this.value;localStorage.setItem(\'sw_tech_name\',this.value);init()">' +
-      tList.map(t => '<option value="' + t + '" ' + (t === myName ? "selected" : "") + '>👨‍🔧 کارتابل ' + t + '</option>').join("") + '</select><a href="dashboard.html" style="color:#0f3b2d;text-decoration:underline">🔙 داشبورد</a>';
-    document.body.insertBefore(bar, document.body.children[1]);
-  }
-  init();
-}
-bootTechPanel();
-</script>
-</body>
-</html>
-<!-- END -->
-
+    method: "PUT", headers: { "C
