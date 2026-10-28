@@ -865,6 +865,65 @@ function bootTechPanel() {
   init();
 }
 bootTechPanel();
+// --- درخواست برگشت فاکتور توسط تکنسین ---
+const _origRenderInvSum = renderInvoiceSummary;
+renderInvoiceSummary = function(isDraft) {
+  _origRenderInvSum(isDraft);
+  if (!isDraft && $("susStatusBanner")) $("susStatusBanner").style.display = "none";
+  let retBox = $("techRetReqBox");
+  if (!retBox) {
+    retBox = document.createElement("div");
+    retBox.id = "techRetReqBox";
+    $("invSummary").appendChild(retBox);
+  }
+  if (isDraft || !curReq || curReq.isSettled) { retBox.style.display = "none"; return; }
+  retBox.style.display = "block";
+  const sr = curReq.techSuspendReq;
+  if (sr?.active) {
+    $("payBox").style.display = "none";
+    retBox.innerHTML = '<div class="box" style="background:#fffbeb;border:2px solid #f59e0b;color:#92400e;text-align:center;margin-top:10px">' +
+      '<div style="font-size:13px;font-weight:800;margin-bottom:4px">⏳ در دست بررسی مدیریت برای برگشت فاکتور</div>' +
+      '<div style="font-size:11px;line-height:1.7">علت ثبت‌شده: <b>' + (sr.reason || "") + (sr.note ? " — " + sr.note : "") + '</b></div></div>';
+  } else {
+    const rejHtml = sr?.rejectedNote ? '<div class="box" style="background:#fef2f2;border:1px solid #ef4444;color:#be123c;font-size:11px;margin-top:8px"><b>❌ رد درخواست برگشت توسط مدیریت:</b> ' + sr.rejectedNote + '</div>' : '';
+    retBox.innerHTML = rejHtml +
+      '<button type="button" class="btn-ret" style="margin-top:10px" onclick="openRetReqModal()">↩️ درخواست برگشت / اصلاح فاکتور</button>' +
+      '<div id="retReqForm" class="box" style="display:none;margin-top:8px;background:#fff1f2;border-color:#fda4af">' +
+        '<div style="font-size:12px;font-weight:800;color:#be123c;margin-bottom:6px">↩️ ثبت درخواست برگشت فاکتور به کارتابل</div>' +
+        '<select id="retReasSel" class="inp">' +
+          '<option value="اصلاح اقلام و قطعات فاکتور">🔧 اصلاح اقلام و قطعات فاکتور</option>' +
+          '<option value="اصلاح مبلغ یا روش پرداخت">💳 اصلاح مبلغ یا روش پرداخت</option>' +
+          '<option value="ثبت اشتباه فاکتور">⚠️ ثبت اشتباه فاکتور</option>' +
+          '<option value="سایر موارد">📝 سایر موارد</option>' +
+        '</select>' +
+        '<input id="retNoteInp" class="inp" placeholder="توضیح دقیق علت برگشت فاکتور (الزامی)...">' +
+        '<div style="display:flex;gap:6px">' +
+          '<button type="button" class="btn-main" style="margin:0;flex:2;padding:9px;font-size:12px" onclick="submitRetReq()">ارسال درخواست برگشت 📤</button>' +
+          '<button type="button" class="btn-ret" style="margin:0;flex:1;padding:9px" onclick="$(\'retReqForm\').style.display=\'none\'">انصراف</button>' +
+        '</div>' +
+      '</div>';
+  }
+};
+
+function openRetReqModal() {
+  const f = $("retReqForm");
+  if (f) f.style.display = f.style.display === "none" ? "block" : "none";
+}
+
+async function submitRetReq() {
+  const reason = $("retReasSel").value, note = $("retNoteInp").value.trim();
+  if (!note) return alert("لطفاً توضیح دقیق علت برگشت فاکتور را بنویسید.");
+  const eff = getEffAmounts(curReq);
+  const r = await fetch(API + "/requests/" + curReq._id + "/status", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ techSuspendReq: { active: true, reason, note, days: eff.payable, requestedAt: new Date().toISOString() } })
+  });
+  if (r.ok) {
+    alert("⏳ درخواست برگشت فاکتور ثبت شد و در انتظار تایید مدیریت است.");
+    await loadData(); openOrder(curReq._id);
+  }
+  }
+  
 </script>
 </body>
 </html>
