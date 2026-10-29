@@ -1005,7 +1005,203 @@ async function sync() {
   } catch (e) { $("syncP").textContent = "⚠️ آفلاین"; }
 }
 sync();
-</script>
+// --- بخش ۱: سیستم برگشت فاکتور، مقایسه قبل/بعد و اصلاح کارتابل تکنسین ---
+(function initRetTab() {
+  const susBtn = document.querySelector("button[onclick*='t-susreq']");
+  if (susBtn && !$("retReqC")) {
+    susBtn.insertAdjacentHTML("afterend", '<button class="nb" onclick="tab(\'t-retreq\',this)">↩️ برگشت فاکتور (<span id="retReqC">0</span>)</button>');
+  }
+  const susCard = $("t-susreq");
+  if (susCard && !$("t-retreq")) {
+    susCard.insertAdjacentHTML("afterend", '<div id="t-retreq" class="card"><h2><span>↩️ درخواست‌های برگشت و اصلاح فاکتور از سمت تکنسین‌ها</span><button class="btn" onclick="sync()">🔄 بروزرسانی</button></h2><div style="overflow-x:auto;margin-bottom:14px"><table><thead><tr><th>فاکتور و تکمیل</th><th>مشتری و تماس</th><th>تکنسین</th><th>وضعیت ثبت‌شده فاکتور</th><th>علت اعلامی تکنسین</th><th>تصمیم مدیریت</th></tr></thead><tbody id="retReqB"></tbody></table></div><h2><span>📜 بانک سوابق فاکتورهای برگشتی (مقایسه قبل و بعد از اصلاح)</span></h2><div style="overflow-x:auto"><table><thead><tr><th>فاکتور و زمان برگشت</th><th>مشتری و تکنسین</th><th>نحوه و علت برگشت</th><th>🔴 قبل از برگشت</th><th>🟢 بعد از اصلاح تکنسین</th></tr></thead><tbody id="retHistB"></tbody></table></div></div>');
+  }
+})();
+
+async function execInvoiceReturn(id, reason, byWho) {
+  const r = reqs.find(x => x._id === id); if (!r) return;
+  const tName = r.technicianName || "";
+  if (!settings.techMeta) settings.techMeta = {};
+  if (tName && settings.techMeta[tName]?.stock) {
+    (r.invoiceItems || []).forEach(it => {
+      if (it.isGoods) settings.techMeta[tName].stock[it.title] = (Number(settings.techMeta[tName].stock[it.title]) || 0) + (Number(it.qty) || 1);
+    });
+  }
+  const pMap = { pos: "پوز", cash: "نقدی", check: "چک", mixed: "ترکیبی", unpaid: "پرداخت‌نشده" };
+  const retLogs = settings.returnedInvoicesLog || [];
+  retLogs.unshift({
+    id: "ret_" + Date.now(), reqId: r._id, invoiceCode: r.invoiceCode || "---",
+    customerName: r.snapshot?.fullName || "---", phone: r.snapshot?.phone || "", techName: tName,
+    date: toJ(new Date()) + " ساعت " + toClock(new Date()), byWho, reason,
+    beforePayable: Number(r.payableAmount) || Number(r.travelFee) || 139000,
+    beforeItems: r.workReport || "ایاب و ذهاب", beforePay: pMap[r.paymentMethod || "unpaid"] || "پرداخت‌نشده"
+  });
+  settings.returnedInvoicesLog = retLogs;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ techMeta: settings.techMeta, returnedInvoicesLog: retLogs }) });
+  await upSt(id, {
+    status: "assigned", technicianName: tName, draftItems: r.invoiceItems || [],
+    invoiceItems: [], workReport: "", payableAmount: 0, totalAmount: 0, techProfit: 0,
+    paymentMethod: "unpaid", paymentBreakdown: { pos: 0, cash: 0, check: 0 },
+    techSuspendReq: null, returnNote: "برگشت جهت اصلاح (" + reason + ")"
+  });
+}
+
+async function rejTechRet(id) {
+  const msg = prompt("علت رد درخواست برگشت فاکتور را برای تکنسین بنویسید:");
+  if (!msg || !msg.trim()) return;
+  await upSt(id, { techSuspendReq: { active: false, rejectedNote: msg.trim(), rejectedAt: new Date().toISOString() } });
+}
+
+function adminRetToTech(id) {
+  const r = reqs.find(x => x._id === id); if (!r) return;
+  const isPaid = r.paymentMethod && r.paymentMethod !== "unpaid";
+  if (isPaid) {
+    const rsn = prompt("⚠️ این فاکتور پرداخت شده و در حساب دوره ثبت شده است.\nوارد کردن «علت دقیق برگشت فاکتور به کارتابل تکنسین» الزامی است:");
+    if (!rsn || !rsn.trim()) return alert("برای برگشت فاکتور تسویه‌شده، ثبت دلیل الزامی است.");
+    execInvoiceReturn(id, rsn.trim(), "مدیر (" + uName + ")");
+  } else {
+    if (!confirm("این فاکتور هنوز پرداخت نشده است.\nآیا به کارتابل «" + (r.technicianName || "تکنسین") + "» (بخش در دست اقدام) برگردد و کالاها به انبارش بازگردانی شود؟")) return;
+    execInvoiceReturn(id, "اصلاح فاکتور پرداخت‌نشده", "مدیر (" + uName + ")");
+  }
+}
+
+function drawRetReqs() {
+  const list = reqs.filter(r => (r.status === "done" || r.status === "completed") && r.techSuspendReq?.active);
+  if ($("retReqC")) $("retReqC").textContent = list.length;
+  if ($("retReqB")) {
+    $("retReqB").innerHTML = list.length ? list.map(r => {
+      const sr = r.techSuspendReq || {}, ph = r.snapshot?.phone || "", a = Number(r.payableAmount) || Number(r.travelFee) || 139000;
+      const safeRsn = ((sr.reason || "") + (sr.note ? " - " + sr.note : "")).replace(/'/g, "");
+      return '<tr><td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#15803d">✅ ' + toJ(r.completedAt) + ' ' + toClock(r.completedAt) + '</div></td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="direction:ltr">' + ph + '</div></td><td><b>👨‍🔧 ' + (r.technicianName || "---") + '</b></td><td><b>' + fmt(a) + ' ت</b> (' + (r.paymentMethod === "unpaid" ? "🔴 پرداخت‌نشده" : "🟢 پرداخت‌شده") + ')<div style="font-size:10px;color:#475569">🔧 ' + (r.workReport || "---") + '</div></td><td style="background:#fff1f2"><b style="color:#be123c">↩️ ' + (sr.reason || "---") + '</b><div style="font-size:11px;margin-top:3px">' + (sr.note || "") + '</div></td><td style="display:flex;flex-direction:column;gap:4px"><button class="btn" style="background:#16a34a" onclick="execInvoiceReturn(\'' + r._id + '\',\'' + safeRsn + '\',\'درخواست تکنسین\')">✅ تایید و برگشت به تکنسین</button><button class="btn" style="background:#dc2626" onclick="rejTechRet(\'' + r._id + '\')">❌ رد درخواست</button></td></tr>';
+    }).join("") : '<tr><td colspan="6" style="text-align:center;padding:12px">هیچ درخواست برگشت فاکتوری در صف بررسی نیست ✅</td></tr>';
+  }
+  if ($("retHistB")) {
+    const logs = settings.returnedInvoicesLog || [], pMap = { pos: "پوز", cash: "نقدی", check: "چک", mixed: "ترکیبی", unpaid: "پرداخت‌نشده" };
+    $("retHistB").innerHTML = logs.length ? logs.map(l => {
+      const cur = reqs.find(x => x._id === l.reqId);
+      const afterHtml = !cur ? "---" : ((cur.status === "done" || cur.status === "completed") ? '<b style="color:#15803d">' + fmt(cur.payableAmount) + ' ت (' + (pMap[cur.paymentMethod || "unpaid"] || "") + ')</b><div style="font-size:10px">🔧 ' + (cur.workReport || "---") + '</div>' : '<span class="bdg st-p">⏳ در دست اصلاح تکنسین (' + cur.status + ')</span>');
+      return '<tr><td><b style="direction:ltr">' + l.invoiceCode + '</b><div style="font-size:10px;color:#64748b">' + l.date + '</div></td><td><b>' + l.customerName + '</b><div style="font-size:10px">👨‍🔧 ' + l.techName + '</div></td><td><span class="bdg st-a">' + l.byWho + '</span><div style="font-size:11px;color:#be123c;margin-top:3px"><b>علت:</b> ' + l.reason + '</div></td><td style="background:#fef2f2"><b>' + fmt(l.beforePayable) + ' ت (' + l.beforePay + ')</b><div style="font-size:10px">🔧 ' + l.beforeItems + '</div></td><td style="background:#f0fdf4">' + afterHtml + '</td></tr>';
+    }).join("") : '<tr><td colspan="5" style="text-align:center;padding:12px">سابقه‌ای از برگشت فاکتور ثبت نشده است.</td></tr>';
+  }
+}
+
+const _origDrawTechs = drawTechs;
+drawTechs = function() {
+  _origDrawTechs();
+  drawRetReqs();
+  if (techSubTab !== "active" && techSubTab !== "done") return;
+  const assignedAll = reqs.filter(r => (r.status === "assigned" || r.status === "open") && !r.techSuspendReq?.active);
+  const unsettledDone = reqs.filter(r => (r.status === "done" || r.status === "completed") && !r.isSettled && (selTech === "ALL" || r.technicianName === selTech));
+  const inHand = assignedAll.filter(r => selTech === "ALL" || r.technicianName === selTech);
+  const listToShow = techSubTab === "active" ? inHand : unsettledDone;
+  if (!listToShow.length) return;
+  $("techB").innerHTML = listToShow.map(r => {
+    const ph = r.snapshot?.phone || "", isD = r.status === "done" || r.status === "completed";
+    const tFee = Number(r.travelFee) || 139000, a = Number(r.payableAmount) > 0 ? Number(r.payableAmount) : tFee, pr = Number(r.techProfit) > 0 ? Number(r.techProfit) : tFee;
+    const pb = r.paymentBreakdown || {};
+    const pbTxt = [pb.pos ? "💳 پوز: " + fmt(pb.pos) : "", pb.cash ? "💵 نقد: " + fmt(pb.cash) : "", pb.check ? "📝 چک: " + fmt(pb.check) + " (" + (pb.checkBank || "") + " #" + (pb.checkNumber || "") + (pb.checkDate ? " سررسید:" + pb.checkDate : "") + ")" : ""].filter(Boolean).join(" | ");
+    const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', mixed: '<span class="bdg st-d">🔀 پرداخت ترکیبی</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
+    const seenHtml = r.seenByTechAt ? '<div class="bdg st-d" style="margin-top:3px">👁️ رویت: ' + toJ(r.seenByTechAt) + ' ساعت ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al" style="margin-top:3px">🔴 باز نشده!</div>';
+    const compHtml = (isD && (r.completedAt || r.updatedAt)) ? '<div class="bdg" style="margin-top:3px;background:#dcfce7;color:#166534;border:1px solid #86efac">✅ تکمیل: ' + toJ(r.completedAt || r.updatedAt) + ' ساعت ' + toClock(r.completedAt || r.updatedAt) + '</div>' : '';
+    const tkHtml = r.customerTicket ? '<div style="background:#fff1f2;border:1px solid #fda4af;color:#be123c;padding:3px 6px;border-radius:5px;font-size:10px;font-weight:bold;margin-top:4px">🎫 تیکت: ' + r.customerTicket + '</div>' : '';
+    const retReqBdg = (isD && r.techSuspendReq?.active) ? '<div class="bdg st-al" style="margin-top:3px">↩️ تکنسین درخواست برگشت داده!</div>' : '';
+    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '<br>' + compHtml + retReqBdg + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام</span><br>' + seenHtml + '</div>');
+    const opsHtml = isD ? '<button class="btn" style="background:#d97706" onclick="adminRetToTech(\'' + r._id + '\')">↩️ برگشت به کارتابل تکنسین</button>' : '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ تغییر تکنسین / ویرایش</button><button class="btn" style="background:#7e22ce" onclick="susM(\'' + r._id + '\')">⏸️ تعلیق</button><button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری</button>';
+    return '<tr><td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="font-size:10px;color:#64748b">👨‍🔧 ' + (r.technicianName || "") + '</div></td><td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a></td><td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + (r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold">🔧 اقلام: ' + r.workReport + '</div>' : '') + tkHtml + tempNotesHtml(r) + draftAlertHtml(r) + '</td><td>' + payHtml + '</td><td style="display:flex;gap:4px;flex-wrap:wrap">' + opsHtml + '</td></tr>';
+  }).join("");
+};
+      // --- بخش ۲: فی خرید تعرفه، تیکت در پرونده مشتری و مدیریت دسترسی دستی پرسنل ---
+function editCatItem(id) {
+  const cats = settings.categories?.length ? settings.categories : DEFAULT_CATS;
+  const it = (settings.catalog || []).find(x => x.id === id) || { id: "c_" + Date.now(), category: selCatF === "ALL" ? cats[0] : selCatF, title: "", isGoods: true, buyPrice: 0, price: 0, commPct: 10, wage: 0 };
+  $("mTit").textContent = id ? "✏️ ویرایش تعرفه" : "➕ افزودن کالا / دستمزد جدید";
+  $("mBod").innerHTML = '<label style="font-size:11px;font-weight:bold">دسته‌بندی</label><select id="ciCat" class="inp">' + cats.map(c => '<option value="' + c + '" ' + (it.category === c ? "selected" : "") + '>' + c + '</option>').join("") + '</select>' +
+    '<label style="font-size:11px;font-weight:bold">عنوان کالا یا سرویس *</label><input id="ciTit" class="inp" value="' + it.title + '">' +
+    '<label style="font-size:11px;font-weight:bold;color:#be123c">قیمت خرید شرکت (تومان) - جهت محاسبه سود خالص در حسابداری</label><input id="ciBuy" type="number" class="inp" style="direction:ltr" value="' + (it.buyPrice || 0) + '">' +
+    '<label style="font-size:11px;font-weight:bold">قیمت فروش به مشتری (تومان) *</label><input id="ciPrc" type="number" class="inp" style="direction:ltr" value="' + it.price + '">' +
+    '<label style="font-size:11px;font-weight:bold">درصد پورسانت تکنسین (%)</label><input id="ciCm" type="number" class="inp" style="direction:ltr" value="' + (it.commPct ?? 10) + '">' +
+    '<label style="font-size:11px;font-weight:bold">دستمزد نصب مضاعف (تومان)</label><input id="ciWg" type="number" class="inp" style="direction:ltr" value="' + (it.wage || 0) + '">' +
+    '<label style="display:flex;gap:6px;font-size:11px;background:#f8fafc;padding:8px;border-radius:6px;margin:6px 0"><input type="checkbox" id="ciGd" ' + (it.isGoods ? "checked" : "") + '><b>📦 کالای فیزیکی (کسر از انبار تکنسین)</b></label>' +
+    '<button class="btn" style="width:100%;background:#16a34a;padding:9px" onclick="saveCatItem(\'' + it.id + '\')">ذخیره در تعرفه‌ها ✅</button>';
+  $("cModal").style.display = "flex";
+}
+
+async function saveCatItem(id) {
+  const tit = $("ciTit").value.trim(); if (!tit) return alert("عنوان الزامی است");
+  const item = { id, category: $("ciCat").value, title: tit, buyPrice: Number($("ciBuy")?.value) || 0, price: Number($("ciPrc").value) || 0, commPct: Number($("ciCm").value) || 0, wage: Number($("ciWg").value) || 0, isGoods: $("ciGd").checked };
+  const cat = [...(settings.catalog || [])];
+  const idx = cat.findIndex(x => x.id === id);
+  if (idx > -1) cat[idx] = item; else cat.push(item);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ catalog: cat }) });
+  $("cModal").style.display = "none"; sync();
+}
+
+const _origDoss = doss;
+doss = function(ph, ix = 0) {
+  _origDoss(ph, ix);
+  const norm = s => String(s || "").replace(/\D/g, "").slice(-10);
+  const cPh = norm(ph);
+  const tks = (settings.customerTickets || []).filter(t => norm(t.phone) === cPh);
+  reqs.filter(r => norm(r.snapshot?.phone) === cPh && r.customerTicket).forEach(r => {
+    if (!tks.some(t => t.invoiceCode === r.invoiceCode)) tks.push({ date: toJ(r.completedAt || r.createdAt), invoiceCode: r.invoiceCode, techName: r.technicianName, tag: "تیکت فاکتور", note: r.customerTicket });
+  });
+  const tkBox = '<div style="background:#fff1f2;border:1px solid #fda4af;padding:7px;border-radius:6px;margin-bottom:8px;font-size:11px"><b style="color:#be123c">🎫 سوابق تیکت‌های این مشتری (' + tks.length + ' مورد - از جدید به قدیم):</b>' +
+    (tks.length ? '<div style="max-height:110px;overflow-y:auto;margin-top:4px">' + tks.map(t => '<div style="padding:3px 0;border-bottom:1px dashed #fecdd3">• <b>' + (t.date || "") + '</b> (' + (t.techName || "سیستم") + '): <span style="color:#be123c;font-weight:bold">[' + (t.tag || "") + ']</span> ' + (t.note || "") + '</div>').join("") + '</div>' : '<div style="color:#64748b;margin-top:3px">تیکتی ثبت نشده است.</div>') + '</div>';
+  $("mBod").insertAdjacentHTML("afterbegin", tkBox);
+};
+
+const ROLE_TABS = {
+  support: [["t-req","خدمات جاری"],["t-susreq","تعلیقی"],["t-retreq","برگشت فاکتور"],["t-rem","یادآور"],["t-arch","بایگانی"],["t-cust","بانک مشتریان"]],
+  warehouse: [["t-wh","انبار مرکزی"],["t-usr","کارتابل تکنسین‌ها"]],
+  accountant: [["t-usr","حسابرسی تکنسین‌ها"],["t-arch","بایگانی"]],
+  callcenter: [["t-rem","یادآور سرویس"],["t-req","خدمات جاری"],["t-cust","بانک مشتریان"]]
+};
+
+openStaffAccM = function() {
+  const def = [
+    { username: "Sup1", pin: "1234", role: "support", fullName: "پشتیبانی ۱", locked: false, tabs: ["t-req","t-susreq","t-retreq","t-rem","t-arch","t-cust"] },
+    { username: "St1", pin: "1234", role: "warehouse", fullName: "مسئول انبار", locked: false, tabs: ["t-wh","t-usr"] },
+    { username: "Acc1", pin: "1234", role: "accountant", fullName: "حسابدار", locked: false, tabs: ["t-usr","t-arch"] }
+  ];
+  if (!settings.staffAccounts?.length) settings.staffAccounts = def;
+  const list = settings.staffAccounts;
+  $("mTit").textContent = "👥 مدیریت پرسنل و تعیین دستی دسترسی‌ها";
+  $("mBod").innerHTML = '<div id="stfList">' + list.map((s, i) => {
+    const avTabs = ROLE_TABS[s.role] || ROLE_TABS.support;
+    const sTabs = Array.isArray(s.tabs) ? s.tabs : avTabs.map(x => x[0]);
+    return '<div class="stf-row" style="background:#f8fafc;border:1px solid #cbd5e1;padding:8px;border-radius:6px;margin-bottom:8px;font-size:11px">' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:5px">' +
+      '<select class="inp sf-r" data-i="' + i + '" style="margin:0" onchange="chgStfRole(' + i + ',this.value)"><option value="support" ' + (s.role === "support" ? "selected" : "") + '>🎧 پشتیبانی</option><option value="callcenter" ' + (s.role === "callcenter" ? "selected" : "") + '>📞 کال‌سنتر</option><option value="warehouse" ' + (s.role === "warehouse" ? "selected" : "") + '>📦 انباردار</option><option value="accountant" ' + (s.role === "accountant" ? "selected" : "") + '>📊 حسابدار</option></select>' +
+      '<input class="inp sf-u" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center;font-weight:bold" value="' + s.username + '" placeholder="کد ورود">' +
+      '<input class="inp sf-p" data-i="' + i + '" style="margin:0;direction:ltr;text-align:center" value="' + s.pin + '" placeholder="رمز">' +
+      '<input class="inp sf-n" data-i="' + i + '" style="margin:0" value="' + s.fullName + '" placeholder="نام شخص"></div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;background:#fff;padding:5px;border-radius:4px;border:1px dashed #cbd5e1;margin-bottom:4px"><b>دسترسی مجاز:</b>' +
+      avTabs.map(tb => '<label style="display:flex;gap:3px;align-items:center"><input type="checkbox" class="sf-tb" data-i="' + i + '" value="' + tb[0] + '" ' + (sTabs.includes(tb[0]) ? "checked" : "") + '>' + tb[1] + '</label>').join("") + '</div>' +
+      '<div style="display:flex;justify-content:space-between"><label style="color:#dc2626;font-weight:bold"><input type="checkbox" class="sf-l" data-i="' + i + '" ' + (s.locked ? "checked" : "") + '> 🔒 قفل حساب</label><span class="lnk" style="color:#dc2626" onclick="settings.staffAccounts.splice(' + i + ',1);openStaffAccM()">[حذف کاربر]</span></div></div>';
+  }).join("") + '</div><div style="display:flex;gap:6px"><button class="btn" style="background:#0284c7;flex:1" onclick="settings.staffAccounts.push({username:\'User\'+(settings.staffAccounts.length+1),pin:\'1234\',role:\'support\',fullName:\'کاربر جدید\',locked:false,tabs:[\'t-susreq\']});openStaffAccM()">➕ افزودن کاربر جدید</button><button class="btn" style="background:#16a34a;flex:2" onclick="saveStaffAccM()">ذخیره حساب‌ها و دسترسی‌ها ✅</button></div>';
+};
+
+function chgStfRole(i, newRole) {
+  settings.staffAccounts[i].role = newRole;
+  settings.staffAccounts[i].tabs = (ROLE_TABS[newRole] || []).map(x => x[0]);
+  openStaffAccM();
+}
+
+saveStaffAccM = async function() {
+  const rows = document.querySelectorAll(".stf-row");
+  const updated = Array.from(rows).map((_, i) => ({
+    role: document.querySelector('.sf-r[data-i="' + i + '"]').value,
+    username: document.querySelector('.sf-u[data-i="' + i + '"]').value.trim(),
+    pin: document.querySelector('.sf-p[data-i="' + i + '"]').value.trim() || "1234",
+    fullName: document.querySelector('.sf-n[data-i="' + i + '"]').value.trim(),
+    locked: document.querySelector('.sf-l[data-i="' + i + '"]').checked,
+    tabs: Array.from(document.querySelectorAll('.sf-tb[data-i="' + i + '"]:checked')).map(c => c.value)
+  }));
+  settings.staffAccounts = updated;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffAccounts: updated }) });
+  $("cModal").style.display = "none"; sync();
+};
+      
+    </script>
 </body>
 </html>
 <!-- END -->
