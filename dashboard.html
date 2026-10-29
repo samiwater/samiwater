@@ -1201,6 +1201,106 @@ saveStaffAccM = async function() {
   $("cModal").style.display = "none"; sync();
 };
       
+    // --- بخش ۳: ثبت تیکت دستی، نمایش تیکت در پنجره ارجاع و منطقه‌بندی هوشمند ۱۰ محوره ---
+function getCustAllTickets(ph) {
+  const norm = s => String(s || "").replace(/\D/g, "").slice(-10), cPh = norm(ph);
+  if (!cPh) return [];
+  const tks = (settings.customerTickets || []).map((t, idx) => ({ ...t, _idx: idx })).filter(t => norm(t.phone) === cPh);
+  reqs.filter(r => norm(r.snapshot?.phone) === cPh && r.customerTicket).forEach(r => {
+    if (!tks.some(t => t.invoiceCode === r.invoiceCode && t.note === r.customerTicket)) {
+      tks.push({ date: toJ(r.completedAt || r.createdAt), invoiceCode: r.invoiceCode, techName: r.technicianName || "تکنسین", tag: "گزارش تکنسین", note: r.customerTicket });
+    }
+  });
+  return tks;
+}
+
+doss = function(ph, ix = 0) {
+  _origDoss(ph, ix);
+  const tks = getCustAllTickets(ph);
+  const tkBox = '<div style="background:#fff1f2;border:1.5px solid #fda4af;padding:8px;border-radius:8px;margin-bottom:10px;font-size:11px">' +
+    '<div style="font-weight:bold;color:#be123c;margin-bottom:6px">🎫 پرونده محرمانه و تیکت‌های مشتری (' + tks.length + ' مورد - غیرقابل رویت برای تکنسین):</div>' +
+    '<div style="display:grid;grid-template-columns:1.1fr 2fr auto;gap:4px;margin-bottom:6px">' +
+      '<select id="manTkTag" class="inp" style="margin:0;font-size:10px"><option value="نکته مدیریتی/پشتیبانی">📌 نکته مدیریتی/پشتیبانی</option><option value="هشدار مالی/بدحساب">⚠️ هشدار مالی/بدحساب</option><option value="توافق تخفیف/قیمت">🎁 توافق تخفیف/قیمت</option><option value="گزارش عملکرد تکنسین">🕵️ گزارش محرمانه تکنسین</option><option value="نکته فنی دستگاه">🔧 نکته فنی دستگاه</option></select>' +
+      '<input id="manTkNote" class="inp" style="margin:0;font-size:11px" placeholder="ثبت تیکت یا نکته محرمانه جدید برای این مشتری...">' +
+      '<button class="btn" style="background:#be123c;color:#fff;padding:4px 8px" onclick="addManTicket(\'' + ph + '\',' + ix + ')">➕ ثبت</button>' +
+    '</div>' +
+    (tks.length ? '<div style="max-height:115px;overflow-y:auto;background:#fff;padding:5px;border-radius:6px;border:1px solid #fecdd3">' + tks.map(t => '<div style="padding:3px 0;border-bottom:1px dashed #fecdd3;display:flex;justify-content:space-between;align-items:center"><span>• <b>' + (t.date || "") + '</b> (' + (t.techName || "مدیریت") + '): <b style="color:#be123c">[' + (t.tag || "تیکت") + ']</b> ' + (t.note || "") + '</span>' + (t._idx !== undefined ? '<span class="lnk" style="color:#dc2626;font-size:10px" onclick="delManTicket(' + t._idx + ',\'' + ph + '\',' + ix + ')">[حذف]</span>' : '') + '</div>').join("") + '</div>' : '<div style="color:#64748b">هنوز تیکتی برای این مشتری ثبت نشده است.</div>') +
+  '</div>';
+  $("mBod").insertAdjacentHTML("afterbegin", tkBox);
+};
+
+async function addManTicket(ph, ix) {
+  const tag = $("manTkTag").value, note = $("manTkNote").value.trim();
+  if (!note) return alert("متن تیکت را وارد کنید.");
+  const list = settings.customerTickets || [];
+  list.unshift({ phone: ph, date: toJ(new Date()) + " " + toClock(new Date()), techName: uName, tag, note });
+  settings.customerTickets = list;
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerTickets: list }) });
+  doss(ph, ix);
+}
+
+async function delManTicket(idx, ph, ix) {
+  if (!confirm("این تیکت حذف شود؟")) return;
+  settings.customerTickets.splice(idx, 1);
+  await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerTickets: settings.customerTickets }) });
+  doss(ph, ix);
+}
+
+const _origAssignM = assignM;
+assignM = function(id, tName) {
+  _origAssignM(id, tName);
+  const r = reqs.find(x => x._id === id); if (!r) return;
+  const tks = getCustAllTickets(r.snapshot?.phone || "");
+  if (!tks.length) return;
+  const alertHtml = '<div style="background:#fff1f2;border:1.5px solid #fda4af;padding:7px;border-radius:6px;margin-bottom:8px;font-size:11px">' +
+    '<b style="color:#be123c;display:block;margin-bottom:4px">🔒 تیکت‌های محرمانه این مشتری (فقط قابل رویت برای شما):</b>' +
+    tks.map(t => '<div style="margin-bottom:3px;display:flex;justify-content:space-between;align-items:center;gap:4px"><span>• <b>[' + (t.tag || "تیکت") + ']</b> ' + t.note + ' <small style="color:#64748b">(' + (t.date || "") + ')</small></span><button type="button" class="btn" style="background:#be123c;padding:2px 5px;font-size:9px" onclick="$(\'asNt\').value+=(\' // نکته: \'+this.dataset.nt)" data-nt="' + (t.note || "").replace(/"/g, "") + '">+ درج به تکنسین</button></div>').join("") +
+  '</div>';
+  $("mBod").insertAdjacentHTML("afterbegin", alertHtml);
+};
+
+let selCustRegion = "ALL";
+const REGIONS_MAP = [
+  ["🏙️ بهارستان و سپاهان‌شهر", ["بهارستان", "سپاهان شهر", "سپاهان‌شهر", "فدک", "سیتی سنتر", "سیتی‌سنتر", "قلعه شور"]],
+  ["🛣️ محور ذوب‌آهن (فولادشهر/زرین‌شهر/فلاورجان)", ["فولادشهر", "فولاد شهر", "زرین شهر", "زرین‌شهر", "سده", "لنجان", "فلاورجان", "پیربکران", "قهدریجان", "درچه", "ابریشم", "کلیشاد", "باغ بهادران", "باغ‌بهادران", "ذوب آهن", "ذوب‌آهن", "ایمانشهر", "چمگردان"]],
+  ["🛣️ محور شاهین‌شهر (گز/میمه/برخوار)", ["شاهین شهر", "شاهین‌شهر", "گز", "میمه", "دولت آباد", "دولت‌آباد", "برخوار", "حبیب آباد", "حبیب‌آباد", "دستگرد", "مورچه خورت", "مورچه‌خورت", "خورزوق"]],
+  ["🛣️ محور شهرضا، دهاقان و مبارکه", ["شهرضا", "دهاقان", "مبارکه", "مجلسی", "طالخونچه", "کرکوند", "دیزیچه", "زیباشهر"]],
+  ["🛣️ محور نجف‌آباد و خمینی‌شهر", ["نجف آباد", "نجف‌آباد", "خمینی شهر", "خمینی‌شهر", "گلدشت", "ویلاشهر", "امیرآباد", "یزدان شهر", "یزدان‌شهر", "تیران", "اصغرآباد", "کوشک", "منظریه"]],
+  ["🟢 شمال اصفهان", ["کاوه", "جابرانصاری", "جابر انصاری", "ملک شهر", "ملک‌شهر", "خانه اصفهان", "رباط", "گلستان", "برازنده", "اشراق", "فلاطوری", "امام خمینی", "باهنر", "غرضی", "نگارستان", "چمران", "آل محمد", "آل‌محمد"]],
+  ["🔵 جنوب اصفهان", ["مرداویج", "هزارجریب", "ملاصدرا", "شیخ صدوق", "صدوق", "توحید", "نظر", "میر", "حکیم نظامی", "سعادت آباد", "سعادت‌آباد", "صفه", "ارتش", "شفق", "وحید", "خاقانی", "محتشم", "شریعتی", "دروازه شیراز", "فارابی"]],
+  ["🟡 مرکز اصفهان", ["چهارباغ", "بزرگمهر", "هشت بهشت", "هشت‌بهشت", "احمدآباد", "شمس آبادی", "شمس‌آبادی", "طالقانی", "فلسطین", "فردوسی", "نشاط", "پروین", "سجاد", "آپادانا", "شیخ بهایی", "اردیبهشت", "عباس آباد", "عباس‌آباد", "کاشانی", "مسجد سید", "طیب", "عبدالرزاق", "لاله"]],
+  ["🟣 شرق اصفهان", ["جی", "سروش", "خوراسگان", "لاهور", "مشتاق", "آبشار", "زینبیه", "مهرآباد", "ارغوانیه", "بعثت", "همدانیان", "روشن دشت", "روشندشت", "دماوند", "تالار", "عسگریه", "دشتستان"]],
+  ["🟠 غرب اصفهان", ["آتشگاه", "خرم", "صمدیه", "کهندژ", "میرزاطاهر", "میرزا طاهر", "ناژوان", "لنبان", "رهنان", "صائب", "جاوان", "الفت"]]
+];
+
+function detectRegion(addr) {
+  const s = String(addr || "");
+  for (const [title, keys] of REGIONS_MAP) { if (keys.some(k => s.includes(k))) return title; }
+  return "⚪ سایر مناطق";
+}
+
+const _origDrawCusts = drawCusts;
+drawCusts = function() {
+  _origDrawCusts();
+  const tbody = $("custB"); if (!tbody) return;
+  let bar = $("custRegBar");
+  if (!bar) {
+    bar = document.createElement("div"); bar.id = "custRegBar"; bar.className = "fg"; bar.style.marginBottom = "8px";
+    tbody.closest("div").insertAdjacentElement("beforebegin", bar);
+  }
+  const rows = Array.from(tbody.querySelectorAll("tr")), counts = { ALL: 0 };
+  rows.forEach(tr => {
+    if (tr.children.length < 3) return;
+    counts.ALL++;
+    const addrTd = tr.children[2], reg = detectRegion(addrTd.textContent);
+    counts[reg] = (counts[reg] || 0) + 1;
+    if (!addrTd.querySelector(".reg-bdg")) addrTd.insertAdjacentHTML("afterbegin", '<span class="bdg st-a reg-bdg" style="margin-left:4px">' + reg + '</span>');
+    tr.style.display = (selCustRegion === "ALL" || selCustRegion === reg) ? "" : "none";
+  });
+  const allRegs = ["ALL", ...REGIONS_MAP.map(x => x[0]), "⚪ سایر مناطق"];
+  bar.innerHTML = allRegs.map(r => '<button class="fb ' + (selCustRegion === r ? "active" : "") + '" onclick="selCustRegion=\'' + r + '\';drawCusts()">' + (r === "ALL" ? "🌍 همه مناطق" : r) + ' (' + (counts[r] || 0) + ')</button>').join("");
+};
+      
     </script>
 </body>
 </html>
