@@ -499,6 +499,92 @@ async function delTx(id) {
   await loadAcc();
 }
 loadAcc();
+// --- ارتقای تسویه تکنسین (تیک ضرر و زیان) و محاسبه دقیق سود خالص با کسر تخفیفات ---
+addCred = function(t, idx, pref, q, r) {
+  customMap[t].push({ title: pref || "", qty: q || 1, rate: r || 0, isLoss: true });
+  drawCredRows(t, idx);
+  recalcTechMath(idx, t);
+};
+
+drawCredRows = function(t, idx) {
+  const box = $("credBox_" + idx); if (!box) return;
+  const arr = customMap[t] || [];
+  box.innerHTML = arr.length ? arr.map((c, ci) => {
+    const rowSum = num(c.qty) * num(c.rate);
+    return '<div style="background:#fff;padding:6px;border-radius:6px;border:1px solid #cbd5e1;margin-bottom:6px">' +
+      '<div style="display:grid;grid-template-columns:1.8fr .65fr 1.25fr 1.1fr auto;gap:4px;align-items:center;margin-bottom:4px">' +
+        '<input class="inp" style="margin:0" placeholder="شرح (نجف‌آباد / فولاد / تخفیف)" value="' + c.title + '" oninput="customMap[\'' + t + '\'][' + ci + '].title=this.value">' +
+        '<input type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;text-align:center;font-weight:bold" placeholder="تعداد" value="' + fmtM(c.qty) + '" oninput="onCredInp(this,\'' + t + '\',' + idx + ',' + ci + ',\'qty\')">' +
+        '<input type="text" inputmode="numeric" class="inp" style="margin:0;direction:ltr;font-weight:bold" placeholder="فی/مبلغ" value="' + fmtM(c.rate) + '" oninput="onCredInp(this,\'' + t + '\',' + idx + ',' + ci + ',\'rate\')">' +
+        '<b id="crSum_' + idx + '_' + ci + '" style="font-size:11px;color:#0f3b2d;direction:ltr;text-align:center">=' + fmt(rowSum) + '</b>' +
+        '<button class="btn" style="background:#ef4444;color:#fff;border:none;padding:4px 7px" onclick="delCred(\'' + t + '\',' + idx + ',' + ci + ')">×</button>' +
+      '</div>' +
+      '<label style="display:flex;align-items:center;gap:5px;font-size:10px;color:#b91c1c;font-weight:bold;cursor:pointer">' +
+        '<input type="checkbox" ' + (c.isLoss !== false ? 'checked' : '') + ' onchange="customMap[\'' + t + '\'][' + ci + '].isLoss=this.checked"> 📉 ثبت در ضرر و زیان شرکت (اگر مشتری به حساب شرکت واریز کرده تیک را بردارید)' +
+      '</label>' +
+    '</div>';
+  }).join("") : '<div style="font-size:10px;color:#64748b;padding:4px">ردیف اضافی ثبت نشده است.</div>';
+};
+
+submitTechSettle = async function(idx, tName) {
+  const d = getTechAuditData(tName);
+  if (!d.paidOrders.length) return alert("هیچ فاکتور تسویه‌نشده‌ای برای «" + tName + "» در این بازه وجود ندارد.");
+  const actualCheck = num($("chk_" + idx).value), actualPos = num($("pos_" + idx).value), compPos = num($("cpos_" + idx).value);
+  const advCash = num($("adv_" + idx).value), actualWage = num($("wg_" + idx).value);
+  const insQ = num($("insQ_" + idx).value), insR = num($("insR_" + idx).value), insTotal = insQ * insR;
+  const validCredits = [];
+  if (insTotal > 0) validCredits.push({ title: `کمک‌هزینه بیمه (${insQ} × ${fmt(insR)})`, amount: insTotal, isLoss: false });
+  (customMap[tName] || []).forEach(c => {
+    const amt = num(c.qty) * num(c.rate);
+    if (c.title.trim() || amt > 0) validCredits.push({ title: `${c.title || "ردیف توافقی"} (${num(c.qty) > 1 ? c.qty + "×" + fmt(c.rate) : fmt(amt)})`, amount: amt, isLoss: c.isLoss !== false });
+  });
+  const customCreditsSum = validCredits.reduce((s, x) => s + num(x.amount), 0);
+  const totalDelivered = actualCheck + actualPos + compPos + advCash + actualWage + customCreditsSum;
+  const finalCashPayable = d.baseBill - totalDelivered;
+  const finalCashReceived = num($("paid_" + idx).value);
+  const shortfall = Math.max(0, finalCashPayable - finalCashReceived);
+  const cashDest = $("dest_" + idx).value;
+  const totalPosToVault = actualPos + compPos, totalCashToVault = advCash + finalCashReceived;
+  const totalBroughtToCompany = totalPosToVault + actualCheck + totalCashToVault;
+  const verifiedChecks = d.chkList.filter((c, ci) => chkVerifyMap[tName]?.[ci]).map(c => ({
+    id: "chk_" + Date.now() + "_" + Math.random().toString(36).slice(2, 5), date: new Date(),
+    techName: tName, customer: c.cust, bank: c.bank, serial: c.serial, dueDate: c.dueDate, amount: num(c.amt), status: "pending"
+  }));
+  const newDebtor = shortfall > 0 ? { id: "deb_" + Date.now(), date: new Date(), name: tName + " (مانده تسویه دوره)", role: "تکنسین", amount: shortfall, paid: 0, note: "کسری تسویه دوره", status: "open" } : null;
+  if (!confirm(`ثبت قطعی تسویه «${tName}»؟\n\n• جمع داخل اپ: ${fmt(d.baseBill)}\n• جمع تحویلی و کسورات: ${fmt(totalDelivered)}\n• مانده پرداختی تکنسین: ${fmt(finalCashReceived)}\n• کل ورودی به خزانه شرکت: ${fmt(totalBroughtToCompany)}` + (shortfall > 0 ? `\n⚠️ مبلغ ${fmt(shortfall)} کسری به لیست بدهکاران منتقل می‌شود.` : ""))) return;
+  const voucher = {
+    code: "STL-" + Date.now().toString().slice(-6), technicianName: tName,
+    fromDate: $("stFrom").value.trim() || "ابتدای دوره", toDate: $("stTo").value.trim() || toJ(new Date()),
+    ordersCount: d.paidOrders.length, invoiceCodes: d.paidOrders.map(r => r.invoiceCode),
+    totalBill: d.baseBill, appClaimPos: d.appPos, appClaimCheck: d.appChk, appClaimCash: d.appCash,
+    sysWage: d.sysWage, cogsAmount: d.totalCogs, actualPos: totalPosToVault, posDiff: actualPos - d.appPos,
+    actualCheck, actualWage, customCredits: validCredits, customCreditsSum, totalDelivered,
+    finalCashPayable, finalCashReceived: totalCashToVault, shortfall, cashDest, totalBroughtToCompany,
+    note: $("nt_" + idx).value.trim(), byUser: uName
+  };
+  const r = await fetch(API + "/requests/settle-tech", {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ technicianName: tName, reqIds: d.paidOrders.map(x => x._id), voucher, newChecks: verifiedChecks, newDebtor })
+  });
+  if (r.ok) { customMap[tName] = []; alert("✅ تسویه با موفقیت ثبت شد و مبالغ به حساب مجموعه اضافه گردید."); await loadAcc(); }
+};
+
+renderReportAccordions = function() {
+  const v = getTreasuryNumbers(), allV = settings.settlementVouchers || [], wList = settings.warrantyVouchers || [];
+  const totalDiscounts = reqs.filter(r => r.status === "done" || r.status === "completed").reduce((s, r) => s + num(r.discountAmount), 0);
+  let totalSettlementLosses = 0;
+  allV.forEach(vch => (vch.customCredits || []).forEach(cr => { if (cr.isLoss) totalSettlementLosses += num(cr.amount); }));
+  const totalCogs = allV.reduce((s, x) => s + num(x.cogsAmount), 0), totalW = wList.reduce((s, x) => s + num(x.lossAmount), 0);
+  const netProfit = v.netLiquid - totalCogs - totalW - totalDiscounts - totalSettlementLosses;
+  $("reportAccordions").innerHTML = '<div class="drw"><div class="drw-h"><span>🏦 ترازنامه خزانه و سود خالص جامع</span></div><div class="drw-b open" style="line-height:2.1;font-size:12px">' +
+    '<div>🟢 موجودی نقد و بانک خزانه: <b>' + fmt(v.netLiquid) + ' تومان</b></div>' +
+    '<div>📦 سرمایه جایگزینی کالای مصرف‌شده: <b style="color:#b45309">-' + fmt(totalCogs) + ' تومان</b></div>' +
+    '<div>🛠️ کسر ضرر گارانتی: <b style="color:#dc2626">-' + fmt(totalW) + ' تومان</b></div>' +
+    '<div>🎁 کسر تخفیفات و هدیه‌های فاکتورها (ضرر شرکت): <b style="color:#dc2626">-' + fmt(totalDiscounts) + ' تومان</b></div>' +
+    '<div>📉 کسر ردیف‌های ضرر و زیان در تسویه تکنسین‌ها: <b style="color:#dc2626">-' + fmt(totalSettlementLosses) + ' تومان</b></div>' +
+    '<div style="background:#09261d;color:#4ade80;padding:11px;border-radius:8px;margin-top:8px;font-size:14px;font-weight:bold">💎 سود خالص قابل برداشت: ' + fmt(netProfit) + ' تومان</div></div></div>';
+};
+  
 </script>
 </body>
 </html>
