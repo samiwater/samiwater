@@ -924,6 +924,23 @@ async function submitRetReq() {
   }
   }
   
+// --- محرمانه‌سازی سوابق تیکت‌ها در پنل تکنسین (فقط ثبت یک‌طرفه، بدون رویت تیکت‌های قبلی) ---
+const _origOpenOrderTech = openOrder;
+openOrder = function(id) {
+  if (typeof settings === "object" && settings) settings.customerTickets = [];
+  if (Array.isArray(allReqs)) allReqs.forEach(r => { if (r._id !== id) r.customerTicket = ""; });
+  _origOpenOrderTech(id);
+  document.querySelectorAll("#orderView *").forEach(el => {
+    if (el.closest("#invSummary")) return;
+    if (el.children.length === 0 && (el.textContent || "").includes("و تیکت")) {
+      el.textContent = el.textContent.replace("و تیکت‌های", "").replace("و تیکت", "");
+    }
+    if ((el.textContent || "").includes("تیکت‌های ثبت‌شده قبلی") && el.tagName === "B") {
+      el.parentElement.style.display = "none";
+    }
+  });
+};
+  
 </script>
 </body>
 </html>
