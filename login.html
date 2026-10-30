@@ -4,28 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>درگاه ورود پرسنل | سامی‌واتر</title>
+<link rel="icon" href="/logoasli.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif}
 body{background:linear-gradient(135deg,#071f17,#0f3b2d);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px;color:#1e293b}
 .card{background:#fff;width:min(400px,100%);border-radius:16px;padding:24px 20px;box-shadow:0 12px 30px #0006;border:2px solid #d9b24c;text-align:center}
-.logo{width:64px;height:64px;border-radius:14px;border:2px solid #d9b24c;margin-bottom:10px;background:#0f3b2d}
+.logo{width:78px;height:78px;border-radius:18px;border:2.5px solid #d9b24c;margin-bottom:12px;background:#071f17;box-shadow:0 8px 20px rgba(0,0,0,0.45),0 0 12px rgba(217,178,76,0.4);object-fit:cover}
 h1{font-size:17px;color:#0f3b2d;margin-bottom:4px}
-p{font-size:11px;color:#64748b;margin-bottom:18px}
+p{font-size:11px;color:#64748b;margin-bottom:16px;line-height:1.7}
 .lbl{display:block;text-align:right;font-size:11px;font-weight:bold;color:#334155;margin-bottom:5px}
-.inp{width:100%;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;margin-bottom:12px;text-align:center;direction:ltr;font-weight:bold}
+.inp{width:100%;padding:11px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;margin-bottom:12px;text-align:center;direction:ltr;font-weight:bold}
 .inp:focus{outline:none;border-color:#0f3b2d}
 .btn{width:100%;background:linear-gradient(135deg,#0f3b2d,#14532d);color:#f5e6b8;border:1.5px solid #d9b24c;padding:12px;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer}
-.err{background:#fee2e2;color:#dc2626;padding:8px;border-radius:8px;font-size:11px;font-weight:bold;margin-bottom:12px;display:none}
+.err{background:#fee2e2;color:#dc2626;padding:8px;border-radius:8px;font-size:11px;font-weight:bold;margin-bottom:12px;display:none;line-height:1.7}
 </style>
 </head>
 <body>
 <div class="card">
-  <img src="/logo-samiwater.png" class="logo" onerror="this.style.display='none'">
+  <img src="/logoasli.png" class="logo" onerror="this.style.display='none'">
   <h1>درگاه یکپارچه پرسنل سامی‌واتر</h1>
-  <p>کد سازمانی و رمز عبور خود را وارد نمایید</p>
+  <p>ویژه مدیریت و پرسنل اداری<br><span style="color:#be123c;font-weight:bold;font-size:10px">(ورود تکنسین‌ها فقط از طریق اپلیکیشن APK مجاز است)</span></p>
   <div id="errBox" class="err"></div>
   <label class="lbl">🆔 کد سازمانی (نام کاربری):</label>
-  <input id="uInp" class="inp" placeholder="مثلاً: Sam12 / Sup1 / Acc1 / admin">
+  <input id="uInp" class="inp" placeholder="ویژه پرسنل دفتر (Sup1 / Acc1 / St1 / admin)">
   <label class="lbl">🔑 رمز عبور (PIN):</label>
   <input id="pInp" type="password" inputmode="numeric" class="inp" placeholder="••••">
   <button id="lBtn" class="btn" onclick="doStaffLogin()">ورود به سامانه 🔐</button>
@@ -42,22 +43,37 @@ async function doStaffLogin() {
       localStorage.setItem("token", "sw-admin-" + Date.now());
       localStorage.setItem("role", "admin");
       localStorage.setItem("username", "مدیر ارشد");
+      localStorage.removeItem("sw_allowed_tabs");
       location.href = "dashboard.html"; return;
+    }
+    const stRes = await fetch(API + "/requests/settings");
+    if (stRes.ok) {
+      const stData = (await stRes.json()).settings || {};
+      const customStaff = (stData.staffAccounts || []).find(s => s.username.toLowerCase() === u.toLowerCase() && String(s.pin) === p);
+      if (customStaff) {
+        if (customStaff.locked) {
+          err.textContent = "🔒 این حساب کاربری توسط مدیریت قفل شده است."; err.style.display = "block";
+          btn.textContent = "ورود به سامانه 🔐"; btn.disabled = false; return;
+        }
+        localStorage.setItem("token", "sw-stf-" + Date.now());
+        localStorage.setItem("role", customStaff.role);
+        localStorage.setItem("username", customStaff.fullName || customStaff.username);
+        localStorage.setItem("sw_allowed_tabs", JSON.stringify(customStaff.tabs || []));
+        location.href = customStaff.role === "accountant" ? "accounting.html" : "dashboard.html";
+        return;
+      }
     }
     const r = await fetch(API + "/requests/staff-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: u, pin: p }) });
     const d = await r.json();
     if (!r.ok || !d.ok) { err.textContent = d.error || "اطلاعات ورود اشتباه است."; err.style.display = "block"; btn.textContent = "ورود به سامانه 🔐"; btn.disabled = false; return; }
+    if (d.role === "technician") {
+      err.innerHTML = "⛔ <b>ورود تکنسین از طریق سایت مسدود است!</b><br>لطفاً فقط از طریق اپلیکیشن اختصاصی تکنسین (APK) روی گوشی خود وارد شوید.";
+      err.style.display = "block"; btn.textContent = "ورود به سامانه 🔐"; btn.disabled = false; return;
+    }
     localStorage.setItem("token", d.token);
     localStorage.setItem("role", d.role);
     localStorage.setItem("username", d.username);
-    if (d.role === "technician") {
-      localStorage.setItem("sw_tech_name", d.username);
-      location.href = "tech.html";
-    } else if (d.role === "accountant") {
-      location.href = "accounting.html";
-    } else {
-      location.href = "dashboard.html";
-    }
+    location.href = d.role === "accountant" ? "accounting.html" : "dashboard.html";
   } catch (e) { err.textContent = "خطا در ارتباط با سرور"; err.style.display = "block"; btn.textContent = "ورود به سامانه 🔐"; btn.disabled = false; }
 }
 </script>
