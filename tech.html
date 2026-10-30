@@ -941,6 +941,68 @@ openOrder = function(id) {
   });
 };
   
+// --- قفل اختصاصی اپلیکیشن تکنسین (APK)، لاگین داخلی اپ و لوگوی سه‌بعدی ---
+(function initTechApkShell() {
+  const urlP = new URLSearchParams(location.search);
+  if (urlP.get("app") === "apk") localStorage.setItem("sw_apk_mode", "1");
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone || localStorage.getItem("sw_apk_mode") === "1";
+  const role = localStorage.getItem("role");
+
+  // اعمال لوگوی جدید در تب و هدر اپ
+  let fav = document.querySelector("link[rel='icon']");
+  if (!fav) { fav = document.createElement("link"); fav.rel = "icon"; document.head.appendChild(fav); }
+  fav.href = "/logoasli.png";
+  const hdrTitle = document.querySelector(".hdr h1");
+  if (hdrTitle && !hdrTitle.querySelector("img")) {
+    hdrTitle.style.display = "flex"; hdrTitle.style.alignItems = "center"; hdrTitle.style.gap = "8px";
+    hdrTitle.insertAdjacentHTML("afterbegin", '<img src="/logoasli.png" style="width:34px;height:34px;border-radius:9px;border:1.5px solid #d9b24c;box-shadow:0 3px 8px #0008;object-fit:cover">');
+  }
+
+  // ۱. اگر مدیر نیست و از مرورگر عادی (خارج از APK) آمده، دسترسی را ببند
+  if (role !== "admin" && !isStandalone) {
+    document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#071f17;padding:20px;text-align:center;color:#fff">' +
+      '<div style="background:#0f2920;border:2px solid #d9b24c;padding:24px;border-radius:16px;max-width:360px">' +
+      '<img src="/logoasli.png" style="width:80px;height:80px;border-radius:18px;border:2px solid #d9b24c;margin-bottom:12px;box-shadow:0 6px 16px #000">' +
+      '<h2 style="color:#facc15;font-size:15px;margin-bottom:8px">⛔ دسترسی از مرورگر سایت مسدود است</h2>' +
+      '<p style="font-size:12px;line-height:1.8;color:#cbd5e1">پنل تکنسین‌های سامی‌واتر فقط از طریق <b>اپلیکیشن اختصاصی اندروید (APK)</b> قابل اجراست و از طریق سایت باز نمی‌شود.</p>' +
+      '</div></div>';
+    return;
+  }
+
+  // ۲. اگر داخل APK است اما هنوز لاگین نکرده، فرم ورود داخلی اپ را نشان بده
+  if (role !== "admin" && (!localStorage.getItem("token") || role !== "technician")) {
+    const ov = document.createElement("div");
+    ov.id = "apkLoginOverlay";
+    ov.style.cssText = "position:fixed;inset:0;background:linear-gradient(135deg,#071f17,#0f3b2d);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px";
+    ov.innerHTML = '<div style="background:#fff;width:min(380px,100%);border-radius:16px;padding:22px 18px;border:2px solid #d9b24c;text-align:center;box-shadow:0 12px 30px #0008">' +
+      '<img src="/logoasli.png" style="width:74px;height:74px;border-radius:16px;border:2px solid #d9b24c;margin-bottom:10px;box-shadow:0 6px 14px #0004">' +
+      '<h2 style="font-size:16px;color:#0f3b2d;margin-bottom:4px">اپلیکیشن تکنسین سامی‌واتر</h2>' +
+      '<p style="font-size:11px;color:#64748b;margin-bottom:14px">کد تکنسینی و رمز عبور خود را وارد نمایید</p>' +
+      '<div id="apkErr" style="display:none;background:#fee2e2;color:#dc2626;padding:8px;border-radius:8px;font-size:11px;font-weight:bold;margin-bottom:10px"></div>' +
+      '<input id="apkU" class="inp" style="text-align:center;direction:ltr;font-weight:bold" placeholder="کد تکنسین (مثلاً Sam12)">' +
+      '<input id="apkP" type="password" inputmode="numeric" class="inp" style="text-align:center;direction:ltr;font-weight:bold" placeholder="رمز عبور (PIN)">' +
+      '<button class="btn-main" onclick="doApkTechLogin()">ورود به اپلیکیشن 🔐</button></div>';
+    document.body.appendChild(ov);
+  }
+})();
+
+async function doApkTechLogin() {
+  const u = $("apkU").value.trim(), p = $("apkP").value.trim(), err = $("apkErr");
+  err.style.display = "none";
+  if (!u || !p) { err.textContent = "کد تکنسین و رمز را وارد کنید."; err.style.display = "block"; return; }
+  const r = await fetch(API + "/requests/staff-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: u, pin: p }) });
+  const d = await r.json();
+  if (!r.ok || !d.ok || d.role !== "technician") {
+    err.textContent = d.error || "کد تکنسین یا رمز اشتباه است."; err.style.display = "block"; return;
+  }
+  localStorage.setItem("token", d.token);
+  localStorage.setItem("role", "technician");
+  localStorage.setItem("username", d.username);
+  localStorage.setItem("sw_tech_name", d.username);
+  localStorage.setItem("sw_apk_mode", "1");
+  location.reload();
+}
+  
 </script>
 </body>
 </html>
