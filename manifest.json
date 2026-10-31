@@ -1,0 +1,18 @@
+{
+  "id": "/tech.html",
+  "name": "سامی‌واتر - تکنسین",
+  "short_name": "سامی‌واتر",
+  "description": "پنل تکنسین‌های سامی‌واتر",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/tech.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1512",
+  "theme_color": "#09261d",
+  "icons": [
+    { "src": "/logoasli.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/logoasli.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
