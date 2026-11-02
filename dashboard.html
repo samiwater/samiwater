@@ -1301,6 +1301,29 @@ drawCusts = function() {
   bar.innerHTML = allRegs.map(r => '<button class="fb ' + (selCustRegion === r ? "active" : "") + '" onclick="selCustRegion=\'' + r + '\';drawCusts()">' + (r === "ALL" ? "🌍 همه مناطق" : r) + ' (' + (counts[r] || 0) + ')</button>').join("");
 };
       
+    // ===== آپدیت سراسری لوگوی رسمی سامی‌واتر (logoasli.png) =====
+(function () {
+  const LOGO = "/logoasli.png";
+  const OLD_LOGO = /logo-samiwater|samiwater[-_]logo|(^|\/)logo\.(png|jpe?g|svg|webp)(\?.*)?$/i;
+  function fixLogos() {
+    try {
+      document.querySelectorAll(".top .brand img, .hdr img, header img").forEach(i => { if (i.getAttribute("src") !== LOGO) i.setAttribute("src", LOGO); });
+      document.querySelectorAll("img").forEach(img => {
+        const s = img.getAttribute("src") || "";
+        if (s && !/logoasli\.png/i.test(s) && OLD_LOGO.test(s)) img.setAttribute("src", LOGO);
+      });
+      [["icon", "image/png"], ["apple-touch-icon", ""]].forEach(([rel, type]) => {
+        let l = document.querySelector('link[rel~="' + rel + '"]');
+        if (!l) { l = document.createElement("link"); l.rel = rel; document.head.appendChild(l); }
+        if (type) l.type = type;
+        if (l.getAttribute("href") !== LOGO) l.setAttribute("href", LOGO);
+      });
+    } catch (e) {}
+  }
+  fixLogos();
+  window.addEventListener("load", fixLogos);
+})();
+      
     </script>
 </body>
 </html>
