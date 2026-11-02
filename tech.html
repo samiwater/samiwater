@@ -5,6 +5,7 @@
 <meta name="theme-color" content="#09261d">
 <link rel="apple-touch-icon" href="/logoasli.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+  <script>window.__bip=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();window.__bip=e;});</script>
   
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1008,6 +1009,216 @@ async function doApkTechLogin() {
   location.reload();
 }
   
+// ===== بلوک نهایی PWA تکنسین سامی‌واتر =====
+(function () {
+  "use strict";
+  const LOGO = "/logoasli.png";
+  const POLL_MS = 25000;
+
+  const isStandalone = () => {
+    try { return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }
+    catch (e) { return false; }
+  };
+  // وقتی قفل کل صفحه را عوض کرده باشد، listView دیگر وجود ندارد
+  const isLocked = () => !document.getElementById("listView");
+  window.SW_IS_PWA = isStandalone();
+  if (window.SW_IS_PWA) document.documentElement.classList.add("sw-pwa");
+
+  /* ---- سرویس‌ورکر ---- */
+  function regSW() { navigator.serviceWorker.register("/sw.js").catch(console.error); }
+  if ("serviceWorker" in navigator) {
+    if (document.readyState === "complete") regSW(); else window.addEventListener("load", regSW);
+    navigator.serviceWorker.addEventListener("message", e => {
+      if (e.data && e.data.type === "PLAY_ALERT") { playTechAlert(); showInPageAlert("کار یا تیکت جدید دارید"); }
+    });
+  }
+
+  /* ---- صدا ---- */
+  let actx = null;
+  function unlockAudio() {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+    } catch (e) {}
+  }
+  ["click", "touchstart", "keydown"].forEach(ev => document.addEventListener(ev, unlockAudio, { passive: true }));
+  function playTechAlert() {
+    try {
+      unlockAudio();
+      if (!actx || actx.state !== "running") return;
+      const t0 = actx.currentTime;
+      [880, 1100, 880, 1100].forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        o.connect(g); g.connect(actx.destination);
+        const s = t0 + i * 0.25;
+        g.gain.setValueAtTime(0.0001, s);
+        g.gain.exponentialRampToValueAtTime(0.4, s + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, s + 0.2);
+        o.start(s); o.stop(s + 0.22);
+      });
+      if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+    } catch (e) {}
+  }
+  window.playTechAlert = playTechAlert;
+
+  /* ---- اعلان داخل صفحه و اعلان سیستمی ---- */
+  function showInPageAlert(msg) {
+    try {
+      let b = document.getElementById("swAlertBar");
+      if (!b) {
+        b = document.createElement("div");
+        b.id = "swAlertBar";
+        b.setAttribute("role", "alert");
+        b.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:#d9b24c;color:#071f17;font:bold 14px Tahoma,sans-serif;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px;text-align:center;box-shadow:0 4px 14px #0006;cursor:pointer";
+        b.addEventListener("click", () => { b.style.display = "none"; });
+        document.body.appendChild(b);
+      }
+      b.textContent = "🔔 " + msg + " (برای بستن لمس کنید)";
+      b.style.display = "block";
+      clearTimeout(b._t);
+      b._t = setTimeout(() => { b.style.display = "none"; }, 15000);
+    } catch (e) {}
+  }
+  function sysNotify(msg) {
+    try {
+      if (!document.hidden || !("Notification" in window) || Notification.permission !== "granted") return;
+      if (!navigator.serviceWorker) return;
+      navigator.serviceWorker.ready.then(reg => reg.showNotification("سامی‌واتر", {
+        body: msg, icon: LOGO, badge: LOGO, tag: "samiwater-new-job", renotify: true,
+        vibrate: [300, 150, 300], dir: "rtl", lang: "fa", data: { url: "/tech.html" }
+      }));
+    } catch (e) {}
+  }
+  let askedNotif = false;
+  document.addEventListener("click", () => {
+    if (askedNotif || !("Notification" in window) || Notification.permission !== "default") return;
+    askedNotif = true;
+    try { Notification.requestPermission(); } catch (e) {}
+  }, { passive: true });
+
+  /* ---- ناظر کار و پیام جدید (بدون صدا زدن loadData) ---- */
+  const seenJobs = new Set(), seenLogs = new Set();
+  let started = false, busy = false, hA = "", hS = "";
+  const hash = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return s.length + ":" + h; };
+  const setArr = (dst, src) => { dst.length = 0; for (let i = 0; i < src.length; i++) dst.push(src[i]); };
+  const setObj = (dst, src) => { Object.keys(dst).forEach(k => delete dst[k]); Object.assign(dst, src); };
+  const logKey = l => { try { return typeof l === "string" ? l : JSON.stringify(l).slice(0, 300); } catch (e) { return String(l); } };
+
+  async function tick() {
+    if (busy || isLocked() || typeof myName === "undefined" || !myName) return;
+    busy = true;
+    try {
+      const [ra, rs] = await Promise.all([fetch(API + "/requests"), fetch(API + "/requests/settings")]);
+      if (!ra.ok || !rs.ok) return;
+      const ta = await ra.text(), ts = await rs.text();
+      const ja = JSON.parse(ta), js = JSON.parse(ts);
+      const reqsNew = Array.isArray(ja.requests) ? ja.requests : null;
+      const setNew = js && js.settings && typeof js.settings === "object" ? js.settings : null;
+      if (!reqsNew || !setNew) return;
+
+      let newJob = false, newLog = false;
+      reqsNew.forEach(r => {
+        if (!r || !r._id) return;
+        if ((r.technicianName || "").trim() === myName && !r.isSettled && (r.status === "assigned" || r.status === "open") && !r.seenByTechAt && !r.techSuspendReq?.active) {
+          if (!seenJobs.has(r._id)) { seenJobs.add(r._id); newJob = true; }
+        }
+      });
+      const logs = setNew.techMeta?.[myName]?.logs;
+      if (Array.isArray(logs)) logs.forEach(l => { const k = logKey(l); if (!seenLogs.has(k)) { seenLogs.add(k); newLog = true; } });
+
+      const first = !started; started = true;
+
+      const na = hash(ta), ns = hash(ts);
+      if (na !== hA || ns !== hS) {
+        hA = na; hS = ns;
+        if (Array.isArray(allReqs)) setArr(allReqs, reqsNew);
+        if (settings && typeof settings === "object") setObj(settings, setNew);
+        if (typeof calcHeader === "function") calcHeader();
+        const lv = document.getElementById("listView");
+        if (lv && lv.style.display !== "none" && typeof renderList === "function") renderList();
+      }
+
+      if (!first && (newJob || newLog)) {
+        const msg = newJob && newLog ? "کار جدید و پیام جدید دارید" : (newJob ? "کار جدید به شما ارجاع شد" : "پیام جدید از مدیریت دارید");
+        playTechAlert(); showInPageAlert(msg); sysNotify(msg);
+      }
+    } catch (e) {
+    } finally { busy = false; }
+  }
+  setTimeout(tick, 2000);
+  setInterval(tick, POLL_MS);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+
+  /* ---- لوگو و favicon ---- */
+  const OLD_LOGO = /logo-samiwater|samiwater[-_]logo|(^|\/)logo\.(png|jpe?g|svg|webp)(\?.*)?$/i;
+  function fixLogos() {
+    try {
+      document.querySelectorAll(".top .brand img").forEach(i => { if (i.getAttribute("src") !== LOGO) i.setAttribute("src", LOGO); });
+      document.querySelectorAll("img").forEach(img => {
+        const s = img.getAttribute("src") || "";
+        if (s && !/logoasli\.png/i.test(s) && OLD_LOGO.test(s)) img.setAttribute("src", LOGO);
+      });
+      [["icon", "image/png"], ["apple-touch-icon", ""]].forEach(([rel, type]) => {
+        let l = document.querySelector('link[rel~="' + rel + '"]');
+        if (!l) { l = document.createElement("link"); l.rel = rel; document.head.appendChild(l); }
+        if (type) l.type = type;
+        if (l.getAttribute("href") !== LOGO) l.setAttribute("href", LOGO);
+      });
+    } catch (e) {}
+  }
+
+  /* ---- دکمه‌ی نصب اپلیکیشن (فقط وقتی قفل مرورگر فعال است) ---- */
+  let dip = window.__bip || null, dismissed = false;
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); dip = e; });
+  window.addEventListener("appinstalled", () => {
+    dip = null;
+    const b = document.getElementById("swInstallBox"); if (b) b.remove();
+  });
+  const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  function ensureInstallBtn() {
+    if (dismissed) return;
+    const exists = document.getElementById("swInstallBox");
+    if (isStandalone() || !isLocked()) { if (exists) exists.remove(); return; }
+    if (exists) return;
+    const box = document.createElement("div");
+    box.id = "swInstallBox";
+    box.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:2147483647;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:#09261d;border-top:2px solid #d9b24c;text-align:center;font-family:Tahoma,sans-serif;direction:rtl";
+    const btn = document.createElement("button");
+    btn.textContent = "📲 نصب اپلیکیشن (PWA)";
+    btn.style.cssText = "background:#d9b24c;color:#071f17;border:none;border-radius:10px;padding:12px 22px;font:bold 15px Tahoma,sans-serif;cursor:pointer";
+    const hint = document.createElement("div");
+    hint.style.cssText = "display:none;color:#f5e6b8;font-size:12px;line-height:1.9;margin-top:8px";
+    const x = document.createElement("button");
+    x.textContent = "×";
+    x.setAttribute("aria-label", "بستن");
+    x.style.cssText = "position:absolute;top:4px;left:8px;background:none;border:none;color:#f5e6b8;font-size:20px;cursor:pointer";
+    x.onclick = () => { dismissed = true; box.remove(); };
+    btn.onclick = async () => {
+      if (dip) {
+        try { dip.prompt(); await dip.userChoice; } catch (e) {}
+        dip = null; window.__bip = null;
+        return;
+      }
+      hint.textContent = isIOS()
+        ? "در Safari دکمه «اشتراک‌گذاری» (Share) را بزنید و گزینه «Add to Home Screen» را انتخاب کنید."
+        : "از منوی مرورگر (⋮) گزینه «نصب برنامه» یا «Add to Home screen» را بزنید. اگر گزینه نبود، یک بار صفحه را رفرش کنید.";
+      hint.style.display = "block";
+    };
+    box.appendChild(x); box.appendChild(btn); box.appendChild(hint);
+    (document.body || document.documentElement).appendChild(box);
+  }
+
+  function refresh() { fixLogos(); ensureInstallBtn(); }
+  refresh();
+  window.addEventListener("load", refresh);
+  try {
+    let tmr = null;
+    new MutationObserver(() => { clearTimeout(tmr); tmr = setTimeout(refresh, 250); })
+      .observe(document.documentElement, { childList: true, subtree: true });
+  } catch (e) {}
+})();
 </script>
 </body>
 </html>
