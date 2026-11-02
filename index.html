@@ -53,5 +53,29 @@
     <button class="btn" id="app-btn" onclick="location.href='main.html'"></button>
   </div>
 
+<script>
+// ===== آپدیت لوگوی تب و آیکون صفحه اصلی (logoasli.png) =====
+(function () {
+  const LOGO = "/logoasli.png";
+  const OLD_LOGO = /logo-samiwater|samiwater[-_]logo|(^|\/)logo\.(png|jpe?g|svg|webp)(\?.*)?$/i;
+  function fixLogos() {
+    try {
+      document.querySelectorAll("img").forEach(img => {
+        const s = img.getAttribute("src") || "";
+        if (s && !/logoasli\.png/i.test(s) && OLD_LOGO.test(s)) img.setAttribute("src", LOGO);
+      });
+      [["icon", "image/png"], ["apple-touch-icon", ""]].forEach(([rel, type]) => {
+        let l = document.querySelector('link[rel~="' + rel + '"]');
+        if (!l) { l = document.createElement("link"); l.rel = rel; document.head.appendChild(l); }
+        if (type) l.type = type;
+        if (l.getAttribute("href") !== LOGO) l.setAttribute("href", LOGO);
+      });
+    } catch (e) {}
+  }
+  fixLogos();
+  window.addEventListener("load", fixLogos);
+})();
+</script>
+  
 </body>
 </html>
