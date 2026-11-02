@@ -585,6 +585,29 @@ renderReportAccordions = function() {
     '<div style="background:#09261d;color:#4ade80;padding:11px;border-radius:8px;margin-top:8px;font-size:14px;font-weight:bold">💎 سود خالص قابل برداشت: ' + fmt(netProfit) + ' تومان</div></div></div>';
 };
   
+// ===== آپدیت سراسری لوگوی رسمی سامی‌واتر (logoasli.png) =====
+(function () {
+  const LOGO = "/logoasli.png";
+  const OLD_LOGO = /logo-samiwater|samiwater[-_]logo|(^|\/)logo\.(png|jpe?g|svg|webp)(\?.*)?$/i;
+  function fixLogos() {
+    try {
+      document.querySelectorAll(".top .brand img, .hdr img, header img").forEach(i => { if (i.getAttribute("src") !== LOGO) i.setAttribute("src", LOGO); });
+      document.querySelectorAll("img").forEach(img => {
+        const s = img.getAttribute("src") || "";
+        if (s && !/logoasli\.png/i.test(s) && OLD_LOGO.test(s)) img.setAttribute("src", LOGO);
+      });
+      [["icon", "image/png"], ["apple-touch-icon", ""]].forEach(([rel, type]) => {
+        let l = document.querySelector('link[rel~="' + rel + '"]');
+        if (!l) { l = document.createElement("link"); l.rel = rel; document.head.appendChild(l); }
+        if (type) l.type = type;
+        if (l.getAttribute("href") !== LOGO) l.setAttribute("href", LOGO);
+      });
+    } catch (e) {}
+  }
+  fixLogos();
+  window.addEventListener("load", fixLogos);
+})();
+  
 </script>
 </body>
 </html>
