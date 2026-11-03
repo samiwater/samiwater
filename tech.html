@@ -1259,6 +1259,22 @@ async function doApkTechLogin() {
   } catch (e) {}
 })();
 </script>
+<script>
+// اصلاح قطعی عملکرد دکمه خروج در اپلیکیشن SamiTech
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("button, a, div, li");
+  if (!el) return;
+  var txt = (el.innerText || el.textContent || "").trim();
+  if (txt.indexOf("خروج") !== -1 && txt.length < 25) {
+    e.preventDefault();
+    e.stopPropagation();
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("/login.html");
+  }
+}, true);
+</script>
+  
 </body>
 </html>
 <!-- END -->
