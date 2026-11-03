@@ -1,6 +1,41 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+  <script>
+(function () {
+  var HOST = "samiwater-backend.onrender.com", orig = window.fetch;
+  if (!orig || window.__swAuthFetch) return;
+  window.__swAuthFetch = true;
+
+  function swToken() {
+    try {
+      var t = localStorage.getItem("token");
+      if (t && t.indexOf("sw1.") === 0) return t;
+      for (var i = 0; i < localStorage.length; i++) {
+        var v = localStorage.getItem(localStorage.key(i));
+        if (v && v.indexOf("sw1.") === 0) return v;
+      }
+    } catch (e) {}
+    return "";
+  }
+
+  window.fetch = function (input, init) {
+    try {
+      var url = typeof input === "string" ? input : (input && input.url) || "";
+      if (url.indexOf(HOST) > -1 && !/\/(staff-login|auth\/login|request-otp|verify-otp)/.test(url)) {
+        var t = swToken();
+        if (t) {
+          init = init || {};
+          var h = new Headers(init.headers || (typeof input !== "string" && input && input.headers) || {});
+          if (!h.has("Authorization")) h.set("Authorization", "Bearer " + t);
+          init.headers = h;
+        }
+      }
+    } catch (e) {}
+    return orig.call(this, input, init);
+  };
+})();
+</script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#09261d">
 <link rel="apple-touch-icon" href="/logoasli.png">
