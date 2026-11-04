@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#09261d">
+<title>فاکتور | سامی‌واتر</title>
+<link rel="icon" href="/logoasli.png">
+<style>
+:root{--ink:#10231c;--muted:#5b6b64;--line:#d9e2dd;--brand:#09261d;--gold:#d9b24c;--bg:#e9eeeb;--ok:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;line-height:1.75;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.bar{max-width:820px;margin:14px auto 0;display:flex;gap:8px;flex-wrap:wrap;padding:0 12px}
+.btn{border:0;border-radius:10px;padding:10px 16px;font:600 14px inherit;font-family:inherit;cursor:pointer;background:var(--brand);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.alt{background:#fff;color:var(--brand);border:1px solid var(--line)}
+.sheet{max-width:820px;margin:12px auto 28px;background:#fff;border-radius:12px;box-shadow:0 6px 24px #0a1f180f;overflow:hidden}
+.head{background:var(--brand);color:#fff;padding:18px 22px;display:flex;align-items:center;gap:16px;border-bottom:4px solid var(--gold)}
+.head img{width:76px;height:76px;border-radius:50%;background:#fff;object-fit:cover;flex:none}
+.head .co{flex:1;min-width:0}
+.head .co b{display:block;font-size:20px}
+.head .co span{font-size:12.5px;opacity:.85}
+.head .ttl{text-align:left;font-size:13px;opacity:.95;white-space:nowrap}
+.head .ttl b{display:block;font-size:17px;color:var(--gold)}
+.body{padding:18px 22px 8px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 18px;margin-bottom:14px}
+.meta div{font-size:13.5px}
+.meta small{display:block;color:var(--muted);font-size:11.5px}
+.box{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:14px;background:#f7faf8}
+.box h4{margin:0 0 4px;font-size:13px;color:var(--muted);font-weight:600}
+.scroll{overflow-x:auto}
+.cap{font-size:11.5px;color:var(--muted);margin:0 0 4px}
+table.items{width:100%;border-collapse:collapse;font-size:13.5px}
+table.items th{background:#eef4f0;color:var(--brand);font-weight:700;padding:8px 10px;border:1px solid var(--line);white-space:nowrap}
+table.items td{padding:8px 10px;border:1px solid var(--line);vertical-align:top}
+table.items td.n,table.items th.n{text-align:center;white-space:nowrap}
+table.items td.m{text-align:center;white-space:nowrap}
+.tot{margin:14px 0 0 auto;max-width:330px}
+.tot div{display:flex;justify-content:space-between;padding:6px 10px;font-size:14px;border-bottom:1px dashed var(--line)}
+.tot .disc{color:var(--bad)}
+.tot .pay{background:var(--brand);color:#fff;border-radius:8px;border:0;margin-top:8px;font-weight:700;font-size:16px;padding:10px 12px}
+.tot .pay span:last-child{color:var(--gold)}
+.pay-st{display:flex;align-items:center;gap:10px;margin:14px 0;flex-wrap:wrap;font-size:13.5px}
+.badge{display:inline-block;padding:3px 12px;border-radius:99px;font-weight:700;font-size:12.5px}
+.badge.ok{background:#dcfce7;color:var(--ok)}
+.badge.no{background:#fee2e2;color:var(--bad)}
+.sign{display:flex;justify-content:space-between;gap:16px;margin:26px 0 8px}
+.sign .s{flex:1;text-align:center;font-size:12.5px;color:var(--muted)}
+.sign .area{position:relative;height:96px;border:1px dashed var(--line);border-radius:10px;margin-bottom:4px;display:flex;align-items:center;justify-content:center}
+.sign .area img{max-height:88px;max-width:90%;object-fit:contain;mix-blend-mode:multiply}
+.foot{border-top:1px solid var(--line);padding:12px 22px 16px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 22px}
+.state{max-width:820px;margin:60px auto;text-align:center;padding:30px 16px;color:var(--muted)}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%);background:#10231c;color:#fff;padding:9px 18px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s}
+.toast.on{opacity:1}
+@media (max-width:560px){table.items{font-size:12px}table.items th,table.items td{padding:6px 4px}.head{padding:14px}.head img{width:56px;height:56px}.head .ttl{display:none}.body{padding:14px 14px 6px}.foot{padding:12px 14px 16px}}
+@media print{
+  @page{size:A4;margin:10mm}
+  html,body{background:#fff}
+  .bar,.noprint,.toast{display:none!important}
+  .sheet{box-shadow:none;border-radius:0;margin:0;max-width:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .scroll{overflow:visible}
+  tr,.box,.sign{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="bar noprint" id="bar" hidden>
+  <button class="btn" id="bPrint">🖨️ چاپ / ذخیره PDF</button>
+  <button class="btn alt" id="bShare">📤 اشتراک‌گذاری</button>
+  <a class="btn alt" href="/club/">باشگاه مشتریان</a>
+</div>
+<div id="root"><div class="state">در حال دریافت فاکتور…</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+  var API = "https://samiwater-backend.onrender.com/api";
+  var $ = function (id) { return document.getElementById(id); };
+
+  function h(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    for (var i = 3; i < arguments.length; i++) if (arguments[i]) e.appendChild(arguments[i]);
+    return e;
+  }
+  var fmt = function (n) { return Number(n || 0).toLocaleString("fa-IR"); };
+  var faDate = function (d) {
+    if (!d) return "—";
+    try { return new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Tehran" }).format(new Date(d)); }
+    catch (e) { return "—"; }
+  };
+  function toast(msg) { var t = $("toast"); t.textContent = msg; t.className = "toast on"; setTimeout(function () { t.className = "toast"; }, 1800); }
+  function fail(msg) { $("root").replaceChildren(h("div", "state", msg)); }
+
+  function metaItem(label, val) { return h("div", "", "", h("small", "", label), document.createTextNode(val || "—")); }
+  function sumRow(label, val, cls) { return h("div", cls || "", "", h("span", "", label), h("span", "", val)); }
+
+  function signBox(label, srcs) {
+    var area = h("div", "area");
+    (srcs || []).forEach(function (src) {
+      var img = document.createElement("img");
+      img.alt = ""; img.src = src;
+      img.onerror = function () { img.remove(); };
+      area.appendChild(img);
+    });
+    return h("div", "s", "", area, document.createTextNode(label));
+  }
+
+  function render(d) {
+    var c = d.company || {}, v = d.invoice;
+
+    var logo = document.createElement("img");
+    logo.src = "/logoasli.png"; logo.alt = "لوگو";
+    logo.onerror = function () { logo.style.visibility = "hidden"; };
+    var head = h("div", "head", "", logo,
+      h("div", "co", "", h("b", "", c.name || "سامی‌واتر"), h("span", "", c.subtitle || "")),
+      h("div", "ttl", "", h("b", "", "فاکتور فروش و خدمات"), document.createTextNode("شماره: " + (v.code || "—"))));
+
+    var meta = h("div", "meta", "",
+      metaItem("شماره فاکتور", v.code), metaItem("تاریخ", faDate(v.date)),
+      metaItem("نوع خدمت", v.issueType), metaItem("تکنسین", v.technician));
+
+    var cust = h("div", "box", "", h("h4", "", "مشخصات مشتری"),
+      h("div", "", (v.customerName || "—") + (v.phone ? "  •  " + v.phone : "")),
+      v.address ? h("div", "", (v.addressLabel ? v.addressLabel + ": " : "") + v.address) : null);
+
+    var thead = h("tr", "", "", h("th", "n", "ردیف"), h("th", "", "شرح کالا / خدمات"), h("th", "n", "تعداد"), h("th", "n", "قیمت واحد"), h("th", "n", "قیمت کل"));
+    var tbody = document.createElement("tbody");
+    var rows = v.items.slice(), n = 0;
+    rows.forEach(function (it) {
+      n++;
+      tbody.appendChild(h("tr", "", "", h("td", "n", fmt(n)), h("td", "", it.title), h("td", "n", fmt(it.qty)), h("td", "m", fmt(it.unit)), h("td", "m", fmt(it.total))));
+    });
+    if (v.travelFee > 0) {
+      n++;
+      tbody.appendChild(h("tr", "", "", h("td", "n", fmt(n)), h("td", "", "ایاب و ذهاب"), h("td", "n", fmt(1)), h("td", "m", fmt(v.travelFee)), h("td", "m", fmt(v.travelFee))));
+    }
+    if (!rows.length && !(v.travelFee > 0)) tbody.appendChild(h("tr", "", "", h("td", "n", "—"), h("td", "", "—"), h("td", "n", "—"), h("td", "m", "—"), h("td", "m", "—")));
+    var table = h("table", "items", "", h("thead", "", "", thead), tbody);
+
+    var tot = h("div", "tot", "", sumRow("جمع کل", fmt(v.subtotal) + " تومان"));
+    if (v.discount > 0) tot.appendChild(sumRow("تخفیف", "− " + fmt(v.discount) + " تومان", "disc"));
+    tot.appendChild(sumRow("مبلغ قابل پرداخت", fmt(v.payable) + " تومان", "pay"));
+
+    var pst = h("div", "pay-st", "", h("span", "badge " + (v.paid ? "ok" : "no"), v.paid ? "پرداخت‌شده" : "پرداخت‌نشده"),
+      v.paid ? h("span", "", "روش پرداخت: " + v.paymentMethod) : null);
+
+    var sign = h("div", "sign", "", signBox("مهر و امضای فروشنده", ["/stamp.png", "/signature.png"]), signBox("امضای مشتری", []));
+
+    var foot = h("div", "foot");
+    if (c.phone) foot.appendChild(h("span", "", "☎ " + c.phone));
+    if (c.address) foot.appendChild(h("span", "", "📍 " + c.address));
+    if (c.card) foot.appendChild(h("span", "", "💳 شماره کارت: " + c.card));
+    if (c.note) foot.appendChild(h("span", "", c.note));
+    if (!foot.childNodes.length) foot.appendChild(h("span", "", "از اعتماد شما سپاسگزاریم."));
+
+    var scroll = h("div", "scroll", "", h("div", "cap", "مبالغ جدول به تومان است"), table);
+    $("root").replaceChildren(h("div", "sheet", "", head, h("div", "body", "", meta, cust, scroll, tot, pst, sign), foot));
+    document.title = "فاکتور " + (v.code || "") + " | " + (c.name || "سامی‌واتر");
+    $("bar").hidden = false;
+  }
+
+  var key = new URLSearchParams(location.search).get("i");
+  if (!key) { fail("لینک فاکتور معتبر نیست."); return; }
+
+  var ctl = new AbortController(), timer = setTimeout(function () { ctl.abort(); }, 60000);
+  fetch(API + "/club/invoice/" + encodeURIComponent(key), { signal: ctl.signal })
+    .then(function (r) { return r.json().catch(function () { return {}; }); })
+    .then(function (j) { if (!j.ok) return fail(j.error || "فاکتور یافت نشد."); render(j); })
+    .catch(function () { fail("ارتباط با سرور برقرار نشد. چند لحظه بعد دوباره امتحان کنید."); })
+    .then(function () { clearTimeout(timer); });
+
+  $("bPrint").onclick = function () { window.print(); };
+  $("bShare").onclick = function () {
+    var data = { title: document.title, text: "فاکتور سامی‌واتر", url: location.href };
+    if (navigator.share) navigator.share(data).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(function () { toast("لینک کپی شد"); }, function () { toast("کپی انجام نشد"); });
+    else toast("لینک را از نوار آدرس کپی کنید");
+  };
+})();
+</script>
+</body>
+</html>
