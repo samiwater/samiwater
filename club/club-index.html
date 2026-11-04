@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#09261d">
+<title>باشگاه مشتریان سامی‌واتر</title>
+<link rel="manifest" href="/club/manifest.json">
+<link rel="icon" href="/logoasli.png">
+<link rel="apple-touch-icon" href="/logoasli.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="سامی‌واتر">
+<style>
+:root{--bg:#071f17;--card:#0d2f23;--card2:#123a2c;--ink:#eaf5ef;--muted:#9db8ac;--gold:#d9b24c;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--line:#1d4a39}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;line-height:1.75;min-height:100vh;padding-bottom:env(safe-area-inset-bottom,0)}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0)) 14px 10px;background:#09261d;border-bottom:2px solid var(--gold)}
+.top img{width:42px;height:42px;border-radius:50%;background:#fff;object-fit:cover;flex:none}
+.top .t{flex:1;min-width:0}
+.top .t b{display:block;font-size:15px}
+.top .t small{color:var(--muted);font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+main{max-width:560px;margin:0 auto;padding:14px 14px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.card h2{margin:0 0 6px;font-size:17px}
+.card h3{margin:0 0 8px;font-size:15px;color:var(--gold)}
+.muted{color:var(--muted);font-size:13.5px;margin:0 0 10px}
+.center{text-align:center;color:var(--muted);padding:40px 10px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;background:#0a2a1f;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit;font-size:16px}
+input[type=tel],input.code{direction:ltr;text-align:center;letter-spacing:2px;font-size:20px}
+textarea{min-height:76px;resize:vertical}
+.btn{display:block;width:100%;border:0;border-radius:11px;padding:12px;margin-top:12px;font:700 15px inherit;font-family:inherit;cursor:pointer;background:var(--gold);color:#071f17;text-align:center;text-decoration:none}
+.btn.alt{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.btn.sm{display:inline-block;width:auto;padding:7px 16px;margin:6px 0 0;font-size:13px}
+.btn[disabled]{opacity:.55;cursor:default}
+.err{color:var(--bad);font-size:13.5px;min-height:20px;margin-top:8px}
+.ok{color:var(--ok);font-size:13.5px;margin-top:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.badge{display:inline-block;border-radius:99px;padding:2px 11px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:#12452f;color:var(--ok)}.b-warn{background:#4a3a0e;color:var(--warn)}.b-bad{background:#4d1c1c;color:var(--bad)}.b-gray{background:#1c3b30;color:var(--muted)}
+.svc{border-top:1px solid var(--line);padding:10px 0}
+.svc:first-of-type{border-top:0}
+.svc small{display:block;color:var(--muted);font-size:12.5px}
+.hist{border-top:1px solid var(--line);padding:10px 0}
+.hist:first-of-type{border-top:0}
+.hist .l{font-size:12.5px;color:var(--muted)}
+details>summary{cursor:pointer;font-weight:700;list-style:none;color:var(--gold)}
+details>summary::-webkit-details-marker{display:none}
+.dev{background:#3b2f0c;color:var(--warn);border-radius:8px;padding:6px 10px;font-size:13px;margin-top:10px;text-align:center}
+.x{background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%);background:#eaf5ef;color:#071f17;padding:9px 18px;border-radius:99px;font-size:13.5px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="/logoasli.png" alt="لوگو" onerror="this.style.visibility='hidden'">
+  <div class="t"><b>باشگاه مشتریان سامی‌واتر</b><small id="sub">خدمات تصفیه آب</small></div>
+  <button id="btnOut" hidden>خروج</button>
+</header>
+<main id="app"><div class="center">در حال بارگذاری…</div></main>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+  const API = "https://samiwater-backend.onrender.com/api";
+  const TK = "sw_club_token", PH = "sw_club_phone", HIDE = "sw_club_inst_hide";
+  const $ = id => document.getElementById(id);
+  const S = { me: null, phone: "", deferred: null, timer: null };
+
+  // ---------- ابزارها ----------
+  function h(tag, cls, text, ...kids) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null && text !== "") e.textContent = text;
+    kids.forEach(k => k && e.appendChild(k));
+    return e;
+  }
+  const normDigits = v => String(v || "").trim().replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+  const fa = n => Number(n || 0).toLocaleString("fa-IR");
+  const faDate = d => { if (!d) return "—"; try { return new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Tehran" }).format(new Date(d)); } catch (e) { return "—"; } };
+  const token = () => { try { return localStorage.getItem(TK) || ""; } catch (e) { return ""; } };
+  const isStandalone = () => (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.className = "toast on"; clearTimeout(toast._t); toast._t = setTimeout(() => { t.className = "toast"; }, 2600); }
+  function show(...nodes) { $("app").replaceChildren(...nodes); window.scrollTo(0, 0); }
+  function card(...kids) { return h("section", "card", "", ...kids); }
+  function busy(btn, on, txt) { btn.disabled = on; if (txt) btn.textContent = txt; }
+
+  async function api(path, o = {}) {
+    const headers = {};
+    if (o.body) headers["Content-Type"] = "application/json";
+    if (o.auth !== false && token()) headers.Authorization = "Bearer " + token();
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 60000);
+    try {
+      const r = await fetch(API + path, { method: o.method || "GET", headers, body: o.body ? JSON.stringify(o.body) : undefined, signal: ctl.signal });
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 401 && o.auth !== false) { logout(true); throw new Error("نشست شما منقضی شده؛ دوباره وارد شوید"); }
+      if (!r.ok || j.ok === false) throw new Error(j.error || "خطا در ارتباط با سرور");
+      return j;
+    } catch (e) {
+      if (e.name === "AbortError") throw new Error("پاسخ سرور دیر رسید؛ دوباره تلاش کنید");
+      throw e;
+    } finally { clearTimeout(t); }
+  }
+
+  // ---------- ورود ----------
+  function viewLogin(msg) {
+    clearInterval(S.timer);
+    $("btnOut").hidden = true; $("sub").textContent = "خدمات تصفیه آب";
+    const inp = h("input"); inp.type = "tel"; inp.inputMode = "numeric"; inp.autocomplete = "tel"; inp.maxLength = 14; inp.placeholder = "۰۹۱۲۳۴۵۶۷۸۹";
+    try { inp.value = localStorage.getItem(PH) || ""; } catch (e) {}
+    const err = h("div", "err", msg || "");
+    const btn = h("button", "btn", "دریافت کد تایید");
+    btn.onclick = async () => {
+      const p = normDigits(inp.value);
+      if (!/^09\d{9}$/.test(p)) { err.textContent = "شماره موبایل را به شکل ۰۹۱۲۳۴۵۶۷۸۹ وارد کنید"; return; }
+      err.textContent = ""; busy(btn, true, "در حال ارسال…");
+      try { const j = await api("/auth/request-otp", { method: "POST", body: { phone: p }, auth: false }); S.phone = p; viewOtp(j.dev_code); }
+      catch (e) { err.textContent = e.message; busy(btn, false, "دریافت کد تایید"); }
+    };
+    inp.onkeydown = e => { if (e.key === "Enter") btn.click(); };
+    show(card(h("h2", "", "ورود به باشگاه مشتریان"),
+      h("p", "muted", "شماره موبایل خود را وارد کنید تا کد تایید برایتان پیامک شود. سوابق سرویس، فاکتورها و موعد سرویس بعدی دستگاهتان همین‌جاست."),
+      h("label", "", "شماره موبایل"), inp, err, btn), h("div", "", "", installSlot()));
+    refreshInstall();
+  }
+
+  function viewOtp(devCode) {
+    const inp = h("input", "code"); inp.inputMode = "numeric"; inp.autocomplete = "one-time-code"; inp.maxLength = 6; inp.placeholder = "------";
+    const err = h("div", "err"), btn = h("button", "btn", "ورود");
+    const resend = h("button", "btn alt", ""); resend.disabled = true;
+    let left = 120;
+    const tick = () => { resend.textContent = left > 0 ? `ارسال دوباره کد (${fa(left)} ثانیه)` : "ارسال دوباره کد"; resend.disabled = left > 0; if (left > 0) left--; };
+    clearInterval(S.timer); tick(); S.timer = setInterval(tick, 1000);
+
+    btn.onclick = async () => {
+      const code = normDigits(inp.value);
+      if (!/^\d{6}$/.test(code)) { err.textContent = "کد ۶ رقمی را کامل وارد کنید"; return; }
+      err.textContent = ""; busy(btn, true, "در حال بررسی…");
+      try {
+        const j = await api("/auth/verify-otp", { method: "POST", body: { phone: S.phone, code }, auth: false });
+        localStorage.setItem(TK, j.token); localStorage.setItem(PH, S.phone);
+        clearInterval(S.timer); viewHome();
+      } catch (e) { err.textContent = e.message; busy(btn, false, "ورود"); }
+    };
+    inp.oninput = () => { if (normDigits(inp.value).length === 6) btn.click(); };
+    inp.onkeydown = e => { if (e.key === "Enter") btn.click(); };
+    resend.onclick = async () => {
+      resend.disabled = true;
+      try { const j = await api("/auth/request-otp", { method: "POST", body: { phone: S.phone }, auth: false }); left = 120; toast("کد جدید ارسال شد"); if (j.dev_code) inp.placeholder = j.dev_code; }
+      catch (e) { err.textContent = e.message; left = 30; }
+    };
+    const edit = h("button", "btn alt", "ویرایش شماره"); edit.onclick = () => viewLogin();
+    const kids = [h("h2", "", "کد تایید را وارد کنید"), h("p", "muted", "کد ۶ رقمی به شماره " + fa(S.phone).replace(/٬/g, "") + " پیامک شد."), inp, err, btn, resend, edit];
+    if (devCode) kids.splice(4, 0, h("div", "dev", "حالت تست — کد: " + devCode));
+    show(card(...kids));
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  function logout(silent) {
+    (async () => { try { if (pushSupported()) { const reg = await navigator.serviceWorker.getRegistration("/club/"); const sub = reg && await reg.pushManager.getSubscription(); if (sub) { await api("/club/push/unsubscribe", { method: "POST", body: { endpoint: sub.endpoint } }).catch(() => {}); } } } catch (e) {} })();
+    try { localStorage.removeItem(TK); } catch (e) {}
+    S.me = null;
+    if (!silent) toast("از حساب خارج شدید");
+    viewLogin();
+  }
+
+  // ---------- نصب اپلیکیشن ----------
+  function installSlot() { const d = h("div"); d.id = "installSlot"; return d; }
+  function refreshInstall() {
+    const slot = $("installSlot"); if (!slot) return;
+    slot.replaceChildren();
+    let hideUntil = 0; try { hideUntil = Number(localStorage.getItem(HIDE) || 0); } catch (e) {}
+    if (isStandalone() || Date.now() < hideUntil) return;
+    const x = h("button", "x", "×"); x.setAttribute("aria-label", "بستن");
+    x.onclick = () => { try { localStorage.setItem(HIDE, String(Date.now() + 7 * 864e5)); } catch (e) {} slot.replaceChildren(); };
+    const kids = [h("div", "row", "", h("h3", "", "📲 نصب اپلیکیشن سامی‌واتر"), x)];
+    if (S.deferred) {
+      kids.push(h("p", "muted", "با نصب اپلیکیشن، سریع‌تر وارد می‌شوید و اعلان فاکتور و یادآوری سرویس را دریافت می‌کنید."));
+      const b = h("button", "btn", "نصب اپلیکیشن");
+      b.onclick = async () => { try { S.deferred.prompt(); await S.deferred.userChoice; } catch (e) {} S.deferred = null; refreshInstall(); };
+      kids.push(b);
+    } else if (isIOS()) {
+      kids.push(h("p", "muted", "در مرورگر Safari دکمه «اشتراک‌گذاری» (مربع با فلش رو به بالا) را بزنید و گزینه «Add to Home Screen» یعنی «افزودن به صفحه‌ی اصلی» را انتخاب کنید."));
+    } else {
+      kids.push(h("p", "muted", "از منوی مرورگر (⋮) گزینه «نصب برنامه» یا «افزودن به صفحه‌ی اصلی» را بزنید."));
+    }
+    slot.appendChild(card(...kids));
+  }
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); S.deferred = e; refreshInstall(); });
+  window.addEventListener("appinstalled", () => { S.deferred = null; refreshInstall(); toast("اپلیکیشن نصب شد ✓"); });
+
+  // ---------- اعلان‌ها ----------
+  async function swReg() { return navigator.serviceWorker.register("/club/sw.js", { scope: "/club/" }).then(() => navigator.serviceWorker.ready); }
+  function b64ToU8(b) { const p = "=".repeat((4 - b.length % 4) % 4), s = atob((b + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(s, c => c.charCodeAt(0)); }
+  async function enablePush() {
+    const reg = await swReg();
+    if (await Notification.requestPermission() !== "granted") throw new Error("اجازه‌ی اعلان داده نشد");
+    const { key } = await api("/club/push-key", { auth: false });
+    if (!key) throw new Error("اعلان هنوز روی سرور فعال نشده است");
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(key) });
+    await api("/club/push/subscribe", { method: "POST", body: { subscription: sub.toJSON() } });
+  }
+  async function pushCard() {
+    const slot = h("div");
+    if (!pushSupported()) return slot;
+    let sub = null;
+    try { const reg = await navigator.serviceWorker.getRegistration("/club/"); sub = reg && await reg.pushManager.getSubscription(); } catch (e) {}
+    if (Notification.permission === "granted" && sub) {
+      api("/club/push/subscribe", { method: "POST", body: { subscription: sub.toJSON() } }).catch(() => {}); // همگام‌سازی با این ورود
+      slot.appendChild(h("p", "ok", "🔔 اعلان‌ها فعال است؛ فاکتور و یادآوری سرویس را دریافت می‌کنید."));
+      return slot;
+    }
+    if (isIOS() && !isStandalone()) { slot.appendChild(card(h("h3", "", "🔔 اعلان‌ها"), h("p", "muted", "برای دریافت اعلان در آیفون، ابتدا اپلیکیشن را به صفحه‌ی اصلی اضافه کنید و از همان‌جا باز کنید."))); return slot; }
+    if (Notification.permission === "denied") { slot.appendChild(card(h("h3", "", "🔔 اعلان‌ها"), h("p", "muted", "اعلان‌ها در مرورگر مسدود شده است؛ از تنظیمات سایت فعالش کنید."))); return slot; }
+    const b = h("button", "btn", "فعال‌سازی اعلان‌ها"), err = h("div", "err");
+    b.onclick = async () => { busy(b, true, "در حال فعال‌سازی…"); try { await enablePush(); toast("اعلان‌ها فعال شد ✓"); slot.replaceChildren(h("p", "ok", "🔔 اعلان‌ها فعال است.")); } catch (e) { err.textContent = e.message; busy(b, false, "فعال‌سازی اعلان‌ها"); } };
+    slot.appendChild(card(h("h3", "", "🔔 اعلان‌ها"), h("p", "muted", "وقتی فاکتورتان صادر شد یا موعد سرویس نزدیک بود، همین‌جا خبردار شوید."), b, err));
+    return slot;
+  }
+
+  // ---------- صفحه‌ی اصلی ----------
+  async function viewHome() {
+    clearInterval(S.timer);
+    $("btnOut").hidden = false;
+    show(h("div", "center", "در حال دریافت اطلاعات… (بار اول ممکن است تا یک دقیقه طول بکشد)"));
+    let d;
+    try { d = await api("/club/me"); }
+    catch (e) {
+      if (!token()) return viewLogin();
+      const b = h("button", "btn", "تلاش دوباره"); b.onclick = viewHome;
+      return show(card(h("p", "err", e.message), b));
+    }
+    S.me = d.customer;
+    $("sub").textContent = S.me.fullName ? "سلام " + S.me.fullName : "شماره " + S.me.phone;
+
+    const nodes = [h("div", "", "", installSlot()), await pushCard()];
+
+    // سرویس بعدی
+    const act = (S.me.addresses || []).filter(a => a.active && a.daysLeft !== null);
+    const svcCard = card(h("h3", "", "🗓️ سرویس دوره‌ای بعدی"));
+    if (!act.length) svcCard.appendChild(h("p", "muted", S.me.isNew ? "هنوز پرونده‌ای برای شما ثبت نشده است. اولین درخواست خود را ثبت کنید." : "برای آدرس‌های شما یادآور فعالی وجود ندارد."));
+    act.forEach(a => {
+      const cls = a.daysLeft < 0 ? "b-bad" : a.daysLeft <= 14 ? "b-warn" : "b-ok";
+      const txt = a.daysLeft < 0 ? fa(-a.daysLeft) + " روز از موعد گذشته" : a.daysLeft === 0 ? "موعد امروز است" : fa(a.daysLeft) + " روز تا موعد";
+      const go = h("button", "btn alt sm", "ثبت درخواست سرویس"); go.onclick = () => openOrder(a.label);
+      svcCard.appendChild(h("div", "svc", "", h("div", "row", "", h("b", "", a.label || "آدرس"), h("span", "badge " + cls, txt)),
+        h("small", "", "موعد: " + faDate(a.nextServiceDate) + "  •  آخرین سرویس: " + faDate(a.lastServiceDate)), go));
+    });
+    nodes.push(svcCard);
+
+    // فرم درخواست
+    nodes.push(orderCard());
+
+    // سوابق
+    const hist = card(h("h3", "", "🧾 سوابق و فاکتورها"));
+    if (!d.requests.length) hist.appendChild(h("p", "muted", "هنوز درخواستی ثبت نشده است."));
+    d.requests.forEach(r => {
+      const done = r.status === "done";
+      const row = h("div", "hist", "", h("div", "row", "", h("b", "", (r.issueType || "درخواست") + (r.code ? " — " + r.code : "")), h("span", "badge " + (done ? "b-ok" : "b-warn"), r.statusLabel)),
+        h("div", "l", faDate(r.completedAt || r.createdAt) + (r.addressLabel ? "  •  " + r.addressLabel : "") + (done && r.payable !== null ? "  •  " + fa(r.payable) + " تومان" : "")));
+      if (done && r.invoiceKey) { const a = h("a", "btn alt sm", "مشاهده و چاپ فاکتور"); a.href = "/invoice.html?i=" + encodeURIComponent(r.invoiceKey); row.appendChild(a); }
+      hist.appendChild(row);
+    });
+    nodes.push(hist);
+
+    show(...nodes);
+    refreshInstall();
+  }
+
+  // ---------- ثبت درخواست ----------
+  function orderCard() {
+    const det = h("details"); det.id = "orderBox";
+    const addrs = S.me.addresses || [];
+    const sel = h("select"); sel.id = "oAddr";
+    addrs.forEach(a => { const o = h("option", "", a.label || "آدرس"); o.value = a.label || ""; sel.appendChild(o); });
+    const newOpt = h("option", "", "➕ آدرس جدید…"); newOpt.value = "__new"; sel.appendChild(newOpt);
+    const label = h("input"); label.placeholder = "عنوان آدرس (مثلاً محل کار)";
+    const addr = h("textarea"); addr.placeholder = "نشانی کامل";
+    const nameIn = h("input"); nameIn.placeholder = "نام و نام خانوادگی"; nameIn.value = S.me.fullName || "";
+    const newBox = h("div", "", "", h("label", "", "عنوان آدرس"), label, h("label", "", "نشانی کامل"), addr);
+    const issue = h("select");
+    ["سرویس دوره‌ای", "تعمیر / خرابی", "نصب دستگاه", "تعویض فیلتر", "سایر"].forEach(t => { const o = h("option", "", t); o.value = t; issue.appendChild(o); });
+    const notes = h("textarea"); notes.placeholder = "توضیحات (اختیاری)";
+    const err = h("div", "err"), btn = h("button", "btn", "ثبت درخواست");
+    const sync = () => { newBox.hidden = sel.value !== "__new"; }; sel.onchange = sync;
+    if (!addrs.length) sel.value = "__new"; sync();
+    btn.onclick = async () => {
+      err.textContent = "";
+      const isNew = sel.value === "__new";
+      const lbl = isNew ? label.value.trim() : sel.value;
+      const old = addrs.find(a => (a.label || "") === lbl);
+      const address = isNew ? addr.value.trim() : (old ? old.address : "");
+      if (isNew && (!lbl || !address)) { err.textContent = "عنوان و نشانی آدرس جدید را وارد کنید"; return; }
+      if (!S.me.fullName && !nameIn.value.trim()) { err.textContent = "نام خود را وارد کنید"; return; }
+      busy(btn, true, "در حال ثبت…");
+      try {
+        const j = await api("/requests", { method: "POST", auth: false, body: { phone: S.me.phone, fullName: (S.me.fullName || nameIn.value).trim(), address, addressLabel: lbl || "خونه", issueType: issue.value, notes: notes.value.trim(), sourcePath: "club_app" } });
+        toast("درخواست ثبت شد — شماره پیگیری " + ((j.request && j.request.invoiceCode) || ""));
+        viewHome();
+      } catch (e) { err.textContent = e.message; busy(btn, false, "ثبت درخواست"); }
+    };
+    det.appendChild(h("summary", "", "➕ ثبت درخواست خدمات جدید"));
+    const body = h("div"); body.appendChild(h("label", "", "آدرس")); body.appendChild(sel); body.appendChild(newBox);
+    if (!S.me.fullName) { body.appendChild(h("label", "", "نام")); body.appendChild(nameIn); }
+    body.appendChild(h("label", "", "نوع درخواست")); body.appendChild(issue);
+    body.appendChild(h("label", "", "توضیحات")); body.appendChild(notes); body.appendChild(err); body.appendChild(btn);
+    det.appendChild(body);
+    return card(det);
+  }
+  function openOrder(label) {
+    const box = $("orderBox"); if (!box) return;
+    box.open = true;
+    const sel = $("oAddr"); if (sel && label !== undefined) { sel.value = label; sel.onchange && sel.onchange(); }
+    box.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  // ---------- شروع ----------
+  $("btnOut").onclick = () => logout(false);
+  if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/club/sw.js", { scope: "/club/" }).catch(() => {}));
+  if (token()) viewHome(); else viewLogin();
+})();
+</script>
+</body>
+</html>
