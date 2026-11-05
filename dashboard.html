@@ -1360,6 +1360,169 @@ drawCusts = function() {
 })();
       
     </script>
+<!-- ==================== ماژول مدیریت پرسنل و دسترسی‌های تیک‌دار ==================== -->
+<div id="staffModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:99999; align-items:center; justify-content:center; padding:12px; font-family:inherit;">
+  <div style="background:#fff; width:100%; max-width:620px; border-radius:14px; padding:18px; max-height:92vh; overflow-y:auto; direction:rtl; text-align:right; box-shadow:0 15px 35px rgba(0,0,0,0.3);">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #09261d; padding-bottom:10px; margin-bottom:14px;">
+      <h3 style="margin:0; color:#09261d; font-size:16px;">👥 مدیریت پرسنل و دسترسی‌های تفکیک‌شده</h3>
+      <button onclick="document.getElementById('staffModal').style.display='none'" style="background:#ef4444; color:#fff; border:none; border-radius:6px; padding:4px 10px; cursor:pointer; font-weight:bold;">✕</button>
+    </div>
+
+    <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:16px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+        <input type="text" id="stUser" placeholder="نام کاربری (مثلا sup1 یا acc1)" style="padding:9px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px;">
+        <input type="text" id="stName" placeholder="نام و سمت (مثلا خانم رضایی - پشتیبان)" style="padding:9px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px;">
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+        <input type="text" id="stPin" placeholder="رمز عبور / پین‌کد (مثلا 1234)" style="padding:9px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px;">
+        <select id="stRole" style="padding:9px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; background:#fff;">
+          <option value="staff">پرسنل اداری / پشتیبان</option>
+          <option value="accounting">حسابداری</option>
+          <option value="warehouse">انباردار</option>
+          <option value="tech">تکنسین فنی</option>
+          <option value="admin">مدیر ارشد (دسترسی کامل)</option>
+        </select>
+      </div>
+
+      <p style="font-weight:bold; font-size:12px; margin:8px 0 6px; color:#0f172a;">✅ تیک زدن بخش‌های مجاز برای این کاربر:</p>
+      <div id="permsCheckboxes" style="display:grid; grid-template-columns:1fr 1fr; gap:7px; font-size:12px; margin-bottom:12px; background:#fff; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="current_services"> 📋 خدمات جاری و ثبت تلفنی</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="suspended"> ⏸️ تعلیقی تکنسین</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="return_invoice"> ↩️ برگشت فاکتور</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="techs_settle"> 🔧 تکنسین‌ها و تسویه</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="warehouse"> 📦 انبار مرکزی و حواله</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="reminders"> 🔔 یادآور سرویس</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="archive"> 🗄️ بایگانی خدمات</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="deleted_invoices"> 🗑️ فاکتورهای حذفی</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="timer_bank"> ⏳ بانک اطلاعات و تایمر</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="tariffs"> 💰 تعرفه کالا و دستمزد</label>
+        <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" value="accounting"> 📊 نرم‌افزار حسابداری</label>
+      </div>
+
+      <button id="btnSaveStaff" onclick="saveStaffMember()" style="background:#09261d; color:#fff; border:none; padding:10px; border-radius:8px; cursor:pointer; width:100%; font-weight:bold; font-size:13px;">💾 ذخیره اطلاعات و دسترسی‌های کاربر</button>
+    </div>
+
+    <div>
+      <h4 style="font-size:13px; margin:0 0 8px; color:#334155;">📋 لیست پرسنل تعریف‌شده (برای ویرایش روی نام کلیک کنید):</h4>
+      <div id="staffTableList" style="font-size:12px; border:1px solid #e2e8f0; border-radius:8px; padding:8px; max-height:180px; overflow-y:auto; background:#f8fafc;">در حال بارگذاری...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const API_STAFF = "https://samiwater-backend.onrender.com/api/requests";
+  window.__staffCache = [];
+
+  // افزودن خودکار دکمه مدیریت پرسنل به بالای داشبورد
+  function injectStaffButton() {
+    if (document.getElementById("btnOpenStaffModal")) return;
+    const btn = document.createElement("button");
+    btn.id = "btnOpenStaffModal";
+    btn.innerHTML = "👥 مدیریت پرسنل";
+    btn.style.cssText = "background:#d97706; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:12px; margin:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2);";
+    btn.onclick = window.openStaffManager;
+
+    const header = document.querySelector("header, .header, .top-bar, .navbar") || document.body;
+    if (header === document.body) {
+      btn.style.position = "fixed";
+      btn.style.bottom = "20px";
+      btn.style.left = "20px";
+      btn.style.zIndex = "9998";
+    }
+    header.appendChild(btn);
+  }
+
+  window.openStaffManager = async function() {
+    document.getElementById("staffModal").style.display = "flex";
+    await loadStaffList();
+  };
+
+  async function loadStaffList() {
+    const box = document.getElementById("staffTableList");
+    box.innerHTML = "در حال دریافت از سرور...";
+    try {
+      const r = await fetch(API_STAFF + "/staff-list");
+      const d = await r.json();
+      window.__staffCache = d.staff || [];
+      if (!window.__staffCache.length) {
+        box.innerHTML = "<div style='color:#64748b;padding:6px;'>هنوز کارمندی ثبت نشده است.</div>";
+        return;
+      }
+      box.innerHTML = window.__staffCache.map((u, idx) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:7px; border-bottom:1px solid #e2e8f0; background:#fff; border-radius:6px; margin-bottom:4px;">
+          <div onclick="fillStaffForm(${idx})" style="cursor:pointer; flex:1;">
+            <strong style="color:#09261d;">${u.username}</strong> — ${u.fullName || "بدون نام"}
+            <span style="font-size:11px; color:#64748b;">(رمز: ${u.pin} | دسترسی: ${(u.permissions||[]).length} بخش)</span>
+          </div>
+          <button onclick="deleteStaffMember('${u.username}')" style="background:#fee2e2; color:#dc2626; border:none; border-radius:5px; padding:4px 8px; cursor:pointer; font-size:11px;">حذف</button>
+        </div>
+      `).join("");
+    } catch (e) {
+      box.innerHTML = "<div style='color:#dc2626;'>خطا در ارتباط با سرور</div>";
+    }
+  }
+
+  window.fillStaffForm = function(idx) {
+    const u = window.__staffCache[idx];
+    if (!u) return;
+    document.getElementById("stUser").value = u.username || "";
+    document.getElementById("stName").value = u.fullName || "";
+    document.getElementById("stPin").value = u.pin || "";
+    document.getElementById("stRole").value = u.role || "staff";
+    const perms = Array.isArray(u.permissions) ? u.permissions : [];
+    document.querySelectorAll("#permsCheckboxes input[type=checkbox]").forEach(cb => {
+      cb.checked = perms.includes(cb.value);
+    });
+  };
+
+  window.saveStaffMember = async function() {
+    const username = document.getElementById("stUser").value.trim();
+    const fullName = document.getElementById("stName").value.trim();
+    const pin = document.getElementById("stPin").value.trim();
+    const role = document.getElementById("stRole").value;
+    if (!username || !pin) return alert("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+
+    const permissions = Array.from(document.querySelectorAll("#permsCheckboxes input[type=checkbox]:checked")).map(cb => cb.value);
+    const btn = document.getElementById("btnSaveStaff");
+    btn.innerText = "در حال ذخیره...";
+    try {
+      const r = await fetch(API_STAFF + "/staff-save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, fullName, pin, role, permissions })
+      });
+      const d = await r.json();
+      if (d.ok) {
+        alert("✅ کاربر با موفقیت ذخیره شد.");
+        document.getElementById("stUser").value = "";
+        document.getElementById("stName").value = "";
+        document.getElementById("stPin").value = "";
+        document.querySelectorAll("#permsCheckboxes input[type=checkbox]").forEach(cb => cb.checked = false);
+        await loadStaffList();
+      } else {
+        alert("خطا: " + (d.error || "مشکل در ذخیره"));
+      }
+    } catch (e) {
+      alert("خطا در ارتباط با سرور");
+    }
+    btn.innerText = "💾 ذخیره اطلاعات و دسترسی‌های کاربر";
+  };
+
+  window.deleteStaffMember = async function(username) {
+    if (!confirm("آیا از حذف کاربر " + username + " مطمئن هستید؟")) return;
+    await fetch(API_STAFF + "/staff-delete/" + encodeURIComponent(username), { method: "DELETE" });
+    await loadStaffList();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectStaffButton);
+  } else {
+    injectStaffButton();
+  }
+})();
+</script>
+  
 </body>
 </html>
 <!-- END -->
