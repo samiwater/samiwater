@@ -1,25 +1,23 @@
 {
   "name": "SamiTech",
   "short_name": "SamiTech",
-  "description": "اپلیکیشن اختصاصی تکنسین و پرسنل سامی‌واتر",
-  "start_url": "/tech.html",
-  "scope": "/",
+  "start_url": "/tech.html?app=apk",
+  "scope": "/tech.html",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0b1a2a",
+  "background_color": "#09261d",
   "theme_color": "#09261d",
+  "dir": "rtl",
+  "lang": "fa",
   "icons": [
     {
       "src": "/logoasli.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "/logoasli.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
