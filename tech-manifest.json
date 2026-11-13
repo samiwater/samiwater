@@ -1,11 +1,12 @@
 {
-  "name": "SamiTech",
+  "name": "سامی‌واتر | پنل تخصصی تکنسین",
   "short_name": "SamiTech",
   "start_url": "/tech.html?app=apk",
   "scope": "/tech.html",
   "display": "standalone",
-  "background_color": "#09261d",
-  "theme_color": "#09261d",
+  "orientation": "portrait",
+  "background_color": "#0b1a2a",
+  "theme_color": "#0b1a2a",
   "dir": "rtl",
   "lang": "fa",
   "icons": [
