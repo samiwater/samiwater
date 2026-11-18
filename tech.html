@@ -242,7 +242,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
     </div>
 
     <div id="actBtns">
-      <button class="btn-main" onclick="dispatchNow()">🚀 در حال اعزام به محل</button>
+      <button id="btnDispatchNow" class="btn-main" onclick="dispatchNow()">🚀 در حال اعزام به محل</button>
       <button class="btn-main" onclick="openBuilder()">📝 ثبت و ویرایش فاکتور</button>
       <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق</button>
     </div>
@@ -613,23 +613,35 @@ function openOrder(id) {
   }
 }
 
+function syncDispatchBtnUI() {
+  const b = document.getElementById("btnDispatchNow") || document.querySelector('button[onclick="dispatchNow()"]');
+  if (!b || !curReq) return;
+  b.disabled = !!curReq.dispatchedAt;
+  b.style.opacity = curReq.dispatchedAt ? "0.65" : "1";
+  b.innerHTML = curReq.dispatchedAt ? "\u2705 \u0627\u0639\u0632\u0627\u0645 \u062b\u0628\u062a \u0648 \u067e\u06cc\u0627\u0645\u06a9 \u0627\u0631\u0633\u0627\u0644 \u0634\u062f" : "\ud83d\ude80 \u062f\u0631 \u062d\u0627\u0644 \u0627\u0639\u0632\u0627\u0645 \u0628\u0647 \u0645\u062d\u0644";
+}
 async function dispatchNow() {
-  if (!curReq) return;
-  if (curReq.dispatchedAt) return alert("🚀 این خدمت قبلاً به محل اعزام شده است.");
-  const tm = settings.techMeta?.[myName] || {};
-  const techName = myName || tm.name || "تکنسین سامی‌واتر";
-  const techPhone = tm.phone || "";
-  const msg = "درود مشتری عزیز 🌹\n" + techName + " هستم، تکنسین مجموعه سامی‌واتر.\n✅ خدمت شما (کد: " + (curReq.invoiceCode || "") + ") به محل اعزام شد.\nشماره موبایل تکنسین: " + techPhone + "\nدر اسرع وقت در دسترس خواهیم بود.\nسپاس و احترام 🙏";
+  if (!curReq || window._dBusy) return;
+  if (curReq.dispatchedAt) { syncDispatchBtnUI(); return alert("\u0627\u0639\u0632\u0627\u0645 \u0642\u0628\u0644\u0627\u064b \u062b\u0628\u062a \u0634\u062f\u0647 \u0627\u0633\u062a."); }
+  if (!confirm("\u0622\u06cc\u0627 \u062a\u0627\u06cc\u06cc\u062f \u0645\u06cc\u200c\u06a9\u0646\u06cc\u062f \u06a9\u0647 \u062f\u0631 \u062d\u0627\u0644 \u0627\u0639\u0632\u0627\u0645 \u0628\u0647 \u0645\u062d\u0644 \u0645\u0634\u062a\u0631\u06cc \u0647\u0633\u062a\u06cc\u062f\u061f")) return;
+  const b = document.getElementById("btnDispatchNow") || document.querySelector('button[onclick="dispatchNow()"]');
+  window._dBusy = true;
+  if (b) { b.disabled = true; b.innerHTML = "\u23f3 \u062f\u0631 \u062d\u0627\u0644 \u0627\u0631\u0633\u0627\u0644 \u067e\u06cc\u0627\u0645\u06a9..."; }
   try {
-    const r = await fetch(API + "/requests/" + curReq._id + "/dispatch", { method: "POST", headers: { "Content-Type": "application/json" } });
+    const techPhone = (settings.techMeta?.[myName] || {}).phone || "";
+    const r = await fetch(API + "/requests/" + curReq._id + "/dispatch", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ techPhone }) });
     const d = await r.json().catch(() => ({}));
-    if (d.ok && d.dispatchedAt) curReq.dispatchedAt = d.dispatchedAt;
-    else curReq.dispatchedAt = new Date().toISOString();
-  } catch (e) { curReq.dispatchedAt = new Date().toISOString(); }
-  openOrder(curReq._id);
-  const ph = (curReq.tempPhone || curReq.snapshot?.phone || curReq.customer?.phone || "").replace(/\D/g, "");
-  if (ph) location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg);
-  else alert("شماره تماس مشتری ثبت نشده است، اما اعزام ثبت شد.");
+    if (!r.ok || !d.ok) {
+      if (r.status === 409 && d.dispatchedAt) curReq.dispatchedAt = d.dispatchedAt;
+      syncDispatchBtnUI();
+      return alert(d.error || "\u0627\u0631\u0633\u0627\u0644 \u067e\u06cc\u0627\u0645\u06a9 \u0646\u0627\u0645\u0648\u0641\u0642 \u0628\u0648\u062f.");
+    }
+    curReq.dispatchedAt = d.dispatchedAt || new Date().toISOString();
+    syncDispatchBtnUI();
+    alert("\u2705 \u0627\u0639\u0632\u0627\u0645 \u062b\u0628\u062a \u0648 \u067e\u06cc\u0627\u0645\u06a9 \u0627\u0631\u0633\u0627\u0644 \u0634\u062f.");
+    openOrder(curReq._id);
+  } catch (e) { syncDispatchBtnUI(); alert("\u062e\u0637\u0627 \u062f\u0631 \u0627\u0631\u062a\u0628\u0627\u0637 \u0628\u0627 \u0633\u0631\u0648\u0631."); }
+  finally { window._dBusy = false; }
 }
 
 function callMainPhone() {
