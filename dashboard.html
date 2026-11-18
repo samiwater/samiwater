@@ -514,6 +514,7 @@ function drawSusReqs() {
   $("susReqB").innerHTML = list.map(r => {
     const ph = r.snapshot?.phone || "", sr = r.techSuspendReq || {};
     const seenHtml = r.seenByTechAt ? '<div class="bdg st-d">👁️ رویت: ' + toJ(r.seenByTechAt) + ' ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al">🔴 باز نشده</div>';
+    const dispHtml = r.dispatchedAt ? '<div style="margin-top:3px"><span class="bdg st-a">🚀 اعزام به محل: ساعت ' + toClock(r.dispatchedAt) + '</span></div>' : '';
     const smsHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:3px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '<div style="font-size:10px;color:#dc2626;margin-top:2px">⚠️ پیامک عدم پاسخ نزده</div>';
     return '<tr>' +
       '<td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td>' +
@@ -619,8 +620,9 @@ function drawTechs() {
     const pbTxt = [pb.pos ? "💳 پوز: " + fmt(pb.pos) : "", pb.cash ? "💵 نقد: " + fmt(pb.cash) : "", pb.check ? "📝 چک: " + fmt(pb.check) + " (" + (pb.checkBank || "") + " #" + (pb.checkNumber || "") + ")" : ""].filter(Boolean).join(" | ");
     const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', mixed: '<span class="bdg st-d">🔀 پرداخت ترکیبی</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
     const seenHtml = r.seenByTechAt ? '<div class="bdg st-d" style="margin-top:3px">👁️ رویت تکنسین: ' + toJ(r.seenByTechAt) + ' ساعت ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al" style="margin-top:3px">🔴 هنوز باز نشده! (ارجاع: ' + toJ(r.assignedAt || r.createdAt) + ' ' + toClock(r.assignedAt || r.createdAt) + ')</div>';
+    const dispHtml = r.dispatchedAt ? '<div style="margin-top:3px"><span class="bdg st-a">🚀 اعزام به محل: ساعت ' + toClock(r.dispatchedAt) + '</span></div>' : '';
     const smsLogHtml = r.missedCallSmsAt ? '<div class="bdg st-p" style="margin-top:2px">💬 پیامک عدم پاسخ: ساعت ' + toClock(r.missedCallSmsAt) + '</div>' : '';
-    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام تکنسین</span><br>' + seenHtml + smsLogHtml + '</div>');
+    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + dispHtml + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام تکنسین</span><br>' + seenHtml + dispHtml + smsLogHtml + '</div>');
     const tPh = settings.techMeta?.[r.technicianName]?.phone || "";
     const smsBtn = (!isD && tPh) ? '<a class="btn" style="background:#0f3b2d;text-decoration:none" href="sms:' + tPh + '?body=' + encodeURIComponent("سامی‌واتر: خدمت جدید (" + (r.invoiceCode || "") + " - " + (r.snapshot?.fullName || "") + ") به کارتابل شما ارجاع شد.") + '">📲 پیامک</a>' : '';
     return '<tr>' +
@@ -1126,7 +1128,10 @@ function editC(id) {
 
 async function saveC(id) {
   const ad = [], reas = $("eReas").value.trim(); let needReas = false;
-  document.querySelectorAll(".er").forEach(r => {
+  const origCust = id ? custs.find(x => x._id === id) : null;
+  const origAd = origCust?.addresses || [];
+  const usedIdx = new Set();
+  document.querySelectorAll(".er").forEach((r, idx) => {
     const l = r.querySelector(".al").value.trim() || "خونه", t = r.querySelector(".atx").value.trim();
     const v = Number(r.querySelector(".av").value) || 180, origV = Number(r.dataset.origV) || 180, origRem = r.dataset.origRem;
     let d = r.dataset.last ? new Date(r.dataset.last) : new Date(), au = r.dataset.au || "";
@@ -1134,7 +1139,18 @@ async function saveC(id) {
       if (!reas) needReas = true;
       d = new Date(); au = "🕵️ تغییر دستی تایمر از " + origRem + " به " + v + " روز توسط " + uName + " (" + toJ(new Date()) + ") | دلیل: " + reas;
     } else if (d.getTime() > Date.now()) d = new Date();
-    if (t) ad.push({ label: l, fullAddress: t, serviceIntervalDays: v, lastServiceDate: d, isActiveTimer: true, inReminderQueue: r.dataset.q === "1", reminderNote: r.dataset.rn || "", auditText: au });
+    if (!t) return;
+    // تطبیق آدرس با آدرس اصلی مشتری (بر اساس عنوان، و در نبود آن بر اساس ایندکس) برای حفظ فیلدها
+    let origA = origAd.find((a, i) => !usedIdx.has(i) && (a.label || "").trim() === l);
+    if (!origA) origA = origAd.find((a, i) => !usedIdx.has(i) && i === idx);
+    if (origA) usedIdx.add(origAd.indexOf(origA));
+    ad.push({
+      label: l, fullAddress: t, serviceIntervalDays: v, lastServiceDate: d, isActiveTimer: true,
+      locationUrl: origA?.locationUrl || "",
+      inReminderQueue: (r.dataset.q === "1") || (!!origA?.inReminderQueue),
+      reminderNote: r.dataset.rn || origA?.reminderNote || "",
+      auditText: au || origA?.auditText || ""
+    });
   });
   if (needReas) return alert("چون عدد تایمر را تغییر دادید، وارد کردن «دلیل تغییر تایمر» الزامی است.");
   if (id) await fetch(API + "/requests/customer-update/" + id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: $("eN").value.trim(), phone: $("eP1").value.trim(), secondaryPhones: [$("eP2").value.trim(), $("eP3").value.trim()].filter(Boolean), addresses: ad }) });
@@ -1256,10 +1272,11 @@ drawTechs = function() {
     const pbTxt = [pb.pos ? "💳 پوز: " + fmt(pb.pos) : "", pb.cash ? "💵 نقد: " + fmt(pb.cash) : "", pb.check ? "📝 چک: " + fmt(pb.check) + " (" + (pb.checkBank || "") + " #" + (pb.checkNumber || "") + (pb.checkDate ? " سررسید:" + pb.checkDate : "") + ")" : ""].filter(Boolean).join(" | ");
     const pMap = { pos: '<span class="bdg st-a">💳 پرداخت پوز</span>', cash: '<span class="bdg st-p">💵 پرداخت نقدی</span>', check: '<span class="bdg st-s">📝 پرداخت چک</span>', mixed: '<span class="bdg st-d">🔀 پرداخت ترکیبی</span>', unpaid: '<span class="bdg st-al">🔴 پرداخت نشده</span>' };
     const seenHtml = r.seenByTechAt ? '<div class="bdg st-d" style="margin-top:3px">👁️ رویت: ' + toJ(r.seenByTechAt) + ' ساعت ' + toClock(r.seenByTechAt) + '</div>' : '<div class="bdg st-al" style="margin-top:3px">🔴 باز نشده!</div>';
+    const dispHtml = r.dispatchedAt ? '<div style="margin-top:3px"><span class="bdg st-a">🚀 اعزام به محل: ساعت ' + toClock(r.dispatchedAt) + '</span></div>' : '';
     const compHtml = (isD && (r.completedAt || r.updatedAt)) ? '<div class="bdg" style="margin-top:3px;background:#dcfce7;color:#166534;border:1px solid #86efac">✅ تکمیل: ' + toJ(r.completedAt || r.updatedAt) + ' ساعت ' + toClock(r.completedAt || r.updatedAt) + '</div>' : '';
     const tkHtml = r.customerTicket ? '<div style="background:#fff1f2;border:1px solid #fda4af;color:#be123c;padding:3px 6px;border-radius:5px;font-size:10px;font-weight:bold;margin-top:4px">🎫 تیکت: ' + r.customerTicket + '</div>' : '';
     const retReqBdg = (isD && r.techSuspendReq?.active) ? '<div class="bdg st-al" style="margin-top:3px">↩️ تکنسین درخواست برگشت داده!</div>' : '';
-    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + '<br>' + compHtml + retReqBdg + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام</span><br>' + seenHtml + '</div>');
+    const payHtml = isD ? ('<div><b>مبلغ: ' + fmt(a) + ' ت</b> (سود: ' + fmt(pr) + ' ت)<br>' + (pMap[r.paymentMethod || "unpaid"] || "") + (pbTxt ? '<div style="font-size:10px;color:#334155;margin-top:2px">' + pbTxt + '</div>' : '') + '<br>' + seenHtml + dispHtml + '<br>' + compHtml + retReqBdg + '</div>') : ('<div><span class="bdg st-p">⏳ در نوبت انجام</span><br>' + seenHtml + dispHtml + '</div>');
     const opsHtml = isD ? '<button class="btn" style="background:#d97706" onclick="adminRetToTech(\'' + r._id + '\')">↩️ برگشت به کارتابل تکنسین</button>' : '<button class="btn" style="background:#0284c7" onclick="assignM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">✏️ تغییر تکنسین / ویرایش</button><button class="btn" style="background:#7e22ce" onclick="susM(\'' + r._id + '\')">⏸️ تعلیق</button><button class="btn" style="background:#d97706" onclick="retReqM(\'' + r._id + '\',\'' + (r.technicianName || "") + '\')">↩️ برگشت به جاری</button>';
     return '<tr><td><b style="direction:ltr">' + (r.invoiceCode || "---") + '</b><div style="font-size:10px;color:#64748b">📅 ' + toJ(r.createdAt) + '</div></td><td><span class="lnk" onclick="doss(\'' + ph + '\',0)">' + (r.snapshot?.fullName || "---") + '</span><div style="font-size:10px;color:#64748b">👨‍🔧 ' + (r.technicianName || "") + '</div></td><td style="direction:ltr;font-weight:bold"><a href="tel:' + ph + '">' + ph + ' 📞</a></td><td><b>📍 ' + (r.addressLabel || "خونه") + ':</b> ' + (r.issueType || "سرویس") + (r.workReport ? '<div style="font-size:10px;color:#15803d;font-weight:bold">🔧 اقلام: ' + r.workReport + '</div>' : '') + tkHtml + tempNotesHtml(r) + draftAlertHtml(r) + '</td><td>' + payHtml + '</td><td style="display:flex;gap:4px;flex-wrap:wrap">' + opsHtml + '</td></tr>';
   }).join("");

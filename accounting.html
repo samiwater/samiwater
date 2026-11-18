@@ -393,6 +393,8 @@ function recalcTechMath(idx, t) {
 // PART 3 END
     
     async function submitTechSettle(idx, tName) {
+  window._settlingTech = window._settlingTech || {};
+  if (window._settlingTech[tName]) return;
   const d = getTechAuditData(tName);
   if (!d.paidOrders.length) return alert("هیچ فاکتور تسویه‌نشده‌ای برای «" + tName + "» در این بازه وجود ندارد.");
   const actualCheck = num($("chk_" + idx).value), actualPos = num($("pos_" + idx).value), compPos = num($("cpos_" + idx).value);
@@ -431,11 +433,14 @@ function recalcTechMath(idx, t) {
     finalCashPayable, finalCashReceived: totalCashToVault, shortfall, cashDest, totalBroughtToCompany,
     note: $("nt_" + idx).value.trim(), byUser: uName
   };
+  window._settlingTech[tName] = true;
+  try {
   const r = await fetch(API + "/requests/settle-tech", {
     method: "PUT", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ technicianName: tName, reqIds: d.paidOrders.map(x => x._id), voucher, newChecks: verifiedChecks, newDebtor })
   });
-  if (r.ok) { customMap[tName] = []; alert("✅ تسویه با موفقیت ثبت شد و مبالغ به حساب مجموعه اضافه گردید."); await loadAcc(); }
+  if (r.ok) { customMap[tName] = []; alert("✅ تسویه با موفقیت ثبت شد و مبالغ به حساب مجموعه اضافه گردید."); await loadAcc(); } else { alert(r.error || "خطا در ثبت سند تسویه"); }
+  } finally { window._settlingTech[tName] = false; }
 }
 
 function renderTechArchAccordions() {

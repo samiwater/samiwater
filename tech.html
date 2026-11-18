@@ -242,6 +242,7 @@ body{background:var(--bg);color:var(--txt);padding-bottom:75px;min-height:100vh}
     </div>
 
     <div id="actBtns">
+      <button class="btn-main" onclick="dispatchNow()">🚀 در حال اعزام به محل</button>
       <button class="btn-main" onclick="openBuilder()">📝 ثبت و ویرایش فاکتور</button>
       <button class="btn-ret" onclick="openSusModal()">⏸️ درخواست تعلیق</button>
     </div>
@@ -610,6 +611,25 @@ function openOrder(id) {
     renderTempNotes();
     $("dPayBadge").style.display = "none"; $("actBtns").style.display = "block"; $("invSummary").style.display = "none";
   }
+}
+
+async function dispatchNow() {
+  if (!curReq) return;
+  if (curReq.dispatchedAt) return alert("🚀 این خدمت قبلاً به محل اعزام شده است.");
+  const tm = settings.techMeta?.[myName] || {};
+  const techName = myName || tm.name || "تکنسین سامی‌واتر";
+  const techPhone = tm.phone || "";
+  const msg = "درود مشتری عزیز 🌹\n" + techName + " هستم، تکنسین مجموعه سامی‌واتر.\n✅ خدمت شما (کد: " + (curReq.invoiceCode || "") + ") به محل اعزام شد.\nشماره موبایل تکنسین: " + techPhone + "\nدر اسرع وقت در دسترس خواهیم بود.\nسپاس و احترام 🙏";
+  try {
+    const r = await fetch(API + "/requests/" + curReq._id + "/dispatch", { method: "POST", headers: { "Content-Type": "application/json" } });
+    const d = await r.json().catch(() => ({}));
+    if (d.ok && d.dispatchedAt) curReq.dispatchedAt = d.dispatchedAt;
+    else curReq.dispatchedAt = new Date().toISOString();
+  } catch (e) { curReq.dispatchedAt = new Date().toISOString(); }
+  openOrder(curReq._id);
+  const ph = (curReq.tempPhone || curReq.snapshot?.phone || curReq.customer?.phone || "").replace(/\D/g, "");
+  if (ph) location.href = "sms:" + ph + "?body=" + encodeURIComponent(msg);
+  else alert("شماره تماس مشتری ثبت نشده است، اما اعزام ثبت شد.");
 }
 
 function callMainPhone() {
