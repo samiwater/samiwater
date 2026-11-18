@@ -1711,6 +1711,120 @@ drawCusts = function() {
 </script>
 
   
+<script>
+(function(){
+  const nav = document.getElementById("mainNav");
+  if (nav && !document.getElementById("btnInfraMgr")) {
+    const b = document.createElement("button");
+    b.id = "btnInfraMgr";
+    b.className = "nb";
+    b.style.cssText = "background:#0284c7;color:#fff;";
+    b.innerHTML = "\u2699\ufe0f \u0645\u062f\u06cc\u0631\u06cc\u062a \u0632\u06cc\u0631\u0633\u0627\u062e\u062a";
+    b.onclick = function(){ openInfraModal(); };
+    nav.insertBefore(b, nav.lastElementChild);
+  }
+  const m = document.createElement("div");
+  m.id = "infraModal";
+  m.style.cssText = "display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:15px;";
+  m.innerHTML = '<div style="background:#1e293b;color:#fff;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:14px;padding:18px;border:1px solid #334155;font-family:inherit;direction:rtl;">' +
+    '<h3 style="margin:0 0 12px;color:#38bdf8;">\u2699\ufe0f \u0645\u062f\u06cc\u0631\u06cc\u062a \u0632\u06cc\u0631\u0633\u0627\u062e\u062a \u0648 \u067e\u06cc\u0627\u0645\u06a9\u200c\u0647\u0627</h3>' +
+    '<label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;"><input type="checkbox" id="inf_smsEn" checked> \u0641\u0639\u0627\u0644 \u0628\u0648\u062f\u0646 \u0627\u0631\u0633\u0627\u0644 \u062e\u0648\u062f\u06a9\u0627\u0631 \u067e\u06cc\u0627\u0645\u06a9</label>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">' +
+      '<div><small>\u0627\u06cc\u0627\u0628\u200c\u0648\u0630\u0647\u0627\u0628 \u067e\u0627\u06cc\u0647 (\u062a\u0648\u0645\u0627\u0646):</small><input id="inf_tFee" type="number" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;"></div>' +
+      '<div><small>\u0633\u0642\u0641 \u0627\u0631\u0633\u0627\u0644 \u0645\u062c\u062f\u062f \u0641\u0627\u06a9\u062a\u0648\u0631 \u062f\u0631 \u0631\u0648\u0632:</small><input id="inf_maxR" type="number" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;"></div>' +
+      '<div><small>\u0634\u0645\u0627\u0631\u0647 \u062a\u0645\u0627\u0633 \u067e\u0634\u062a\u06cc\u0628\u0627\u0646\u06cc:</small><input id="inf_cPh" type="text" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;direction:ltr;"></div>' +
+      '<div><small>\u0634\u0645\u0627\u0631\u0647 \u06a9\u0627\u0631\u062a / \u062d\u0633\u0627\u0628:</small><input id="inf_cCard" type="text" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;direction:ltr;"></div>' +
+    '</div>' +
+    '<div style="margin-bottom:8px;"><small>\u0645\u062a\u0646 \u067e\u06cc\u0627\u0645\u06a9 \u0627\u0639\u0632\u0627\u0645 \u062a\u06a9\u0646\u0633\u06cc\u0646 ({techName}, {techPhone}, {requestId}):</small><textarea id="inf_tplDisp" rows="3" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;font-family:inherit;"></textarea></div>' +
+    '<div style="margin-bottom:12px;"><small>\u0645\u062a\u0646 \u067e\u06cc\u0627\u0645\u06a9 \u0641\u0627\u06a9\u062a\u0648\u0631 \u0648 \u0644\u06cc\u0646\u06a9 \u067e\u0631\u062f\u0627\u062e\u062a ({customerName}, {amount}, {invoiceLink}):</small><textarea id="inf_tplInv" rows="3" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;font-family:inherit;"></textarea></div>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+      '<button type="button" onclick="document.getElementById('infraModal').style.display='none'" style="padding:8px 14px;border-radius:8px;border:1px solid #475569;background:transpa
+
+rent;color:#fff;cursor:pointer;">\u0628\u0633\u062a\u0646</button>' +
+      '<button type="button" id="btnSaveInfra" onclick="saveInfraSettings()" style="padding:8px 16px;border-radius:8px;border:none;background:#16a34a;color:#fff;font-weight:bold;cursor:pointer;">\ud83d\udcbe \u0630\u062e\u06cc\u0631\u0647 \u062a\u0646\u0638\u06cc\u0645\u0627\u062a</button>' +
+    '</div></div>';
+  document.body.appendChild(m);
+})();
+</script>
+<script>
+(function(){
+  const nav = document.getElementById("mainNav");
+  if (nav && !document.getElementById("btnInfraMgr")) {
+    const b = document.createElement("button");
+    b.id = "btnInfraMgr";
+    b.className = "nb";
+    b.style.cssText = "background:#0284c7;color:#fff;";
+    b.innerHTML = "\u2699\ufe0f \u0645\u062f\u06cc\u0631\u06cc\u062a \u0632\u06cc\u0631\u0633\u0627\u062e\u062a";
+    b.onclick = function(){ openInfraModal(); };
+    nav.insertBefore(b, nav.lastElementChild);
+  }
+  const m = document.createElement("div");
+  m.id = "infraModal";
+  m.style.cssText = "display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:15px;";
+  m.innerHTML = '<div style="background:#1e293b;color:#fff;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:14px;padding:18px;border:1px solid #334155;font-family:inherit;direction:rtl;">' +
+    '<h3 style="margin:0 0 12px;color:#38bdf8;">\u2699\ufe0f \u0645\u062f\u06cc\u0631\u06cc\u062a \u0632\u06cc\u0631\u0633\u0627\u062e\u062a \u0648 \u067e\u06cc\u0627\u0645\u06a9\u200c\u0647\u0627</h3>' +
+    '<label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;"><input type="checkbox" id="inf_smsEn" checked> \u0641\u0639\u0627\u0644 \u0628\u0648\u062f\u0646 \u0627\u0631\u0633\u0627\u0644 \u062e\u0648\u062f\u06a9\u0627\u0631 \u067e\u06cc\u0627\u0645\u06a9</label>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">' +
+      '<div><small>\u0627\u06cc\u0627\u0628\u200c\u0648\u0630\u0647\u0627\u0628 \u067e\u0627\u06cc\u0647 (\u062a\u0648\u0645\u0627\u0646):</small><input id="inf_tFee" type="number" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;"></div>' +
+      '<div><small>\u0633\u0642\u0641 \u0627\u0631\u0633\u0627\u0644 \u0645\u062c\u062f\u062f \u0641\u0627\u06a9\u062a\u0648\u0631 \u062f\u0631 \u0631\u0648\u0632:</small><input id="inf_maxR" type="number" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;"></div>' +
+      '<div><small>\u0634\u0645\u0627\u0631\u0647 \u062a\u0645\u0627\u0633 \u067e\u0634\u062a\u06cc\u0628\u0627\u0646\u06cc:</small><input id="inf_cPh" type="text" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;direction:ltr;"></div>' +
+      '<div><small>\u0634\u0645\u0627\u0631\u0647 \u06a9\u0627\u0631\u062a / \u062d\u0633\u0627\u0628:</small><input id="inf_cCard" type="text" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;direction:ltr;"></div>' +
+    '</div>' +
+    '<div style="margin-bottom:8px;"><small>\u0645\u062a\u0646 \u067e\u06cc\u0627\u0645\u06a9 \u0627\u0639\u0632\u0627\u0645 \u062a\u06a9\u0646\u0633\u06cc\u0646 ({techName}, {techPhone}, {requestId}):</small><textarea id="inf_tplDisp" rows="3" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;font-family:inherit;"></textarea></div>' +
+    '<div style="margin-bottom:12px;"><small>\u0645\u062a\u0646 \u067e\u06cc\u0627\u0645\u06a9 \u0641\u0627\u06a9\u062a\u0648\u0631 \u0648 \u0644\u06cc\u0646\u06a9 \u067e\u0631\u062f\u0627\u062e\u062a ({customerName}, {amount}, {invoiceLink}):</small><textarea id="inf_tplInv" rows="3" style="width:100%;padding:7px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#fff;font-family:inherit;"></textarea></div>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+      '<button type="button" onclick="document.getElementById('infraModal').style.display='none'" style="padding:8px 14px;border-radius:8px;border:1px solid #475569;background:transpa
+
+rent;color:#fff;cursor:pointer;">\u0628\u0633\u062a\u0646</button>' +
+      '<button type="button" id="btnSaveInfra" onclick="saveInfraSettings()" style="padding:8px 16px;border-radius:8px;border:none;background:#16a34a;color:#fff;font-weight:bold;cursor:pointer;">\ud83d\udcbe \u0630\u062e\u06cc\u0631\u0647 \u062a\u0646\u0638\u06cc\u0645\u0627\u062a</button>' +
+    '</div></div>';
+  document.body.appendChild(m);
+})();
+</script>
+<script>
+window.openInfraModal = function() {
+  const st = window.settings || {};
+  const cmp = st.company || {};
+  const tpl = st.smsTemplates || {};
+  const defD = "\u062f\u0631\u0648\u062f \u0645\u0634\u062a\u0631\u06cc \u0639\u0632\u06cc\u0632 \ud83c\udf39\n\u062a\u06a9\u0646\u0633\u06cc\u0646 \u0634\u0645\u0627 {techName} \u0628\u0627 \u0634\u0645\u0627\u0631\u0647 {techPhone} \u062f\u0631 \u062d\u0627\u0644 \u062d\u0631\u06a9\u062a \u0628\u0647 \u0633\u0645\u062a \u0634\u0645\u0627\u0633\u062a.\n\u0644\u0637\u0641\u0627\u064b \u062f\u0631 \u062f\u0633\u062a\u0631\u0633 \u0628\u0627\u0634\u06cc\u062f.\n\u0628\u0627 \u0627\u062d\u062a\u0631\u0627\u0645\u060c \u0645\u062c\u0645\u0648\u0639\u0647 \u0633\u0627\u0645\u06cc\u200c\u0648\u0627\u062a\u0631";
+  const defI = "\u0645\u0634\u062a\u0631\u06cc \u06af\u0631\u0627\u0645\u06cc\u060c \u0635\u0648\u0631\u062a\u062d\u0633\u0627\u0628 \u0633\u0627\u0645\u06cc\u200c\u0648\u0627\u062a\u0631 \u0628\u0647 \u0645\u0628\u0644\u063a {amount} \u062a\u0648\u0645\u0627\u0646:\n{invoiceLink}";
+  document.getElementById("inf_smsEn").checked = st.smsEnabled !== false;
+  document.getElementById("inf_tFee").value = Number(st.fixedTravelFee ?? 100000);
+  document.getElementById("inf_maxR").value = Number(st.maxDailyPaymentResend ?? 2);
+  document.getElementById("inf_cPh").value = cmp.phone || "";
+  document.getElementById("inf_cCard").value = cmp.cardNumber || "";
+  document.getElementById("inf_tplDisp").value = tpl.dispatch || defD;
+  document.getElementById("inf_tplInv").value = tpl.invoice || defI;
+  document.getElementById("infraModal").style.display = "flex";
+};
+window.saveInfraSettings = async function() {
+  const b = document.getElementById("btnSaveInfra");
+  if (b) { b.disabled = true; b.textContent = "\u23f3..."; }
+  try {
+    const st = window.settings || {};
+    const body = {
+      smsEnabled: document.getElementById("inf_smsEn").checked,
+      fixedTravelFee: Number(document.getElementById("inf_tFee").value) || 0,
+      maxDailyPaymentResend: Number(document.getElementById("inf_maxR").value) || 2,
+      company: Object.assign({}, st.company || {}, {
+        phone: document.getElementById("inf_cPh").value.trim(),
+        cardNumber: document.getElementById("inf_cCard").value.trim()
+      }),
+      smsTemplates: Object.assign({}, st.smsTemplates || {}, {
+        dispatch: document.getElementById("inf_tplDisp").value,
+        invoice: document.getElementById("inf_tplInv").value
+      })
+    };
+    const r = await fetch(API + "/requests/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.ok) return alert(d.error || "\u062e\u0637\u0627 \u062f\u0631 \u0630\u062e\u06cc\u0631\u0647");
+    window.settings = Object.assign(st, body);
+    alert("\u2705 \u062a\u0646\u0638\u06cc\u0645\u0627\u062a \u0632\u06cc\u0631\u0633\u0627\u062e\u062a \u0630\u062e\u06cc\u0631\u0647 \u0634\u062f.");
+    document.getElementById("infraModal").style.display = "none";
+  } catch (e) { alert("\u062e\u0637\u0627 \u062f\u0631 \u0627\u0631\u062a\u0628\u0627\u0637 \u0628\u0627 \u0633\u0631\u0648\u0631"); }
+  finally { if (b) { b.disabled = false; b.textContent = "\ud83d\udcbe \u0630\u062e\u06cc\u0631\u0647 \u062a\u0646\u0638\u06cc\u0645\u0627\u062a"; } }
+};
+</script>
 </body>
 </html>
 <!-- END -->
